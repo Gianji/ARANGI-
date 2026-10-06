@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ARANGIÒ">
-<meta name="theme-color" content="#f5f6f8">
+<meta name="theme-color" content="#f2f3f5">
 <title>ARANGIÒ</title>
 <style>
   :root {
@@ -43,14 +43,12 @@
   .app {
     display: flex;
     flex-direction: column;
-    height: 100dvh;
     height: 100vh;
+    height: 100dvh;
   }
 
-  /* HEADER */
   .app-header {
-    padding: 14px 20px 14px;
-    background: var(--sfondo);
+    padding: 18px 20px 14px;
     padding-top: calc(18px + env(safe-area-inset-top));
     flex-shrink: 0;
   }
@@ -73,18 +71,16 @@
     font-weight: 500;
   }
 
-  /* CONTENUTO */
   .app-content {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 4px 16px calc(var(--tabbar-h) + 24px);
+    padding: 4px 16px calc(80px + env(safe-area-inset-bottom));
   }
 
   .view { display: none; }
   .view.active { display: block; }
 
-  /* CARD */
   .card {
     background: var(--card);
     border-radius: 16px;
@@ -151,7 +147,6 @@
     opacity: 0.35;
   }
 
-  /* BOTTONI */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -165,32 +160,17 @@
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
+    transition: opacity 0.15s;
     margin-bottom: 8px;
     letter-spacing: -0.2px;
   }
 
-  .btn:active {
-    opacity: 0.75;
-    transform: scale(0.99);
-  }
+  .btn:active { opacity: 0.75; }
 
-  .btn-primary {
-    background: var(--arancione);
-    color: white;
-  }
+  .btn-primary { background: var(--arancione); color: white; }
+  .btn-secondary { background: #eef0f3; color: var(--blu); }
+  .btn-danger { background: #fef2f2; color: #dc2626; }
 
-  .btn-secondary {
-    background: #eef0f3;
-    color: var(--blu);
-  }
-
-  .btn-danger {
-    background: #fef2f2;
-    color: #dc2626;
-  }
-
-  /* TAB BAR */
   .tabbar {
     position: fixed;
     bottom: 0;
@@ -224,41 +204,12 @@
     transition: color 0.15s;
   }
 
-  .tabbar button svg {
-    width: 22px;
-    height: 22px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  .tabbar button span {
+    font-size: 20px;
+    line-height: 1;
   }
 
-  .tabbar button.active {
-    color: var(--blu);
-  }
-
-  .tabbar button.active svg {
-    stroke: var(--blu);
-  }
-
-  /* LINEA SOTTILE SULLE INFO */
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    font-size: 14px;
-  }
-
-  .info-row .label {
-    color: var(--testo-sec);
-  }
-
-  .info-row .value {
-    color: var(--testo);
-    font-weight: 500;
-  }
+  .tabbar button.active { color: var(--blu); }
 </style>
 </head>
 <body>
@@ -272,7 +223,6 @@
 
   <main class="app-content">
 
-    <!-- VIEW: IMMOBILI -->
     <section id="view-immobili" class="view active">
       <div class="grid-2">
         <div class="card">
@@ -293,7 +243,6 @@
       </div>
     </section>
 
-    <!-- VIEW: PERSONE -->
     <section id="view-persone" class="view">
       <div class="grid-2">
         <div class="card">
@@ -314,7 +263,6 @@
       </div>
     </section>
 
-    <!-- VIEW: ATTIVITÀ -->
     <section id="view-attivita" class="view">
       <div class="card">
         <h2><span class="dot"></span>Attività</h2>
@@ -325,19 +273,17 @@
       </div>
     </section>
 
-    <!-- VIEW: MAPPA -->
     <section id="view-mappa" class="view">
       <div class="card">
         <h2><span class="dot"></span>Mappa</h2>
         <div class="empty">
           <div class="icon">🗺️</div>
-          La mappa  sarà attivata nel Modulo22 3
+          La mappa sarà attivata nel Modulo 3
         </div>
-      </"/div>
+      </div>
     </section>
 
-    <!-- VIEW:></ ALTRO -->
-    <section id="svgview-altro" class="view">
+    <section id="view-altro" class="view">
       <div class="card">
         <h2><span class="dot"></span>Dati</h2>
         <p style="margin-bottom:16px;">Esporta un backup di tutti i dati in un file.</p>
@@ -348,18 +294,9 @@
 
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row">
-          <span class="label">Versione</span>
-          <span class="value">1.0 (Modulo 1)</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Storage</span>
-          <span class="value">Locale</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Occupato</span>
-          <span class="value" id="storage-info">—</span>
-        </div>
+        <p>Versione: 1.0 (Modulo 1)</p>
+        <p>Storage: locale</p>
+        <p id="storage-info">—</p>
       </div>
 
       <div class="card">
@@ -372,34 +309,16 @@
   </main>
 
   <nav class="tabbar">
-    <button data-tab="immobili" class="active">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15>
-      Immobili
-    </button>
-    <button data-tab="persone">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Persone
-    </button>
-    <button data-tab="attivita">
-      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      Attività
-    </button>
-    <button data-tab="mappa">
-      <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-      Mappa
-    </button>
-    <button data-tab="altro">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Altro
-    </button>
+    <button data-tab="immobili" class="active"><span>🏠</span>Immobili</button>
+    <button data-tab="persone"><span>👥</span>Persone</button>
+    <button data-tab="attivita"><span>✅</span>Attività</button>
+    <button data-tab="mappa"><span>🗺️</span>Mappa</button>
+    <button data-tab="altro"><span>⚙️</span>Altro</button>
   </nav>
 
 </div>
 
 <script>
-// =====================================================
-// STORAGE
-// =====================================================
 const DB_KEY = 'arangiò_db_v1';
 
 const Storage = {
@@ -410,22 +329,18 @@ const Storage = {
       const parsed = JSON.parse(raw);
       return Object.assign(this.default(), parsed);
     } catch (e) {
-      console.error('Errore caricamento DB:', e);
       return this.default();
     }
   },
-
   save(data) {
     try {
       localStorage.setItem(DB_KEY, JSON.stringify(data));
       return true;
     } catch (e) {
-      console.error('Errore salvataggio DB:', e);
-      alert('Errore nel salvataggio. Spazio esaurito?');
+      alert('Errore nel salvataggio.');
       return false;
     }
   },
-
   default() {
     return {
       versione: 1,
@@ -439,26 +354,18 @@ const Storage = {
 
 let DB = Storage.load();
 
-// =====================================================
-// NAVIGAZIONE TAB
-// =====================================================
 const tabButtons = document.querySelectorAll('.tabbar button');
 const views = document.querySelectorAll('.view');
 
 tabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const tab = btn.dataset.tab;
-
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
-
     document.querySelector('.app-content').scrollTop = 0;
   });
 });
 
-// =====================================================
-// AGGIORNAMENTO CONTATORI
-// =====================================================
 function aggiornaContatori() {
   const elImm = document.getElementById('count-immobili');
   const elInk = document.getElementById('count-ink');
@@ -473,25 +380,18 @@ function aggiornaContatori() {
   const info = document.getElementById('storage-info');
   if (info) {
     const raw = localStorage.getItem(DB_KEY) || '';
-    const kb = (raw.length / 1024).toFixed(2);
-    info.textContent = kb + ' KB';
+    info.textContent = (raw.length / 1024).toFixed(2) + ' KB';
   }
 }
 
-// =====================================================
-// BACKUP
-// =====================================================
 function esportaBackup() {
   const data = JSON.stringify(DB, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-
   const oggi = new Date();
-  const nome = 'arangiò_backup_' +
-    oggi.getFullYear() + '-' +
+  const nome = 'arangiò_backup_' + oggi.getFullYear() + '-' +
     String(oggi.getMonth() + 1).padStart(2, '0') + '-' +
     String(oggi.getDate()).padStart(2, '0') + '.json';
-
   const a = document.createElement('a');
   a.href = url;
   a.download = nome;
@@ -504,16 +404,12 @@ function esportaBackup() {
 function importaBackup(event) {
   const file = event.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
       const imported = JSON.parse(e.target.result);
       if (!imported || typeof imported !== 'object') throw new Error('Formato non valido');
-
-      const conferma = confirm('Importare questo backup? I dati attuali verranno sostituiti.');
-      if (!conferma) return;
-
+      if (!confirm('Importare questo backup? I dati attuali verranno sostituiti.')) return;
       DB = Object.assign(Storage.default(), imported);
       Storage.save(DB);
       aggiornaContatori();
@@ -527,20 +423,14 @@ function importaBackup(event) {
 }
 
 function cancellaTutto() {
-  const conferma1 = confirm('⚠️ Cancellare TUTTI i dati? Operazione irreversibile.');
-  if (!conferma1) return;
-  const conferma2 = confirm('⚠️ Sei sicuro? Non ci sarà modo di recuperarli.');
-  if (!conferma2) return;
-
+  if (!confirm('⚠️ Cancellare TUTTI i dati?')) return;
+  if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
   DB = Storage.default();
   Storage.save(DB);
   aggiornaContatori();
   alert('🗑️ Tutti i dati cancellati');
 }
 
-// =====================================================
-// AVVIO
-// =====================================================
 aggiornaContatori();
 </script>
 
