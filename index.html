@@ -127,7 +127,7 @@
   .condo-header { background: #eef4fb; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--blu); font-weight: 700; letter-spacing: 0.3px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
   .condo-card { background: var(--card); border-radius: 14px; padding: 16px; margin-bottom: 10px; box-shadow: var(--ombra); cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; gap: 12px; }
   .condo-card:active { transform: scale(0.99); }
-  .condo-card .condo-icon { font-size: 28px; flex-shrink: 0; }
+  .condo-card .condo-icon { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; }
   .condo-card .condo-info { flex: 1; overflow: hidden; }
   .condo-card .condo-title { font-size: 15px; font-weight: 700; color: var(--testo); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); }
@@ -258,6 +258,32 @@
   .tipo-app-btn.tipo-entrambi { border-left: 4px solid var(--vnd); }
   .tipo-app-btn .custom-star { position: absolute; top: 6px; right: 8px; font-size: 11px; }
   .tipo-app-btn.custom { border-color: #e5e7eb; background: #fafbfc; }
+
+  /* ATTIVITÀ - nuovo stile */
+  .att-gruppo { background: var(--card); border-radius: 14px; margin-bottom: 10px; box-shadow: var(--ombra); overflow: hidden; }
+  .att-gruppo-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; }
+  .att-gruppo-header:active { background: #f5f6f8; }
+  .att-icona-ent { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; }
+  .att-info { flex: 1; min-width: 0; }
+  .att-titolo { font-size: 14px; font-weight: 700; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .att-meta { font-size: 11px; color: var(--testo-sec); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .att-count { background: var(--arancione); color: white; font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: 10px; }
+  .att-arrow { color: #c4c9d2; font-size: 20px; transition: transform 0.2s; }
+  .att-gruppo.espanso .att-arrow { transform: rotate(90deg); }
+  .att-gruppo-body { display: none; border-top: 1px solid #f0f1f3; padding: 4px 0; }
+  .att-gruppo.espanso .att-gruppo-body { display: block; }
+  .att-item { display: flex; gap: 10px; padding: 11px 16px; cursor: pointer; align-items: flex-start; }
+  .att-item:active { background: #f8f9fb; }
+  .att-dot { width: 10px; height: 10px; border-radius: 5px; flex-shrink: 0; margin-top: 5px; }
+  .att-dot.fatta { background: #059669; }
+  .att-dot.oggi { background: var(--arancione); box-shadow: 0 0 0 3px rgba(255,107,0,0.15); }
+  .att-dot.scaduta { background: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.15); }
+  .att-dot.prossima { background: #2563eb; }
+  .att-body { flex: 1; min-width: 0; }
+  .att-data { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 3px; }
+  .att-data.oggi { color: var(--arancione); }
+  .att-data.scaduta { color: #dc2626; }
+  .att-testo { font-size: 14px; color: var(--testo); line-height: 1.35; word-break: break-word; }
 </style>
 </head>
 <body>
@@ -306,13 +332,13 @@
 
     <section id="view-attivita" class="view">
       <div class="att-subtabs" id="att-subtabs">
-        <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')">
-          <div class="num" id="att-num-oggi">0</div>
-          <div class="lbl">Oggi</div>
-        </div>
         <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')">
           <div class="num" id="att-num-scadute">0</div>
           <div class="lbl">Scadute</div>
+        </div>
+        <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')">
+          <div class="num" id="att-num-oggi">0</div>
+          <div class="lbl">Oggi</div>
         </div>
         <div class="att-subtab prossime" data-att="prossime" onclick="setAttTab('prossime')">
           <div class="num" id="att-num-prossime">0</div>
@@ -378,7 +404,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 8)</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.1 (Modulo 9)</span></div>
         <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
         <div class="info-row"><span class="label">Tipi personalizzati</span><span class="value" id="sistema-n-tipi">0</span></div>
@@ -447,16 +473,18 @@ const Storage = {
         attivita: parsed.attivita || [],
         appuntamenti: parsed.appuntamenti || [],
         condomini: parsed.condomini || {},
+        coordinateCondomini: parsed.coordinateCondomini || {},
         customTipiApp: parsed.customTipiApp || []
       };
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 33, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, customTipiApp: [] }; }
+  default() { return { versione: 34, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
 };
 
 let DB = Storage.load();
 if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = [];
+if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
 
 // =====================================================
 // COSTANTI
@@ -484,18 +512,18 @@ const STATI_RR = [
   { id: 'rogitato', label: 'RR rogitato', tag: '#RR-rogitato' }
 ];
 
+// TIPI_APPUNTAMENTO aggiornati: rimossi VISITA PROP e CONSEGNA CHIAVI, aggiunto RIVAL
 const TIPI_APPUNTAMENTO = [
   { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: '📋', desc: 'Ribassi, rinnovi, contratto' },
   { sigla: 'VAL', nome: 'Valutazione', chi: 'vend', icona: '📐', desc: 'Sopralluogo per valutazione' },
+  { sigla: 'RIVAL', nome: 'Rivalutazione', chi: 'vend', icona: '📈', desc: 'Esposizione valutazione al proprietario' },
   { sigla: 'ACC PROP', nome: 'Accettazione proposta', chi: 'vend', icona: '✍️', desc: 'Venditore risponde alla proposta' },
-  { sigla: 'VISITA PROP', nome: 'Visita proprietario', chi: 'vend', icona: '🏠', desc: 'Incontro con proprietario' },
   { sigla: 'APP', nome: 'Appuntamento di visita', chi: 'acq', icona: '👀', desc: 'Visita immobile' },
   { sigla: 'CONS', nome: 'Consulenza Kiron', chi: 'acq', icona: '💼', desc: 'Verifica mutuabilità' },
   { sigla: 'RIT PROP', nome: 'Ritiro proposta', chi: 'acq', icona: '📤', desc: 'Acquirente ritira proposta' },
   { sigla: 'NOT ACC PROP', nome: 'Notifica acc. proposta', chi: 'acq', icona: '📬', desc: 'Comunica accettazione' },
   { sigla: 'PRELIMINARE', nome: 'Preliminare', chi: 'entrambi', icona: '📝', desc: 'Firma preliminare' },
   { sigla: 'ROGITO', nome: 'Rogito', chi: 'entrambi', icona: '🏛️', desc: 'Atto notarile definitivo' },
-  { sigla: 'CONSEGNA CHIAVI', nome: 'Consegna chiavi', chi: 'entrambi', icona: '🔑', desc: 'Consegna dell\'immobile' },
   { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: '📅', desc: 'Con immobile, persona o entrambi' },
   { sigla: 'SOPRALLUOGO', nome: 'Sopralluogo tecnico', chi: 'gen', icona: '🔧', desc: 'Con professionista' },
   { sigla: 'PERIZIA', nome: 'Perizia', chi: 'gen', icona: '📊', desc: 'Con perito/geometra' }
@@ -529,6 +557,17 @@ function getCittaPrincipale() { return DB.cittaPrincipale || CITTA_DEFAULT; }
 function getNomeCittaPrincipale() { return getCittaPrincipale().split(',')[0].trim(); }
 function rinumeraZCondominio(condo) { if (!condo) return; const immobili = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo); immobili.sort((a, b) => (a.z || 0) - (b.z || 0)); immobili.forEach((imm, idx) => { const nuovoZ = idx + 1; if (imm.z !== nuovoZ) { imm.z = nuovoZ; imm.updatedAt = new Date().toISOString(); } }); }
 function iconaCampanello() { return '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:2px;color:var(--arancione);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'; }
+function iconaCondo(size) {
+  const s = size || 16;
+  return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><rect x="3" y="2" width="11" height="20" rx="1"/><rect x="14" y="8" width="7" height="14" rx="1"/><path d="M6 6h1.5M6 10h1.5M6 14h1.5M6 18h1.5M10 6h1.5M10 10h1.5M10 14h1.5M10 18h1.5M16.5 12h1.5M16.5 16h1.5M16.5 20h1.5"/></svg>';
+}
+const MAPPA_LOCALI = {1:'monolocale',2:'bilocale',3:'trilocale',4:'quadrilocale',5:'pentavani',6:'sei locali',7:'sette locali'};
+function normalizzaTipoImmobile(s) {
+  if (!s) return '';
+  const t = String(s).trim().toLowerCase();
+  if (/^\d+$/.test(t)) { const n = parseInt(t, 10); return MAPPA_LOCALI[n] || (n + ' locali'); }
+  return s.trim();
+}
 
 // =====================================================
 // PERSONE - UTILITY
@@ -543,16 +582,9 @@ function getLabelTipoPersona(p) { if (p.tipo === 'acquirente') return 'Acquirent
 // =====================================================
 // TIPI APPUNTAMENTO - con personalizzati
 // =====================================================
-function getTuttiTipiApp() {
-  return TIPI_APPUNTAMENTO.concat(DB.customTipiApp || []);
-}
-function getTipoApp(sigla) {
-  const tutti = getTuttiTipiApp();
-  return tutti.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[11];
-}
-function isTipoCustom(sigla) {
-  return (DB.customTipiApp || []).some(t => t.sigla === sigla);
-}
+function getTuttiTipiApp() { return TIPI_APPUNTAMENTO.concat(DB.customTipiApp || []); }
+function getTipoApp(sigla) { const tutti = getTuttiTipiApp(); return tutti.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10]; }
+function isTipoCustom(sigla) { return (DB.customTipiApp || []).some(t => t.sigla === sigla); }
 
 // =====================================================
 // GEOCODING
@@ -666,7 +698,7 @@ tabButtons.forEach(btn => {
       else fab.style.display = 'none';
       fabMenu.style.display = 'none';
       fabMenuAperto = false;
-      if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">🏠 Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">🏢 Nuovo condominio</button>';
+      if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">🏠 Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">' + iconaCondo(16) + ' Nuovo condominio</button>';
       else if (tab === 'persone') aggiornaFabPersone();
       else if (tab === 'attivita') { fabMenu.innerHTML = '<button onclick="fabMenuNuovaAttivita()">✅ Nuova attività</button><button onclick="fabMenuNuovoAppuntamento()">📅 Nuovo appuntamento</button>'; renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); }
       if (tab === 'altro') aggiornaInfoSistema();
@@ -733,7 +765,7 @@ function immobileMatchRicerca(imm, q) { if (!q) return true; const condo = getCo
 function dataEffettivaAttivita(a) { if (a.tipo === 'da_fare' && a.dataPrevista) return a.dataPrevista; return a.data; }
 function compareAttivitaCrescente(a, b) { const da = dataEffettivaAttivita(a), db = dataEffettivaAttivita(b); const cmp = String(da).localeCompare(String(db)); if (cmp !== 0) return cmp; return (a.seq || 0) - (b.seq || 0); }
 function compareAttivitaDecrescente(a, b) { return compareAttivitaCrescente(b, a); }
-function renderBannerFiltroAttivo() { const cont = document.getElementById('filtro-attivo'); const p = []; if (condoSelezionato) p.push('🏢 ' + condoSelezionato); if (statoSelezionato) p.push(statoSelezionato); if (zonaSelezionata) p.push('📍 ' + zonaSelezionata); if (p.length === 0) { cont.innerHTML = ''; return; } cont.innerHTML = '<div class="active-filter-banner"><span>' + escapeHtml(p.join(' · ')) + '</span><button class="x" onclick="rimuoviTuttiFiltri()">✕</button></div>'; }
+function renderBannerFiltroAttivo() { const cont = document.getElementById('filtro-attivo'); const p = []; if (condoSelezionato) p.push(iconaCondo(12) + ' ' + condoSelezionato); if (statoSelezionato) p.push(statoSelezionato); if (zonaSelezionata) p.push('📍 ' + zonaSelezionata); if (p.length === 0) { cont.innerHTML = ''; return; } cont.innerHTML = '<div class="active-filter-banner"><span>' + p.join(' · ') + '</span><button class="x" onclick="rimuoviTuttiFiltri()">✕</button></div>'; }
 function rimuoviTuttiFiltri() { condoSelezionato = null; zonaSelezionata = null; if (!vistaCondomini) statoSelezionato = null; aggiornaChips(); renderListaImmobili(); }
 
 // =====================================================
@@ -759,7 +791,7 @@ function renderListaImmobili() {
   el.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
   let html = '';
   for (const e of el) {
-    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">🏢</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s;">›</div></div>'; if (esp) { html += '<div style="margin-left:14px;margin-bottom:8px;border-left:2px solid #e5e7eb;padding-left:10px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
+    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(28) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s;">›</div></div>'; if (esp) { html += '<div style="margin-left:14px;margin-bottom:8px;border-left:2px solid #e5e7eb;padding-left:10px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
     else html += renderItemCardImmobile(e.imm);
   }
   cont.innerHTML = html; aggiornaContatori();
@@ -777,7 +809,7 @@ function renderItemCardImmobile(imm) {
   if (imm.stato === 'IMM' && imm.citofono) h += '<div class="item-sub">' + iconaCampanello() + ' ' + escapeHtml(imm.citofono) + '</div>';
   if (imm.telefono && imm.stato !== 'IMM') h += '<div class="item-sub">📞 ' + escapeHtml(imm.telefono) + '</div>';
   if (imm.sottotipo) h += '<div class="item-sub">' + escapeHtml(imm.sottotipo) + '</div>';
-  if (isCondo) h += '<div class="item-sub">🏢 - ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
+  if (isCondo) h += '<div class="item-sub">' + iconaCondo(12) + ' - ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
   if (ze.length > 0) h += '<div class="item-sub">📍 ' + escapeHtml(ze.join(' · ')) + '</div>';
   if (ultima) h += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 40)) + (ultima.testo.length > 40 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(ultima)) + '</span></div>';
   h += '</div>'; return h;
@@ -788,12 +820,12 @@ function renderListaCondomini(cont) {
   const t = new Set(); Object.keys(g).forEach(c => { if (g[c].filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)).length > 0) t.add(c); });
   vuoti.forEach(c => t.add(c));
   let c = Array.from(t); if (queryRicerca) c = c.filter(x => x.toLowerCase().includes(queryRicerca)); c.sort();
-  if (c.length === 0) { cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏢</div>Nessun condominio</div></div>'; aggiornaContatori(); return; }
+  if (c.length === 0) { cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + iconaCondo(40) + '</div>Nessun condominio</div></div>'; aggiornaContatori(); return; }
   let h = '';
   for (const x of c) {
     const im = g[x] || []; const v = im.filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)); const det = (DB.condomini && DB.condomini[x]) || {};
     const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · 📍 ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili';
-    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">🏢</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><div class="condo-arrow">›</div></div>';
+    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(28) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><div class="condo-arrow">›</div></div>';
   }
   cont.innerHTML = h; aggiornaContatori();
 }
@@ -848,7 +880,7 @@ function renderPersone() {
   let l = DB.persone.filter(p => p.tipo === pTabAttivo);
   if (pTabAttivo === 'acquirente' && pStatoRRFiltro) l = l.filter(p => p.statoRR === pStatoRRFiltro);
   if (pTabAttivo === 'professionista' && pTipoProfFiltro) l = l.filter(p => p.tipoProf === pTipoProfFiltro);
-  if (pQueryRicerca) l = l.filter(p => { const c = [p.cognomeNome, p.telefono, p.telefonoCell, p.telefonoUff, p.email, p.indirizzoUff, p.residenza, p.note, (p.immobili || []).join(' '), p.collega, p.zona, p.tipoImmobile, p.budget, p.esigenze]; return c.some(x => (x || '').toLowerCase().includes(pQueryRicerca)); });
+  if (pQueryRicerca) l = l.filter(p => { const c = [p.cognomeNome, p.telefono, p.telefonoCell, p.telefonoUff, p.email, p.indirizzoUff, p.residenza, p.note, (p.immobili || []).join(' '), p.collega, p.zona, p.tipoImmobile, p.budget, p.box, p.esigenze]; return c.some(x => (x || '').toLowerCase().includes(pQueryRicerca)); });
   l.sort((a, b) => (a.cognomeNome || '').localeCompare(b.cognomeNome || ''));
   if (l.length === 0) { const ls = pTabAttivo === 'acquirente' ? 'acquirente' : 'professionista'; c.innerHTML = '<div class="card"><div class="empty"><div class="icon">👥</div>' + (DB.persone.filter(p => p.tipo === pTabAttivo).length === 0 ? 'Nessun ' + ls + '. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
   let h = '';
@@ -881,8 +913,9 @@ function apriFormNuovoAcquirente() {
     </div>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="a-budget"></div>
-      <div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="a-tipo-imm"></div>
+      <div class="form-row"><label class="form-label">Tipo immobile (es. "3" = trilocale)</label><input class="form-input" id="a-tipo-imm"></div>
       <div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona"></div>
+      <div class="form-row"><label class="form-label">Box</label><select class="form-select" id="a-box"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option><option value="Indifferente">Indifferente</option></select></div>
       <div class="form-row"><label class="form-label">Mutuo / tempi / esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div>
       <div class="form-row"><label class="form-label">Immobili interessati (separati da /)</label><input class="form-input" id="a-immobili"></div>
     </div>
@@ -896,7 +929,7 @@ function salvaNuovoAcquirente() {
   const ct = (g('a-collega-type') || {}).value; const col = ct === 'collega' ? ((g('a-collega-nome') || {}).value || '').trim() : '';
   const im = ((g('a-immobili') || {}).value || '').split('/').map(s => s.trim().toUpperCase()).filter(s => s);
   const ad = new Date().toISOString();
-  const p = { id: uid(), tipo: 'acquirente', cognomeNome: cn, telefono: (g('a-telefono') || {}).value || '', email: (g('a-email') || {}).value || '', statoRR: (g('a-stato') || {}).value || 'attiva', collega: col, budget: (g('a-budget') || {}).value || '', tipoImmobile: (g('a-tipo-imm') || {}).value || '', zona: (g('a-zona') || {}).value || '', esigenze: (g('a-esigenze') || {}).value || '', immobili: im, note: '', attivita: [], createdAt: ad, updatedAt: ad };
+  const p = { id: uid(), tipo: 'acquirente', cognomeNome: cn, telefono: (g('a-telefono') || {}).value || '', email: (g('a-email') || {}).value || '', statoRR: (g('a-stato') || {}).value || 'attiva', collega: col, budget: (g('a-budget') || {}).value || '', tipoImmobile: normalizzaTipoImmobile((g('a-tipo-imm') || {}).value || ''), zona: (g('a-zona') || {}).value || '', box: (g('a-box') || {}).value || '', esigenze: (g('a-esigenze') || {}).value || '', immobili: im, note: '', attivita: [], createdAt: ad, updatedAt: ad };
   DB.persone.push(p); Storage.save(DB); chiudiModal();
   pTabAttivo = 'acquirente';
   document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === 'acquirente'));
@@ -946,7 +979,7 @@ function apriSchedaPersona(id) {
   if (p.email) h += '<div class="info-row"><span class="label">Email</span><span class="value">' + escapeHtml(p.email) + '</span></div>';
   if (p.indirizzoUff) h += '<div class="info-row"><span class="label">Indirizzo ufficio</span><span class="value">' + escapeHtml(p.indirizzoUff) + '</span></div>';
   if (p.residenza) h += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(p.residenza) + '</span></div>';
-  if (p.tipo === 'acquirente') { if (p.collega) h += '<div class="info-row"><span class="label">Cliente di</span><span class="value">' + escapeHtml(p.collega.toUpperCase()) + '</span></div>'; if (p.budget) h += '<div class="info-row"><span class="label">Budget</span><span class="value">' + escapeHtml(p.budget) + '</span></div>'; if (p.tipoImmobile) h += '<div class="info-row"><span class="label">Cerca</span><span class="value">' + escapeHtml(p.tipoImmobile) + '</span></div>'; if (p.zona) h += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(p.zona) + '</span></div>'; if (p.esigenze) h += '<div class="info-row"><span class="label">Esigenze</span><span class="value">' + escapeHtml(p.esigenze) + '</span></div>'; }
+  if (p.tipo === 'acquirente') { if (p.collega) h += '<div class="info-row"><span class="label">Cliente di</span><span class="value">' + escapeHtml(p.collega.toUpperCase()) + '</span></div>'; if (p.budget) h += '<div class="info-row"><span class="label">Budget</span><span class="value">' + escapeHtml(p.budget) + '</span></div>'; if (p.tipoImmobile) h += '<div class="info-row"><span class="label">Cerca</span><span class="value">' + escapeHtml(p.tipoImmobile) + '</span></div>'; if (p.zona) h += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(p.zona) + '</span></div>'; if (p.box) h += '<div class="info-row"><span class="label">Box</span><span class="value">' + escapeHtml(p.box) + '</span></div>'; if (p.esigenze) h += '<div class="info-row"><span class="label">Esigenze</span><span class="value">' + escapeHtml(p.esigenze) + '</span></div>'; }
   if (p.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(p.note) + '</span></div>';
   h += '<div style="margin-top:8px;"><span class="tag">' + tag + '</span></div></div>';
   if (p.tipo === 'acquirente' && p.immobili && p.immobili.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Immobili interessati (' + p.immobili.length + ')</h2><div class="immobili-list">'; for (const im of p.immobili) h += '<div class="immobile-line"><span class="txt">🏠 ' + escapeHtml(im) + '</span></div>'; h += '</div></div>'; }
@@ -958,6 +991,7 @@ function apriSchedaPersona(id) {
   h += '<div class="actions"><button class="action-btn" onclick="apriModificaPersona()"><span class="icon">✏️</span>Modifica</button>';
   if (p.tipo === 'acquirente') h += '<button class="action-btn" onclick="apriCambiaStatoRR()"><span class="icon">🔄</span>Stato</button>';
   h += '<button class="action-btn" onclick="apriNuovaAttivitaPersona()"><span class="icon">➕</span>Attività</button></div>';
+  if (p.tipo === 'acquirente') h += '<button class="btn btn-secondary" onclick="apriMatchNTINKPerAcquirente(\'' + p.id + '\')">🎯 Associa NT/INK (matching)</button>';
   h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoPersona(\'' + p.id + '\')">📅 Nuovo appuntamento</button>';
   h += '<div class="card"><h2><span class="dot"></span>Attività (' + att.length + ')</h2>';
   if (att.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività.</p>';
@@ -970,7 +1004,7 @@ function apriModificaPersona() { const p = DB.persone.find(x => x.id === persona
 function apriModificaAcquirente(p) {
   const ic = !!p.collega;
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="m-a-cognomeNome" value="${escapeHtml(p.cognomeNome || '')}"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="m-a-telefono" type="tel" value="${escapeHtml(p.telefono || '')}"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="m-a-email" value="${escapeHtml(p.email || '')}"></div><div class="form-row"><label class="form-label">Stato</label><select class="form-select" id="m-a-stato">${STATI_RR.map(s => '<option value="' + s.id + '"' + (p.statoRR === s.id ? ' selected' : '') + '>' + s.label + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cliente</label><select class="form-select" id="m-a-collega-type"><option value="mio"${!ic ? ' selected' : ''}>Mio</option><option value="collega"${ic ? ' selected' : ''}>Di un collega</option></select></div><div class="form-row" id="m-a-collega-nome-row" style="display:${ic ? 'block' : 'none'};"><label class="form-label">Nome collega</label><input class="form-input" id="m-a-collega-nome" value="${escapeHtml(p.collega || '')}"></div></div>
-    <div class="form-group"><div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="m-a-budget" value="${escapeHtml(p.budget || '')}"></div><div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="m-a-tipo-imm" value="${escapeHtml(p.tipoImmobile || '')}"></div><div class="form-row"><label class="form-label">Zona</label><input class="form-input" id="m-a-zona" value="${escapeHtml(p.zona || '')}"></div><div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="m-a-esigenze">${escapeHtml(p.esigenze || '')}</textarea></div><div class="form-row"><label class="form-label">Immobili (separati da /)</label><input class="form-input" id="m-a-immobili" value="${escapeHtml((p.immobili || []).join(' / '))}"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-a-note">${escapeHtml(p.note || '')}</textarea></div></div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="m-a-budget" value="${escapeHtml(p.budget || '')}"></div><div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="m-a-tipo-imm" value="${escapeHtml(p.tipoImmobile || '')}"></div><div class="form-row"><label class="form-label">Zona</label><input class="form-input" id="m-a-zona" value="${escapeHtml(p.zona || '')}"></div><div class="form-row"><label class="form-label">Box</label><select class="form-select" id="m-a-box"><option value=""${!p.box ? ' selected' : ''}>—</option><option value="Sì"${p.box === 'Sì' ? ' selected' : ''}>Sì</option><option value="No"${p.box === 'No' ? ' selected' : ''}>No</option><option value="Indifferente"${p.box === 'Indifferente' ? ' selected' : ''}>Indifferente</option></select></div><div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="m-a-esigenze">${escapeHtml(p.esigenze || '')}</textarea></div><div class="form-row"><label class="form-label">Immobili (separati da /)</label><input class="form-input" id="m-a-immobili" value="${escapeHtml((p.immobili || []).join(' / '))}"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-a-note">${escapeHtml(p.note || '')}</textarea></div></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona('${p.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAcquirente('${p.id}')">Salva</button></div>`;
   apriModal('Modifica acquirente', h);
   const s = document.getElementById('m-a-collega-type'); s.addEventListener('change', () => { document.getElementById('m-a-collega-nome-row').style.display = s.value === 'collega' ? 'block' : 'none'; });
@@ -984,8 +1018,9 @@ function salvaModificaAcquirente(id) {
   p.statoRR = (g('m-a-stato') || {}).value || p.statoRR;
   const ct = (g('m-a-collega-type') || {}).value; p.collega = ct === 'collega' ? ((g('m-a-collega-nome') || {}).value || '').trim() : '';
   p.budget = (g('m-a-budget') || {}).value || '';
-  p.tipoImmobile = (g('m-a-tipo-imm') || {}).value || '';
+  p.tipoImmobile = normalizzaTipoImmobile((g('m-a-tipo-imm') || {}).value || '');
   p.zona = (g('m-a-zona') || {}).value || '';
+  p.box = (g('m-a-box') || {}).value || '';
   p.esigenze = (g('m-a-esigenze') || {}).value || '';
   p.immobili = ((g('m-a-immobili') || {}).value || '').split('/').map(s => s.trim().toUpperCase()).filter(s => s);
   p.note = (g('m-a-note') || {}).value || '';
@@ -1095,6 +1130,63 @@ function eliminaPersona() {
 }
 
 // =====================================================
+// MATCHING NT/INK PER ACQUIRENTE
+// =====================================================
+function trovaMatchNTINK(p) {
+  const budget = parseFloat((p.budget || '').replace(/[^\d]/g, ''));
+  const tipo = normalizzaTipoImmobile(p.tipoImmobile).toLowerCase();
+  const zona = (p.zona || '').toLowerCase().trim();
+  const list = DB.immobili.filter(i => i.stato === 'NT' || i.stato === 'INK');
+  return list.map(i => {
+    let score = 0;
+    const ze = getZoneEffettive(i);
+    if (zona) for (const z of ze) if (z.toLowerCase().includes(zona)) { score += 3; break; }
+    if (tipo) {
+      const loc = (i.dettagli && i.dettagli.camere) ? normalizzaTipoImmobile(i.dettagli.camere).toLowerCase() : '';
+      if (loc && loc.includes(tipo)) score += 2;
+      if ((i.sottotipo || '').toLowerCase().includes(tipo)) score += 1;
+    }
+    return { imm: i, score };
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+}
+function apriMatchNTINKPerAcquirente(pid) {
+  const p = DB.persone.find(x => x.id === pid); if (!p) return;
+  const match = trovaMatchNTINK(p);
+  const tutti = DB.immobili.filter(i => (i.stato === 'NT' || i.stato === 'INK') && !match.some(m => m.imm.id === i.id));
+  const sel = (p.immobili || []);
+  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona/deseleziona NT/INK da associare all\'acquirente.</p>';
+  if (match.length > 0) {
+    h += '<div class="section-title">✅ Match consigliati</div><div class="card" style="padding:8px 0;">';
+    for (const m of match) {
+      const isSel = sel.includes(titoloImmobile(m.imm));
+      h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + m.imm.id + '\')"><span class="txt">' + (isSel ? '☑️ ' : '⬜ ') + escapeHtml(titoloImmobile(m.imm)) + '</span><span class="badge badge-' + m.imm.stato + '">' + m.imm.stato + '</span></div>';
+    }
+    h += '</div>';
+  }
+  if (tutti.length > 0) {
+    h += '<div class="section-title">Altri NT/INK</div><div class="card" style="padding:8px 0;">';
+    for (const i of tutti) {
+      const isSel = sel.includes(titoloImmobile(i));
+      h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + i.id + '\')"><span class="txt">' + (isSel ? '☑️ ' : '⬜ ') + escapeHtml(titoloImmobile(i)) + '</span><span class="badge badge-' + i.stato + '">' + i.stato + '</span></div>';
+    }
+    h += '</div>';
+  }
+  if (match.length === 0 && tutti.length === 0) h += '<div class="card"><div class="empty"><div class="icon">🔍</div>Nessun NT/INK disponibile</div></div>';
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + pid + '\')">Chiudi</button></div>';
+  apriModal('🎯 Match NT/INK', h);
+}
+function toggleImmobileAcquirente(pid, iid) {
+  const p = DB.persone.find(x => x.id === pid); const i = DB.immobili.find(x => x.id === iid); if (!p || !i) return;
+  const label = titoloImmobile(i);
+  p.immobili = p.immobili || [];
+  const idx = p.immobili.indexOf(label);
+  if (idx >= 0) p.immobili.splice(idx, 1); else p.immobili.push(label);
+  p.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  apriMatchNTINKPerAcquirente(pid);
+}
+
+// =====================================================
 // MODULO APPUNTAMENTI
 // =====================================================
 let settimanaCorrente = new Date();
@@ -1137,25 +1229,57 @@ function apriGoogleCalendarApp(a) {
   const p = new URLSearchParams({ action: 'TEMPLATE', text: a.titolo, dates: f(a.dataInizio) + '/' + f(a.dataFine), details: a.note || '', location: a.luogo || '' });
   window.open('https://calendar.google.com/calendar/render?' + p.toString(), '_blank');
 }
-function appendiNotaAppuntamento(ent) { if (!ent) return; ent.updatedAt = new Date().toISOString(); }
 
 function apriNuovoAppuntamentoGlobale() { apriSelezioneTipoApp(null, null); }
 function apriNuovoAppuntamentoPersona(pid) { const p = DB.persone.find(x => x.id === pid); apriSelezioneTipoApp(null, p); }
 function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.id === iid); apriSelezioneTipoApp(i, null); }
 
+// Filtro tipi validi in base al contesto
+function tipiAppValidi(imm, per) {
+  return getTuttiTipiApp().filter(t => {
+    const s = t.sigla;
+    // 15) CONS solo per RR (acquirenti)
+    if (s === 'CONS' && (!per || per.tipo !== 'acquirente')) return false;
+    // 16) VAL solo su NT/PA/IMM (non su INK)
+    if (s === 'VAL' && imm && !(imm.stato === 'NT' || imm.stato === 'PA' || imm.stato === 'IMM')) return false;
+    // 17) ACC PROP solo se esiste una proposta
+    if (s === 'ACC PROP' && imm) {
+      const haProp = (imm.attivita || []).some(a => /propost/i.test(a.testo || ''));
+      if (!haProp) return false;
+    }
+    // 19) niente visite/notifiche su professionisti
+    if ((s === 'APP' || s === 'NOT ACC PROP' || s === 'RIT PROP') && per && per.tipo === 'professionista') return false;
+    // 20) preliminare solo se c'è proposta accettata/notificata o VND
+    if (s === 'PRELIMINARE' && imm) {
+      const ok = (imm.attivita || []).some(a => /(accettat|notificat)/i.test(a.testo || ''));
+      const vend = imm.stato === 'VND';
+      if (!ok && !vend) return false;
+    }
+    // 21) rogito solo se VND
+    if (s === 'ROGITO' && imm && imm.stato !== 'VND') return false;
+    // 23) APP GEN, SOPRALLUOGO, PERIZIA devono avere contesto
+    if ((s === 'APP GEN' || s === 'SOPRALLUOGO' || s === 'PERIZIA') && !imm && !per) return false;
+    return true;
+  });
+}
+
 function apriSelezioneTipoApp(immPre, perPre) {
   window._appImmPre = immPre; window._appPersPre = perPre;
-  const tipi = getTuttiTipiApp();
+  const tipi = tipiAppValidi(immPre, perPre);
   let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona il tipo di appuntamento.</p>';
-  h += '<div class="tipo-app-grid">';
-  for (const t of tipi) {
-    const c = getClasseChiApp(t.chi);
-    const isCustom = isTipoCustom(t.sigla);
-    h += '<button type="button" class="tipo-app-btn ' + c + (isCustom ? ' custom' : '') + '" onclick="selezionaTipoApp(\'' + t.sigla.replace(/'/g, "\\'") + '\')">';
-    if (isCustom) h += '<span class="custom-star">⭐</span>';
-    h += '<div class="sigla">' + (t.icona || '📅') + ' ' + escapeHtml(t.sigla) + '</div><div class="desc">' + escapeHtml(t.desc || t.nome) + '</div></button>';
+  if (tipi.length === 0) {
+    h += '<div class="card"><div class="empty"><div class="icon">⚠️</div>Nessun tipo di appuntamento valido per questo contesto.</div></div>';
+  } else {
+    h += '<div class="tipo-app-grid">';
+    for (const t of tipi) {
+      const c = getClasseChiApp(t.chi);
+      const isCustom = isTipoCustom(t.sigla);
+      h += '<button type="button" class="tipo-app-btn ' + c + (isCustom ? ' custom' : '') + '" onclick="selezionaTipoApp(\'' + t.sigla.replace(/'/g, "\\'") + '\')">';
+      if (isCustom) h += '<span class="custom-star">⭐</span>';
+      h += '<div class="sigla">' + (t.icona || '📅') + ' ' + escapeHtml(t.sigla) + '</div><div class="desc">' + escapeHtml(t.desc || t.nome) + '</div></button>';
+    }
+    h += '</div>';
   }
-  h += '</div>';
   h += '<button class="btn btn-secondary" onclick="apriCreaTipoCustomDaSelezione()">➕ Aggiungi tipo personalizzato</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
   apriModal('📅 Nuovo appuntamento', h);
@@ -1164,16 +1288,14 @@ function apriSelezioneTipoApp(immPre, perPre) {
 function apriCreaTipoCustomDaSelezione() {
   const immPre = window._appImmPre || null;
   const perPre = window._appPersPre || null;
-  apriFormTipoCustom(null, () => {
-    // Dopo la creazione, torna alla selezione tipo
-    apriSelezioneTipoApp(immPre, perPre);
-  });
+  apriFormTipoCustom(null, () => { apriSelezioneTipoApp(immPre, perPre); });
 }
 
 function selezionaTipoApp(sigla) {
   const t = getTipoApp(sigla);
   window._appTipoSel = t;
   const imm = window._appImmPre; const per = window._appPersPre;
+  if (t.chi === 'solo') { apriFormAppuntamento(null, null, t); return; }
   if (t.chi === 'vend') { if (imm) { apriFormAppuntamento(imm, null, t); return; } apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, null, t)); return; }
   if (t.chi === 'acq') { if (per) { apriFormAppuntamento(null, per, t); return; } apriPickerEntita('persona', (p) => apriFormAppuntamento(null, p, t)); return; }
   if (t.chi === 'entrambi') {
@@ -1200,7 +1322,7 @@ function cercaEntitaPicker(te, q, cb) {
   r = r.slice(0, 40);
   if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">🔍</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? '🏠' : '🏢') : (x.badge === 'RR' ? '👤' : '💼'); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
+  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? '🏠' : iconaCondo(14)) : (x.badge === 'RR' ? '👤' : '💼'); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPicker(t, id) {
@@ -1220,7 +1342,7 @@ function apriFormAppuntamento(imm, per, tipo) {
   if (imm) h += '<div class="card" style="padding:12px 14px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:4px;">Immobile</div><div style="font-size:14px;font-weight:600;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>';
   if (per) h += '<div class="card" style="padding:12px 14px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:4px;">Persona</div><div style="font-size:14px;font-weight:600;">' + escapeHtml(titoloPersona(per)) + '</div></div>';
   h += '<div class="form-group"><div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="' + isoToLocalInput(iD.toISOString()) + '"></div>';
+  h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="' + isoToLocalInput(iD.toISOString()) + '" onchange="syncFineAppuntamentoNew()"></div>';
   h += '<div class="form-row"><label class="form-label">Fine</label><input class="form-input" type="datetime-local" step="1" id="ap-fine" value="' + isoToLocalInput(fD.toISOString()) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Luogo</label><input class="form-input" id="ap-luogo" value="' + escapeHtml(lu) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="ap-note"></textarea></div></div>';
@@ -1228,6 +1350,16 @@ function apriFormAppuntamento(imm, per, tipo) {
   if (tipo.sigla === 'CONS') { h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Consulenza Kiron</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mutuabile?</label><select class="form-select" id="ap-mutuabile"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option></select></div><div class="form-row"><label class="form-label">Importo mutuo</label><input class="form-input" id="ap-importo"></div><div class="form-row"><label class="form-label">Percentuale</label><input class="form-input" id="ap-perc"></div></div>'; }
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaAppuntamento()">Salva</button></div>';
   apriModal('📅 Appuntamento', h);
+}
+function syncFineAppuntamentoNew() {
+  const i = document.getElementById('ap-inizio').value; if (!i) return;
+  const d = new Date(i); d.setTime(d.getTime() + 60 * 60 * 1000);
+  document.getElementById('ap-fine').value = isoToLocalInput(d.toISOString());
+}
+function syncFineAppuntamento() {
+  const i = document.getElementById('mapp-inizio').value; if (!i) return;
+  const d = new Date(i); d.setTime(d.getTime() + 60 * 60 * 1000);
+  document.getElementById('mapp-fine').value = isoToLocalInput(d.toISOString());
 }
 
 function salvaAppuntamento() {
@@ -1265,11 +1397,16 @@ function apriSchedaAppuntamento(id) {
   if (a.esito) { const e = ESITI_APPUNTAMENTO.find(x => x.id === a.esito); if (e) h += '<div class="info-row"><span class="label">Esito</span><span class="value">' + e.icona + ' ' + e.label + '</span></div>'; }
   if (a.descrizioneEsito) h += '<div class="info-row"><span class="label">Descrizione</span><span class="value">' + escapeHtml(a.descrizioneEsito) + '</span></div>';
   h += '</div>';
-  if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">🏢 ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
+  if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">' + iconaCondo(14) + ' ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
   if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">👤 ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
+  // Collegamento diretto interessati
+  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (imm ? '🔄 Cambia immobile' : (iconaCondo(14) + ' Collega immobile')) + '</button>';
+  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (per ? '🔄 Cambia persona' : '👤 Collega persona') + '</button>';
   h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">📅 Aggiungi a Google Calendar</button>';
   h += '<button class="btn btn-secondary" onclick="apriModificaAppuntamento(\'' + a.id + '\')">✏️ Modifica appuntamento</button>';
-  if (a.stato !== 'eseguito' && a.stato !== 'annullato') h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">✅ Chiudi con esito</button>';
+  const adesso = new Date();
+  const passato = new Date(a.dataFine) < adesso;
+  if (a.stato !== 'eseguito' && a.stato !== 'annullato' && passato) h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">✅ Chiudi con esito</button>';
   h += '<button class="btn btn-secondary" onclick="eliminaAppuntamento(\'' + a.id + '\')">🗑️ Elimina</button>';
   apriModal('📅 ' + a.titolo, h);
 }
@@ -1321,7 +1458,7 @@ function apriModificaAppuntamento(id) {
   let h = '<div class="prefill-banner">📅 Modifica: ' + escapeHtml(a.tipo) + '</div>';
   h += '<div class="form-group">';
   h += '<div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="mapp-titolo" value="' + escapeHtml(a.titolo || '') + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="mapp-inizio" value="' + isoToLocalInput(a.dataInizio) + '"></div>';
+  h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="mapp-inizio" value="' + isoToLocalInput(a.dataInizio) + '" onchange="syncFineAppuntamento()"></div>';
   h += '<div class="form-row"><label class="form-label">Fine</label><input class="form-input" type="datetime-local" step="1" id="mapp-fine" value="' + isoToLocalInput(a.dataFine) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Luogo</label><input class="form-input" id="mapp-luogo" value="' + escapeHtml(a.luogo || '') + '"></div>';
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="mapp-note">' + escapeHtml(a.note || '') + '</textarea></div>';
@@ -1385,7 +1522,7 @@ function apriGestioneTipiApp() {
     for (const t of c) {
       h += '<div class="immobile-line" style="margin:4px 8px;" onclick="apriFormTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\', apriGestioneTipiApp)">';
       h += '<span class="txt">' + (t.icona || '📅') + ' <strong>' + escapeHtml(t.sigla) + '</strong> · ' + escapeHtml(t.nome) + '</span>';
-      h += '<span class="badge badge-' + (t.chi === 'vend' ? 'PA' : t.chi === 'acq' ? 'RR-attiva' : t.chi === 'entrambi' ? 'VND' : 'IMM') + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(t.chi.toUpperCase()) + '</span>';
+      h += '<span class="badge badge-' + (t.chi === 'vend' ? 'PA' : t.chi === 'acq' ? 'RR-attiva' : t.chi === 'entrambi' ? 'VND' : 'IMM') + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml((t.chi || '').toUpperCase()) + '</span>';
       h += '</div>';
     }
     h += '</div>';
@@ -1401,16 +1538,39 @@ function apriFormTipoCustom(siglaEsistente, dopoSalva) {
   window._customTipoDopoSalva = dopoSalva;
   let h = '<div class="form-group">';
   h += '<div class="form-row"><label class="form-label">Sigla breve (max 20 caratteri)</label><input class="form-input" id="ct-sigla" maxlength="20" value="' + escapeHtml(t ? t.sigla : '') + '" placeholder="es. MEETING"></div>';
-  h += '<div class="form-row"><label class="form-label">Nome esteso</label><input class="form-input" id="ct-nome" value="' + escapeHtml(t ? t.nome : '') + '" placeholder="es. Meeting interno"></div>';
+  h += '<div class="form-row" style="position:relative;"><label class="form-label">Nome esteso</label><input class="form-input" id="ct-nome" value="' + escapeHtml(t ? t.nome : '') + '" placeholder="es. Meeting interno" autocomplete="off" oninput="autocompleteNomeCustom(this)"><div id="ct-autocomplete" style="position:absolute;top:100%;left:16px;right:16px;background:white;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:100;display:none;max-height:180px;overflow-y:auto;"></div></div>';
   h += '<div class="form-row"><label class="form-label">Icona (emoji)</label><input class="form-input" id="ct-icona" maxlength="4" value="' + escapeHtml(t ? (t.icona || '📅') : '📅') + '" placeholder="📅"></div>';
   h += '<div class="form-row"><label class="form-label">Descrizione breve</label><input class="form-input" id="ct-desc" value="' + escapeHtml(t ? (t.desc || '') : '') + '" placeholder="es. Riunione con colleghi"></div>';
   h += '<div class="form-row"><label class="form-label">Chi partecipa?</label><select class="form-select" id="ct-chi">';
-  const opts = [['vend', 'Solo venditore (immobile)'], ['acq', 'Solo acquirente (persona)'], ['entrambi', 'Entrambi (immobile + persona)'], ['gen', 'Generico (uno dei due)']];
+  const opts = [['solo', 'Solo io (nessuno collegato)'], ['vend', 'Solo venditore (immobile)'], ['acq', 'Solo acquirente (persona)'], ['entrambi', 'Entrambi (immobile + persona)'], ['gen', 'Generico (uno dei due)']];
   for (const [v, l] of opts) h += '<option value="' + v + '"' + (t && t.chi === v ? ' selected' : '') + '>' + l + '</option>';
   h += '</select></div></div>';
   if (isEdit) h += '<button class="btn btn-danger" onclick="eliminaTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\')">🗑️ Elimina tipo</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal();if(window._customTipoDopoSalva)setTimeout(window._customTipoDopoSalva,100)">Annulla</button><button class="btn btn-primary" onclick="salvaTipoCustom(' + (isEdit ? "'" + escapeHtml(t.sigla).replace(/'/g, "\\'") + "'" : 'null') + ')">Salva</button></div>';
   apriModal(isEdit ? '✏️ Modifica tipo' : '⭐ Nuovo tipo', h);
+}
+
+function autocompleteNomeCustom(inp) {
+  const q = (inp.value || '').toLowerCase().trim();
+  const box = document.getElementById('ct-autocomplete');
+  if (!box) return;
+  if (!q || q.length < 2) { box.style.display = 'none'; return; }
+  const sugg = new Set();
+  for (const p of DB.persone) if (p.cognomeNome && p.cognomeNome.toLowerCase().includes(q)) sugg.add(p.cognomeNome);
+  for (const i of DB.immobili) {
+    if (i.cognomeNome && i.cognomeNome.toLowerCase().includes(q)) sugg.add(i.cognomeNome);
+    if (i.indirizzo && i.indirizzo.toLowerCase().includes(q)) sugg.add(i.indirizzo);
+  }
+  const arr = Array.from(sugg).slice(0, 8);
+  if (arr.length === 0) { box.style.display = 'none'; return; }
+  box.innerHTML = arr.map(s => '<div style="padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid #f0f1f3;" onmousedown="event.preventDefault();scegliNomeCustom(\'' + escapeHtml(s).replace(/'/g, "\\'") + '\')">' + escapeHtml(s) + '</div>').join('');
+  box.style.display = 'block';
+}
+function scegliNomeCustom(s) {
+  const el = document.getElementById('ct-nome');
+  if (el) el.value = s;
+  const b = document.getElementById('ct-autocomplete');
+  if (b) b.style.display = 'none';
 }
 
 function salvaTipoCustom(siglaOriginale) {
@@ -1423,18 +1583,14 @@ function salvaTipoCustom(siglaOriginale) {
   if (!sigla) { alert('Inserisci la sigla'); return; }
   if (!nome) { alert('Inserisci il nome'); return; }
   if (sigla.length > 20) { alert('Sigla troppo lunga (max 20)'); return; }
-  // Controllo conflitto con tipi di default
   if (TIPI_APPUNTAMENTO.some(x => x.sigla === sigla)) { alert('Esiste già un tipo di default con questa sigla'); return; }
-  // Controllo conflitto con altri custom (escluso quello che sto modificando)
   const altri = (DB.customTipiApp || []).filter(x => x.sigla !== siglaOriginale);
   if (altri.some(x => x.sigla === sigla)) { alert('Esiste già un tipo personalizzato con questa sigla'); return; }
   if (!DB.customTipiApp) DB.customTipiApp = [];
   const nuovo = { sigla, nome, icona, desc: desc || nome, chi };
   if (siglaOriginale) {
-    // Modifica
     const idx = DB.customTipiApp.findIndex(x => x.sigla === siglaOriginale);
     if (idx >= 0) DB.customTipiApp[idx] = nuovo;
-    // Se il sigla è cambiata, aggiorna gli appuntamenti esistenti
     if (siglaOriginale !== sigla) {
       for (const a of (DB.appuntamenti || [])) if (a.tipo === siglaOriginale) a.tipo = sigla;
     }
@@ -1550,7 +1706,7 @@ function renderAttivita() {
   for (const gg of ga) {
     const k = gg.entitaTipo + ':' + gg.entitaId; const e = !!attGruppiEspansi[k];
     const isI = gg.entitaTipo === 'immobile';
-    const ic = isI ? (gg.entitaVilla ? '🏠' : '🏢') : (gg.entitaTipoPersona === 'acquirente' ? '👤' : '💼');
+    const ic = isI ? (gg.entitaVilla ? '🏠' : iconaCondo(20)) : (gg.entitaTipoPersona === 'acquirente' ? '👤' : '💼');
     let be = '';
     if (isI) be = '<span class="badge badge-' + gg.entitaStato + '">' + gg.entitaStato + '</span>';
     else if (gg.entitaTipoPersona === 'acquirente' && gg.entitaStatoRR) { const s = STATI_RR.find(x => x.id === gg.entitaStatoRR) || STATI_RR[0]; be = '<span class="badge badge-RR-' + s.id + '">' + s.id.replace('-', ' ').toUpperCase() + '</span>'; }
@@ -1585,7 +1741,7 @@ function cercaPerNuovaAttivita(q) {
   const ms = r.slice(0, 40);
   if (ms.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">🔍</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? '🏠' : '🏢') : (x.badge === 'RR' ? '👤' : '💼'); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
+  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? '🏠' : iconaCondo(14)) : (x.badge === 'RR' ? '👤' : '💼'); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
@@ -1596,12 +1752,12 @@ function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileApe
 function apriFormNuovo() {
   const dc = !!condoSelezionato;
   const tf = dc ? 'Nuovo immobile in condominio' : 'Nuovo immobile';
-  const bh = dc ? '<div class="prefill-banner">🏢 Creando in: ' + escapeHtml(condoSelezionato) + '</div>' : '';
+  const bh = dc ? '<div class="prefill-banner">' + iconaCondo(14) + ' Creando in: ' + escapeHtml(condoSelezionato) + '</div>' : '';
   zoneTemp.nuovo = { base: [], speciale: null };
   window._villaNuovo = false; window._proprietariTemp = []; window._showPropForm = false; window._propEditingIndex = -1;
   const h = `${bh}<div class="form-group"><div class="form-row"><label class="form-label">Tipo immobile</label><select class="form-select" id="f-tipo" onchange="aggiornaFormNuovo()"><option value="censito">Immobile censito</option><option value="pa">Possibile Acquisizione (PA)</option><option value="nt">Notizia (NT)</option><option value="ink">Incarico (INK)</option></select></div></div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Tipo struttura</h2></div>
-    <div class="form-group" style="padding:14px 16px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)"><span class="ico">🏢</span>In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)"><span class="ico">🏠</span>Villa / Singolo</button></div></div>
+    <div class="form-group" style="padding:14px 16px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)"><span class="ico">${iconaCondo(20)}</span>In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)"><span class="ico">🏠</span>Villa / Singolo</button></div></div>
     <div id="campi-dinamici"></div>
     <div id="f-zone-block"><div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 16px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div></div>
     <div class="form-group" style="padding:14px 16px;"><label style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--blu);cursor:pointer;"><input type="checkbox" id="f-chiedi-attivita" checked style="width:18px;height:18px;accent-color:var(--arancione);">Aggiungi subito un'attività</label></div>
@@ -1666,7 +1822,7 @@ function aggiornaBloccoZoneDaCondominio(c, p) {
   if (window._villaNuovo) return;
   const co = normalizzaIndirizzo(c); const b = document.getElementById('f-zone-block'); if (!b) return;
   const det = (DB.condomini && DB.condomini[co]) || {}; const zc = det.zone || [];
-  if (zc.length > 0) { let h = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div><div class="inherit-banner"><span class="ico">🏢</span><div><strong>Dettagli ereditati da: ' + escapeHtml(co) + '</strong>📍 Zona: ' + escapeHtml(zc.join(' · ')); if (det.annoCostruzione) h += '<br>Anno: ' + escapeHtml(det.annoCostruzione); if (det.amministratore && det.amministratore.nome) h += '<br>Amministratore: ' + escapeHtml(det.amministratore.nome); h += '</div></div>'; b.innerHTML = h; zoneTemp[p].base = []; zoneTemp[p].speciale = null; zoneTemp[p].eredita = true; }
+  if (zc.length > 0) { let h = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div><div class="inherit-banner"><span class="ico">' + iconaCondo(18) + '</span><div><strong>Dettagli ereditati da: ' + escapeHtml(co) + '</strong>📍 Zona: ' + escapeHtml(zc.join(' · ')); if (det.annoCostruzione) h += '<br>Anno: ' + escapeHtml(det.annoCostruzione); if (det.amministratore && det.amministratore.nome) h += '<br>Amministratore: ' + escapeHtml(det.amministratore.nome); h += '</div></div>'; b.innerHTML = h; zoneTemp[p].base = []; zoneTemp[p].speciale = null; zoneTemp[p].eredita = true; }
   else { if (!document.getElementById(p + '-zone-container')) b.innerHTML = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 16px;"><div id="' + p + '-zone-container">' + htmlSelettoreZone(p) + '</div></div>'; zoneTemp[p].eredita = false; }
 }
 function salvaNuovoImmobile() {
@@ -1726,16 +1882,16 @@ function apriScheda(id) {
   if (at.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività.</p>';
   else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
-  if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>🏢 Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">✏️ Modifica condominio</button>'; h += '</div>'; }
+  if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(14) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">✏️ Modifica condominio</button>'; h += '</div>'; }
   if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:11px;color:#059669;font-weight:600;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
   const d = im.dettagli || {};
   const gu = [['Scala', d.scala], ['Piano', d.piano], ['Interno', d.interno]].filter(([_, v]) => v && v !== '');
-  const gs = [['Mq', d.mq], ['Vani', d.vani], ['Camere', d.camere], ['Bagni', d.bagni]].filter(([_, v]) => v && v !== '');
+  const gs = [['Mq', d.mq], ['Vani', d.vani], ['Locali', d.camere], ['Bagni', d.bagni]].filter(([_, v]) => v && v !== '');
   const gd = [['Ascensore', d.ascensore], ['Balcone', d.balcone], ['Terrazzo', d.terrazzo], ['Giardino', d.giardino], ['Box', d.box], ['Cantina', d.cantina], ['Chiavi', d.chiavi]].filter(([_, v]) => v && v !== '');
   const ge = [['Classe energetica', d.classeEnergetica], ['Riscaldamento', d.riscaldamento]].filter(([_, v]) => v && v !== '');
   const gst = [['Stato conservativo', d.statoConservativo]].filter(([_, v]) => v && v !== '');
   if (gu.length + gs.length + gd.length + ge.length + gst.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Dettagli unità</h2>'; if (gu.length) { h += '<div class="section-title">Unità</div>'; for (const [k, v] of gu) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gs.length) { h += '<div class="section-title">Superficie</div>'; for (const [k, v] of gs) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gd.length) { h += '<div class="section-title">Dotazioni</div>'; for (const [k, v] of gd) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (ge.length) { h += '<div class="section-title">Energetico</div>'; for (const [k, v] of ge) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gst.length) { h += '<div class="section-title">Stato</div>'; for (const [k, v] of gst) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } h += '</div>'; }
-  if (fr.length > 0) { h += '<div class="card"><div class="condo-header">🏢 CONDOMINIO · ' + escapeHtml(co) + '</div><div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;">' + (fr.length + 1) + ' immobili</div><div class="immobili-list">'; for (const f of fr) h += '<div class="immobile-line" onclick="apriScheda(\'' + f.id + '\')"><span class="txt">' + escapeHtml(titoloImmobile(f)) + '</span><span class="badge badge-' + f.stato + '" style="font-size:9px;padding:2px 6px;">' + f.stato + '</span></div>'; h += '</div></div>'; }
+  if (fr.length > 0) { h += '<div class="card"><div class="condo-header">' + iconaCondo(14) + ' CONDOMINIO · ' + escapeHtml(co) + '</div><div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;">' + (fr.length + 1) + ' immobili</div><div class="immobili-list">'; for (const f of fr) h += '<div class="immobile-line" onclick="apriScheda(\'' + f.id + '\')"><span class="txt">' + escapeHtml(titoloImmobile(f)) + '</span><span class="badge badge-' + f.stato + '" style="font-size:9px;padding:2px 6px;">' + f.stato + '</span></div>'; h += '</div></div>'; }
   h += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + im.id + '\')">📋 Duplica immobile</button>';
   h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="eliminaImmobile()">🗑️ Elimina</button>';
   if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">📦 Archivia</button>';
@@ -1744,11 +1900,37 @@ function apriScheda(id) {
 }
 function apriModificaCoordinate() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const h = `<div class="form-group"><div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${i.lat || ''}" inputmode="decimal"></div><div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${i.lng || ''}" inputmode="decimal"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateManuali('${i.id}')">Salva</button></div>`; apriModal('📍 Coordinate', h); }
 function salvaCoordinateManuali(id) { const i = DB.immobili.find(x => x.id === id); if (!i) return; const a = ((document.getElementById('coord-lat') || {}).value || '').trim(); const b = ((document.getElementById('coord-lng') || {}).value || '').trim(); if (!a || !b) { if (!a && !b) { i.lat = null; i.lng = null; i.geoPreciso = null; Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); return; } alert('Entrambe'); return; } const an = parseFloat(a.replace(',', '.')); const bn = parseFloat(b.replace(',', '.')); if (isNaN(an) || isNaN(bn)) { alert('Non valide'); return; } i.lat = an; i.lng = bn; i.geoPreciso = true; i.updatedAt = new Date().toISOString(); Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); }
+function apriCoordinateCondominio(co) {
+  const c = (DB.coordinateCondomini && DB.coordinateCondomini[co]) || {};
+  const h = `<div class="form-group">
+    <div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="co-lat" value="${c.lat || ''}" inputmode="decimal"></div>
+    <div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="co-lng" value="${c.lng || ''}" inputmode="decimal"></div>
+  </div>
+  <button class="btn btn-secondary" onclick="autoGeocodeCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">🔍 Geocodifica automatica</button>
+  <div class="btn-row"><button class="btn btn-secondary" onclick="apriModificaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Salva</button></div>`;
+  apriModal('📍 Coordinate condominio', h);
+}
+function salvaCoordinateCondominio(co) {
+  const lat = parseFloat((document.getElementById('co-lat').value || '').replace(',', '.'));
+  const lng = parseFloat((document.getElementById('co-lng').value || '').replace(',', '.'));
+  if (isNaN(lat) || isNaN(lng)) { alert('Coordinate non valide'); return; }
+  if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
+  DB.coordinateCondomini[co] = { lat, lng };
+  Storage.save(DB); if (map) aggiornaMappa(); apriModificaCondominio(co);
+}
+async function autoGeocodeCondominio(co) {
+  const r = await geocodificaIndirizzo(co + ', ' + getNomeCittaPrincipale());
+  if (!r) { alert('Non trovato'); return; }
+  document.getElementById('co-lat').value = r.lat;
+  document.getElementById('co-lng').value = r.lng;
+}
 function apriModificaCondominio(co) {
   const d = getDettagliCondominio(co); const a = d.amministratore || {};
+  const coord = (DB.coordinateCondomini && DB.coordinateCondomini[co]) || {};
   zoneTemp.condo = { base: [], speciale: null };
   if (d.zone && d.zone.length > 0) { const s = d.zone.filter(z => ZONA_ZDF === z || ZONE_SPECIALI.includes(z)); const b = d.zone.filter(z => ZONE_BASE.includes(z)); if (b.length > 0) zoneTemp.condo.base = b; else if (s.length === 1 && ZONE_SPECIALI.includes(s[0])) zoneTemp.condo.speciale = s[0]; }
-  const h = `<div class="prefill-banner">🏢 Condominio: ${escapeHtml(co)}</div>
+  const h = `<div class="prefill-banner">${iconaCondo(14)} Condominio: ${escapeHtml(co)}</div>
+    <button class="btn btn-secondary" onclick="apriCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">📍 Coordinate ${coord.lat ? '✓' : ''}</button>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" value="${escapeHtml(d.annoCostruzione || '')}"></div>
       <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (d.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
@@ -1768,7 +1950,7 @@ function apriModificaCondominio(co) {
   apriModal('Dettagli condominio', h);
 }
 function salvaCondominio(co) { if (!DB.condomini) DB.condomini = {}; const g = (id) => document.getElementById(id); const zc = calcolaZoneFinali('condo'); DB.condomini[co] = { annoCostruzione: ((g('cd-anno') || {}).value || '').trim(), statoCondominio: ((g('cd-stato') || {}).value || '').trim(), cappotto: ((g('cd-cappotto') || {}).value || '').trim(), ascensoreCondominiale: ((g('cd-ascensore') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('cd-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('cd-amm-tel') || {}).value || '', email: (g('cd-amm-email') || {}).value || '', studio: ((g('cd-amm-studio') || {}).value || '').trim() }, note: (g('cd-note') || {}).value || '' }; for (const i of DB.immobili) if (!i.villa && getCondominio(i) === co) { i.zone = zc.slice(); i.updatedAt = new Date().toISOString(); } Storage.save(DB); if (immobileAperto) apriScheda(immobileAperto); else chiudiModal(); }
-function eliminaCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); const m = i.length > 0 ? 'Contiene ' + i.length + ' immobili. Continuare?' : 'Eliminare?'; if (!confirm(m)) return; if (DB.condomini && DB.condomini[co]) delete DB.condomini[co]; Storage.save(DB); chiudiModal(); renderListaImmobili(); alert('🗑️'); }
+function eliminaCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); const m = i.length > 0 ? 'Contiene ' + i.length + ' immobili. Continuare?' : 'Eliminare?'; if (!confirm(m)) return; if (DB.condomini && DB.condomini[co]) delete DB.condomini[co]; if (DB.coordinateCondomini && DB.coordinateCondomini[co]) delete DB.coordinateCondomini[co]; Storage.save(DB); chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('🗑️'); }
 
 function apriModifica() {
   const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return;
@@ -1780,15 +1962,15 @@ function apriModifica() {
   window._villaModifica = !!i.villa; window._proprietariTemp = (i.altriProprietari || []).map(p => ({ ...p })); window._showPropForm = false; window._propEditingIndex = -1;
   let h = '<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="m-indirizzo" value="' + escapeHtml(i.indirizzo || '') + '"></div>';
   if (ic) h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="m-citofono" value="' + escapeHtml(i.citofono || '') + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Tipo struttura</label><div class="villa-toggle"><button type="button" id="m-btn-condominio" class="' + (!i.villa ? 'active' : '') + '" onclick="setVillaModifica(false)"><span class="ico">🏢</span>Condominio</button><button type="button" id="m-btn-villa" class="' + (i.villa ? 'active' : '') + '" onclick="setVillaModifica(true)"><span class="ico">🏠</span>Villa</button></div></div>';
+  h += '<div class="form-row"><label class="form-label">Tipo struttura</label><div class="villa-toggle"><button type="button" id="m-btn-condominio" class="' + (!i.villa ? 'active' : '') + '" onclick="setVillaModifica(false)"><span class="ico">' + iconaCondo(20) + '</span>Condominio</button><button type="button" id="m-btn-villa" class="' + (i.villa ? 'active' : '') + '" onclick="setVillaModifica(true)"><span class="ico">🏠</span>Villa</button></div></div>';
   if (!i.villa) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="m-condominio" value="' + escapeHtml(i.condominio || '') + '"></div>';
   if (!ic) { h += '<div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="m-cognomeNome" value="' + escapeHtml(i.cognomeNome || '') + '"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(i.telefono || '') + '"></div><div class="form-row"><label class="form-label">Residenza</label><input class="form-input" id="m-residenza" value="' + escapeHtml(i.residenza || '') + '"></div>'; if (i.stato === 'NT') { const iv = (i.sottotipo || '').toLowerCase().includes('valutata') && !(i.sottotipo || '').toLowerCase().includes('non'); h += '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="m-sottotipo"><option value="NT non ancora valutata"' + (!iv ? ' selected' : '') + '>NT non ancora valutata</option><option value="NT valutata"' + (iv ? ' selected' : '') + '>NT valutata</option></select></div>'; } if (i.stato === 'INK') { const ie = (i.sottotipo || '').toLowerCase().includes('esclusiva'); h += '<div class="form-row"><label class="form-label">Tipo incarico</label><select class="form-select" id="m-sottotipo"><option value="">—</option><option value="INK gestione"' + (!ie && i.sottotipo ? ' selected' : '') + '>INK gestione</option><option value="INK esclusiva"' + (ie ? ' selected' : '') + '>INK esclusiva</option></select></div>'; } }
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-note">' + escapeHtml(i.note || '') + '</textarea></div></div>';
   if (!ic && !i.villa) h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri proprietari</h2></div><div class="form-group" style="padding:14px 16px;"><div id="prop-list-container">' + htmlPropList() + '</div></div>';
-  if (zd) h += '<div class="inherit-banner"><span class="ico">🏢</span><div><strong>Zona del condominio</strong>' + escapeHtml(zc.join(' · ')) + '</div></div>';
+  if (zd) h += '<div class="inherit-banner"><span class="ico">' + iconaCondo(18) + '</span><div><strong>Zona del condominio</strong>' + escapeHtml(zc.join(' · ')) + '</div></div>';
   else h += '<div class="form-group" style="padding:14px 16px;"><div id="modifica-zone-container">' + htmlSelettoreZone('modifica') + '</div></div>';
   h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Unità immobiliare</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(d.scala || '') + '"></div><div class="form-row"><label class="form-label">Piano</label><input class="form-input" id="d-piano" value="' + escapeHtml(d.piano || '') + '"></div><div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(d.interno || '') + '"></div></div>';
-  h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Superficie</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(d.mq || '') + '"></div><div class="form-row"><label class="form-label">Vani</label><input class="form-input" id="d-vani" inputmode="numeric" value="' + escapeHtml(d.vani || '') + '"></div><div class="form-row"><label class="form-label">Camere</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(d.camere || '') + '"></div><div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(d.bagni || '') + '"></div></div>';
+  h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Superficie</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(d.mq || '') + '"></div><div class="form-row"><label class="form-label">Vani</label><input class="form-input" id="d-vani" inputmode="numeric" value="' + escapeHtml(d.vani || '') + '"></div><div class="form-row"><label class="form-label">Locali</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(d.camere || '') + '"></div><div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(d.bagni || '') + '"></div></div>';
   h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dotazioni</h2></div><div class="form-group">';
   for (const [k, l] of [['ascensore', 'Ascensore'], ['balcone', 'Balcone'], ['terrazzo', 'Terrazzo'], ['giardino', 'Giardino'], ['box', 'Box'], ['cantina', 'Cantina'], ['chiavi', 'Chiavi disponibili']]) { h += '<div class="form-row"><label class="form-label">' + l + '</label><select class="form-select" id="d-' + k + '">'; for (const v of ['', 'Sì', 'No']) h += '<option value="' + v + '"' + (d[k] === v ? ' selected' : '') + '>' + (v || '—') + '</option>'; h += '</select></div>'; }
   h += '</div>';
@@ -1840,7 +2022,7 @@ function eliminaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobil
 function toggleValutazione() { const i = DB.immobili.find(x => x.id === immobileAperto); const c = i.sottotipo || ''; const v = c.toLowerCase().includes('valutata') && !c.toLowerCase().includes('non'); i.sottotipo = v ? 'NT non ancora valutata' : 'NT valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Stato notizia: ' + (v ? '→ non ancora valutata' : '→ valutata'), completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(i.id); }
 function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa(); }
 function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('✅'); }
-function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
+function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackgroun(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
 
 function apriFormNuovoCondominio() {
   zoneTemp.condo = { base: [], speciale: null };
@@ -1860,15 +2042,15 @@ function creaPinIcona(i) { const s = i.stato; const v = !!i.villa; let c = 'pin-
 function creaPinCondominio(n) { const h = `<div class="pin-wrap pin-condo"><div class="pin-body"><div class="pin-label">${n}</div></div></div>`; return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] }); }
 function apriPopupImmobile(id) { chiudiModal(); apriScheda(id); }
 function apriPopupCondominioByIndex(i) { const c = window._condoPopups[i]; if (c) apriPopupCondominio(c); }
-function apriPopupCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); let h = '<div class="prefill-banner">🏢 ' + escapeHtml(co) + '</div><div class="card"><h2><span class="dot"></span>Immobili (' + i.length + ')</h2><div class="immobili-list">'; for (const im of i) h += '<div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + escapeHtml(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; h += '</div></div>'; h += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')},100)">✏️</button>'; apriModal('🏢 ' + co, h); }
-function aggiornaMappa() { if (!map || !markersLayer) return; markersLayer.clearLayers(); window._condoPopups = []; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); const gc = {}; const vs = []; for (const im of l) { const c = getCondominio(im); if (!c) vs.push(im); else { if (!gc[c]) gc[c] = []; gc[c].push(im); } } let pt = 0; for (const c in gc) { const im = gc[c]; const p = im[0]; if (im.length === 1) { const x = im[0]; const mk = L.marker([x.lat, x.lng], { icon: creaPinIcona(x) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div><div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">📋</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } else { window._condoPopups.push(c); const idx = window._condoPopups.length - 1; const mk = L.marker([p.lat, p.lng], { icon: creaPinCondominio(im.length) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">🏢 CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">🏢</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${p.lat}, ${p.lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } } for (const im of vs) { const mk = L.marker([im.lat, im.lng], { icon: creaPinIcona(im) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div><div class="pop-sub">${im.villa ? '🏠 ' : ''}<span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">📋</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } const t = DB.immobili.length; const g = DB.immobili.filter(i => i.lat && i.lng).length; document.getElementById('map-count').textContent = pt; document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)'; }
+function apriPopupCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); let h = '<div class="prefill-banner">' + iconaCondo(14) + ' ' + escapeHtml(co) + '</div><div class="card"><h2><span class="dot"></span>Immobili (' + i.length + ')</h2><div class="immobili-list">'; for (const im of i) h += '<div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + escapeHtml(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; h += '</div></div>'; h += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')},100)">✏️</button>'; apriModal(iconaCondo(14) + ' ' + co, h); }
+function aggiornaMappa() { if (!map || !markersLayer) return; markersLayer.clearLayers(); window._condoPopups = []; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); const gc = {}; const vs = []; for (const im of l) { const c = getCondominio(im); if (!c) vs.push(im); else { if (!gc[c]) gc[c] = []; gc[c].push(im); } } let pt = 0; for (const c in gc) { const im = gc[c]; const p = im[0]; const cc = (DB.coordinateCondomini && DB.coordinateCondomini[c]) || null; const lat = cc ? cc.lat : p.lat; const lng = cc ? cc.lng : p.lng; if (im.length === 1) { const x = im[0]; const mk = L.marker([x.lat, x.lng], { icon: creaPinIcona(x) }); const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">🔔 Citofono: ${escapeHtml(x.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">📋</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } else { window._condoPopups.push(c); const idx = window._condoPopups.length - 1; const mk = L.marker([lat, lng], { icon: creaPinCondominio(im.length) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(13)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">🏢</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } } for (const im of vs) { const mk = L.marker([im.lat, im.lng], { icon: creaPinIcona(im) }); const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">🔔 Citofono: ${escapeHtml(im.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub">${im.villa ? '🏠 ' : ''}<span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">📋</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } const t = DB.immobili.length; const g = DB.immobili.filter(i => i.lat && i.lng).length; document.getElementById('map-count').textContent = pt; document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)'; }
 async function centraMappaSuCittaPrincipale() { if (!map) return; if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); map.setView(_coordsCittaPrincipale, 14); }
 function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); if (l.length === 0) { centraMappaSuCittaPrincipale(); return; } const b = L.latLngBounds(l.map(i => [i.lat, i.lng])); map.fitBounds(b, { padding: [60, 60], maxZoom: 17 }); }
 
 // CONTATORI / BACKUP
 function aggiornaContatori() { const ep = document.getElementById('count-persone'); const ea = document.getElementById('count-acquirenti'); if (ep) ep.textContent = (DB.persone || []).length; if (ea) ea.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length; const info = document.getElementById('storage-info'); if (info) { const r = localStorage.getItem(DB_KEY) || ''; info.textContent = (r.length / 1024).toFixed(2) + ' KB'; } }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
-function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('✅'); } catch (err) { alert('❌ ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
+function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('✅'); } catch (err) { alert('❌ ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
 function cancellaTutto() { if (!confirm('⚠️ Cancellare TUTTI i dati?')) return; if (!confirm('⚠️ Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('🗑️'); }
 function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">↩️ Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal('⚙️ Città', h); }
 function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('✅ ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
