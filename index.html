@@ -195,6 +195,29 @@
     gap: 4px;
   }
   .back-btn:active { opacity: 0.7; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--testo-sec);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 4px 4px 8px;
+    margin-top: 4px;
+  }
+
+  .prefill-banner {
+    background: #eef4fb;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--blu);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 </style>
 </head>
 <body>
@@ -350,7 +373,7 @@ const Storage = {
   },
   default() {
     return {
-      versione: 7,
+      versione: 8,
       nextSeq: 1,
       immobili: [],
       persone: [],
@@ -514,7 +537,6 @@ function compareAttivitaDecrescente(a, b) {
 function renderListaImmobili() {
   const cont = document.getElementById('lista-immobili');
 
-  // Filtro COND: mostra elenco condomini
   if (filtroStato === 'COND' && !condoSelezionato) {
     renderListaCondomini(cont);
     return;
@@ -536,7 +558,6 @@ function renderListaImmobili() {
 
   let html = '';
 
-  // Se sto vedendo un condominio specifico, aggiungi pulsante indietro
   if (filtroStato === 'COND' && condoSelezionato) {
     html += '<button class="back-btn" onclick="tornaAiCondomini()">← Tutti i condomini</button>';
     html += '<div style="font-size:13px;font-weight:700;color:var(--blu);margin-bottom:10px;">🏢 ' + escapeHtml(condoSelezionato) + '</div>';
@@ -583,7 +604,6 @@ function renderListaImmobili() {
 }
 
 function renderListaCondomini(cont) {
-  // Raggruppa per condominio
   const gruppi = {};
   for (const imm of DB.immobili) {
     const c = getCondominio(imm);
@@ -592,10 +612,8 @@ function renderListaCondomini(cont) {
     gruppi[c].push(imm);
   }
 
-  // Filtra solo condomini con 2+ immobili
   let condomini = Object.keys(gruppi).filter(c => gruppi[c].length > 1);
 
-  // Applica ricerca
   if (queryRicerca) {
     condomini = condomini.filter(c => c.toLowerCase().includes(queryRicerca));
   }
@@ -638,7 +656,15 @@ function tornaAiCondomini() {
 // IMMOBILI - FORM NUOVO
 // =====================================================
 function apriFormNuovo() {
+  const daCondominio = !!condoSelezionato;
+  const titoloForm = daCondominio ? 'Nuovo immobile in condominio' : 'Nuovo immobile';
+
+  const bannerHtml = daCondominio
+    ? '<div class="prefill-banner">🏢 Creando in: ' + escapeHtml(condoSelezionato) + '</div>'
+    : '';
+
   const html = `
+    ${bannerHtml}
     <div class="form-group">
       <div class="form-row">
         <label class="form-label">Tipo immobile</label>
@@ -656,7 +682,7 @@ function apriFormNuovo() {
       <button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button>
     </div>
   `;
-  apriModal('Nuovo immobile', html);
+  apriModal(titoloForm, html);
   aggiornaFormNuovo();
 }
 
@@ -664,12 +690,15 @@ function aggiornaFormNuovo() {
   const tipo = document.getElementById('f-tipo').value;
   const cont = document.getElementById('campi-dinamici');
 
+  const prefillInd = condoSelezionato ? escapeHtml(condoSelezionato) : '';
+  const prefillCondo = condoSelezionato ? escapeHtml(condoSelezionato) : '';
+
   if (tipo === 'censito') {
     cont.innerHTML = `
       <div class="form-group">
         <div class="form-row">
           <label class="form-label">Indirizzo</label>
-          <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off">
+          <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}">
         </div>
         <div class="form-row">
           <label class="form-label">Citofono (opzionale)</label>
@@ -677,7 +706,7 @@ function aggiornaFormNuovo() {
         </div>
         <div class="form-row">
           <label class="form-label">Condominio (opzionale)</label>
-          <input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l'indirizzo" autocomplete="off">
+          <input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l'indirizzo" autocomplete="off" value="${prefillCondo}">
         </div>
       </div>
     `;
@@ -718,7 +747,7 @@ function aggiornaFormNuovo() {
         </div>
         <div class="form-row">
           <label class="form-label">Indirizzo immobile</label>
-          <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off">
+          <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}">
         </div>
         <div class="form-row">
           <label class="form-label">Residenza proprietario (opzionale)</label>
@@ -726,7 +755,7 @@ function aggiornaFormNuovo() {
         </div>
         <div class="form-row">
           <label class="form-label">Condominio (opzionale)</label>
-          <input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l'indirizzo" autocomplete="off">
+          <input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l'indirizzo" autocomplete="off" value="${prefillCondo}">
         </div>
         ${sottotipoHtml}
       </div>
@@ -901,20 +930,23 @@ function apriScheda(id) {
 
   html += '</div>';
 
-  // SEZIONE DETTAGLI
+  // SEZIONE DETTAGLI (riorganizzata)
   const det = imm.dettagli || {};
-  const dettagliFiltrati = [
-    ['Piano', det.piano],
-    ['Interno', det.interno],
+
+  const gruppoUnita = [
     ['Scala', det.scala],
+    ['Piano', det.piano],
+    ['Interno', det.interno]
+  ].filter(([_, v]) => v && v !== '');
+
+  const gruppoSuperficie = [
     ['Mq', det.mq],
     ['Vani', det.vani],
-    ['Bagni', det.bagni],
     ['Camere', det.camere],
-    ['Classe energetica', det.classeEnergetica],
-    ['Riscaldamento', det.riscaldamento],
-    ['Anno costruzione', det.anno],
-    ['Stato', det.statoConservativo],
+    ['Bagni', det.bagni]
+  ].filter(([_, v]) => v && v !== '');
+
+  const gruppoDotazioni = [
     ['Ascensore', det.ascensore],
     ['Balcone', det.balcone],
     ['Terrazzo', det.terrazzo],
@@ -923,15 +955,60 @@ function apriScheda(id) {
     ['Cantina', det.cantina]
   ].filter(([_, v]) => v && v !== '');
 
-  if (dettagliFiltrati.length > 0) {
+  const gruppoEnergetico = [
+    ['Classe energetica', det.classeEnergetica],
+    ['Riscaldamento', det.riscaldamento],
+    ['Anno costruzione', det.anno]
+  ].filter(([_, v]) => v && v !== '');
+
+  const gruppoStato = [
+    ['Stato conservativo', det.statoConservativo]
+  ].filter(([_, v]) => v && v !== '');
+
+  const totaleDettagli = gruppoUnita.length + gruppoSuperficie.length + gruppoDotazioni.length + gruppoEnergetico.length + gruppoStato.length;
+
+  if (totaleDettagli > 0) {
     html += '<div class="card"><h2><span class="dot"></span>Dettagli</h2>';
-    for (const [k, v] of dettagliFiltrati) {
-      html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+
+    if (gruppoUnita.length > 0) {
+      html += '<div class="section-title">Unità immobiliare</div>';
+      for (const [k, v] of gruppoUnita) {
+        html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+      }
     }
+
+    if (gruppoSuperficie.length > 0) {
+      html += '<div class="section-title">Superficie e locali</div>';
+      for (const [k, v] of gruppoSuperficie) {
+        html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+      }
+    }
+
+    if (gruppoDotazioni.length > 0) {
+      html += '<div class="section-title">Dotazioni</div>';
+      for (const [k, v] of gruppoDotazioni) {
+        html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+      }
+    }
+
+    if (gruppoEnergetico.length > 0) {
+      html += '<div class="section-title">Dati energetici e tecnici</div>';
+      for (const [k, v] of gruppoEnergetico) {
+        html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+      }
+    }
+
+    if (gruppoStato.length > 0) {
+      html += '<div class="section-title">Stato</div>';
+      for (const [k, v] of gruppoStato) {
+        html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+      }
+    }
+
     html += '</div>';
   }
 
-  // Sezione CONDOMINIO
+  // SEZIONE CONDOMINIO
   const condo = getCondominio(imm);
   const fratelli = immobiliStessoCondominio(imm);
   if (fratelli.length > 0) {
@@ -1258,16 +1335,47 @@ function apriModifica() {
 
   html += '</div>';
 
-  // DETTAGLI
-  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dettagli immobile</h2></div>';
+  // DETTAGLI - GRUPPO 1: Unità immobiliare
+  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Unità immobiliare</h2></div>';
   html += '<div class="form-group">';
+  html += '<div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(det.scala || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Piano</label><input class="form-input" id="d-piano" value="' + escapeHtml(det.piano || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(det.interno || '') + '"></div>';
-  html += '<div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(det.scala || '') + '"></div>';
+  html += '</div>';
+
+  // GRUPPO 2: Superficie e locali
+  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Superficie e locali</h2></div>';
+  html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(det.mq || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Vani</label><input class="form-input" id="d-vani" inputmode="numeric" value="' + escapeHtml(det.vani || '') + '"></div>';
-  html += '<div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(det.bagni || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Camere</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(det.camere || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(det.bagni || '') + '"></div>';
+  html += '</div>';
+
+  // GRUPPO 3: Dotazioni
+  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dotazioni</h2></div>';
+  html += '<div class="form-group">';
+  const dotazioni = [
+    ['ascensore', 'Ascensore'],
+    ['balcone', 'Balcone'],
+    ['terrazzo', 'Terrazzo'],
+    ['giardino', 'Giardino'],
+    ['box', 'Box'],
+    ['cantina', 'Cantina']
+  ];
+  for (const [key, label] of dotazioni) {
+    html += '<div class="form-row"><label class="form-label">' + label + '</label>';
+    html += '<select class="form-select" id="d-' + key + '">';
+    for (const v of ['', 'Sì', 'No']) {
+      html += '<option value="' + v + '"' + (det[key] === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+    }
+    html += '</select></div>';
+  }
+  html += '</div>';
+
+  // GRUPPO 4: Dati energetici e tecnici
+  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dati energetici e tecnici</h2></div>';
+  html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Classe energetica</label>';
   html += '<select class="form-select" id="d-classe">';
   const classi = ['', 'A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -1283,47 +1391,16 @@ function apriModifica() {
   }
   html += '</select></div>';
   html += '<div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="d-anno" inputmode="numeric" value="' + escapeHtml(det.anno || '') + '"></div>';
+  html += '</div>';
+
+  // GRUPPO 5: Stato
+  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Stato</h2></div>';
+  html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Stato conservativo</label>';
   html += '<select class="form-select" id="d-statoConservativo">';
   const statiC = ['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'];
   for (const s of statiC) {
     html += '<option value="' + s + '"' + (det.statoConservativo === s ? ' selected' : '') + '>' + (s || '—') + '</option>';
-  }
-  html += '</select></div>';
-  html += '<div class="form-row"><label class="form-label">Ascensore</label>';
-  html += '<select class="form-select" id="d-ascensore">';
-  for (const v of ['', 'Sì', 'No']) {
-    html += '<option value="' + v + '"' + (det.ascensore === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
-  }
-  html += '</select></div>';
-  html += '<div class="form-row"><label class="form-label">Balcone</label>';
-  html += '<select class="form-select" id="d-balcone">';
-  for (const v of ['', 'Sì', 'No']) {
-    html += '<option value="' + v + '"' + (det.balcone === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
-  }
-  html += '</select></div>';
-  html += '<div class="form-row"><label class="form-label">Terrazzo</label>';
-  html += '<select class="form-select" id="d-terrazzo">';
-  for (const v of ['', 'Sì', 'No']) {
-    html += '<option value="' + v + '"' + (det.terrazzo === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
-  }
-  html += '</select></div>';
-  html += '<div class="form-row"><label class="form-label">Giardino</label>';
-  html += '<select class="form-select" id="d-giardino">';
-  for (const v of ['', 'Sì', 'No']) {
-    html += '<option value="' + v + '"' + (det.giardino === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
-  }
-  html += '</select></div>';
-  html += '<div class="form-row"><label class="form-label">Box</label>';
-  html += '<select class="form-select" id="d-box">';
-  for (const v of ['', 'Sì', 'No']) {
-    html += '<option value="' + v + '"' + (det.box === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
-  }
-  html += '</select></div>';
-  html += '<div class="form-row"><label class="form-label">Cantina</label>';
-  html += '<select class="form-select" id="d-cantina">';
-  for (const v of ['', 'Sì', 'No']) {
-    html += '<option value="' + v + '"' + (det.cantina === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
   }
   html += '</select></div>';
   html += '</div>';
@@ -1434,25 +1511,24 @@ function salvaModifica() {
 
   imm.note = (g('m-note') || {}).value || '';
 
-  // Dettagli
   imm.dettagli = {
+    scala: ((g('d-scala') || {}).value || '').trim(),
     piano: ((g('d-piano') || {}).value || '').trim(),
     interno: ((g('d-interno') || {}).value || '').trim(),
-    scala: ((g('d-scala') || {}).value || '').trim(),
     mq: ((g('d-mq') || {}).value || '').trim(),
     vani: ((g('d-vani') || {}).value || '').trim(),
-    bagni: ((g('d-bagni') || {}).value || '').trim(),
     camere: ((g('d-camere') || {}).value || '').trim(),
-    classeEnergetica: ((g('d-classe') || {}).value || '').trim(),
-    riscaldamento: ((g('d-riscaldamento') || {}).value || '').trim(),
-    anno: ((g('d-anno') || {}).value || '').trim(),
-    statoConservativo: ((g('d-statoConservativo') || {}).value || '').trim(),
+    bagni: ((g('d-bagni') || {}).value || '').trim(),
     ascensore: ((g('d-ascensore') || {}).value || '').trim(),
     balcone: ((g('d-balcone') || {}).value || '').trim(),
     terrazzo: ((g('d-terrazzo') || {}).value || '').trim(),
     giardino: ((g('d-giardino') || {}).value || '').trim(),
     box: ((g('d-box') || {}).value || '').trim(),
-    cantina: ((g('d-cantina') || {}).value || '').trim()
+    cantina: ((g('d-cantina') || {}).value || '').trim(),
+    classeEnergetica: ((g('d-classe') || {}).value || '').trim(),
+    riscaldamento: ((g('d-riscaldamento') || {}).value || '').trim(),
+    anno: ((g('d-anno') || {}).value || '').trim(),
+    statoConservativo: ((g('d-statoConservativo') || {}).value || '').trim()
   };
 
   imm.updatedAt = new Date().toISOString();
