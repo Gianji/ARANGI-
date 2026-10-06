@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ARANGIÒ">
+<meta name="theme-color" content="#ffffff">
+<title>ARANGIÒ</title>
+<style>
+  :root {
+    --blu: #003d7a;
+    --arancione: #ff6b00;
+    --sfondo: #f5f6f8;
+    --card: #ffffff;
+    --testo: #1a1a1a;
+    --testo-sec: #6b7280;
+    --bordo: #e5e7eb;
+    --tabbar-h: 60px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    background: var(--sfondo);
+    color: var(--testo);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    padding: 14px 20px 10px;
+    background: var(--card);
+    border-bottom: 1px solid var(--bordo);
+    padding-top: calc(14px + env(safe-area-inset-top));
+    flex-shrink: 0;
+  }
+
+  .app-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--blu);
+    letter-spacing: -0.5px;
+  }
+
+  .app-header h1 span {
+    color: var(--arancione);
+  }
+
+  .app-header .sub {
+    font-size: 12px;
+    color: var(--testo-sec);
+    margin-top: 2px;
+  }
+
+  /* CONTENUTO */
+  .app-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 16px 16px calc(var(--tabbar-h) + 24px);
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    border: 1px solid var(--bordo);
+  }
+
+  .card h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blu);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card h2 .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--arancione);
+  }
+
+  .card p {
+    font-size: 14px;
+    color: var(--testo-sec);
+    line-height: 1.5;
+  }
+
+  .counter {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--blu);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .counter-label {
+    font-size: 13px;
+    color: var(--testo-sec);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--testo-sec);
+    font-size: 14px;
+  }
+
+  .empty .icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  /* BOTTONI */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-bottom: 8px;
+  }
+
+  .btn:active { opacity: 0.7; }
+
+  .btn-primary {
+    background: var(--arancione);
+    color: white;
+  }
+
+  .btn-secondary {
+    background: var(--card);
+    color: var(--blu);
+    border: 1px solid var(--bordo);
+  }
+
+  /* TAB BAR */
+  .tabbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--tabbar-h);
+    background: var(--card);
+    border-top: 1px solid var(--bordo);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: 6px;
+    z-index: 100;
+  }
+
+  .tabbar button {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: var(--testo-sec);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .tabbar button svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .tabbar button.active {
+    color: var(--blu);
+  }
+
+  .tabbar button.active svg {
+    stroke: var(--blu);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header class="app-header">
+    <h1>ARANGI<span>Ò</span></h1>
+    <div class="sub">Assistente agente immobiliare</div>
+  </header>
+
+  <main class="app-content">
+
+    <!-- VIEW: IMMOBILI -->
+    <section id="view-immobili" class="view active">
+      <div class="grid-2">
+        <div class="card">
+          <div class="counter" id="count-immobili">0</div>
+          <div class="counter-label">Immobili totali</div>
+        </div>
+        <div class="card">
+          <div class="counter" id="count-ink">0</div>
+          <div class="counter-label">Incarichi attivi</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>Immobili</h2>
+        <div class="empty">
+          <div class="icon">🏠</div>
+          Il modulo Immobili sarà attivato nel Modulo 2
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: PERSONE -->
+    <section id="view-persone" class="view">
+      <div class="grid-2">
+        <div class="card">
+          <div class="counter" id="count-persone">0</div>
+          <div class="counter-label">Persone totali</div>
+        </div>
+        <div class="card">
+          <div class="counter" id="count-acquirenti">0</div>
+          <div class="counter-label">Acquirenti</div>
+        </div>
+      </div>
+      <div class="card">
+        <h2><span class="dot"></span>Persone</h2>
+        <div class="empty">
+          <div class="icon">👥</div>
+          Il modulo Persone sarà attivato nel Modulo 4
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: ATTIVITÀ -->
+    <section id="view-attivita" class="view">
+      <div class="card">
+        <h2><span class="dot"></span>Attività</h2>
+        <div class="empty">
+          <div class="icon">✅</div>
+          Il modulo Attività sarà attivato nel Modulo 5
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: MAPPA -->
+    <section id="view-mappa" class="view">
+      <div class="card">
+        <h2><span class="dot"></span>Mappa</h2>
+        <div class="empty">
+          <div class="icon">🗺️</div>
+          La mappa sarà attivata nel Modulo 3
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: ALTRO -->
+    <section id="view-altro" class="view">
+      <div class="card">
+        <h2><span class="dot"></span>Dati</h2>
+        <p style="margin-bottom:14px;">Esporta un backup di tutti i dati in un file.</p>
+        <button class="btn btn-secondary" onclick="esportaBackup()">📥 Esporta backup</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">📤 Importa backup</button>
+        <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaBackup(event)">
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>Sistema</h2>
+        <p>Versione: 1.0 (Modulo 1)</p>
+        <p>Storage: locale (localStorage)</p>
+        <p id="storage-info">—</p>
+      </div>
+
+      <div class="card">
+        <h2><span class="dot"></span>Zona pericolosa</h2>
+        <p style="margin-bottom:14px;">Cancella tutti i dati. Operazione irreversibile.</p>
+        <button class="btn btn-secondary" style="color:#dc2626;border-color:#dc2626;" onclick="cancellaTutto()">🗑️ Cancella tutti i dati</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="tabbar">
+    <button data-tab="immobili" class="active">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Immobili
+    </button>
+    <button data-tab="persone">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Persone
+    </button>
+    <button data-tab="attivita">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Attività
+    </button>
+    <button data-tab="mappa">
+      <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      Mappa
+    </button>
+    <button data-tab="altro">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Altro
+    </button>
+  </nav>
+
+</div>
+
+<script>
+// =====================================================
+// STORAGE
+// =====================================================
+const DB_KEY = 'arangiò_db_v1';
+
+const Storage = {
+  load() {
+    try {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) return this.default();
+      const parsed = JSON.parse(raw);
+      return Object.assign(this.default(), parsed);
+    } catch (e) {
+      console.error('Errore caricamento DB:', e);
+      return this.default();
+    }
+  },
+
+  save(data) {
+    try {
+      localStorage.setItem(DB_KEY, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      console.error('Errore salvataggio DB:', e);
+      alert('Errore nel salvataggio. Spazio esaurito?');
+      return false;
+    }
+  },
+
+  default() {
+    return {
+      versione: 1,
+      immobili: [],
+      persone: [],
+      attivita: [],
+      appuntamenti: []
+    };
+  }
+};
+
+let DB = Storage.load();
+
+// =====================================================
+// NAVIGAZIONE TAB
+// =====================================================
+const tabButtons = document.querySelectorAll('.tabbar button');
+const views = document.querySelectorAll('.view');
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+
+    tabButtons.forEach(b => b.classList.toggle('active', b === btn));
+    views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
+
+    document.querySelector('.app-content').scrollTop = 0;
+  });
+});
+
+// =====================================================
+// AGGIORNAMENTO CONTATORI
+// =====================================================
+function aggiornaContatori() {
+  const elImm = document.getElementById('count-immobili');
+  const elInk = document.getElementById('count-ink');
+  const elPers = document.getElementById('count-persone');
+  const elAcq = document.getElementById('count-acquirenti');
+
+  if (elImm) elImm.textContent = (DB.immobili || []).length;
+  if (elInk) elInk.textContent = (DB.immobili || []).filter(i => i.stato === 'INK').length;
+  if (elPers) elPers.textContent = (DB.persone || []).length;
+  if (elAcq) elAcq.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length;
+
+  const info = document.getElementById('storage-info');
+  if (info) {
+    const raw = localStorage.getItem(DB_KEY) || '';
+    const kb = (raw.length / 1024).toFixed(2);
+    info.textContent = 'Occupato: ' + kb + ' KB';
+  }
+}
+
+// =====================================================
+// BACKUP
+// =====================================================
+function esportaBackup() {
+  const data = JSON.stringify(DB, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const oggi = new Date();
+  const nome = 'arangiò_backup_' +
+    oggi.getFullYear() + '-' +
+    String(oggi.getMonth() + 1).padStart(2, '0') + '-' +
+    String(oggi.getDate()).padStart(2, '0') + '.json';
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nome;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importaBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported || typeof imported !== 'object') throw new Error('Formato non valido');
+
+      const conferma = confirm('Importare questo backup? I dati attuali verranno sostituiti.');
+      if (!conferma) return;
+
+      DB = Object.assign(Storage.default(), imported);
+      Storage.save(DB);
+      aggiornaContatori();
+      alert('✅ Backup importato');
+    } catch (err) {
+      alert('❌ Errore: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function cancellaTutto() {
+  const conferma1 = confirm('⚠️ Cancellare TUTTI i dati? Operazione irreversibile.');
+  if (!conferma1) return;
+  const conferma2 = confirm('⚠️ Sei sicuro? Non ci sarà modo di recuperarli.');
+  if (!conferma2) return;
+
+  DB = Storage.default();
+  Storage.save(DB);
+  aggiornaContatori();
+  alert('🗑️ Tutti i dati cancellati');
+}
+
+// =====================================================
+// AVVIO
+// =====================================================
+aggiornaContatori();
+</script>
+
+</body>
+</html>
