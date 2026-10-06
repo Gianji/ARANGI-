@@ -175,6 +175,13 @@
   .btn-primary { background: var(--arancione); color: white; }
   .btn-secondary { background: #eef0f3; color: var(--blu); }
   .btn-danger { background: #fef2f2; color: #dc2626; }
+  .btn-small {
+    padding: 8px 12px;
+    font-size: 13px;
+    width: auto;
+    margin-bottom: 6px;
+    margin-right: 6px;
+  }
 
   .tabbar {
     position: fixed;
@@ -574,6 +581,82 @@
 
   .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
+
+  /* Lista immobili nella scheda proprietario */
+  .immobili-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .immobile-line {
+    background: #f5f6f8;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--testo);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .immobile-line .txt {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .immobile-line .rm {
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  .add-btn {
+    background: #eef0f3;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blu);
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+  }
+
+  .add-btn:active { opacity: 0.75; }
+
+  .sottotipo-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  .sottotipo-line .lbl { color: var(--testo-sec); }
+
+  .sottotipo-line button {
+    background: #eef0f3;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blu);
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -728,7 +811,7 @@ const Storage = {
   },
   default() {
     return {
-      versione: 3,
+      versione: 4,
       nextSeq: 1,
       immobili: [],
       persone: [],
@@ -765,8 +848,6 @@ function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Restituisce il prossimo numero di sequenza incrementale.
-// Serve per ordinare le attività inserite nello stesso minuto/secondo.
 function prossimoSeq() {
   if (typeof DB.nextSeq !== 'number') DB.nextSeq = 1;
   const s = DB.nextSeq;
@@ -841,7 +922,8 @@ document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
 function immobileMatchRicerca(imm, q) {
   if (!q) return true;
   const campi = [
-    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.note
+    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza,
+    imm.note
   ];
   return campi.some(c => (c || '').toLowerCase().includes(q));
 }
@@ -851,8 +933,6 @@ function dataEffettivaAttivita(a) {
   return a.data;
 }
 
-// Comparatore attività: prima per data effettiva (crescente),
-// poi per seq (ordine di inserimento) se la data è identica.
 function compareAttivitaCrescente(a, b) {
   const da = dataEffettivaAttivita(a);
   const db = dataEffettivaAttivita(b);
@@ -957,11 +1037,10 @@ function aggiornaFormNuovo() {
     if (tipo === 'nt') {
       sottotipoHtml = `
         <div class="form-row">
-          <label class="form-label">Tipo notizia</label>
+          <label class="form-label">Stato notizia</label>
           <select class="form-select" id="f-sottotipo">
-            <option value="">— Seleziona —</option>
-            <option value="NT valutata">NT valutata</option>
             <option value="NT non ancora valutata">NT non ancora valutata</option>
+            <option value="NT valutata">NT valutata</option>
           </select>
         </div>
       `;
@@ -991,6 +1070,10 @@ function aggiornaFormNuovo() {
         <div class="form-row">
           <label class="form-label">Indirizzo immobile</label>
           <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Residenza proprietario (opzionale)</label>
+          <input class="form-input" id="f-residenza" placeholder="VIA ..." autocomplete="off">
         </div>
         ${sottotipoHtml}
       </div>
@@ -1032,6 +1115,8 @@ function salvaNuovoImmobile() {
       z: z,
       cognomeNome: '',
       telefono: '',
+      residenza: '',
+      altriImmobili: [],
       sottotipo: '',
       note: '',
       attivita: [],
@@ -1049,6 +1134,8 @@ function salvaNuovoImmobile() {
   const cognomeNomeRaw = (document.getElementById('f-cognomeNome') || {}).value || '';
   const cognomeNome = cognomeNomeRaw.trim().toUpperCase();
   const telefono = (document.getElementById('f-telefono') || {}).value || '';
+  const residenzaRaw = (document.getElementById('f-residenza') || {}).value || '';
+  const residenza = residenzaRaw.trim().toUpperCase();
   const sottotipoEl = document.getElementById('f-sottotipo');
   const sottotipo = sottotipoEl ? sottotipoEl.value : '';
 
@@ -1063,6 +1150,8 @@ function salvaNuovoImmobile() {
     z: null,
     cognomeNome: cognomeNome,
     telefono: telefono.trim(),
+    residenza: residenza,
+    altriImmobili: [],
     sottotipo: sottotipo,
     note: '',
     attivita: [],
@@ -1102,7 +1191,31 @@ function apriScheda(id) {
   if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
   if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
   if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
+  if (imm.residenza) html += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(imm.residenza) + '</span></div>';
   if (imm.note) html += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(imm.note) + '</span></div>';
+
+  // Altri immobili
+  if (imm.altriImmobili && imm.altriImmobili.length > 0) {
+    html += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;">';
+    html += '<div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Altri immobili di proprietà</div>';
+    html += '<div class="immobili-list">';
+    for (const a of imm.altriImmobili) {
+      html += '<div class="immobile-line"><span class="txt">🏠 ' + escapeHtml(a) + '</span></div>';
+    }
+    html += '</div></div>';
+  }
+
+  // Per NT: mostra pulsante cambio stato valutazione
+  if (imm.stato === 'NT') {
+    const isValutata = (imm.sottotipo || '').toLowerCase().includes('valutata') &&
+      !(imm.sottotipo || '').toLowerCase().includes('non');
+    html += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;">';
+    html += '<div class="sottotipo-line">';
+    html += '<span class="lbl">Stato notizia</span>';
+    html += '<button onclick="toggleValutazione()">' + (isValutata ? '✅ Valutata' : '⏳ Non valutata') + ' — cambia</button>';
+    html += '</div></div>';
+  }
+
   html += '</div>';
 
   html += '<div class="actions">';
@@ -1138,6 +1251,33 @@ function apriScheda(id) {
   apriModal(titolo, html);
 }
 
+// Cambio rapido valutazione NT
+function toggleValutazione() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  const corrente = imm.sottotipo || '';
+  const isValutata = corrente.toLowerCase().includes('valutata') &&
+    !corrente.toLowerCase().includes('non');
+
+  imm.sottotipo = isValutata ? 'NT non ancora valutata' : 'NT valutata';
+
+  imm.attivita = imm.attivita || [];
+  imm.attivita.push({
+    id: uid(),
+    seq: prossimoSeq(),
+    data: new Date().toISOString(),
+    tipo: 'fatta',
+    testo: 'Stato notizia: ' + (isValutata ? '→ non ancora valutata' : '→ valutata'),
+    completata: true
+  });
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
 // =====================================================
 // IMMOBILI - MODIFICA
 // =====================================================
@@ -1158,6 +1298,31 @@ function apriModifica() {
 
     html += '<div class="form-row"><label class="form-label">Telefono proprietario</label>';
     html += '<input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(imm.telefono || '') + '"></div>';
+
+    html += '<div class="form-row"><label class="form-label">Residenza proprietario</label>';
+    html += '<input class="form-input" id="m-residenza" value="' + escapeHtml(imm.residenza || '') + '"></div>';
+
+    // Sottotipo NT modificabile
+    if (imm.stato === 'NT') {
+      const isValutata = (imm.sottotipo || '').toLowerCase().includes('valutata') &&
+        !(imm.sottotipo || '').toLowerCase().includes('non');
+      html += '<div class="form-row"><label class="form-label">Stato notizia</label>';
+      html += '<select class="form-select" id="m-sottotipo">';
+      html += '<option value="NT non ancora valutata"' + (!isValutata ? ' selected' : '') + '>NT non ancora valutata</option>';
+      html += '<option value="NT valutata"' + (isValutata ? ' selected' : '') + '>NT valutata</option>';
+      html += '</select></div>';
+    }
+
+    // Sottotipo INK modificabile
+    if (imm.stato === 'INK') {
+      const isEsclusiva = (imm.sottotipo || '').toLowerCase().includes('esclusiva');
+      html += '<div class="form-row"><label class="form-label">Tipo incarico</label>';
+      html += '<select class="form-select" id="m-sottotipo">';
+      html += '<option value="">— Seleziona —</option>';
+      html += '<option value="INK gestione"' + (!isEsclusiva && imm.sottotipo ? ' selected' : '') + '>INK gestione</option>';
+      html += '<option value="INK esclusiva"' + (isEsclusiva ? ' selected' : '') + '>INK esclusiva</option>';
+      html += '</select></div>';
+    }
   }
 
   html += '<div class="form-row"><label class="form-label">Note</label>';
@@ -1165,12 +1330,84 @@ function apriModifica() {
 
   html += '</div>';
 
+  // Altri immobili
+  if (!isCensito) {
+    html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili di proprietà</h2>';
+    html += '<div id="altri-immobili-list">';
+    const lista = imm.altriImmobili || [];
+    if (lista.length === 0) {
+      html += '<p style="font-size:13px;color:var(--testo-sec);">Nessun altro immobile inserito.</p>';
+    } else {
+      html += '<div class="immobili-list">';
+      for (let i = 0; i < lista.length; i++) {
+        html += '<div class="immobile-line"><span class="txt">🏠 ' + escapeHtml(lista[i]) + '</span><button class="rm" onclick="rimuoviAltroImmobile(' + i + ')">✕</button></div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+    html += '<button class="add-btn" onclick="aggiungiAltroImmobile()">➕ Aggiungi altro immobile</button>';
+    html += '</div>';
+  }
+
   html += '<div class="btn-row">';
   html += '<button class="btn btn-secondary" onclick="apriScheda(\'' + imm.id + '\')">Annulla</button>';
   html += '<button class="btn btn-primary" onclick="salvaModifica()">Salva</button>';
   html += '</div>';
 
   apriModal('Modifica', html);
+}
+
+function aggiungiAltroImmobile() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  // Salva temporaneamente i campi correnti prima di chiedere il nuovo
+  salvaCampiTemp(imm);
+
+  const nuovo = prompt('Indirizzo del nuovo immobile di proprietà:');
+  if (!nuovo || !nuovo.trim()) return;
+
+  imm.altriImmobili = imm.altriImmobili || [];
+  imm.altriImmobili.push(nuovo.trim().toUpperCase());
+  Storage.save(DB);
+
+  apriModifica();
+}
+
+function rimuoviAltroImmobile(idx) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm || !imm.altriImmobili) return;
+
+  if (!confirm('Rimuovere "' + imm.altriImmobili[idx] + '"?')) return;
+
+  salvaCampiTemp(imm);
+  imm.altriImmobili.splice(idx, 1);
+  Storage.save(DB);
+  apriModifica();
+}
+
+// Salva temporaneamente i campi del form modifica, per non perderli
+// quando si aggiunge/rimuove un altro immobile
+function salvaCampiTemp(imm) {
+  const elInd = document.getElementById('m-indirizzo');
+  if (elInd) imm.indirizzo = (elInd.value || '').trim().toUpperCase();
+
+  const elNome = document.getElementById('m-cognomeNome');
+  if (elNome) imm.cognomeNome = (elNome.value || '').trim().toUpperCase();
+
+  const elTel = document.getElementById('m-telefono');
+  if (elTel) imm.telefono = elTel.value || '';
+
+  const elRes = document.getElementById('m-residenza');
+  if (elRes) imm.residenza = (elRes.value || '').trim().toUpperCase();
+
+  const elNote = document.getElementById('m-note');
+  if (elNote) imm.note = elNote.value || '';
+
+  const elSotto = document.getElementById('m-sottotipo');
+  if (elSotto) imm.sottotipo = elSotto.value || '';
+
+  Storage.save(DB);
 }
 
 function salvaModifica() {
@@ -1184,6 +1421,25 @@ function salvaModifica() {
   if (elNome) {
     imm.cognomeNome = elNome.value.trim().toUpperCase();
     imm.telefono = (document.getElementById('m-telefono') || {}).value || '';
+    imm.residenza = ((document.getElementById('m-residenza') || {}).value || '').trim().toUpperCase();
+  }
+
+  const elSotto = document.getElementById('m-sottotipo');
+  if (elSotto) {
+    const nuovo = elSotto.value || '';
+    if (nuovo !== imm.sottotipo) {
+      // Aggiungi attività cambio sottotipo
+      imm.attivita = imm.attivita || [];
+      imm.attivita.push({
+        id: uid(),
+        seq: prossimoSeq(),
+        data: new Date().toISOString(),
+        tipo: 'fatta',
+        testo: 'Sottotipo: ' + (imm.sottotipo || '—') + ' → ' + (nuovo || '—'),
+        completata: true
+      });
+    }
+    imm.sottotipo = nuovo;
   }
 
   imm.note = (document.getElementById('m-note') || {}).value || '';
@@ -1253,6 +1509,10 @@ function cambiaStato(nuovoStato) {
           <label class="form-label">Telefono proprietario</label>
           <input class="form-input" id="cs-telefono" type="tel" placeholder="333 333 3333" autocomplete="off">
         </div>
+        <div class="form-row">
+          <label class="form-label">Residenza (opzionale)</label>
+          <input class="form-input" id="cs-residenza" placeholder="VIA ..." autocomplete="off">
+        </div>
       </div>
       <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">
         Stai passando da IMM a ${nuovoStato}. Inserisci i dati del proprietario.
@@ -1277,6 +1537,8 @@ function confermaCambioStato(nuovoStato) {
   if (nomeEl) imm.cognomeNome = nomeEl.value.trim().toUpperCase();
   const telEl = document.getElementById('cs-telefono');
   if (telEl) imm.telefono = telEl.value || '';
+  const resEl = document.getElementById('cs-residenza');
+  if (resEl) imm.residenza = (resEl.value || '').trim().toUpperCase();
 
   const vecchio = imm.stato;
   eseguiCambioStato(imm, vecchio, nuovoStato);
@@ -1288,7 +1550,14 @@ function eseguiCambioStato(imm, vecchio, nuovoStato) {
   if (nuovoStato === 'IMM') {
     imm.cognomeNome = '';
     imm.telefono = '';
+    imm.residenza = '';
+    imm.altriImmobili = [];
     if (!imm.z) imm.z = 1;
+  }
+
+  // Se passa a NT senza sottotipo, default = non ancora valutata
+  if (nuovoStato === 'NT' && !imm.sottotipo) {
+    imm.sottotipo = 'NT non ancora valutata';
   }
 
   imm.attivita = imm.attivita || [];
