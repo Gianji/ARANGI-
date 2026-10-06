@@ -18,6 +18,11 @@
     --testo-sec: #6b7280;
     --ombra: 0 1px 3px rgba(0,0,0,0.04);
     --tabbar-h: 60px;
+    --imm: #6b7280;
+    --pa: #d97706;
+    --nt: #2563eb;
+    --ink: #059669;
+    --vnd: #dc2626;
   }
 
   * {
@@ -215,6 +220,349 @@
   }
 
   .tabbar button.active { color: var(--blu); }
+
+  /* ============ IMMOBILI ============ */
+  .search-bar {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    background: var(--card);
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--testo);
+    margin-bottom: 12px;
+    outline: none;
+    box-shadow: var(--ombra);
+  }
+
+  .search-bar::placeholder { color: var(--testo-sec); }
+
+  .chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .chips::-webkit-scrollbar { display: none; }
+
+  .chip {
+    background: var(--card);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--testo-sec);
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: var(--ombra);
+  }
+
+  .chip.active {
+    background: var(--blu);
+    color: white;
+  }
+
+  .item-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--ombra);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .item-card:active { transform: scale(0.99); }
+
+  .item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .item-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--testo);
+    letter-spacing: -0.2px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-sub {
+    font-size: 13px;
+    color: var(--testo-sec);
+    margin-bottom: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .item-meta {
+    font-size: 12px;
+    color: var(--testo-sec);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #f0f1f3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+  }
+
+  .badge-IMM { background: var(--imm); }
+  .badge-PA  { background: var(--pa); }
+  .badge-NT  { background: var(--nt); }
+  .badge-INK { background: var(--ink); }
+  .badge-VND { background: var(--vnd); }
+
+  .fab {
+    position: fixed;
+    right: 20px;
+    bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom));
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: var(--arancione);
+    color: white;
+    border: none;
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255,107,0,0.4);
+    cursor: pointer;
+    z-index: 50;
+    transition: transform 0.15s;
+  }
+
+  .fab:active { transform: scale(0.92); }
+
+  /* ============ MODAL ============ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeIn 0.2s;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-sheet {
+    background: var(--sfondo);
+    width: 100%;
+    max-width: 600px;
+    max-height: 92vh;
+    border-radius: 22px 22px 0 0;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.25s ease-out;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .modal-header h2 {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--blu);
+    letter-spacing: -0.4px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .modal-close {
+    background: #e5e7eb;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    font-size: 18px;
+    color: var(--testo);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+
+  /* ============ FORM ============ */
+  .form-group {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 4px 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--ombra);
+  }
+
+  .form-row {
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f1f3;
+  }
+
+  .form-row:last-child { border-bottom: none; }
+
+  .form-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--testo-sec);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--testo);
+    outline: none;
+    padding: 0;
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 60px;
+    line-height: 1.4;
+  }
+
+  .form-select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    padding-right: 24px;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .btn-row .btn { margin-bottom: 0; flex: 1; }
+
+  /* ============ TIMELINE ============ */
+  .timeline-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f1f3;
+    font-size: 14px;
+    color: var(--testo);
+    line-height: 1.4;
+  }
+
+  .timeline-item:last-child { border-bottom: none; }
+
+  .timeline-item .data {
+    font-size: 11px;
+    color: var(--testo-sec);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .timeline-item.da-fare .data { color: var(--arancione); }
+
+  /* ============ AZIONI SHORTCUT ============ */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .action-btn {
+    flex: 1;
+    background: var(--card);
+    border: none;
+    border-radius: 14px;
+    padding: 14px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blu);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--ombra);
+    transition: transform 0.1s;
+  }
+
+  .action-btn:active { transform: scale(0.97); }
+
+  .action-btn .icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+    gap: 12px;
+  }
+
+  .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
+  .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
 </style>
 </head>
 <body>
@@ -229,23 +577,16 @@
   <main class="app-content">
 
     <section id="view-immobili" class="view active">
-      <div class="grid-2">
-        <div class="card">
-          <div class="counter" id="count-immobili">0</div>
-          <div class="counter-label">Immobili totali</div>
-        </div>
-        <div class="card">
-          <div class="counter" id="count-ink">0</div>
-          <div class="counter-label">Incarichi attivi</div>
-        </div>
+      <input type="search" class="search-bar" id="search-immobili" placeholder="Cerca per indirizzo, nome o telefono...">
+      <div class="chips" id="chips-immobili">
+        <button class="chip active" data-filtro="tutti">Tutti</button>
+        <button class="chip" data-filtro="IMM">IMM</button>
+        <button class="chip" data-filtro="PA">PA</button>
+        <button class="chip" data-filtro="NT">NT</button>
+        <button class="chip" data-filtro="INK">INK</button>
+        <button class="chip" data-filtro="VND">VND</button>
       </div>
-      <div class="card">
-        <h2><span class="dot"></span>Immobili</h2>
-        <div class="empty">
-          <div class="icon">🏠</div>
-          Il modulo Immobili sarà attivato nel Modulo 2
-        </div>
-      </div>
+      <div id="lista-immobili"></div>
     </section>
 
     <section id="view-persone" class="view">
@@ -299,9 +640,9 @@
 
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <p>Versione: 1.0 (Modulo 1)</p>
-        <p>Storage: locale</p>
-        <p id="storage-info">—</p>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 2)</span></div>
+        <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
+        <div class="info-row"><span class="label">Occupato</span><span class="value" id="storage-info">—</span></div>
       </div>
 
       <div class="card">
@@ -312,6 +653,8 @@
     </section>
 
   </main>
+
+  <button class="fab" id="fab-immobili" onclick="apriFormNuovo()">+</button>
 
   <nav class="tabbar">
     <button data-tab="immobili" class="active">
@@ -338,7 +681,21 @@
 
 </div>
 
+<!-- MODAL GENERICO -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)chiudiModal()">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2 id="modal-title">Titolo</h2>
+      <button class="modal-close" onclick="chiudiModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
 <script>
+// =====================================================
+// STORAGE
+// =====================================================
 const DB_KEY = 'arangiò_db_v1';
 
 const Storage = {
@@ -348,9 +705,7 @@ const Storage = {
       if (!raw) return this.default();
       const parsed = JSON.parse(raw);
       return Object.assign(this.default(), parsed);
-    } catch (e) {
-      return this.default();
-    }
+    } catch (e) { return this.default(); }
   },
   save(data) {
     try {
@@ -363,7 +718,7 @@ const Storage = {
   },
   default() {
     return {
-      versione: 1,
+      versione: 2,
       immobili: [],
       persone: [],
       attivita: [],
@@ -374,6 +729,34 @@ const Storage = {
 
 let DB = Storage.load();
 
+// =====================================================
+// UTILITY
+// =====================================================
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function formattaData(iso) {
+  const d = new Date(iso);
+  return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2) +
+    '-' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+
+function formattaDataBreve(iso) {
+  const d = new Date(iso);
+  return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2);
+}
+
+function escapeHtml(s) {
+  if (s === undefined || s === null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// =====================================================
+// NAVIGAZIONE TAB
+// =====================================================
 const tabButtons = document.querySelectorAll('.tabbar button');
 const views = document.querySelectorAll('.view');
 
@@ -383,17 +766,630 @@ tabButtons.forEach(btn => {
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
     document.querySelector('.app-content').scrollTop = 0;
+
+    // FAB visibile solo su Immobili
+    document.getElementById('fab-immobili').style.display = (tab === 'immobili') ? 'flex' : 'none';
   });
 });
 
+// =====================================================
+// MODAL
+// =====================================================
+function apriModal(titolo, contenutoHtml) {
+  document.getElementById('modal-title').textContent = titolo;
+  document.getElementById('modal-body').innerHTML = contenutoHtml;
+  document.getElementById('modal').classList.add('open');
+}
+
+function chiudiModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modal-body').innerHTML = '';
+}
+
+// =====================================================
+// IMMOBILI - LISTA
+// =====================================================
+let filtroStato = 'tutti';
+let queryRicerca = '';
+
+document.getElementById('search-immobili').addEventListener('input', (e) => {
+  queryRicerca = e.target.value.toLowerCase().trim();
+  renderListaImmobili();
+});
+
+document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    filtroStato = chip.dataset.filtro;
+    renderListaImmobili();
+  });
+});
+
+function immobileMatchRicerca(imm, q) {
+  if (!q) return true;
+  const campi = [
+    imm.indirizzo, imm.cognomeNome, imm.telefono,
+    imm.proprietario && imm.proprietario.cognomeNome,
+    imm.proprietario && imm.proprietario.telefono,
+    imm.note
+  ];
+  return campi.some(c => (c || '').toLowerCase().includes(q));
+}
+
+function renderListaImmobili() {
+  const cont = document.getElementById('lista-immobili');
+  let lista = DB.immobili.slice();
+
+  if (filtroStato !== 'tutti') {
+    lista = lista.filter(i => i.stato === filtroStato);
+  }
+
+  if (queryRicerca) {
+    lista = lista.filter(i => immobileMatchRicerca(i, queryRicerca));
+  }
+
+  // Ordina per data ultima modifica (più recenti in alto)
+  lista.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
+
+  if (lista.length === 0) {
+    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏠</div>' +
+      (DB.immobili.length === 0 ? 'Nessun immobile. Tocca + per aggiungerne uno.' : 'Nessun risultato') +
+      '</div></div>';
+    aggiornaContatori();
+    return;
+  }
+
+  let html = '';
+  for (const imm of lista) {
+    const titolo = titoloImmobile(imm);
+    const sub = imm.indirizzo || '';
+    const attivitaRecenti = (imm.attivita || []).slice().sort((a,b) => (b.data||'').localeCompare(a.data||''));
+    const ultima = attivitaRecenti[0];
+
+    html += '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')">';
+    html += '<div class="item-row">';
+    html += '<div class="item-title">' + escapeHtml(titolo) + '</div>';
+    html += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
+    html += '</div>';
+    if (sub && sub !== titolo) html += '<div class="item-sub">📍 ' + escapeHtml(sub) + '</div>';
+    if (imm.telefono) html += '<div class="item-sub">📞 ' + escapeHtml(imm.telefono) + '</div>';
+    if (ultima) {
+      html += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 40)) + (ultima.testo.length > 40 ? '…' : '') + '</span><span>' + formattaDataBreve(ultima.data) + '</span></div>';
+    }
+    html += '</div>';
+  }
+  cont.innerHTML = html;
+
+  aggiornaContatori();
+}
+
+function titoloImmobile(imm) {
+  if (imm.tipo === 'censito') {
+    return 'Imm - ' + (imm.indirizzo || '') + ' - Z' + (imm.z || 1);
+  }
+  // PA/NT/INK/VND
+  const tipo = imm.stato;
+  const nome = imm.cognomeNome || '';
+  const tel = imm.telefono ? ' ' + imm.telefono : '';
+  const ind = imm.indirizzo ? ' x ' + imm.indirizzo : '';
+  return tipo + ' - ' + nome + tel + ind;
+}
+
+// =====================================================
+// IMMOBILI - FORM NUOVO
+// =====================================================
+function apriFormNuovo() {
+  const html = `
+    <div class="form-group">
+      <div class="form-row">
+        <label class="form-label">Tipo immobile</label>
+        <select class="form-select" id="f-tipo" onchange="aggiornaFormNuovo()">
+          <option value="censito">Immobile censito</option>
+          <option value="pa">Possibile Acquisizione (PA)</option>
+          <option value="nt">Notizia (NT)</option>
+          <option value="ink">Incarico (INK)</option>
+        </select>
+      </div>
+    </div>
+    <div id="campi-dinamici"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button>
+    </div>
+  `;
+  apriModal('Nuovo immobile', html);
+  aggiornaFormNuovo();
+}
+
+function aggiornaFormNuovo() {
+  const tipo = document.getElementById('f-tipo').value;
+  const cont = document.getElementById('campi-dinamici');
+
+  if (tipo === 'censito') {
+    cont.innerHTML = `
+      <div class="form-group">
+        <div class="form-row">
+          <label class="form-label">Indirizzo</label>
+          <input class="form-input" id="f-indirizzo" placeholder="Via Roma 1, Cremona" autocomplete="off">
+        </div>
+      </div>
+    `;
+  } else {
+    let sottotipoHtml = '';
+    if (tipo === 'nt') {
+      sottotipoHtml = `
+        <div class="form-row">
+          <label class="form-label">Tipo notizia</label>
+          <select class="form-select" id="f-sottotipo">
+            <option value="">— Seleziona —</option>
+            <option value="NT valutata">NT valutata</option>
+            <option value="NT non ancora valutata">NT non ancora valutata</option>
+          </select>
+        </div>
+      `;
+    } else if (tipo === 'ink') {
+      sottotipoHtml = `
+        <div class="form-row">
+          <label class="form-label">Tipo incarico</label>
+          <select class="form-select" id="f-sottotipo">
+            <option value="">— Seleziona —</option>
+            <option value="INK gestione">INK gestione</option>
+            <option value="INK esclusiva">INK esclusiva</option>
+          </select>
+        </div>
+      `;
+    }
+
+    cont.innerHTML = `
+      <div class="form-group">
+        <div class="form-row">
+          <label class="form-label">Cognome e Nome</label>
+          <input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Telefono</label>
+          <input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Indirizzo</label>
+          <input class="form-input" id="f-indirizzo" placeholder="Via Roma 1, Cremona" autocomplete="off">
+        </div>
+        ${sottotipoHtml}
+      </div>
+    `;
+  }
+}
+
+function salvaNuovoImmobile() {
+  const tipoForm = document.getElementById('f-tipo').value;
+  const indirizzo = (document.getElementById('f-indirizzo') || {}).value || '';
+
+  if (!indirizzo.trim()) { alert('Inserisci un indirizzo'); return; }
+
+  const adesso = new Date().toISOString();
+
+  if (tipoForm === 'censito') {
+    // Controlla se esiste già stesso indirizzo
+    const esistenti = DB.immobili.filter(i => i.tipo === 'censito' &&
+      (i.indirizzo || '').toLowerCase() === indirizzo.toLowerCase());
+
+    let z = 1;
+    if (esistenti.length > 0) {
+      const zs = esistenti.map(i => i.z || 1);
+      const scelta = confirm('Esiste già "' + indirizzo + '" (Z' + Math.max(...zs) + ').\n\nOK = Crea nuovo Z' + (Math.max(...zs) + 1) + '\nAnnulla = Riprendi esistente');
+      if (!scelta) {
+        // Riprendi esistente: apri la scheda dell'ultimo
+        const piuRecente = esistenti.sort((a,b) => (b.updatedAt||'').localeCompare(a.updatedAt||''))[0];
+        chiudiModal();
+        setTimeout(() => apriScheda(piuRecente.id), 100);
+        return;
+      }
+      z = Math.max(...zs) + 1;
+    }
+
+    const imm = {
+      id: uid(),
+      tipo: 'censito',
+      stato: 'IMM',
+      indirizzo: indirizzo.trim(),
+      z: z,
+      cognomeNome: '',
+      telefono: '',
+      sottotipo: '',
+      proprietario: null,
+      note: '',
+      attivita: [],
+      createdAt: adesso,
+      updatedAt: adesso
+    };
+    DB.immobili.push(imm);
+    Storage.save(DB);
+    chiudiModal();
+    renderListaImmobili();
+    setTimeout(() => apriScheda(imm.id), 200);
+    return;
+  }
+
+  // PA/NT/INK
+  const cognomeNome = (document.getElementById('f-cognomeNome') || {}).value || '';
+  const telefono = (document.getElementById('f-telefono') || {}).value || '';
+  const sottotipoEl = document.getElementById('f-sottotipo');
+  const sottotipo = sottotipoEl ? sottotipoEl.value : '';
+
+  if (!cognomeNome.trim()) { alert('Inserisci cognome e nome'); return; }
+
+  const stato = tipoForm === 'pa' ? 'PA' : tipoForm === 'nt' ? 'NT' : 'INK';
+
+  const imm = {
+    id: uid(),
+    tipo: tipoForm,
+    stato: stato,
+    indirizzo: indirizzo.trim(),
+    z: null,
+    cognomeNome: cognomeNome.trim().toUpperCase(),
+    telefono: telefono.trim(),
+    sottotipo: sottotipo,
+    proprietario: null,
+    note: '',
+    attivita: [],
+    createdAt: adesso,
+    updatedAt: adesso
+  };
+  DB.immobili.push(imm);
+  Storage.save(DB);
+  chiudiModal();
+  renderListaImmobili();
+  setTimeout(() => apriScheda(imm.id), 200);
+}
+
+// =====================================================
+// IMMOBILI - SCHEDA DETTAGLIO
+// =====================================================
+let immobileAperto = null;
+
+function apriScheda(id) {
+  const imm = DB.immobili.find(i => i.id === id);
+  if (!imm) return;
+  immobileAperto = id;
+
+  const titolo = titoloImmobile(imm);
+  const attivita = (imm.attivita || []).slice().sort((a,b) => (b.data||'').localeCompare(a.data||''));
+
+  let html = '';
+
+  // Badge stato + sottotipo
+  html += '<div style="margin-bottom:14px;">';
+  html += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
+  if (imm.sottotipo) {
+    html += ' <span style="font-size:12px;color:var(--testo-sec);margin-left:8px;">' + escapeHtml(imm.sottotipo) + '</span>';
+  }
+  html += '</div>';
+
+  // Info
+  html += '<div class="card">';
+  if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
+  if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
+  if (imm.proprietario && imm.proprietario.cognomeNome) {
+    html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.proprietario.cognomeNome) + '</span></div>';
+  }
+  if (imm.note) html += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(imm.note) + '</span></div>';
+  html += '</div>';
+
+  // Azioni
+  html += '<div class="actions">';
+  html += '<button class="action-btn" onclick="apriModifica()"><span class="icon">✏️</span>Modifica</button>';
+  html += '<button class="action-btn" onclick="apriCambiaStato()"><span class="icon">🔄</span>Stato</button>';
+  html += '<button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">➕</span>Attività</button>';
+  html += '</div>';
+
+  // Timeline
+  html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
+  if (attivita.length === 0) {
+    html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
+  } else {
+    for (const a of attivita) {
+      const cls = a.tipo === 'da_fare' && !a.completata ? 'da-fare' : '';
+      html += '<div class="timeline-item ' + cls + '">';
+      html += '<span class="data">' + formattaData(a.data) + '</span>';
+      html += escapeHtml(a.testo);
+      if (a.tipo === 'da_fare' && !a.completata && a.dataPrevista) {
+        html += ' <span style="color:var(--arancione);font-weight:600;">[da fare il ' + formattaData(a.dataPrevista) + ']</span>';
+      }
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+
+  // Azioni finali
+  html += '<div class="btn-row" style="margin-top:16px;">';
+  html += '<button class="btn btn-secondary" onclick="eliminaImmobile()">🗑️ Elimina</button>';
+  if (imm.stato === 'VND') {
+    html += '<button class="btn btn-primary" onclick="archiviaImmobile()">📦 Archivia</button>';
+  }
+  html += '</div>';
+
+  apriModal(titolo, html);
+}
+
+// =====================================================
+// IMMOBILI - MODIFICA
+// =====================================================
+function apriModifica() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  let html = '<div class="form-group">';
+
+  html += '<div class="form-row"><label class="form-label">Indirizzo</label>';
+  html += '<input class="form-input" id="m-indirizzo" value="' + escapeHtml(imm.indirizzo || '') + '"></div>';
+
+  if (imm.tipo !== 'censito') {
+    html += '<div class="form-row"><label class="form-label">Cognome e Nome</label>';
+    html += '<input class="form-input" id="m-cognomeNome" value="' + escapeHtml(imm.cognomeNome || '') + '"></div>';
+
+    html += '<div class="form-row"><label class="form-label">Telefono</label>';
+    html += '<input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(imm.telefono || '') + '"></div>';
+  }
+
+  html += '<div class="form-row"><label class="form-label">Note</label>';
+  html += '<textarea class="form-textarea" id="m-note" placeholder="Note libere...">' + escapeHtml(imm.note || '') + '</textarea></div>';
+
+  // Proprietario
+  html += '</div>';
+  html += '<div class="card" style="padding:16px 16px 4px;"><h2><span class="dot"></span>Proprietario</h2></div>';
+  html += '<div class="form-group">';
+  const prop = imm.proprietario || {};
+  html += '<div class="form-row"><label class="form-label">Cognome e Nome</label>';
+  html += '<input class="form-input" id="m-prop-nome" value="' + escapeHtml(prop.cognomeNome || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Telefono</label>';
+  html += '<input class="form-input" id="m-prop-tel" type="tel" value="' + escapeHtml(prop.telefono || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Email</label>';
+  html += '<input class="form-input" id="m-prop-email" type="email" value="' + escapeHtml(prop.email || '') + '"></div>';
+  html += '</div>';
+
+  html += '<div class="btn-row">';
+  html += '<button class="btn btn-secondary" onclick="apriScheda(\'' + imm.id + '\')">Annulla</button>';
+  html += '<button class="btn btn-primary" onclick="salvaModifica()">Salva</button>';
+  html += '</div>';
+
+  apriModal('Modifica', html);
+}
+
+function salvaModifica() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  imm.indirizzo = (document.getElementById('m-indirizzo') || {}).value || '';
+  if (imm.tipo !== 'censito') {
+    imm.cognomeNome = ((document.getElementById('m-cognomeNome') || {}).value || '').toUpperCase();
+    imm.telefono = (document.getElementById('m-telefono') || {}).value || '';
+  }
+  imm.note = (document.getElementById('m-note') || {}).value || '';
+
+  const propNome = (document.getElementById('m-prop-nome') || {}).value || '';
+  const propTel = (document.getElementById('m-prop-tel') || {}).value || '';
+  const propEmail = (document.getElementById('m-prop-email') || {}).value || '';
+  if (propNome || propTel || propEmail) {
+    imm.proprietario = { cognomeNome: propNome, telefono: propTel, email: propEmail };
+  } else {
+    imm.proprietario = null;
+  }
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+// =====================================================
+// IMMOBILI - CAMBIA STATO
+// =====================================================
+function apriCambiaStato() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  const ordine = ['IMM', 'PA', 'NT', 'INK', 'VND'];
+  const idx = ordine.indexOf(imm.stato);
+
+  let html = '<div class="form-group">';
+  html += '<div class="form-row"><label class="form-label">Stato attuale</label>';
+  html += '<div style="font-weight:700;font-size:15px;">' + imm.stato + '</div></div>';
+  html += '</div>';
+
+  html += '<div class="card" style="padding:16px;"><h2><span class="dot"></span>Upgrade</h2>';
+  if (idx < ordine.length - 1) {
+    html += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + ordine[idx + 1] + '\')">→ ' + ordine[idx + 1] + '</button>';
+  } else {
+    html += '<p style="font-size:13px;">Già allo stato massimo</p>';
+  }
+  html += '</div>';
+
+  html += '<div class="card" style="padding:16px;"><h2><span class="dot"></span>Degrade</h2>';
+  if (idx > 0) {
+    html += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + ordine[idx - 1] + '\')">→ ' + ordine[idx - 1] + '</button>';
+  } else {
+    html += '<p style="font-size:13px;">Già allo stato minimo</p>';
+  }
+  html += '</div>';
+
+  if (imm.stato !== 'VND') {
+    html += '<div class="card" style="padding:16px;"><h2><span class="dot"></span>Vendi</h2>';
+    html += '<button class="btn btn-primary" onclick="cambiaStato(\'VND\')">→ VND (Venduto)</button>';
+    html += '</div>';
+  }
+
+  html += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + imm.id + '\')">Annulla</button></div>';
+
+  apriModal('Cambia stato', html);
+}
+
+function cambiaStato(nuovoStato) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  const vecchio = imm.stato;
+  imm.stato = nuovoStato;
+  imm.tipo = nuovoStato.toLowerCase();
+
+  // Aggiungi attività automatica
+  imm.attivita = imm.attivita || [];
+  imm.attivita.push({
+    id: uid(),
+    data: new Date().toISOString(),
+    tipo: 'fatta',
+    testo: 'Cambio stato: ' + vecchio + ' → ' + nuovoStato,
+    completata: true
+  });
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+// =====================================================
+// ATTIVITÀ
+// =====================================================
+function apriNuovaAttivita() {
+  const html = `
+    <div class="form-group">
+      <div class="form-row">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" id="a-tipo" onchange="aggiornaFormAttivita()">
+          <option value="fatta">Fatta</option>
+          <option value="da_fare">Da fare</option>
+        </select>
+      </div>
+    </div>
+    <div id="a-campi"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="apriScheda('${immobileAperto}')">Annulla</button>
+      <button class="btn btn-primary" onclick="salvaAttivita()">Salva</button>
+    </div>
+  `;
+  apriModal('Nuova attività', html);
+  aggiornaFormAttivita();
+}
+
+function aggiornaFormAttivita() {
+  const tipo = document.getElementById('a-tipo').value;
+  const cont = document.getElementById('a-campi');
+
+  if (tipo === 'fatta') {
+    cont.innerHTML = `
+      <div class="form-group">
+        <div class="form-row">
+          <label class="form-label">Data e ora svolgimento</label>
+          <input class="form-input" type="datetime-local" id="a-data" value="${adessoLocal()}">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Testo</label>
+          <textarea class="form-textarea" id="a-testo" placeholder="Cosa hai fatto?"></textarea>
+        </div>
+      </div>
+    `;
+  } else {
+    cont.innerHTML = `
+      <div class="form-group">
+        <div class="form-row">
+          <label class="form-label">Data e ora prevista</label>
+          <input class="form-input" type="datetime-local" id="a-dataPrevista" value="${adessoLocal()}">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Testo</label>
+          <textarea class="form-textarea" id="a-testo" placeholder="Cosa devi fare?"></textarea>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function adessoLocal() {
+  const d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' +
+    pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+
+function salvaAttivita() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  const tipo = document.getElementById('a-tipo').value;
+  const testo = (document.getElementById('a-testo') || {}).value || '';
+
+  if (!testo.trim()) { alert('Scrivi qualcosa'); return; }
+
+  imm.attivita = imm.attivita || [];
+
+  if (tipo === 'fatta') {
+    const dataLocal = document.getElementById('a-data').value;
+    if (!dataLocal) { alert('Inserisci la data'); return; }
+    imm.attivita.push({
+      id: uid(),
+      data: new Date(dataLocal).toISOString(),
+      tipo: 'fatta',
+      testo: testo.trim(),
+      completata: true
+    });
+  } else {
+    const dataPrevista = document.getElementById('a-dataPrevista').value;
+    if (!dataPrevista) { alert('Inserisci la data prevista'); return; }
+    imm.attivita.push({
+      id: uid(),
+      data: new Date().toISOString(),
+      tipo: 'da_fare',
+      testo: testo.trim(),
+      dataPrevista: new Date(dataPrevista).toISOString(),
+      completata: false
+    });
+  }
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+// =====================================================
+// ELIMINA / ARCHIVIA
+// =====================================================
+function eliminaImmobile() {
+  if (!immobileAperto) return;
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  if (!confirm('Eliminare "' + titoloImmobile(imm) + '"?\nOperazione irreversibile.')) return;
+
+  DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
+  Storage.save(DB);
+  immobileAperto = null;
+  chiudiModal();
+  renderListaImmobili();
+}
+
+function archiviaImmobile() {
+  if (!immobileAperto) return;
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  if (!confirm('Archiviare "' + titoloImmobile(imm) + '"?')) return;
+
+  // Per ora: sposta in un array archivio (lo implementeremo nel Modulo 5)
+  DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
+  Storage.save(DB);
+  immobileAperto = null;
+  chiudiModal();
+  renderListaImmobili();
+  alert('✅ Immobile archiviato');
+}
+
+// =====================================================
+// CONTATORI
+// =====================================================
 function aggiornaContatori() {
-  const elImm = document.getElementById('count-immobili');
-  const elInk = document.getElementById('count-ink');
   const elPers = document.getElementById('count-persone');
   const elAcq = document.getElementById('count-acquirenti');
-
-  if (elImm) elImm.textContent = (DB.immobili || []).length;
-  if (elInk) elInk.textContent = (DB.immobili || []).filter(i => i.stato === 'INK').length;
   if (elPers) elPers.textContent = (DB.persone || []).length;
   if (elAcq) elAcq.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length;
 
@@ -404,14 +1400,16 @@ function aggiornaContatori() {
   }
 }
 
+// =====================================================
+// BACKUP
+// =====================================================
 function esportaBackup() {
   const data = JSON.stringify(DB, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const oggi = new Date();
   const nome = 'arangiò_backup_' + oggi.getFullYear() + '-' +
-    String(oggi.getMonth() + 1).padStart(2, '0') + '-' +
-    String(oggi.getDate()).padStart(2, '0') + '.json';
+    pad2(oggi.getMonth() + 1) + '-' + pad2(oggi.getDate()) + '.json';
   const a = document.createElement('a');
   a.href = url;
   a.download = nome;
@@ -432,6 +1430,7 @@ function importaBackup(event) {
       if (!confirm('Importare questo backup? I dati attuali verranno sostituiti.')) return;
       DB = Object.assign(Storage.default(), imported);
       Storage.save(DB);
+      renderListaImmobili();
       aggiornaContatori();
       alert('✅ Backup importato');
     } catch (err) {
@@ -447,10 +1446,15 @@ function cancellaTutto() {
   if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
   DB = Storage.default();
   Storage.save(DB);
+  renderListaImmobili();
   aggiornaContatori();
   alert('🗑️ Tutti i dati cancellati');
 }
 
+// =====================================================
+// AVVIO
+// =====================================================
+renderListaImmobili();
 aggiornaContatori();
 </script>
 
