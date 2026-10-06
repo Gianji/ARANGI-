@@ -14,7 +14,7 @@
     --blu: #003d7a; --arancione: #ff6b00; --sfondo: #f2f3f5; --card: #ffffff;
     --testo: #1a1a1a; --testo-sec: #6b7280; --ombra: 0 1px 3px rgba(0,0,0,0.04);
     --tabbar-h: 60px; --imm: #6b7280; --pa: #d97706; --nt: #2563eb; --ink: #059669; --vnd: #dc2626;
-    --rr: #7c3aed; --prof: #0891b2;
+    --rr: #7c3aed; --prof: #0891b2; --att-oggi: #ff6b00; --att-scadute: #dc2626; --att-prossime: #2563eb;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; }
@@ -42,9 +42,11 @@
   .btn-danger { background: #fef2f2; color: #dc2626; }
   .btn-verde { background: #e8f5ec; color: #047857; }
   .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); background: var(--sfondo); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; }
-  .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; flex: 1; height: 100%; color: var(--testo-sec); font-family: inherit; font-size: 10px; font-weight: 500; cursor: pointer; transition: color 0.15s; }
+  .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; flex: 1; height: 100%; color: var(--testo-sec); font-family: inherit; font-size: 10px; font-weight: 500; cursor: pointer; transition: color 0.15s; position: relative; }
   .tabbar button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .tabbar button.active { color: var(--blu); }
+  .tabbar .badge-tab { position: absolute; top: 2px; right: 18%; background: var(--arancione); color: white; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 8px; min-width: 16px; text-align: center; display: none; }
+  .tabbar .badge-tab.show { display: block; }
   .search-bar { width: 100%; padding: 12px 16px; border: none; border-radius: 12px; background: var(--card); font-family: inherit; font-size: 15px; color: var(--testo); margin-bottom: 12px; outline: none; box-shadow: var(--ombra); }
   .search-bar::placeholder { color: var(--testo-sec); }
   .filter-label { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.6px; padding: 0 4px 8px; }
@@ -81,6 +83,8 @@
   .badge-RR-non-attiva { background: #9ca3af; }
   .badge-RR-rogitato { background: #1e40af; }
   .badge-PROF { background: var(--prof); }
+  .badge-ENT-immobile { background: var(--blu); }
+  .badge-ENT-persona { background: var(--prof); }
   .tag { display: inline-block; background: #eef0f3; color: var(--testo-sec); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; margin-right: 4px; margin-top: 4px; }
   .fab { position: fixed; right: 20px; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 28px; background: var(--arancione); color: white; border: none; font-size: 30px; font-weight: 300; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(255,107,0,0.4); cursor: pointer; z-index: 50; transition: transform 0.15s; }
   .fab:active { transform: scale(0.92); }
@@ -109,6 +113,9 @@
   .timeline-item.da-fare .data { color: var(--arancione); }
   .timeline-item.da-fare { background: #fff7ed; margin: 4px -12px; padding: 12px; border-radius: 8px; border-bottom: none; }
   .timeline-item.da-fare:active { background: #ffedd5; margin: 4px -12px; }
+  .timeline-item.scaduta { background: #fef2f2; margin: 4px -12px; padding: 12px; border-radius: 8px; border-bottom: none; }
+  .timeline-item.scaduta .data { color: #dc2626; }
+  .timeline-item.scaduta:active { background: #fee2e2; margin: 4px -12px; }
   .timeline-item .meta { font-size: 11px; color: var(--testo-sec); margin-top: 4px; font-style: italic; }
   .timeline-item .chev { float: right; color: #c4c9d2; font-size: 18px; line-height: 1; margin-left: 8px; }
   .actions { display: flex; gap: 10px; margin-bottom: 12px; }
@@ -155,8 +162,6 @@
   .prop-card { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; }
   .prop-card .prop-nome { font-size: 13px; font-weight: 700; color: var(--testo); margin-bottom: 4px; }
   .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.5; }
-
-  /* Indicatore posizione corretta accanto all'indirizzo */
   .addr-line { display: flex; align-items: center; justify-content: flex-end; gap: 6px; text-align: right; }
   .addr-check { color: #059669; font-weight: 800; font-size: 14px; flex-shrink: 0; }
   .addr-click { color: var(--blu); font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(0,61,122,0.35); text-underline-offset: 3px; }
@@ -164,8 +169,6 @@
   .addr-link { color: var(--blu); cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; padding: 2px 4px; border-radius: 6px; transition: background 0.15s; }
   .addr-link:active { background: #eef4fb; }
   .addr-tools { padding-top: 8px; border-top: 1px solid #f0f1f3; margin-top: 8px; }
-
-  /* Dropdown filtri */
   .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; }
   .filter-dropdown-overlay.open { display: block; background: rgba(0,0,0,0.2); }
   .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sfondo); border-radius: 16px; padding: 16px; min-width: 260px; max-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
@@ -173,7 +176,6 @@
   .filter-dropdown .opt { padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--testo); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
   .filter-dropdown .opt:active { background: #e5e7eb; }
   .filter-dropdown .opt.selected { background: #eef4fb; color: var(--blu); }
-
   #map-container { position: relative; width: 100%; height: calc(100vh - 60px); height: calc(100dvh - 60px); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
   .map-overlay-top { position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -206,19 +208,99 @@
   .arangiò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
   .arangiò-popup .pop-btn.btn-nav { background: var(--blu); margin-top: 4px; }
   .arangiò-popup .pop-zone { font-size: 10px; color: var(--testo-sec); margin-top: 4px; }
-  .arangiò-popup .pop-prec { font-size: 10px; margin-top: 4px; padding: 4px 8px; border-radius: 6px; display: inline-block; }
-  .arangiò-popup .pop-prec.ok { background: #e8f5ec; color: #047857; }
-  .arangiò-popup .pop-prec.warn { background: #fef3c7; color: #92400e; }
   .arangiò-popup .pop-list { margin-top: 6px; max-height: 180px; overflow-y: auto; }
   .arangiò-popup .pop-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f0f1f3; font-size: 11px; }
   .arangiò-popup .pop-item:last-child { border-bottom: none; }
   .arangiò-popup .pop-item .pop-item-txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
   #map-container.map-hidden { visibility: hidden !important; pointer-events: none !important; }
   #map-container.map-hidden #map { visibility: hidden !important; }
   .leaflet-pane { z-index: 1 !important; }
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
+
+  /* ===================================================== */
+  /* SEZIONE ATTIVITÀ - Dashboard                            */
+  /* ===================================================== */
+  .att-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .att-stat {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 6px;
+    text-align: center;
+    box-shadow: var(--ombra);
+    cursor: pointer;
+    transition: transform 0.1s;
+    border: 2px solid transparent;
+  }
+  .att-stat:active { transform: scale(0.97); }
+  .att-stat.active { border-color: var(--blu); }
+  .att-stat .att-num {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .att-stat .att-lbl {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--testo-sec);
+  }
+  .att-stat.oggi .att-num { color: var(--att-oggi); }
+  .att-stat.scadute .att-num { color: var(--att-scadute); }
+  .att-stat.prossime .att-num { color: var(--att-prossime); }
+  .att-stat.tutte .att-num { color: var(--blu); }
+
+  .att-gruppo { background: var(--card); border-radius: 14px; margin-bottom: 10px; box-shadow: var(--ombra); overflow: hidden; }
+  .att-gruppo-header { padding: 14px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.1s; }
+  .att-gruppo-header:active { background: #f5f6f8; }
+  .att-gruppo-header .att-icona-ent { font-size: 22px; flex-shrink: 0; }
+  .att-gruppo-header .att-info { flex: 1; overflow: hidden; }
+  .att-gruppo-header .att-titolo { font-size: 14px; font-weight: 700; color: var(--testo); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.3; }
+  .att-gruppo-header .att-meta { font-size: 11px; color: var(--testo-sec); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .att-gruppo-header .att-count { background: var(--arancione); color: white; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 10px; flex-shrink: 0; }
+  .att-gruppo-header .att-arrow { color: #c4c9d2; font-size: 20px; flex-shrink: 0; transition: transform 0.2s; }
+  .att-gruppo.espanso .att-gruppo-header .att-arrow { transform: rotate(90deg); }
+  .att-gruppo-body { padding: 0 16px 14px; display: none; border-top: 1px solid #f0f1f3; }
+  .att-gruppo.espanso .att-gruppo-body { display: block; }
+  .att-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f1f3;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .att-item:last-child { border-bottom: none; }
+  .att-item:active { background: #f8f9fb; margin: 0 -16px; padding-left: 16px; padding-right: 16px; }
+  .att-item .att-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .att-item .att-dot.fatta { background: #059669; }
+  .att-item .att-dot.oggi { background: var(--att-oggi); }
+  .att-item .att-dot.scaduta { background: var(--att-scadute); animation: pulse 2s infinite; }
+  .att-item .att-dot.prossima { background: var(--att-prossime); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .att-item .att-body { flex: 1; overflow: hidden; }
+  .att-item .att-data { font-size: 10px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 3px; }
+  .att-item .att-data.scaduta { color: var(--att-scadute); }
+  .att-item .att-data.oggi { color: var(--att-oggi); }
+  .att-item .att-testo { font-size: 14px; color: var(--testo); line-height: 1.4; word-break: break-word; }
+  .att-item .att-stato-label { font-size: 11px; color: var(--testo-sec); font-style: italic; margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -258,7 +340,26 @@
     </section>
 
     <section id="view-attivita" class="view">
-      <div class="card"><h2><span class="dot"></span>Attività</h2><div class="empty"><div class="icon">✅</div>Il modulo Attività sarà attivato nel Modulo 5</div></div>
+      <div class="att-dashboard" id="att-dashboard">
+        <div class="att-stat oggi" data-att="oggi" onclick="setAttTab('oggi')">
+          <div class="att-num" id="att-num-oggi">0</div>
+          <div class="att-lbl">Oggi</div>
+        </div>
+        <div class="att-stat scadute" data-att="scadute" onclick="setAttTab('scadute')">
+          <div class="att-num" id="att-num-scadute">0</div>
+          <div class="att-lbl">Scadute</div>
+        </div>
+        <div class="att-stat prossime" data-att="prossime" onclick="setAttTab('prossime')">
+          <div class="att-num" id="att-num-prossime">0</div>
+          <div class="att-lbl">Prossime</div>
+        </div>
+        <div class="att-stat tutte" data-att="tutte" onclick="setAttTab('tutte')">
+          <div class="att-num" id="att-num-tutte">0</div>
+          <div class="att-lbl">Tutte</div>
+        </div>
+      </div>
+      <input type="search" class="search-bar" id="search-attivita" placeholder="Cerca attività o entità...">
+      <div id="lista-attivita"></div>
     </section>
 
     <section id="view-mappa" class="view" style="padding:0;margin:0;">
@@ -303,7 +404,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 4)</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 5)</span></div>
         <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
         <div class="info-row"><span class="label">Occupato</span><span class="value" id="storage-info">—</span></div>
@@ -322,7 +423,11 @@
   <nav class="tabbar">
     <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Immobili</button>
     <button data-tab="persone"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Persone</button>
-    <button data-tab="attivita"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Attività</button>
+    <button data-tab="attivita" id="tab-attivita">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span class="badge-tab" id="tab-badge-attivita">0</span>
+      Attività
+    </button>
     <button data-tab="mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mappa</button>
     <button data-tab="altro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>Altro</button>
   </nav>
@@ -338,7 +443,6 @@
   </div>
 </div>
 
-<!-- Overlay filtro dropdown -->
 <div class="filter-dropdown-overlay" id="filter-dd-overlay" onclick="if(event.target===this)chiudiFilterDD()">
   <div class="filter-dropdown" id="filter-dd"></div>
 </div>
@@ -372,7 +476,7 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 24, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
+  default() { return { versione: 25, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -415,6 +519,7 @@ function uid() { return Date.now().toString(36) + Math.random().toString(36).sub
 function pad2(n) { return String(n).padStart(2, '0'); }
 function formattaData(iso) { const d = new Date(iso); return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2) + '-' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
 function formattaDataBreve(iso) { const d = new Date(iso); return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2); }
+function formattaDataOraSolo(iso) { const d = new Date(iso); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
 function escapeHtml(s) { if (s === undefined || s === null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 function prossimoSeq() { if (typeof DB.nextSeq !== 'number') DB.nextSeq = 1; const s = DB.nextSeq; DB.nextSeq = s + 1; return s; }
 function adessoLocal() { const d = new Date(); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); }
@@ -440,10 +545,8 @@ function applicaEreditaCondominio(imm) {
   if (det.zone && det.zone.length > 0) imm.zone = det.zone.slice();
   return imm;
 }
-
 function getCittaPrincipale() { return DB.cittaPrincipale || CITTA_DEFAULT; }
 function getNomeCittaPrincipale() { return getCittaPrincipale().split(',')[0].trim(); }
-
 function rinumeraZCondominio(condo) {
   if (!condo) return;
   const immobili = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo);
@@ -456,8 +559,6 @@ function rinumeraZCondominio(condo) {
     }
   });
 }
-
-// Icona campanello stilizzata per citofono
 function iconaCampanello() {
   return '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:2px;color:var(--arancione);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
 }
@@ -472,9 +573,7 @@ function titoloAcquirente(p) {
   const immobili = (p.immobili || []).length > 0 ? ' x ' + p.immobili.join(' / ') : '';
   return 'RR - ' + nome + tel + coll + immobili;
 }
-function titoloProfessionista(p) {
-  return 'PROF - ' + (p.cognomeNome || '').toUpperCase();
-}
+function titoloProfessionista(p) { return 'PROF - ' + (p.cognomeNome || '').toUpperCase(); }
 function titoloPersona(p) {
   if (p.tipo === 'acquirente') return titoloAcquirente(p);
   if (p.tipo === 'professionista') return titoloProfessionista(p);
@@ -486,10 +585,7 @@ function getStatoRR(p) {
   return s || STATI_RR[0];
 }
 function getTagPersona(p) {
-  if (p.tipo === 'acquirente') {
-    const s = getStatoRR(p);
-    return s ? s.tag : '#RR-attiva';
-  }
+  if (p.tipo === 'acquirente') { const s = getStatoRR(p); return s ? s.tag : '#RR-attiva'; }
   if (p.tipo === 'professionista') {
     const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf) || TIPI_PROFESSIONISTA[6];
     return t.tag;
@@ -662,7 +758,7 @@ tabButtons.forEach(btn => {
 
       const fab = document.getElementById('fab-immobili');
       const fabMenu = document.getElementById('fab-menu');
-      if (tab === 'immobili' || tab === 'persone') fab.style.display = 'flex';
+      if (tab === 'immobili' || tab === 'persone' || tab === 'attivita') fab.style.display = 'flex';
       else fab.style.display = 'none';
       fabMenu.style.display = 'none';
       fabMenuAperto = false;
@@ -671,6 +767,9 @@ tabButtons.forEach(btn => {
         fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">🏠 Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">🏢 Nuovo condominio</button>';
       } else if (tab === 'persone') {
         aggiornaFabPersone();
+      } else if (tab === 'attivita') {
+        fabMenu.innerHTML = '';
+        renderAttivita();
       }
 
       if (tab === 'altro') aggiornaInfoSistema();
@@ -740,6 +839,12 @@ function onFabClick() {
     fabMenuAperto = false;
     document.getElementById('fab-menu').style.display = 'none';
     apriFormNuovaPersona();
+    return;
+  }
+  if (tab === 'attivita') {
+    fabMenuAperto = false;
+    document.getElementById('fab-menu').style.display = 'none';
+    apriNuovaAttivitaGlobale();
     return;
   }
   toggleFabMenu();
@@ -900,7 +1005,6 @@ function renderListaImmobili() {
     return;
   }
 
-  // Raggruppa gli IMM in condominio con 2+ fratelli (solo se non stiamo già filtrando per condominio)
   const gruppiCondo = {};
   const individuali = [];
   for (const imm of lista) {
@@ -919,12 +1023,10 @@ function renderListaImmobili() {
     else individuali.push(gruppiCondo[condo][0]);
   }
 
-  // Auto-espandi i gruppi se c'è una ricerca attiva
   if (queryRicerca) {
     for (const condo in gruppiFinali) condoListaEspansi[condo] = true;
   }
 
-  // Prepara gli elementi ordinati per data
   const elementi = [];
   for (const condo in gruppiFinali) {
     const immobili = gruppiFinali[condo];
@@ -1491,10 +1593,14 @@ function apriSchedaPersona(id) {
   else {
     for (const a of attivita) {
       const isDaFare = a.tipo === 'da_fare' && !a.completata;
-      html += '<div class="timeline-item ' + (isDaFare ? 'da-fare' : '') + '" onclick="apriAzioniAttivitaPersona(\'' + a.id + '\')">';
+      const isScaduta = isDaFare && new Date(a.dataPrevista) < new Date(new Date().setHours(0,0,0,0));
+      let cls = '';
+      if (isScaduta) cls = 'scaduta';
+      else if (isDaFare) cls = 'da-fare';
+      html += '<div class="timeline-item ' + cls + '" onclick="apriAzioniAttivitaPersona(\'' + a.id + '\')">';
       html += '<span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>';
       html += escapeHtml(a.testo);
-      if (isDaFare) html += ' <span style="color:var(--arancione);font-weight:600;">[da fare]</span>';
+      if (isDaFare) html += ' <span style="color:' + (isScaduta ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (isScaduta ? 'scaduta' : 'da fare') + ']</span>';
       const metaParts = [];
       if (a.updatedAt) metaParts.push('aggiornata il ' + formattaData(a.updatedAt));
       if (a.dataEsecuzione) metaParts.push('eseguita il ' + formattaData(a.dataEsecuzione));
@@ -1766,6 +1872,7 @@ function salvaAttivitaPersona() {
   p.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderPersone();
+  aggiornaBadgeAttivita();
   apriSchedaPersona(p.id);
 }
 
@@ -1813,6 +1920,7 @@ function confermaSegnaComeFattaPersona(idAtt) {
   p.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderPersone();
+  aggiornaBadgeAttivita();
   apriSchedaPersona(p.id);
 }
 
@@ -1851,6 +1959,7 @@ function salvaModificaAttivitaPersona(idAtt) {
   p.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderPersone();
+  aggiornaBadgeAttivita();
   apriSchedaPersona(p.id);
 }
 
@@ -1862,6 +1971,7 @@ function eliminaAttivitaPersona(idAtt) {
   p.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderPersone();
+  aggiornaBadgeAttivita();
   apriSchedaPersona(p.id);
 }
 
@@ -1877,6 +1987,363 @@ function eliminaPersona() {
   personaAperta = null;
   chiudiModal();
   renderPersone();
+  aggiornaBadgeAttivita();
+}
+
+// =====================================================
+// =====================================================
+// SEZIONE ATTIVITÀ (Modulo 5) - Dashboard globale
+// =====================================================
+// =====================================================
+
+let attTabFiltro = 'oggi';   // 'oggi' | 'scadute' | 'prossime' | 'tutte'
+let attQueryRicerca = '';
+let attGruppiEspansi = {};
+
+document.getElementById('search-attivita').addEventListener('input', (e) => {
+  attQueryRicerca = e.target.value.toLowerCase().trim();
+  renderAttivita();
+});
+
+function setAttTab(tab) {
+  attTabFiltro = tab;
+  renderAttivita();
+}
+
+// Funzione che estrae TUTTE le attività da immobili e persone
+function raccogliTutteAttivita() {
+  const tutte = [];
+  for (const imm of DB.immobili) {
+    for (const a of (imm.attivita || [])) {
+      tutte.push({
+        ...a,
+        entitaTipo: 'immobile',
+        entitaId: imm.id,
+        entitaTitolo: titoloImmobile(imm),
+        entitaStato: imm.stato,
+        entitaVilla: !!imm.villa
+      });
+    }
+  }
+  for (const p of DB.persone) {
+    for (const a of (p.attivita || [])) {
+      tutte.push({
+        ...a,
+        entitaTipo: 'persona',
+        entitaId: p.id,
+        entitaTitolo: titoloPersona(p),
+        entitaStatoRR: p.tipo === 'acquirente' ? p.statoRR : null,
+        entitaTipoPersona: p.tipo,
+        entitaTipoProf: p.tipo === 'professionista' ? p.tipoProf : null
+      });
+    }
+  }
+  return tutte;
+}
+
+// Conta oggi / scadute / prossime / tutte
+function contaAttivita() {
+  const tutte = raccogliTutteAttivita();
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const domani = new Date(oggi); domani.setDate(domani.getDate() + 1);
+
+  let cntOggi = 0, cntScadute = 0, cntProssime = 0, cntTutte = 0;
+
+  for (const a of tutte) {
+    cntTutte++;
+    if (a.tipo !== 'da_fare' || a.completata) continue;
+    const d = new Date(a.dataPrevista);
+    if (d < oggi) cntScadute++;
+    else if (d >= oggi && d < domani) cntOggi++;
+    else if (d >= domani) cntProssime++;
+  }
+
+  return { oggi: cntOggi, scadute: cntScadute, prossime: cntProssime, tutte: cntTutte };
+}
+
+// Aggiorna dashboard contatori + badge sul tab
+function aggiornaBadgeAttivita() {
+  const c = contaAttivita();
+  document.getElementById('att-num-oggi').textContent = c.oggi;
+  document.getElementById('att-num-scadute').textContent = c.scadute;
+  document.getElementById('att-num-prossime').textContent = c.prossime;
+  document.getElementById('att-num-tutte').textContent = c.tutte;
+
+  // Badge sul tab della tabbar
+  const badge = document.getElementById('tab-badge-attivita');
+  const totUrgenti = c.oggi + c.scadute;
+  if (totUrgenti > 0) {
+    badge.textContent = totUrgenti;
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+
+  // Aggiorna anche lo stato "active" della dashboard
+  document.querySelectorAll('.att-stat').forEach(s => {
+    s.classList.toggle('active', s.dataset.att === attTabFiltro);
+  });
+}
+
+function renderAttivita() {
+  const cont = document.getElementById('lista-attivita');
+  if (!cont) return;
+
+  aggiornaBadgeAttivita();
+
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const domani = new Date(oggi); domani.setDate(domani.getDate() + 1);
+
+  let tutte = raccogliTutteAttivita();
+
+  // Filtra per tab
+  if (attTabFiltro === 'oggi') {
+    tutte = tutte.filter(a => {
+      if (a.tipo !== 'da_fare' || a.completata) return false;
+      const d = new Date(a.dataPrevista);
+      return d >= oggi && d < domani;
+    });
+  } else if (attTabFiltro === 'scadute') {
+    tutte = tutte.filter(a => {
+      if (a.tipo !== 'da_fare' || a.completata) return false;
+      const d = new Date(a.dataPrevista);
+      return d < oggi;
+    });
+  } else if (attTabFiltro === 'prossime') {
+    tutte = tutte.filter(a => {
+      if (a.tipo !== 'da_fare' || a.completata) return false;
+      const d = new Date(a.dataPrevista);
+      return d >= domani;
+    });
+  }
+  // 'tutte' mostra tutte
+
+  // Ricerca
+  if (attQueryRicerca) {
+    tutte = tutte.filter(a => {
+      const txt = ((a.testo || '') + ' ' + (a.entitaTitolo || '')).toLowerCase();
+      return txt.includes(attQueryRicerca);
+    });
+  }
+
+  // Ordina per data effettiva (crescente)
+  tutte.sort(compareAttivitaCrescente);
+
+  if (tutte.length === 0) {
+    let icona, msg;
+    if (attTabFiltro === 'oggi') { icona = '☀️'; msg = 'Nessuna attività per oggi.'; }
+    else if (attTabFiltro === 'scadute') { icona = '✅'; msg = 'Nessuna attività scaduta. Bravo!'; }
+    else if (attTabFiltro === 'prossime') { icona = '📅'; msg = 'Nessuna attività in programma.'; }
+    else { icona = '📋'; msg = 'Nessuna attività. Tocca + per aggiungerne una.'; }
+    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + icona + '</div>' + msg + '</div></div>';
+    return;
+  }
+
+  // Raggruppa per entità
+  const gruppi = {};
+  for (const a of tutte) {
+    const key = a.entitaTipo + ':' + a.entitaId;
+    if (!gruppi[key]) {
+      gruppi[key] = {
+        entitaTipo: a.entitaTipo,
+        entitaId: a.entitaId,
+        entitaTitolo: a.entitaTitolo,
+        entitaStato: a.entitaStato,
+        entitaVilla: a.entitaVilla,
+        entitaStatoRR: a.entitaStatoRR,
+        entitaTipoPersona: a.entitaTipoPersona,
+        entitaTipoProf: a.entitaTipoProf,
+        items: []
+      };
+    }
+    gruppi[key].items.push(a);
+  }
+
+  // Ordina gruppi per data più imminente
+  const gruppiArr = Object.values(gruppi);
+  gruppiArr.sort((a, b) => {
+    const da = Math.min(...a.items.map(x => new Date(dataEffettivaAttivita(x)).getTime()));
+    const db = Math.min(...b.items.map(x => new Date(dataEffettivaAttivita(x)).getTime()));
+    return da - db;
+  });
+
+  let html = '';
+  for (const g of gruppiArr) {
+    const key = g.entitaTipo + ':' + g.entitaId;
+    const espanso = !!attGruppiEspansi[key];
+    const isImmobile = g.entitaTipo === 'immobile';
+    const iconaEnt = isImmobile ? (g.entitaVilla ? '🏠' : '🏢') : (g.entitaTipoPersona === 'acquirente' ? '👤' : '💼');
+
+    // Badge entità
+    let badgeEnt = '';
+    if (isImmobile) {
+      badgeEnt = '<span class="badge badge-' + g.entitaStato + '">' + g.entitaStato + '</span>';
+    } else if (g.entitaTipoPersona === 'acquirente' && g.entitaStatoRR) {
+      const s = STATI_RR.find(x => x.id === g.entitaStatoRR) || STATI_RR[0];
+      badgeEnt = '<span class="badge badge-RR-' + s.id + '">' + s.id.replace('-', ' ').toUpperCase() + '</span>';
+    } else {
+      badgeEnt = '<span class="badge badge-PROF">PROF</span>';
+    }
+
+    // Numero attività
+    const n = g.items.length;
+
+    // Data più imminente
+    const dataImminente = Math.min(...g.items.map(x => new Date(dataEffettivaAttivita(x)).getTime()));
+    const dataImmObj = new Date(dataImminente);
+    let dataLabel = formattaDataBreve(dataImmObj.toISOString());
+    if (dataImmObj < oggi) dataLabel = '⚠️ ' + dataLabel;
+
+    html += '<div class="att-gruppo' + (espanso ? ' espanso' : '') + '">';
+    html += '<div class="att-gruppo-header" onclick="toggleAttGruppo(\'' + key + '\')">';
+    html += '<span class="att-icona-ent">' + iconaEnt + '</span>';
+    html += '<div class="att-info">';
+    html += '<div class="att-titolo">' + escapeHtml(g.entitaTitolo) + '</div>';
+    html += '<div class="att-meta">' + badgeEnt + ' <span>· ' + dataLabel + '</span></div>';
+    html += '</div>';
+    html += '<span class="att-count">' + n + '</span>';
+    html += '<span class="att-arrow">›</span>';
+    html += '</div>';
+    html += '<div class="att-gruppo-body">';
+    for (const a of g.items) {
+      html += renderAttivitaItem(a);
+    }
+    html += '</div>';
+    html += '</div>';
+  }
+
+  cont.innerHTML = html;
+}
+
+function renderAttivitaItem(a) {
+  const isDaFare = a.tipo === 'da_fare' && !a.completata;
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  const domani = new Date(oggi); domani.setDate(domani.getDate() + 1);
+
+  let dotCls = 'fatta';
+  let dataCls = '';
+  let dataTxt = formattaData(dataEffettivaAttivita(a));
+
+  if (isDaFare) {
+    const d = new Date(a.dataPrevista);
+    if (d < oggi) { dotCls = 'scaduta'; dataCls = 'scaduta'; }
+    else if (d < domani) { dotCls = 'oggi'; dataCls = 'oggi'; }
+    else { dotCls = 'prossima'; }
+  }
+
+  let html = '<div class="att-item" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')">';
+  html += '<span class="att-dot ' + dotCls + '"></span>';
+  html += '<div class="att-body">';
+  html += '<div class="att-data ' + dataCls + '">' + dataTxt + (isDaFare ? ' · DA FARE' : ' · FATTA') + '</div>';
+  html += '<div class="att-testo">' + escapeHtml(a.testo) + '</div>';
+  if (a.updatedAt || a.dataEsecuzione) {
+    const metaParts = [];
+    if (a.updatedAt) metaParts.push('agg. ' + formattaData(a.updatedAt));
+    if (a.dataEsecuzione) metaParts.push('eseg. ' + formattaData(a.dataEsecuzione));
+    if (metaParts.length > 0) html += '<div class="att-stato-label">' + metaParts.join(' · ') + '</div>';
+  }
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function toggleAttGruppo(key) {
+  attGruppiEspansi[key] = !attGruppiEspansi[key];
+  renderAttivita();
+}
+
+// Azioni su attività globale
+function apriAzioniAttivitaGlobale(idAtt, entitaTipo, entitaId) {
+  // Imposta temporaneamente il contesto e chiama la funzione esistente
+  if (entitaTipo === 'immobile') {
+    immobileAperto = entitaId;
+    apriAzioniAttivita(idAtt);
+  } else {
+    personaAperta = entitaId;
+    apriAzioniAttivitaPersona(idAtt);
+  }
+}
+
+// FAB → nuova attività globale
+function apriNuovaAttivitaGlobale() {
+  const html = `
+    <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Cerca l'immobile o la persona a cui collegare l'attività.</p>
+    <input type="search" class="search-bar" id="ng-search" placeholder="Cognome, indirizzo, telefono...">
+    <div id="ng-risultati"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button>
+    </div>
+  `;
+  apriModal('➕ Nuova attività', html);
+  setTimeout(() => {
+    const input = document.getElementById('ng-search');
+    if (input) {
+      input.focus();
+      input.addEventListener('input', (e) => cercaPerNuovaAttivita(e.target.value));
+    }
+    cercaPerNuovaAttivita('');
+  }, 100);
+}
+
+function cercaPerNuovaAttivita(q) {
+  const cont = document.getElementById('ng-risultati');
+  if (!cont) return;
+  const query = (q || '').toLowerCase().trim();
+
+  const risultati = [];
+
+  for (const imm of DB.immobili) {
+    const txt = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase();
+    if (!query || txt.includes(query)) {
+      risultati.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), sub: imm.indirizzo, badge: imm.stato, villa: !!imm.villa });
+    }
+  }
+
+  for (const p of DB.persone) {
+    const txt = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase();
+    if (!query || txt.includes(query)) {
+      let sub = p.tipo === 'acquirente' ? 'Acquirente' : 'Professionista';
+      if (p.tipo === 'professionista') {
+        const t = TIPI_PROFESSIONISTA.find(x => x.id === p.tipoProf);
+        if (t) sub = t.label;
+      }
+      risultati.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), sub, badge: p.tipo === 'acquirente' ? 'RR' : 'PROF' });
+    }
+  }
+
+  // Limita a 40
+  const maxShow = 40;
+  const mostrati = risultati.slice(0, maxShow);
+
+  if (mostrati.length === 0) {
+    cont.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">🔍</div>Nessun risultato</div></div>';
+    return;
+  }
+
+  let html = '<div class="card" style="padding:8px 0;">';
+  for (const r of mostrati) {
+    const iconaEnt = r.tipo === 'immobile' ? (r.villa ? '🏠' : '🏢') : (r.badge === 'RR' ? '👤' : '💼');
+    html += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + r.tipo + '\',\'' + r.id + '\')">';
+    html += '<span class="txt">' + iconaEnt + ' ' + escapeHtml(r.titolo) + '</span>';
+    if (r.badge) html += '<span class="badge badge-' + r.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(r.badge) + '</span>';
+    html += '</div>';
+  }
+  if (risultati.length > maxShow) {
+    html += '<div style="text-align:center;font-size:11px;color:var(--testo-sec);padding:8px;">+ altri ' + (risultati.length - maxShow) + ' risultati. Affina la ricerca.</div>';
+  }
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function selezionaEntitaPerAttivita(tipo, id) {
+  // Chiude il picker e apre direttamente il form "Nuova attività"
+  if (tipo === 'immobile') {
+    immobileAperto = id;
+    setTimeout(() => apriNuovaAttivita(), 100);
+  } else {
+    personaAperta = id;
+    setTimeout(() => apriNuovaAttivitaPersona(), 100);
+  }
 }
 
 // =====================================================
@@ -2138,6 +2605,7 @@ function salvaNuovoImmobile() {
   Storage.save(DB);
   chiudiModal();
   renderListaImmobili();
+  aggiornaBadgeAttivita();
   avviaGeocodificaBackground(imm);
   setTimeout(() => {
     apriScheda(imm.id);
@@ -2348,10 +2816,14 @@ function apriScheda(id) {
   else {
     for (const a of attivita) {
       const isDaFare = a.tipo === 'da_fare' && !a.completata;
-      html += '<div class="timeline-item ' + (isDaFare ? 'da-fare' : '') + '" onclick="apriAzioniAttivita(\'' + a.id + '\')">';
+      const isScaduta = isDaFare && new Date(a.dataPrevista) < new Date(new Date().setHours(0,0,0,0));
+      let cls = '';
+      if (isScaduta) cls = 'scaduta';
+      else if (isDaFare) cls = 'da-fare';
+      html += '<div class="timeline-item ' + cls + '" onclick="apriAzioniAttivita(\'' + a.id + '\')">';
       html += '<span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>';
       html += escapeHtml(a.testo);
-      if (isDaFare) html += ' <span style="color:var(--arancione);font-weight:600;">[da fare]</span>';
+      if (isDaFare) html += ' <span style="color:' + (isScaduta ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (isScaduta ? 'scaduta' : 'da fare') + ']</span>';
       const metaParts = [];
       if (a.updatedAt) metaParts.push('aggiornata il ' + formattaData(a.updatedAt));
       if (a.dataEsecuzione) metaParts.push('eseguita il ' + formattaData(a.dataEsecuzione));
@@ -2778,6 +3250,7 @@ function salvaModifica() {
   imm.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderListaImmobili();
+  aggiornaBadgeAttivita();
   apriScheda(imm.id);
 }
 
@@ -2835,7 +3308,7 @@ function eseguiCambioStato(imm, vecchio, nuovoStato) {
   imm.attivita = imm.attivita || [];
   imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Cambio stato: ' + vecchio + ' → ' + nuovoStato, completata: true });
   imm.updatedAt = new Date().toISOString();
-  Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
+  Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(imm.id);
 }
 
 // =====================================================
@@ -2883,7 +3356,7 @@ function salvaAttivita() {
     imm.attivita.push({ id: uid(), seq, data: new Date().toISOString(), tipo: 'da_fare', testo: testo.trim(), dataPrevista: new Date(dataPrevista).toISOString(), completata: false });
   }
   imm.updatedAt = new Date().toISOString();
-  Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
+  Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(imm.id);
 }
 function apriAzioniAttivita(idAtt) {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
@@ -2924,7 +3397,7 @@ function confermaSegnaComeFatta(idAtt) {
   att.tipo = 'fatta'; att.completata = true; att.testo = testo.trim();
   att.updatedAt = new Date().toISOString(); att.seq = prossimoSeq();
   imm.updatedAt = new Date().toISOString();
-  Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
+  Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(imm.id);
 }
 function apriModificaAttivita(idAtt) {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
@@ -2960,6 +3433,7 @@ function salvaModificaAttivita(idAtt) {
   imm.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderListaImmobili();
+  aggiornaBadgeAttivita();
   apriScheda(imm.id);
 }
 function eliminaAttivita(idAtt) {
@@ -2967,7 +3441,7 @@ function eliminaAttivita(idAtt) {
   const att = (imm.attivita || []).find(a => a.id === idAtt);
   if (!confirm('Eliminare questa attività?\n\n' + att.testo)) return;
   imm.attivita = (imm.attivita || []).filter(a => a.id !== idAtt);
-  imm.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
+  imm.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(imm.id);
 }
 function toggleValutazione() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
@@ -2989,6 +3463,7 @@ function eliminaImmobile() {
   immobileAperto = null;
   chiudiModal();
   renderListaImmobili();
+  aggiornaBadgeAttivita();
   if (map) aggiornaMappa();
 }
 function archiviaImmobile() {
@@ -3002,6 +3477,7 @@ function archiviaImmobile() {
   immobileAperto = null;
   chiudiModal();
   renderListaImmobili();
+  aggiornaBadgeAttivita();
   if (map) aggiornaMappa();
   alert('✅ Immobile archiviato');
 }
@@ -3209,7 +3685,14 @@ function importaBackup(event) {
       if (!imported || typeof imported !== 'object') throw new Error('Formato non valido');
       if (!confirm('Importare questo backup? I dati attuali verranno sostituiti.')) return;
       DB = Object.assign(Storage.default(), imported);
-      Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone();
+      Storage.save(DB);
+      renderListaImmobili();
+      aggiornaContatori();
+      aggiornaMappa();
+      aggiornaInfoSistema();
+      renderPersone();
+      renderAttivita();
+      aggiornaBadgeAttivita();
       alert('✅ Backup importato');
     } catch (err) { alert('❌ Errore: ' + err.message); }
   };
@@ -3218,7 +3701,8 @@ function importaBackup(event) {
 function cancellaTutto() {
   if (!confirm('⚠️ Cancellare TUTTI i dati?')) return;
   if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
-  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone();
+  DB = Storage.default(); Storage.save(DB);
+  renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita();
   alert('🗑️ Tutti i dati cancellati');
 }
 
@@ -3268,6 +3752,8 @@ aggiornaContatori();
 aggiornaInfoSistema();
 aggiornaFabPersone();
 renderPersone();
+renderAttivita();
+aggiornaBadgeAttivita();
 </script>
 
 </body>
