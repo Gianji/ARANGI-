@@ -160,6 +160,41 @@
     align-items: center;
     gap: 6px;
   }
+
+  .condo-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--ombra);
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .condo-card:active { transform: scale(0.99); }
+  .condo-card .condo-icon { font-size: 28px; flex-shrink: 0; }
+  .condo-card .condo-info { flex: 1; overflow: hidden; }
+  .condo-card .condo-title { font-size: 15px; font-weight: 700; color: var(--testo); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); }
+  .condo-card .condo-arrow { color: #c4c9d2; font-size: 22px; flex-shrink: 0; }
+
+  .back-btn {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blu);
+    cursor: pointer;
+    padding: 8px 0;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .back-btn:active { opacity: 0.7; }
 </style>
 </head>
 <body>
@@ -182,7 +217,7 @@
         <button class="chip" data-filtro="NT">NT</button>
         <button class="chip" data-filtro="INK">INK</button>
         <button class="chip" data-filtro="VND">VND</button>
-        <button class="chip" data-filtro="CONDOMINI">🏢 Condomini</button>
+        <button class="chip" data-filtro="COND">🏢 COND</button>
       </div>
       <div id="lista-immobili"></div>
     </section>
@@ -315,7 +350,7 @@ const Storage = {
   },
   default() {
     return {
-      versione: 6,
+      versione: 7,
       nextSeq: 1,
       immobili: [],
       persone: [],
@@ -371,18 +406,17 @@ function isoToLocalInput(iso) {
     pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
 }
 
-// Normalizza un indirizzo per il condominio
 function normalizzaIndirizzo(ind) {
   return (ind || '').trim().toUpperCase().replace(/\s+/g, ' ');
 }
 
-// Trova gli immobili nello stesso condominio
+function getCondominio(imm) {
+  return imm.condominio || normalizzaIndirizzo(imm.indirizzo);
+}
+
 function immobiliStessoCondominio(imm) {
-  const condo = imm.condominio || normalizzaIndirizzo(imm.indirizzo);
-  return DB.immobili.filter(i =>
-    i.id !== imm.id &&
-    (i.condominio || normalizzaIndirizzo(i.indirizzo)) === condo
-  );
+  const condo = getCondominio(imm);
+  return DB.immobili.filter(i => i.id !== imm.id && getCondominio(i) === condo);
 }
 
 // =====================================================
@@ -434,6 +468,7 @@ function titoloImmobile(imm) {
 // =====================================================
 let filtroStato = 'tutti';
 let queryRicerca = '';
+let condoSelezionato = null;
 
 document.getElementById('search-immobili').addEventListener('input', (e) => {
   queryRicerca = e.target.value.toLowerCase().trim();
@@ -445,6 +480,7 @@ document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
     document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     filtroStato = chip.dataset.filtro;
+    condoSelezionato = null;
     renderListaImmobili();
   });
 });
@@ -452,7 +488,8 @@ document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
 function immobileMatchRicerca(imm, q) {
   if (!q) return true;
   const campi = [
-    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza, imm.note, imm.condominio
+    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza, imm.note,
+    imm.condominio, imm.citofono
   ];
   return campi.some(c => (c || '').toLowerCase().includes(q));
 }
@@ -476,21 +513,17 @@ function compareAttivitaDecrescente(a, b) {
 
 function renderListaImmobili() {
   const cont = document.getElementById('lista-immobili');
+
+  // Filtro COND: mostra elenco condomini
+  if (filtroStato === 'COND' && !condoSelezionato) {
+    renderListaCondomini(cont);
+    return;
+  }
+
   let lista = DB.immobili.slice();
 
-  if (filtroStato === 'CONDOMINI') {
-    // Raggruppa per condominio: mostra solo immobili che hanno almeno un "fratello"
-    const gruppi = {};
-    for (const imm of DB.immobili) {
-      const c = imm.condominio || normalizzaIndirizzo(imm.indirizzo);
-      if (!c) continue;
-      if (!gruppi[c]) gruppi[c] = [];
-      gruppi[c].push(imm);
-    }
-    lista = DB.immobili.filter(imm => {
-      const c = imm.condominio || normalizzaIndirizzo(imm.indirizzo);
-      return gruppi[c] && gruppi[c].length > 1;
-    });
+  if (filtroStato === 'COND' && condoSelezionato) {
+    lista = lista.filter(i => getCondominio(i) === condoSelezionato);
   } else if (filtroStato !== 'tutti') {
     lista = lista.filter(i => i.stato === filtroStato);
   }
@@ -501,22 +534,29 @@ function renderListaImmobili() {
 
   lista.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
 
+  let html = '';
+
+  // Se sto vedendo un condominio specifico, aggiungi pulsante indietro
+  if (filtroStato === 'COND' && condoSelezionato) {
+    html += '<button class="back-btn" onclick="tornaAiCondomini()">← Tutti i condomini</button>';
+    html += '<div style="font-size:13px;font-weight:700;color:var(--blu);margin-bottom:10px;">🏢 ' + escapeHtml(condoSelezionato) + '</div>';
+  }
+
   if (lista.length === 0) {
-    let msg = 'Nessun immobile. Tocca + per aggiungerne uno.';
-    if (filtroStato === 'CONDOMINI') msg = 'Nessun condominio con più immobili.';
-    else if (DB.immobili.length > 0) msg = 'Nessun risultato';
-    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏠</div>' + msg + '</div></div>';
+    html += '<div class="card"><div class="empty"><div class="icon">🏠</div>' +
+      (DB.immobili.length === 0 ? 'Nessun immobile. Tocca + per aggiungerne uno.' : 'Nessun risultato') +
+      '</div></div>';
+    cont.innerHTML = html;
     aggiornaContatori();
     return;
   }
 
-  let html = '';
   for (const imm of lista) {
     const titolo = titoloImmobile(imm);
     const attivitaOrdinate = (imm.attivita || []).slice().sort(compareAttivitaDecrescente);
     const ultima = attivitaOrdinate[0];
-    const condo = imm.condominio || normalizzaIndirizzo(imm.indirizzo);
-    const fratelli = DB.immobili.filter(i => i.id !== imm.id && (i.condominio || normalizzaIndirizzo(i.indirizzo)) === condo);
+    const condo = getCondominio(imm);
+    const fratelli = DB.immobili.filter(i => i.id !== imm.id && getCondominio(i) === condo);
     const isCondo = fratelli.length > 0;
 
     html += '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')">';
@@ -531,7 +571,7 @@ function renderListaImmobili() {
       html += '<div class="item-sub">' + escapeHtml(imm.sottotipo) + '</div>';
     }
     if (isCondo) {
-      html += '<div class="item-sub">🏢 Condominio · ' + (fratelli.length + 1) + ' immobili</div>';
+      html += '<div class="item-sub">🏢 - ' + escapeHtml(condo) + '</div>';
     }
     if (ultima) {
       html += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 40)) + (ultima.testo.length > 40 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(ultima)) + '</span></div>';
@@ -540,6 +580,58 @@ function renderListaImmobili() {
   }
   cont.innerHTML = html;
   aggiornaContatori();
+}
+
+function renderListaCondomini(cont) {
+  // Raggruppa per condominio
+  const gruppi = {};
+  for (const imm of DB.immobili) {
+    const c = getCondominio(imm);
+    if (!c) continue;
+    if (!gruppi[c]) gruppi[c] = [];
+    gruppi[c].push(imm);
+  }
+
+  // Filtra solo condomini con 2+ immobili
+  let condomini = Object.keys(gruppi).filter(c => gruppi[c].length > 1);
+
+  // Applica ricerca
+  if (queryRicerca) {
+    condomini = condomini.filter(c => c.toLowerCase().includes(queryRicerca));
+  }
+
+  condomini.sort();
+
+  if (condomini.length === 0) {
+    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏢</div>Nessun condominio trovato</div></div>';
+    aggiornaContatori();
+    return;
+  }
+
+  let html = '';
+  for (const c of condomini) {
+    const count = gruppi[c].length;
+    html += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(c).replace(/'/g, "\\'") + '\')">';
+    html += '<div class="condo-icon">🏢</div>';
+    html += '<div class="condo-info">';
+    html += '<div class="condo-title">' + escapeHtml(c) + '</div>';
+    html += '<div class="condo-sub">' + count + ' immobili</div>';
+    html += '</div>';
+    html += '<div class="condo-arrow">›</div>';
+    html += '</div>';
+  }
+  cont.innerHTML = html;
+  aggiornaContatori();
+}
+
+function selezionaCondominio(condo) {
+  condoSelezionato = condo;
+  renderListaImmobili();
+}
+
+function tornaAiCondomini() {
+  condoSelezionato = null;
+  renderListaImmobili();
 }
 
 // =====================================================
@@ -578,6 +670,10 @@ function aggiornaFormNuovo() {
         <div class="form-row">
           <label class="form-label">Indirizzo</label>
           <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Citofono (opzionale)</label>
+          <input class="form-input" id="f-citofono" placeholder="Nome sul citofono" autocomplete="off">
         </div>
         <div class="form-row">
           <label class="form-label">Condominio (opzionale)</label>
@@ -668,11 +764,9 @@ function salvaNuovoImmobile() {
       z = Math.max(...zs) + 1;
     }
 
-    // Condominio: se l'utente non ha specificato, usa l'indirizzo
-    let condominio = condominioInput || indirizzo;
+    const citofono = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase();
 
-    // Se esiste già un immobile con stesso indirizzo e condominio diverso,
-    // eredita il condominio esistente (stesso indirizzo = stesso condominio)
+    let condominio = condominioInput || indirizzo;
     if (!condominioInput) {
       const conStessoIndirizzo = DB.immobili.filter(i =>
         (i.indirizzo || '').toUpperCase() === indirizzo);
@@ -687,6 +781,7 @@ function salvaNuovoImmobile() {
       stato: 'IMM',
       indirizzo: indirizzo,
       z: z,
+      citofono: citofono,
       cognomeNome: '',
       telefono: '',
       residenza: '',
@@ -694,6 +789,7 @@ function salvaNuovoImmobile() {
       condominio: condominio,
       sottotipo: '',
       note: '',
+      dettagli: {},
       attivita: [],
       createdAt: adesso,
       updatedAt: adesso
@@ -733,6 +829,7 @@ function salvaNuovoImmobile() {
     stato: stato,
     indirizzo: indirizzo,
     z: null,
+    citofono: '',
     cognomeNome: cognomeNome,
     telefono: telefono.trim(),
     residenza: residenza,
@@ -740,6 +837,7 @@ function salvaNuovoImmobile() {
     condominio: condominio,
     sottotipo: sottotipo,
     note: '',
+    dettagli: {},
     attivita: [],
     createdAt: adesso,
     updatedAt: adesso
@@ -775,6 +873,7 @@ function apriScheda(id) {
 
   html += '<div class="card">';
   if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
+  if (imm.citofono) html += '<div class="info-row"><span class="label">Citofono</span><span class="value">' + escapeHtml(imm.citofono) + '</span></div>';
   if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
   if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
   if (imm.residenza) html += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(imm.residenza) + '</span></div>';
@@ -802,8 +901,38 @@ function apriScheda(id) {
 
   html += '</div>';
 
+  // SEZIONE DETTAGLI
+  const det = imm.dettagli || {};
+  const dettagliFiltrati = [
+    ['Piano', det.piano],
+    ['Interno', det.interno],
+    ['Scala', det.scala],
+    ['Mq', det.mq],
+    ['Vani', det.vani],
+    ['Bagni', det.bagni],
+    ['Camere', det.camere],
+    ['Classe energetica', det.classeEnergetica],
+    ['Riscaldamento', det.riscaldamento],
+    ['Anno costruzione', det.anno],
+    ['Stato', det.statoConservativo],
+    ['Ascensore', det.ascensore],
+    ['Balcone', det.balcone],
+    ['Terrazzo', det.terrazzo],
+    ['Giardino', det.giardino],
+    ['Box', det.box],
+    ['Cantina', det.cantina]
+  ].filter(([_, v]) => v && v !== '');
+
+  if (dettagliFiltrati.length > 0) {
+    html += '<div class="card"><h2><span class="dot"></span>Dettagli</h2>';
+    for (const [k, v] of dettagliFiltrati) {
+      html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>';
+    }
+    html += '</div>';
+  }
+
   // Sezione CONDOMINIO
-  const condo = imm.condominio || normalizzaIndirizzo(imm.indirizzo);
+  const condo = getCondominio(imm);
   const fratelli = immobiliStessoCondominio(imm);
   if (fratelli.length > 0) {
     html += '<div class="card">';
@@ -1078,11 +1207,17 @@ function apriModifica() {
   if (!imm) return;
 
   const isCensito = imm.stato === 'IMM';
+  const det = imm.dettagli || {};
 
   let html = '<div class="form-group">';
 
   html += '<div class="form-row"><label class="form-label">Indirizzo</label>';
   html += '<input class="form-input" id="m-indirizzo" value="' + escapeHtml(imm.indirizzo || '') + '"></div>';
+
+  if (isCensito) {
+    html += '<div class="form-row"><label class="form-label">Citofono</label>';
+    html += '<input class="form-input" id="m-citofono" value="' + escapeHtml(imm.citofono || '') + '" placeholder="Nome sul citofono"></div>';
+  }
 
   html += '<div class="form-row"><label class="form-label">Condominio</label>';
   html += '<input class="form-input" id="m-condominio" value="' + escapeHtml(imm.condominio || '') + '" placeholder="Lascia vuoto per usare l\'indirizzo"></div>';
@@ -1123,6 +1258,77 @@ function apriModifica() {
 
   html += '</div>';
 
+  // DETTAGLI
+  html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dettagli immobile</h2></div>';
+  html += '<div class="form-group">';
+  html += '<div class="form-row"><label class="form-label">Piano</label><input class="form-input" id="d-piano" value="' + escapeHtml(det.piano || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(det.interno || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(det.scala || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(det.mq || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Vani</label><input class="form-input" id="d-vani" inputmode="numeric" value="' + escapeHtml(det.vani || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(det.bagni || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Camere</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(det.camere || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Classe energetica</label>';
+  html += '<select class="form-select" id="d-classe">';
+  const classi = ['', 'A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G'];
+  for (const c of classi) {
+    html += '<option value="' + c + '"' + (det.classeEnergetica === c ? ' selected' : '') + '>' + (c || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Riscaldamento</label>';
+  html += '<select class="form-select" id="d-riscaldamento">';
+  const risc = ['', 'Autonomo', 'Centralizzato', 'Assente'];
+  for (const r of risc) {
+    html += '<option value="' + r + '"' + (det.riscaldamento === r ? ' selected' : '') + '>' + (r || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="d-anno" inputmode="numeric" value="' + escapeHtml(det.anno || '') + '"></div>';
+  html += '<div class="form-row"><label class="form-label">Stato conservativo</label>';
+  html += '<select class="form-select" id="d-statoConservativo">';
+  const statiC = ['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'];
+  for (const s of statiC) {
+    html += '<option value="' + s + '"' + (det.statoConservativo === s ? ' selected' : '') + '>' + (s || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Ascensore</label>';
+  html += '<select class="form-select" id="d-ascensore">';
+  for (const v of ['', 'Sì', 'No']) {
+    html += '<option value="' + v + '"' + (det.ascensore === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Balcone</label>';
+  html += '<select class="form-select" id="d-balcone">';
+  for (const v of ['', 'Sì', 'No']) {
+    html += '<option value="' + v + '"' + (det.balcone === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Terrazzo</label>';
+  html += '<select class="form-select" id="d-terrazzo">';
+  for (const v of ['', 'Sì', 'No']) {
+    html += '<option value="' + v + '"' + (det.terrazzo === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Giardino</label>';
+  html += '<select class="form-select" id="d-giardino">';
+  for (const v of ['', 'Sì', 'No']) {
+    html += '<option value="' + v + '"' + (det.giardino === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Box</label>';
+  html += '<select class="form-select" id="d-box">';
+  for (const v of ['', 'Sì', 'No']) {
+    html += '<option value="' + v + '"' + (det.box === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '<div class="form-row"><label class="form-label">Cantina</label>';
+  html += '<select class="form-select" id="d-cantina">';
+  for (const v of ['', 'Sì', 'No']) {
+    html += '<option value="' + v + '"' + (det.cantina === v ? ' selected' : '') + '>' + (v || '—') + '</option>';
+  }
+  html += '</select></div>';
+  html += '</div>';
+
+  // ALTRI IMMOBILI
   if (!isCensito) {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili di proprietà</h2>';
     html += '<div id="altri-immobili-list">';
@@ -1178,26 +1384,16 @@ function rimuoviAltroImmobile(idx) {
 }
 
 function salvaCampiTemp(imm) {
-  const elInd = document.getElementById('m-indirizzo');
-  if (elInd) imm.indirizzo = (elInd.value || '').trim().toUpperCase();
+  const g = (id) => document.getElementById(id);
 
-  const elCondo = document.getElementById('m-condominio');
-  if (elCondo) imm.condominio = normalizzaIndirizzo(elCondo.value) || normalizzaIndirizzo(imm.indirizzo);
-
-  const elNome = document.getElementById('m-cognomeNome');
-  if (elNome) imm.cognomeNome = (elNome.value || '').trim().toUpperCase();
-
-  const elTel = document.getElementById('m-telefono');
-  if (elTel) imm.telefono = elTel.value || '';
-
-  const elRes = document.getElementById('m-residenza');
-  if (elRes) imm.residenza = (elRes.value || '').trim().toUpperCase();
-
-  const elNote = document.getElementById('m-note');
-  if (elNote) imm.note = elNote.value || '';
-
-  const elSotto = document.getElementById('m-sottotipo');
-  if (elSotto) imm.sottotipo = elSotto.value || '';
+  if (g('m-indirizzo')) imm.indirizzo = (g('m-indirizzo').value || '').trim().toUpperCase();
+  if (g('m-citofono')) imm.citofono = (g('m-citofono').value || '').trim().toUpperCase();
+  if (g('m-condominio')) imm.condominio = normalizzaIndirizzo(g('m-condominio').value) || normalizzaIndirizzo(imm.indirizzo);
+  if (g('m-cognomeNome')) imm.cognomeNome = (g('m-cognomeNome').value || '').trim().toUpperCase();
+  if (g('m-telefono')) imm.telefono = g('m-telefono').value || '';
+  if (g('m-residenza')) imm.residenza = (g('m-residenza').value || '').trim().toUpperCase();
+  if (g('m-note')) imm.note = g('m-note').value || '';
+  if (g('m-sottotipo')) imm.sottotipo = g('m-sottotipo').value || '';
 
   Storage.save(DB);
 }
@@ -1206,22 +1402,22 @@ function salvaModifica() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
 
-  const ind = (document.getElementById('m-indirizzo') || {}).value || '';
-  imm.indirizzo = ind.trim().toUpperCase();
+  const g = (id) => document.getElementById(id);
 
-  const condoInput = normalizzaIndirizzo((document.getElementById('m-condominio') || {}).value);
+  imm.indirizzo = ((g('m-indirizzo') || {}).value || '').trim().toUpperCase();
+  if (g('m-citofono')) imm.citofono = ((g('m-citofono') || {}).value || '').trim().toUpperCase();
+
+  const condoInput = normalizzaIndirizzo((g('m-condominio') || {}).value);
   imm.condominio = condoInput || normalizzaIndirizzo(imm.indirizzo);
 
-  const elNome = document.getElementById('m-cognomeNome');
-  if (elNome) {
-    imm.cognomeNome = elNome.value.trim().toUpperCase();
-    imm.telefono = (document.getElementById('m-telefono') || {}).value || '';
-    imm.residenza = ((document.getElementById('m-residenza') || {}).value || '').trim().toUpperCase();
+  if (g('m-cognomeNome')) {
+    imm.cognomeNome = (g('m-cognomeNome').value || '').trim().toUpperCase();
+    imm.telefono = (g('m-telefono') || {}).value || '';
+    imm.residenza = ((g('m-residenza') || {}).value || '').trim().toUpperCase();
   }
 
-  const elSotto = document.getElementById('m-sottotipo');
-  if (elSotto) {
-    const nuovo = elSotto.value || '';
+  if (g('m-sottotipo')) {
+    const nuovo = g('m-sottotipo').value || '';
     if (nuovo !== imm.sottotipo) {
       imm.attivita = imm.attivita || [];
       imm.attivita.push({
@@ -1236,7 +1432,28 @@ function salvaModifica() {
     imm.sottotipo = nuovo;
   }
 
-  imm.note = (document.getElementById('m-note') || {}).value || '';
+  imm.note = (g('m-note') || {}).value || '';
+
+  // Dettagli
+  imm.dettagli = {
+    piano: ((g('d-piano') || {}).value || '').trim(),
+    interno: ((g('d-interno') || {}).value || '').trim(),
+    scala: ((g('d-scala') || {}).value || '').trim(),
+    mq: ((g('d-mq') || {}).value || '').trim(),
+    vani: ((g('d-vani') || {}).value || '').trim(),
+    bagni: ((g('d-bagni') || {}).value || '').trim(),
+    camere: ((g('d-camere') || {}).value || '').trim(),
+    classeEnergetica: ((g('d-classe') || {}).value || '').trim(),
+    riscaldamento: ((g('d-riscaldamento') || {}).value || '').trim(),
+    anno: ((g('d-anno') || {}).value || '').trim(),
+    statoConservativo: ((g('d-statoConservativo') || {}).value || '').trim(),
+    ascensore: ((g('d-ascensore') || {}).value || '').trim(),
+    balcone: ((g('d-balcone') || {}).value || '').trim(),
+    terrazzo: ((g('d-terrazzo') || {}).value || '').trim(),
+    giardino: ((g('d-giardino') || {}).value || '').trim(),
+    box: ((g('d-box') || {}).value || '').trim(),
+    cantina: ((g('d-cantina') || {}).value || '').trim()
+  };
 
   imm.updatedAt = new Date().toISOString();
   Storage.save(DB);
