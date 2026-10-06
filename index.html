@@ -14,7 +14,7 @@
     --blu: #003d7a; --arancione: #ff6b00; --sfondo: #f2f3f5; --card: #ffffff;
     --testo: #1a1a1a; --testo-sec: #6b7280; --ombra: 0 1px 3px rgba(0,0,0,0.04);
     --tabbar-h: 60px; --imm: #6b7280; --pa: #d97706; --nt: #2563eb; --ink: #059669; --vnd: #dc2626;
-    --rr: #7c3aed; --prof: #0891b2; --forn: #ea580c;
+    --rr: #7c3aed; --prof: #0891b2;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; overflow: hidden; }
@@ -54,6 +54,9 @@
   .chip.active { background: var(--blu); color: white; }
   .chip.sub { font-size: 12px; padding: 6px 12px; }
   .chip.sub.active { background: var(--arancione); }
+  .chip-dropdown { background: var(--card); border: none; padding: 8px 14px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); cursor: pointer; box-shadow: var(--ombra); display: flex; align-items: center; gap: 6px; }
+  .chip-dropdown.active { background: var(--blu); color: white; }
+  .chip-dropdown .caret { font-size: 10px; }
   .zone-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
   .zone-chip { background: #f5f6f8; border: 1px solid transparent; padding: 7px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--testo-sec); cursor: pointer; transition: all 0.15s; }
   .zone-chip.active { background: var(--blu); color: white; border-color: var(--blu); }
@@ -77,12 +80,7 @@
   .badge-RR-non-attiva { background: #9ca3af; }
   .badge-RR-rogitato { background: #1e40af; }
   .badge-PROF { background: var(--prof); }
-  .badge-FORN { background: var(--forn); }
   .tag { display: inline-block; background: #eef0f3; color: var(--testo-sec); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; margin-right: 4px; margin-top: 4px; }
-  .tag.blue { background: #dbeafe; color: #1e40af; }
-  .tag.orange { background: #ffedd5; color: #c2410c; }
-  .tag.green { background: #dcfce7; color: #15803d; }
-  .tag.purple { background: #ede9fe; color: #6d28d9; }
   .fab { position: fixed; right: 20px; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 28px; background: var(--arancione); color: white; border: none; font-size: 30px; font-weight: 300; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(255,107,0,0.4); cursor: pointer; z-index: 50; transition: transform 0.15s; }
   .fab:active { transform: scale(0.92); }
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: none; align-items: flex-end; justify-content: center; animation: fadeIn 0.2s; }
@@ -156,6 +154,21 @@
   .prop-card { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; }
   .prop-card .prop-nome { font-size: 13px; font-weight: 700; color: var(--testo); margin-bottom: 4px; }
   .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.5; }
+
+  /* Indicatore posizione corretta accanto all'indirizzo */
+  .addr-line { display: flex; align-items: center; justify-content: flex-end; gap: 6px; text-align: right; }
+  .addr-check { color: #059669; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .addr-link { color: var(--blu); font-weight: 600; font-size: 12px; cursor: pointer; text-decoration: underline; flex-shrink: 0; }
+  .addr-tools { padding-top: 8px; border-top: 1px solid #f0f1f3; margin-top: 8px; }
+
+  /* Dropdown filtri */
+  .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; }
+  .filter-dropdown-overlay.open { display: block; background: rgba(0,0,0,0.2); }
+  .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sfondo); border-radius: 16px; padding: 16px; min-width: 260px; max-width: 320px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+  .filter-dropdown h3 { font-size: 13px; font-weight: 700; color: var(--blu); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .filter-dropdown .opt { padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; color: var(--testo); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+  .filter-dropdown .opt:active { background: #e5e7eb; }
+  .filter-dropdown .opt.selected { background: #eef4fb; color: var(--blu); }
 
   #map-container { position: relative; width: 100%; height: calc(100vh - 60px); height: calc(100dvh - 60px); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
@@ -232,12 +245,11 @@
 
     <section id="view-persone" class="view">
       <div class="chips" id="persone-tabs" style="padding-bottom:14px;">
-        <button class="chip sub active" data-ptab="acquirenti">🏠 Acquirenti</button>
-        <button class="chip sub" data-ptab="professionisti">💼 Professionisti</button>
-        <button class="chip sub" data-ptab="fornitori">🔧 Fornitori</button>
+        <button class="chip sub active" data-ptab="acquirente">🏠 Acquirenti</button>
+        <button class="chip sub" data-ptab="professionista">💼 Professionisti</button>
       </div>
-      <input type="search" class="search-bar" id="search-persone" placeholder="Cerca per nome, telefono, email, tag...">
-      <div class="chips" id="chips-persone"></div>
+      <input type="search" class="search-bar" id="search-persone" placeholder="Cerca per nome, telefono, email...">
+      <div id="filtro-persone-attivo" style="margin-bottom:10px;"></div>
       <div id="lista-persone"></div>
     </section>
 
@@ -322,6 +334,11 @@
   </div>
 </div>
 
+<!-- Overlay filtro dropdown -->
+<div class="filter-dropdown-overlay" id="filter-dd-overlay" onclick="if(event.target===this)chiudiFilterDD()">
+  <div class="filter-dropdown" id="filter-dd"></div>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // =====================================================
@@ -351,7 +368,7 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 23, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
+  default() { return { versione: 24, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -375,17 +392,6 @@ const TIPI_PROFESSIONISTA = [
   { id: 'avv', label: 'Avvocato', tag: '#avv' },
   { id: 'comm', label: 'Commercialista', tag: '#comm' },
   { id: 'ente', label: 'Ente/Comune/Catasto', tag: '#ente' },
-  { id: 'altro', label: 'Altro', tag: '#altro' }
-];
-
-const TIPI_FORNITORE = [
-  { id: 'fotografo', label: 'Fotografo', tag: '#fotografo' },
-  { id: 'impresa', label: 'Impresa edile', tag: '#impresa' },
-  { id: 'arredatore', label: 'Arredatore', tag: '#arredatore' },
-  { id: 'cleaner', label: 'Cleaner', tag: '#cleaner' },
-  { id: 'muratore', label: 'Muratore', tag: '#muratore' },
-  { id: 'elettricista', label: 'Elettricista', tag: '#elettricista' },
-  { id: 'idraulico', label: 'Idraulico', tag: '#idraulico' },
   { id: 'altro', label: 'Altro', tag: '#altro' }
 ];
 
@@ -457,28 +463,19 @@ function titoloAcquirente(p) {
   const immobili = (p.immobili || []).length > 0 ? ' x ' + p.immobili.join(' / ') : '';
   return 'RR - ' + nome + tel + coll + immobili;
 }
-
 function titoloProfessionista(p) {
   return 'PROF - ' + (p.cognomeNome || '').toUpperCase();
 }
-
-function titoloFornitore(p) {
-  return 'FORN - ' + (p.cognomeNome || '').toUpperCase();
-}
-
 function titoloPersona(p) {
   if (p.tipo === 'acquirente') return titoloAcquirente(p);
   if (p.tipo === 'professionista') return titoloProfessionista(p);
-  if (p.tipo === 'fornitore') return titoloFornitore(p);
   return p.cognomeNome || '';
 }
-
 function getStatoRR(p) {
   if (p.tipo !== 'acquirente') return null;
   const s = STATI_RR.find(s => s.id === p.statoRR);
   return s || STATI_RR[0];
 }
-
 function getTagPersona(p) {
   if (p.tipo === 'acquirente') {
     const s = getStatoRR(p);
@@ -486,24 +483,15 @@ function getTagPersona(p) {
   }
   if (p.tipo === 'professionista') {
     const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf) || TIPI_PROFESSIONISTA[6];
-    return p.collaboratore ? t.tag + '-collaboratore' : t.tag;
-  }
-  if (p.tipo === 'fornitore') {
-    const t = TIPI_FORNITORI.find(t => t.id === p.tipoForn) || TIPI_FORNITORI[7];
-    return p.collaboratore ? t.tag + '-collaboratore' : t.tag;
+    return t.tag;
   }
   return '';
 }
-
 function getLabelTipoPersona(p) {
   if (p.tipo === 'acquirente') return 'Acquirente';
   if (p.tipo === 'professionista') {
     const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf);
     return t ? t.label : 'Professionista';
-  }
-  if (p.tipo === 'fornitore') {
-    const t = TIPI_FORNITORI.find(t => t.id === p.tipoForn);
-    return t ? t.label : 'Fornitore';
   }
   return '';
 }
@@ -665,18 +653,16 @@ tabButtons.forEach(btn => {
 
       const fab = document.getElementById('fab-immobili');
       const fabMenu = document.getElementById('fab-menu');
-      if (tab === 'immobili' || tab === 'persone') {
-        fab.style.display = 'flex';
-      } else {
-        fab.style.display = 'none';
-      }
+      if (tab === 'immobili' || tab === 'persone') fab.style.display = 'flex';
+      else fab.style.display = 'none';
       fabMenu.style.display = 'none';
+      fabMenuAperto = false;
 
-      // Aggiorna FAB menu in base al tab
       if (tab === 'immobili') {
         fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">🏠 Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">🏢 Nuovo condominio</button>';
       } else if (tab === 'persone') {
-        fabMenu.innerHTML = '<button onclick="fabMenuNuovoAcquirente()">🏠 Nuovo acquirente</button><button onclick="fabMenuNuovoProfessionista()">💼 Nuovo professionista</button><button onclick="fabMenuNuovoFornitore()">🔧 Nuovo fornitore</button>';
+        // FAB dinamico in base al sub-tab attivo
+        aggiornaFabPersone();
       }
 
       if (tab === 'altro') aggiornaInfoSistema();
@@ -684,6 +670,15 @@ tabButtons.forEach(btn => {
     }
   });
 });
+
+function aggiornaFabPersone() {
+  const fabMenu = document.getElementById('fab-menu');
+  if (pTabAttivo === 'acquirente') {
+    fabMenu.innerHTML = '<button onclick="fabMenuNuovoPersona()">🏠 Nuovo acquirente</button>';
+  } else if (pTabAttivo === 'professionista') {
+    fabMenu.innerHTML = '<button onclick="fabMenuNuovoPersona()">💼 Nuovo professionista</button>';
+  }
+}
 
 function aggiornaInfoSistema() {
   const el = document.getElementById('sistema-citta');
@@ -708,15 +703,36 @@ function chiudiModal() {
 }
 
 // =====================================================
+// FILTRI DROPDOWN
+// =====================================================
+function apriFilterDD(titolo, opzioni, selezionato, callback) {
+  let html = '<h3>' + titolo + '</h3>';
+  for (const opt of opzioni) {
+    const sel = opt.value === selezionato ? ' selected' : '';
+    html += '<div class="opt' + sel + '" onclick="selezionaFilterDD(\'' + String(opt.value).replace(/'/g, "\\'") + '\')">' + escapeHtml(opt.label) + (sel ? ' ✓' : '') + '</div>';
+  }
+  document.getElementById('filter-dd').innerHTML = html;
+  document.getElementById('filter-dd-overlay').classList.add('open');
+  window._filterDDCallback = callback;
+}
+function selezionaFilterDD(val) {
+  const cb = window._filterDDCallback;
+  chiudiFilterDD();
+  if (cb) cb(val === '' ? null : val);
+}
+function chiudiFilterDD() {
+  document.getElementById('filter-dd-overlay').classList.remove('open');
+  window._filterDDCallback = null;
+}
+
+// =====================================================
 // FAB
 // =====================================================
 let fabMenuAperto = false;
 function toggleFabMenu() { fabMenuAperto = !fabMenuAperto; document.getElementById('fab-menu').style.display = fabMenuAperto ? 'flex' : 'none'; }
 function fabMenuNuovoImmobile() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovo(); }
 function fabMenuNuovoCondominio() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoCondominio(); }
-function fabMenuNuovoAcquirente() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoAcquirente(); }
-function fabMenuNuovoProfessionista() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoProfessionista(); }
-function fabMenuNuovoFornitore() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoFornitore(); }
+function fabMenuNuovoPersona() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovaPersona(); }
 
 // =====================================================
 // NAVIGAZIONE ESTERNA
@@ -745,7 +761,7 @@ function apriWhatsApp(tel) {
 }
 
 // =====================================================
-// TITOLO
+// TITOLO IMMOBILE
 // =====================================================
 function titoloImmobile(imm) {
   if (imm.stato === 'IMM') {
@@ -1021,10 +1037,9 @@ function calcolaZoneFinali(idPrefix) {
 // =====================================================
 // PERSONE - SUB-TAB E RENDER
 // =====================================================
-let pTabAttivo = 'acquirenti';
+let pTabAttivo = 'acquirente';
 let pStatoRRFiltro = null;
 let pTipoProfFiltro = null;
-let pTipoFornFiltro = null;
 let pQueryRicerca = '';
 
 document.querySelectorAll('#persone-tabs .chip').forEach(chip => {
@@ -1032,10 +1047,10 @@ document.querySelectorAll('#persone-tabs .chip').forEach(chip => {
     pTabAttivo = chip.dataset.ptab;
     pStatoRRFiltro = null;
     pTipoProfFiltro = null;
-    pTipoFornFiltro = null;
     pQueryRicerca = '';
     document.getElementById('search-persone').value = '';
     document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c === chip));
+    aggiornaFabPersone();
     renderPersone();
   });
 });
@@ -1045,35 +1060,43 @@ document.getElementById('search-persone').addEventListener('input', (e) => {
   renderPersone();
 });
 
+function getFiltroPersonaLabel() {
+  if (pTabAttivo === 'acquirente') {
+    if (!pStatoRRFiltro) return 'Stato';
+    const s = STATI_RR.find(s => s.id === pStatoRRFiltro);
+    return s ? s.label : 'Stato';
+  }
+  if (pTabAttivo === 'professionista') {
+    if (!pTipoProfFiltro) return 'Tipo';
+    const t = TIPI_PROFESSIONISTA.find(t => t.id === pTipoProfFiltro);
+    return t ? t.label : 'Tipo';
+  }
+  return 'Filtro';
+}
+
+function apriFiltroPersone() {
+  if (pTabAttivo === 'acquirente') {
+    const opzioni = [{ value: '', label: 'Tutti' }].concat(STATI_RR.map(s => ({ value: s.id, label: s.label })));
+    apriFilterDD('Filtra per stato', opzioni, pStatoRRFiltro || '', (val) => { pStatoRRFiltro = val; renderPersone(); });
+  } else if (pTabAttivo === 'professionista') {
+    const opzioni = [{ value: '', label: 'Tutti' }].concat(TIPI_PROFESSIONISTA.map(t => ({ value: t.id, label: t.label })));
+    apriFilterDD('Filtra per tipo', opzioni, pTipoProfFiltro || '', (val) => { pTipoProfFiltro = val; renderPersone(); });
+  }
+}
+
 function renderPersone() {
   const cont = document.getElementById('lista-persone');
-  const chipsCont = document.getElementById('chips-persone');
+  const banner = document.getElementById('filtro-persone-attivo');
   if (!cont) return;
 
-  // Render chips filtri in base al tab
-  let chipsHtml = '';
-  if (pTabAttivo === 'acquirenti') {
-    chipsHtml += '<button class="chip' + (!pStatoRRFiltro ? ' active' : '') + '" onclick="setFiltroRR(null)">Tutti</button>';
-    for (const s of STATI_RR) {
-      chipsHtml += '<button class="chip' + (pStatoRRFiltro === s.id ? ' active' : '') + '" onclick="setFiltroRR(\'' + s.id + '\')">' + s.label + '</button>';
-    }
-  } else if (pTabAttivo === 'professionisti') {
-    chipsHtml += '<button class="chip' + (!pTipoProfFiltro ? ' active' : '') + '" onclick="setFiltroProf(null)">Tutti</button>';
-    for (const t of TIPI_PROFESSIONISTA) {
-      chipsHtml += '<button class="chip' + (pTipoProfFiltro === t.id ? ' active' : '') + '" onclick="setFiltroProf(\'' + t.id + '\')">' + t.label + '</button>';
-    }
-  } else if (pTabAttivo === 'fornitori') {
-    chipsHtml += '<button class="chip' + (!pTipoFornFiltro ? ' active' : '') + '" onclick="setFiltroForn(null)">Tutti</button>';
-    for (const t of TIPI_FORNITORI) {
-      chipsHtml += '<button class="chip' + (pTipoFornFiltro === t.id ? ' active' : '') + '" onclick="setFiltroForn(\'' + t.id + '\')">' + t.label + '</button>';
-    }
-  }
-  chipsCont.innerHTML = chipsHtml;
+  // Mostra filtro attivo + pulsante filtro
+  const filtroLabel = getFiltroPersonaLabel();
+  const isFiltroAttivo = (pTabAttivo === 'acquirente' && pStatoRRFiltro) || (pTabAttivo === 'professionista' && pTipoProfFiltro);
+  banner.innerHTML = '<div class="chips" style="padding-bottom:0;"><button class="chip-dropdown' + (isFiltroAttivo ? ' active' : '') + '" onclick="apriFiltroPersone()">Filtra: ' + escapeHtml(filtroLabel) + ' <span class="caret">▼</span></button>' + (isFiltroAttivo ? '<button class="chip" onclick="resetFiltroPersone()">✕ Rimuovi</button>' : '') + '</div>';
 
   let lista = DB.persone.filter(p => p.tipo === pTabAttivo);
-  if (pTabAttivo === 'acquirenti' && pStatoRRFiltro) lista = lista.filter(p => p.statoRR === pStatoRRFiltro);
-  if (pTabAttivo === 'professionisti' && pTipoProfFiltro) lista = lista.filter(p => p.tipoProf === pTipoProfFiltro);
-  if (pTabAttivo === 'fornitori' && pTipoFornFiltro) lista = lista.filter(p => p.tipoForn === pTipoFornFiltro);
+  if (pTabAttivo === 'acquirente' && pStatoRRFiltro) lista = lista.filter(p => p.statoRR === pStatoRRFiltro);
+  if (pTabAttivo === 'professionista' && pTipoProfFiltro) lista = lista.filter(p => p.tipoProf === pTipoProfFiltro);
 
   if (pQueryRicerca) {
     lista = lista.filter(p => {
@@ -1085,8 +1108,9 @@ function renderPersone() {
   lista.sort((a, b) => (a.cognomeNome || '').localeCompare(b.cognomeNome || ''));
 
   if (lista.length === 0) {
-    let label = pTabAttivo === 'acquirenti' ? 'acquirenti' : (pTabAttivo === 'professionisti' ? 'professionisti' : 'fornitori');
-    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">👥</div>' + (DB.persone.filter(p => p.tipo === pTabAttivo).length === 0 ? 'Nessun ' + label.slice(0, -1) + '. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>';
+    const label = pTabAttivo === 'acquirente' ? 'acquirenti' : 'professionisti';
+    const labelSing = pTabAttivo === 'acquirente' ? 'acquirente' : 'professionista';
+    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">👥</div>' + (DB.persone.filter(p => p.tipo === pTabAttivo).length === 0 ? 'Nessun ' + labelSing + '. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>';
     aggiornaContatori();
     return;
   }
@@ -1106,11 +1130,9 @@ function renderPersone() {
       html += '<span class="badge badge-RR-' + s.id + '">' + s.id.replace('-', ' ').toUpperCase() + '</span>';
     } else if (p.tipo === 'professionista') {
       html += '<span class="badge badge-PROF">PROF</span>';
-    } else if (p.tipo === 'fornitore') {
-      html += '<span class="badge badge-FORN">FORN</span>';
     }
     html += '</div>';
-    if (labelTipo) html += '<div class="item-sub">' + escapeHtml(labelTipo) + (p.collaboratore ? ' · collaboratore' : '') + '</div>';
+    if (labelTipo) html += '<div class="item-sub">' + escapeHtml(labelTipo) + '</div>';
     const tel = p.telefonoCell || p.telefono;
     if (tel) html += '<div class="item-sub">📞 ' + escapeHtml(tel) + '</div>';
     if (p.tipo === 'acquirente') {
@@ -1127,12 +1149,22 @@ function renderPersone() {
   aggiornaContatori();
 }
 
-function setFiltroRR(id) { pStatoRRFiltro = id; renderPersone(); }
-function setFiltroProf(id) { pTipoProfFiltro = id; renderPersone(); }
-function setFiltroForn(id) { pTipoFornFiltro = id; renderPersone(); }
+function resetFiltroPersone() {
+  if (pTabAttivo === 'acquirente') pStatoRRFiltro = null;
+  if (pTabAttivo === 'professionista') pTipoProfFiltro = null;
+  renderPersone();
+}
 
 // =====================================================
-// PERSONE - FORM NUOVO ACQUIRENTE
+// FORM NUOVA PERSONA (in base al sub-tab attivo)
+// =====================================================
+function apriFormNuovaPersona() {
+  if (pTabAttivo === 'acquirente') apriFormNuovoAcquirente();
+  else if (pTabAttivo === 'professionista') apriFormNuovoProfessionista();
+}
+
+// =====================================================
+// FORM NUOVO ACQUIRENTE
 // =====================================================
 function apriFormNuovoAcquirente() {
   const html = `
@@ -1161,10 +1193,10 @@ function apriFormNuovoAcquirente() {
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Cosa cerca</h2></div>
     <div class="form-group">
-      <div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="a-budget" placeholder="es. 180.000 €" autocomplete="off"></div>
-      <div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="a-tipo-imm" placeholder="es. trilocale, villa..." autocomplete="off"></div>
-      <div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona" placeholder="es. Ghinaglia" autocomplete="off"></div>
-      <div class="form-row"><label class="form-label">Mutuo / tempi / esigenze</label><textarea class="form-textarea" id="a-esigenze" placeholder="Note libere..."></textarea></div>
+      <div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="a-budget" placeholder="es. 180.000 €"></div>
+      <div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="a-tipo-imm" placeholder="es. trilocale, villa..."></div>
+      <div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona" placeholder="es. Ghinaglia"></div>
+      <div class="form-row"><label class="form-label">Mutuo / tempi / esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Immobili interessati</h2></div>
     <div class="form-group">
@@ -1224,12 +1256,16 @@ function salvaNuovoAcquirente() {
   DB.persone.push(p);
   Storage.save(DB);
   chiudiModal();
+  // Forza il sub-tab su acquirente per vedere la persona appena creata
+  pTabAttivo = 'acquirente';
+  document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === 'acquirente'));
+  aggiornaFabPersone();
   renderPersone();
   setTimeout(() => apriSchedaPersona(p.id), 200);
 }
 
 // =====================================================
-// PERSONE - FORM NUOVO PROFESSIONISTA
+// FORM NUOVO PROFESSIONISTA
 // =====================================================
 function apriFormNuovoProfessionista() {
   const html = `
@@ -1238,12 +1274,6 @@ function apriFormNuovoProfessionista() {
       <div class="form-row"><label class="form-label">Tipo *</label>
         <select class="form-select" id="p-tipoProf">
           ${TIPI_PROFESSIONISTA.map(t => '<option value="' + t.id + '">' + t.label + '</option>').join('')}
-        </select>
-      </div>
-      <div class="form-row"><label class="form-label">Mio o di un collega?</label>
-        <select class="form-select" id="p-collab">
-          <option value="mio">Mio</option>
-          <option value="collega">Di un collega</option>
         </select>
       </div>
     </div>
@@ -1271,7 +1301,6 @@ function salvaNuovoProfessionista() {
   const cognomeNome = ((g('p-cognomeNome') || {}).value || '').trim().toUpperCase();
   if (!cognomeNome) { alert('Inserisci cognome e nome'); return; }
   const tipoProf = (g('p-tipoProf') || {}).value || 'altro';
-  const collaboratore = (g('p-collab') || {}).value === 'collega';
   const telefonoCell = (g('p-cell') || {}).value || '';
   const telefonoUff = (g('p-uff') || {}).value || '';
   const email = (g('p-email') || {}).value || '';
@@ -1284,7 +1313,6 @@ function salvaNuovoProfessionista() {
     tipo: 'professionista',
     cognomeNome,
     tipoProf,
-    collaboratore,
     telefonoCell,
     telefonoUff,
     email,
@@ -1297,79 +1325,9 @@ function salvaNuovoProfessionista() {
   DB.persone.push(p);
   Storage.save(DB);
   chiudiModal();
-  renderPersone();
-  setTimeout(() => apriSchedaPersona(p.id), 200);
-}
-
-// =====================================================
-// PERSONE - FORM NUOVO FORNITORE
-// =====================================================
-function apriFormNuovoFornitore() {
-  const html = `
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Nome / Azienda *</label><input class="form-input" id="f-cognomeNome" placeholder="FOTO STUDIO XYZ" autocomplete="off"></div>
-      <div class="form-row"><label class="form-label">Tipo *</label>
-        <select class="form-select" id="f-tipoForn">
-          ${TIPI_FORNITORI.map(t => '<option value="' + t.id + '">' + t.label + '</option>').join('')}
-        </select>
-      </div>
-      <div class="form-row"><label class="form-label">Mio o di un collega?</label>
-        <select class="form-select" id="f-collab">
-          <option value="mio">Mio</option>
-          <option value="collega">Di un collega</option>
-        </select>
-      </div>
-    </div>
-    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Contatti (tutti opzionali)</h2></div>
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Cellulare</label><input class="form-input" id="f-cell" type="tel" placeholder="333 333 3333"></div>
-      <div class="form-row"><label class="form-label">Ufficio</label><input class="form-input" id="f-uff" type="tel" placeholder="0372 123456"></div>
-      <div class="form-row"><label class="form-label">Email</label><input class="form-input" id="f-email" type="email" placeholder="nome@email.it"></div>
-      <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-ind" placeholder="Via ..."></div>
-    </div>
-    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Note</h2></div>
-    <div class="form-group">
-      <div class="form-row"><textarea class="form-textarea" id="f-note" placeholder="Note libere..."></textarea></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
-      <button class="btn btn-primary" onclick="salvaNuovoFornitore()">Salva</button>
-    </div>
-  `;
-  apriModal('Nuovo fornitore', html);
-}
-
-function salvaNuovoFornitore() {
-  const g = (id) => document.getElementById(id);
-  const cognomeNome = ((g('f-cognomeNome') || {}).value || '').trim().toUpperCase();
-  if (!cognomeNome) { alert('Inserisci nome o azienda'); return; }
-  const tipoForn = (g('f-tipoForn') || {}).value || 'altro';
-  const collaboratore = (g('f-collab') || {}).value === 'collega';
-  const telefonoCell = (g('f-cell') || {}).value || '';
-  const telefonoUff = (g('f-uff') || {}).value || '';
-  const email = (g('f-email') || {}).value || '';
-  const indirizzoUff = ((g('f-ind') || {}).value || '').trim().toUpperCase();
-  const note = (g('f-note') || {}).value || '';
-
-  const adesso = new Date().toISOString();
-  const p = {
-    id: uid(),
-    tipo: 'fornitore',
-    cognomeNome,
-    tipoForn,
-    collaboratore,
-    telefonoCell,
-    telefonoUff,
-    email,
-    indirizzoUff,
-    note,
-    attivita: [],
-    createdAt: adesso,
-    updatedAt: adesso
-  };
-  DB.persone.push(p);
-  Storage.save(DB);
-  chiudiModal();
+  pTabAttivo = 'professionista';
+  document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === 'professionista'));
+  aggiornaFabPersone();
   renderPersone();
   setTimeout(() => apriSchedaPersona(p.id), 200);
 }
@@ -1389,22 +1347,18 @@ function apriSchedaPersona(id) {
   const labelTipo = getLabelTipoPersona(p);
   let html = '';
 
-  // Badge stato
   html += '<div style="margin-bottom:14px;">';
   if (p.tipo === 'acquirente') {
     const s = getStatoRR(p);
     html += '<span class="badge badge-RR-' + s.id + '">' + s.label + '</span>';
   } else if (p.tipo === 'professionista') {
     html += '<span class="badge badge-PROF">PROFESSIONISTA</span>';
-  } else if (p.tipo === 'fornitore') {
-    html += '<span class="badge badge-FORN">FORNITORE</span>';
   }
   html += '</div>';
 
-  // Card dati
   html += '<div class="card">';
   if (p.cognomeNome) html += '<div class="info-row"><span class="label">Nome</span><span class="value">' + escapeHtml(p.cognomeNome) + '</span></div>';
-  if (labelTipo) html += '<div class="info-row"><span class="label">Tipo</span><span class="value">' + escapeHtml(labelTipo) + (p.collaboratore ? ' · collaboratore' : '') + '</span></div>';
+  if (labelTipo) html += '<div class="info-row"><span class="label">Tipo</span><span class="value">' + escapeHtml(labelTipo) + '</span></div>';
   const telPrincipale = p.telefonoCell || p.telefono;
   if (telPrincipale) html += '<div class="info-row"><span class="label">Cellulare</span><span class="value">' + escapeHtml(telPrincipale) + '</span></div>';
   if (p.telefonoUff) html += '<div class="info-row"><span class="label">Ufficio</span><span class="value">' + escapeHtml(p.telefonoUff) + '</span></div>';
@@ -1422,7 +1376,6 @@ function apriSchedaPersona(id) {
   html += '<div style="margin-top:8px;"><span class="tag">' + tag + '</span></div>';
   html += '</div>';
 
-  // Immobili interessati (solo acquirenti)
   if (p.tipo === 'acquirente' && p.immobili && p.immobili.length > 0) {
     html += '<div class="card"><h2><span class="dot"></span>Immobili interessati (' + p.immobili.length + ')</h2>';
     html += '<div class="immobili-list">';
@@ -1453,7 +1406,7 @@ function apriSchedaPersona(id) {
   html += '<button class="action-btn" onclick="apriNuovaAttivitaPersona()"><span class="icon">➕</span>Attività</button>';
   html += '</div>';
 
-  // Timeline
+  // Timeline attività
   html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
   if (attivita.length === 0) html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
   else {
@@ -1472,7 +1425,6 @@ function apriSchedaPersona(id) {
   }
   html += '</div>';
 
-  // Elimina
   html += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-danger" onclick="eliminaPersona()">🗑️ Elimina</button></div>';
 
   apriModal(titolo, html);
@@ -1486,7 +1438,6 @@ function apriModificaPersona() {
   if (!p) return;
   if (p.tipo === 'acquirente') apriModificaAcquirente(p);
   else if (p.tipo === 'professionista') apriModificaProfessionista(p);
-  else if (p.tipo === 'fornitore') apriModificaFornitore(p);
 }
 
 function apriModificaAcquirente(p) {
@@ -1524,7 +1475,6 @@ function apriModificaAcquirente(p) {
       <div class="form-row">
         <label class="form-label">Cognomi degli immobili (separati da /)</label>
         <input class="form-input" id="m-a-immobili" value="${escapeHtml((p.immobili || []).join(' / '))}">
-        <div style="font-size:11px;color:var(--testo-sec);margin-top:6px;">Aggiungi tra parentesi il collega se non è tuo, es: <em>BIANCHI (gabri) / VERDI</em></div>
       </div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Note</h2></div>
@@ -1564,19 +1514,12 @@ function salvaModificaAcquirente(id) {
 }
 
 function apriModificaProfessionista(p) {
-  const isCollab = !!p.collaboratore;
   const html = `
     <div class="form-group">
       <div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="m-p-cognomeNome" value="${escapeHtml(p.cognomeNome || '')}"></div>
       <div class="form-row"><label class="form-label">Tipo</label>
         <select class="form-select" id="m-p-tipoProf">
           ${TIPI_PROFESSIONISTA.map(t => '<option value="' + t.id + '"' + (p.tipoProf === t.id ? ' selected' : '') + '>' + t.label + '</option>').join('')}
-        </select>
-      </div>
-      <div class="form-row"><label class="form-label">Mio o di un collega?</label>
-        <select class="form-select" id="m-p-collab">
-          <option value="mio"${!isCollab ? ' selected' : ''}>Mio</option>
-          <option value="collega"${isCollab ? ' selected' : ''}>Di un collega</option>
         </select>
       </div>
     </div>
@@ -1603,64 +1546,11 @@ function salvaModificaProfessionista(id) {
   const g = (id) => document.getElementById(id);
   p.cognomeNome = ((g('m-p-cognomeNome') || {}).value || '').trim().toUpperCase();
   p.tipoProf = (g('m-p-tipoProf') || {}).value || p.tipoProf;
-  p.collaboratore = (g('m-p-collab') || {}).value === 'collega';
   p.telefonoCell = (g('m-p-cell') || {}).value || '';
   p.telefonoUff = (g('m-p-uff') || {}).value || '';
   p.email = (g('m-p-email') || {}).value || '';
   p.indirizzoUff = ((g('m-p-ind') || {}).value || '').trim().toUpperCase();
   p.note = (g('m-p-note') || {}).value || '';
-  p.updatedAt = new Date().toISOString();
-  Storage.save(DB);
-  renderPersone();
-  apriSchedaPersona(p.id);
-}
-
-function apriModificaFornitore(p) {
-  const isCollab = !!p.collaboratore;
-  const html = `
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Nome / Azienda</label><input class="form-input" id="m-f-cognomeNome" value="${escapeHtml(p.cognomeNome || '')}"></div>
-      <div class="form-row"><label class="form-label">Tipo</label>
-        <select class="form-select" id="m-f-tipoForn">
-          ${TIPI_FORNITORI.map(t => '<option value="' + t.id + '"' + (p.tipoForn === t.id ? ' selected' : '') + '>' + t.label + '</option>').join('')}
-        </select>
-      </div>
-      <div class="form-row"><label class="form-label">Mio o di un collega?</label>
-        <select class="form-select" id="m-f-collab">
-          <option value="mio"${!isCollab ? ' selected' : ''}>Mio</option>
-          <option value="collega"${isCollab ? ' selected' : ''}>Di un collega</option>
-        </select>
-      </div>
-    </div>
-    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Contatti (opzionali)</h2></div>
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Cellulare</label><input class="form-input" id="m-f-cell" type="tel" value="${escapeHtml(p.telefonoCell || '')}"></div>
-      <div class="form-row"><label class="form-label">Ufficio</label><input class="form-input" id="m-f-uff" type="tel" value="${escapeHtml(p.telefonoUff || '')}"></div>
-      <div class="form-row"><label class="form-label">Email</label><input class="form-input" id="m-f-email" type="email" value="${escapeHtml(p.email || '')}"></div>
-      <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="m-f-ind" value="${escapeHtml(p.indirizzoUff || '')}"></div>
-    </div>
-    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Note</h2></div>
-    <div class="form-group"><div class="form-row"><textarea class="form-textarea" id="m-f-note">${escapeHtml(p.note || '')}</textarea></div></div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="apriSchedaPersona('${p.id}')">Annulla</button>
-      <button class="btn btn-primary" onclick="salvaModificaFornitore('${p.id}')">Salva</button>
-    </div>
-  `;
-  apriModal('Modifica fornitore', html);
-}
-
-function salvaModificaFornitore(id) {
-  const p = DB.persone.find(x => x.id === id);
-  if (!p) return;
-  const g = (id) => document.getElementById(id);
-  p.cognomeNome = ((g('m-f-cognomeNome') || {}).value || '').trim().toUpperCase();
-  p.tipoForn = (g('m-f-tipoForn') || {}).value || p.tipoForn;
-  p.collaboratore = (g('m-f-collab') || {}).value === 'collega';
-  p.telefonoCell = (g('m-f-cell') || {}).value || '';
-  p.telefonoUff = (g('m-f-uff') || {}).value || '';
-  p.email = (g('m-f-email') || {}).value || '';
-  p.indirizzoUff = ((g('m-f-ind') || {}).value || '').trim().toUpperCase();
-  p.note = (g('m-f-note') || {}).value || '';
   p.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderPersone();
@@ -1774,12 +1664,8 @@ function apriAzioniAttivitaPersona(idAtt) {
   let html = '<div class="card" style="padding:16px;">';
   html += '<div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">' + (isDaFare ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(att)) + '</div>';
   html += '<div style="font-size:15px;line-height:1.4;">' + escapeHtml(att.testo) + '</div>';
-  if (att.updatedAt) html += '<div style="font-size:11px;color:var(--testo-sec);margin-top:8px;">Aggiornata il ' + formattaData(att.updatedAt) + '</div>';
-  if (att.dataEsecuzione) html += '<div style="font-size:11px;color:var(--testo-sec);margin-top:2px;">Eseguita il ' + formattaData(att.dataEsecuzione) + '</div>';
   html += '</div>';
-  if (isDaFare) {
-    html += '<button class="btn btn-primary" onclick="segnaComeFattaPersona(\'' + idAtt + '\')">✅ Segna come fatta</button>';
-  }
+  if (isDaFare) html += '<button class="btn btn-primary" onclick="segnaComeFattaPersona(\'' + idAtt + '\')">✅ Segna come fatta</button>';
   html += '<button class="btn btn-danger" onclick="eliminaAttivitaPersona(\'' + idAtt + '\')">🗑️ Elimina</button>';
   html += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
   apriModal('Attività', html);
@@ -1842,7 +1728,7 @@ function eliminaPersona() {
 }
 
 // =====================================================
-// FORM NUOVO IMMOBILE (rimasto dal Modulo 3)
+// FORM NUOVO IMMOBILE
 // =====================================================
 function apriFormNuovo() {
   const daCondominio = !!condoSelezionato;
@@ -2203,11 +2089,19 @@ function duplicaImmobile(id) {
 // SCHEDA IMMOBILE
 // =====================================================
 let immobileAperto = null;
+window._addrToolsAperti = false;
+
+function toggleAddrTools() {
+  window._addrToolsAperti = !window._addrToolsAperti;
+  const el = document.getElementById('addr-tools');
+  if (el) el.style.display = window._addrToolsAperti ? 'block' : 'none';
+}
 
 function apriScheda(id) {
   const imm = DB.immobili.find(i => i.id === id);
   if (!imm) return;
   immobileAperto = id;
+  window._addrToolsAperti = false;
   const titolo = titoloImmobile(imm);
   const attivita = (imm.attivita || []).slice().sort(compareAttivitaCrescente);
   const condo = getCondominio(imm);
@@ -2217,31 +2111,33 @@ function apriScheda(id) {
   const zoneDaCondo = !imm.villa && detCondo.zone && detCondo.zone.length > 0;
   const haDettagliCondo = !imm.villa && (detCondo.annoCostruzione || detCondo.ristrutturazioneInterna || detCondo.ristrutturazioneEsterna || detCondo.statoCondominio || detCondo.cappotto || detCondo.ascensoreCondominiale || (detCondo.amministratore && detCondo.amministratore.nome));
   const altriProp = imm.altriProprietari || [];
+  const haCoord = !!(imm.lat && imm.lng);
   let html = '';
   html += '<div style="margin-bottom:14px;"><span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
   if (imm.villa) html += ' <span style="font-size:11px;color:#059669;font-weight:700;margin-left:8px;">🏠 VILLA</span>';
   if (imm.sottotipo) html += ' <span style="font-size:12px;color:var(--testo-sec);margin-left:8px;">' + escapeHtml(imm.sottotipo) + '</span>';
   html += '</div>';
   if (imm.z) html += '<div style="margin-bottom:12px;"><span class="zcode-badge">CODICE INTERNO: z' + imm.z + '</span></div>';
+
+  // Card principale - INDIRIZZO con check + link "correggi posizione" + tools
   html += '<div class="card">';
-  if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
-  if (imm.lat && imm.lng) {
-    const prec = imm.geoPreciso === true ? '<span style="color:#059669;font-weight:600;">✓ preciso</span>' : (imm.geoPreciso === false ? '<span style="color:#d97706;font-weight:600;">⚠ approssimativo</span>' : '');
-    html += '<div class="info-row"><span class="label">Coordinate</span><span class="value" style="font-size:12px;">' + imm.lat.toFixed(5) + ', ' + imm.lng.toFixed(5) + ' ' + prec + '</span></div>';
+  if (imm.indirizzo) {
+    const checkIcon = haCoord && imm.geoPreciso === true ? ' <span class="addr-check">✓</span>' : '';
+    html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + checkIcon + ' <span class="addr-link" onclick="toggleAddrTools()">correggi posizione</span></span></div>';
+    html += '<div id="addr-tools" class="addr-tools" style="display:none;">';
+    if (haCoord) {
+      html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="apriGoogleMaps(' + imm.lat + ',' + imm.lng + ')">🗺️ Google Maps</button>';
+      html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="apriAppleMaps(' + imm.lat + ',' + imm.lng + ',\'' + escapeHtml(imm.indirizzo).replace(/'/g, "\\'") + '\')">🍎 Apple Maps</button>';
+    }
+    html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="apriModificaCoordinate()">📍 Coordinate manuali</button>';
+    if (haCoord) html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="riGeocodificaImmobile(\'' + imm.id + '\')">🔄 Ri-geocodifica da indirizzo</button>';
+    html += '</div>';
   }
   if (imm.citofono) html += '<div class="info-row"><span class="label">Citofono</span><span class="value">' + escapeHtml(imm.citofono) + '</span></div>';
   if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario principale</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
   if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
   if (imm.residenza) html += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(imm.residenza) + '</span></div>';
   if (imm.note) html += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(imm.note) + '</span></div>';
-  if (imm.lat && imm.lng) {
-    html += '<div style="display:flex;gap:8px;margin-top:12px;">';
-    html += '<button class="btn btn-secondary" style="margin-bottom:0;flex:1;font-size:13px;" onclick="apriGoogleMaps(' + imm.lat + ',' + imm.lng + ')">🗺️ Google</button>';
-    html += '<button class="btn btn-secondary" style="margin-bottom:0;flex:1;font-size:13px;" onclick="apriAppleMaps(' + imm.lat + ',' + imm.lng + ',\'' + escapeHtml(imm.indirizzo).replace(/'/g, "\\'") + '\')">🍎 Apple</button>';
-    html += '</div>';
-  }
-  html += '<button class="btn btn-secondary" style="margin-top:8px;font-size:13px;" onclick="apriModificaCoordinate()">📍 Modifica coordinate manualmente</button>';
-  if (imm.lat && imm.lng) html += '<button class="btn btn-secondary" style="margin-top:8px;font-size:13px;" onclick="riGeocodificaImmobile(\'' + imm.id + '\')">🔄 Ri-geocodifica da indirizzo</button>';
   if (imm.altriImmobili && imm.altriImmobili.length > 0) {
     html += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Altri immobili di proprietà</div><div class="immobili-list">';
     for (const a of imm.altriImmobili) html += '<div class="immobile-line"><span class="txt">🏠 ' + escapeHtml(a) + '</span></div>';
@@ -2269,6 +2165,34 @@ function apriScheda(id) {
     html += '</div>';
   }
   html += '</div>';
+
+  // AZIONI PRINCIPALI (modifica, stato, attività)
+  html += '<div class="actions">';
+  html += '<button class="action-btn" onclick="apriModifica()"><span class="icon">✏️</span>Modifica</button>';
+  html += '<button class="action-btn" onclick="apriCambiaStato()"><span class="icon">🔄</span>Stato</button>';
+  html += '<button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">➕</span>Attività</button>';
+  html += '</div>';
+
+  // TIMELINE ATTIVITÀ (subito dopo dettagli principali, come richiesto #9)
+  html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
+  if (attivita.length === 0) html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
+  else {
+    for (const a of attivita) {
+      const isDaFare = a.tipo === 'da_fare' && !a.completata;
+      html += '<div class="timeline-item ' + (isDaFare ? 'da-fare' : '') + '" onclick="apriAzioniAttivita(\'' + a.id + '\')">';
+      html += '<span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>';
+      html += escapeHtml(a.testo);
+      if (isDaFare) html += ' <span style="color:var(--arancione);font-weight:600;">[da fare]</span>';
+      const metaParts = [];
+      if (a.updatedAt) metaParts.push('aggiornata il ' + formattaData(a.updatedAt));
+      if (a.dataEsecuzione) metaParts.push('eseguita il ' + formattaData(a.dataEsecuzione));
+      if (metaParts.length > 0) html += '<div class="meta">' + metaParts.join(' · ') + '</div>';
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+
+  // CONDOMINIO
   if (!imm.villa) {
     const detCondoMostrati = [];
     if (detCondo.annoCostruzione) detCondoMostrati.push(['Anno costruzione', detCondo.annoCostruzione]);
@@ -2293,6 +2217,7 @@ function apriScheda(id) {
     if (condo) html += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')">✏️ Modifica dettagli condominio</button>';
     html += '</div>';
   }
+
   if (zoneEff.length > 0) {
     html += '<div class="card"><h2><span class="dot"></span>Zone' + (zoneDaCondo ? ' <span style="font-size:11px;color:#059669;font-weight:600;text-transform:none;letter-spacing:0;">(ereditate dal condominio)</span>' : '') + '</h2><div class="zone-chips">';
     for (const z of zoneEff) {
@@ -2301,6 +2226,7 @@ function apriScheda(id) {
     }
     html += '</div></div>';
   }
+
   const det = imm.dettagli || {};
   const gruppoUnita = [['Scala', det.scala], ['Piano', det.piano], ['Interno', det.interno]].filter(([_, v]) => v && v !== '');
   const gruppoSuperficie = [['Mq', det.mq], ['Vani', det.vani], ['Camere', det.camere], ['Bagni', det.bagni]].filter(([_, v]) => v && v !== '');
@@ -2316,6 +2242,7 @@ function apriScheda(id) {
     if (gruppoStato.length) { html += '<div class="section-title">Stato</div>'; for (const [k, v] of gruppoStato) html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; }
     html += '</div>';
   }
+
   if (fratelli.length > 0) {
     html += '<div class="card"><div class="condo-header">🏢 CONDOMINIO · ' + escapeHtml(condo) + '</div>';
     html += '<div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;">' + (fratelli.length + 1) + ' immobili in questo condominio</div><div class="immobili-list">';
@@ -2326,29 +2253,9 @@ function apriScheda(id) {
     }
     html += '</div></div>';
   }
-  html += '<div class="actions">';
-  html += '<button class="action-btn" onclick="apriModifica()"><span class="icon">✏️</span>Modifica</button>';
-  html += '<button class="action-btn" onclick="apriCambiaStato()"><span class="icon">🔄</span>Stato</button>';
-  html += '<button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">➕</span>Attività</button>';
-  html += '</div>';
+
   html += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + imm.id + '\')">📋 Duplica immobile</button>';
-  html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
-  if (attivita.length === 0) html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
-  else {
-    for (const a of attivita) {
-      const isDaFare = a.tipo === 'da_fare' && !a.completata;
-      html += '<div class="timeline-item ' + (isDaFare ? 'da-fare' : '') + '" onclick="apriAzioniAttivita(\'' + a.id + '\')">';
-      html += '<span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>';
-      html += escapeHtml(a.testo);
-      if (isDaFare) html += ' <span style="color:var(--arancione);font-weight:600;">[da fare]</span>';
-      const metaParts = [];
-      if (a.updatedAt) metaParts.push('aggiornata il ' + formattaData(a.updatedAt));
-      if (a.dataEsecuzione) metaParts.push('eseguita il ' + formattaData(a.dataEsecuzione));
-      if (metaParts.length > 0) html += '<div class="meta">' + metaParts.join(' · ') + '</div>';
-      html += '</div>';
-    }
-  }
-  html += '</div>';
+
   html += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="eliminaImmobile()">🗑️ Elimina</button>';
   if (imm.stato === 'VND') html += '<button class="btn btn-primary" onclick="archiviaImmobile()">📦 Archivia</button>';
   html += '</div>';
@@ -2866,7 +2773,6 @@ function toggleValutazione() {
   imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Stato notizia: ' + (isValutata ? '→ non ancora valutata' : '→ valutata'), completata: true });
   imm.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
 }
-
 function eliminaImmobile() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
@@ -2910,27 +2816,18 @@ function initMappa() {
   markersLayer = L.layerGroup().addTo(map);
   aggiornaMappa();
 }
-
 function creaPinIcona(imm) {
   const stato = imm.stato;
   const isVilla = !!imm.villa;
   let cls = 'pin-' + stato;
   if (isVilla) cls = 'pin-villa';
-  const html = `
-    <div class="pin-wrap ${cls}">
-      <div class="pin-body"><div class="pin-label">${isVilla ? '🏠' : stato}</div></div>
-    </div>
-  `;
+  const html = `<div class="pin-wrap ${cls}"><div class="pin-body"><div class="pin-label">${isVilla ? '🏠' : stato}</div></div></div>`;
   const size = isVilla ? [28, 28] : [32, 40];
   const anchor = isVilla ? [14, 14] : [16, 40];
   return L.divIcon({ className: 'arangiò-pin', html: html, iconSize: size, iconAnchor: anchor, popupAnchor: [0, -40] });
 }
 function creaPinCondominio(num) {
-  const html = `
-    <div class="pin-wrap pin-condo">
-      <div class="pin-body"><div class="pin-label">${num}</div></div>
-    </div>
-  `;
+  const html = `<div class="pin-wrap pin-condo"><div class="pin-body"><div class="pin-label">${num}</div></div></div>`;
   return L.divIcon({ className: 'arangiò-pin', html: html, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] });
 }
 function apriPopupImmobile(immId) { chiudiModal(); apriScheda(immId); }
@@ -2995,13 +2892,11 @@ function aggiornaMappa() {
       const zone = getZoneEffettive(imm);
       const zoneStr = zone.length > 0 ? '📍 ' + zone.join(' · ') : '';
       const tel = imm.telefono ? '📞 ' + escapeHtml(imm.telefono) : '';
-      const prec = imm.geoPreciso === true ? '<div class="pop-prec ok">✓ Posizione precisa</div>' : (imm.geoPreciso === false ? '<div class="pop-prec warn">⚠ Posizione approssimativa</div>' : '');
       const popup = `<div class="arangiò-popup">
         <div class="pop-titolo">${escapeHtml(titolo)}</div>
         <div class="pop-sub"><span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
         ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
         ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
-        ${prec}
         <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">📋 Apri scheda</button>
         <button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${imm.lat}, ${imm.lng}, '${escapeHtml(imm.indirizzo).replace(/'/g, "\\'")}')">🧭 Naviga</button>
       </div>`;
@@ -3043,13 +2938,11 @@ function aggiornaMappa() {
     const zoneStr = zone.length > 0 ? '📍 ' + zone.join(' · ') : '';
     const tel = imm.telefono ? '📞 ' + escapeHtml(imm.telefono) : '';
     const villaTag = imm.villa ? '<span style="font-size:9px;color:#059669;font-weight:700;">🏠 VILLA</span> ' : '';
-    const prec = imm.geoPreciso === true ? '<div class="pop-prec ok">✓ Posizione precisa</div>' : (imm.geoPreciso === false ? '<div class="pop-prec warn">⚠ Posizione approssimativa</div>' : '');
     const popup = `<div class="arangiò-popup">
       <div class="pop-titolo">${escapeHtml(titolo)}</div>
       <div class="pop-sub">${villaTag}<span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
       ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
       ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
-      ${prec}
       <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">📋 Apri scheda</button>
       <button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${imm.lat}, ${imm.lng}, '${escapeHtml(imm.indirizzo).replace(/'/g, "\\'")}')">🧭 Naviga</button>
     </div>`;
@@ -3125,7 +3018,7 @@ function cancellaTutto() {
 }
 
 // =====================================================
-// AVVIO
+// IMPOSTAZIONI CITTÀ
 // =====================================================
 function apriImpostazioniCitta() {
   const citta = getCittaPrincipale();
@@ -3161,7 +3054,15 @@ function resettaCittaPrincipale() {
   if (el) el.value = CITTA_DEFAULT;
 }
 
-aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema(); renderPersone();
+// =====================================================
+// AVVIO
+// =====================================================
+aggiornaChips();
+renderListaImmobili();
+aggiornaContatori();
+aggiornaInfoSistema();
+aggiornaFabPersone();
+renderPersone();
 </script>
 
 </body>
