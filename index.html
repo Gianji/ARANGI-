@@ -66,8 +66,9 @@
   .active-filter-banner .x { background: #dbe6f3; border: none; width: 22px; height: 22px; border-radius: 11px; font-family: inherit; font-size: 13px; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .item-card { background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--ombra); cursor: pointer; transition: transform 0.1s; }
   .item-card:active { transform: scale(0.99); }
-  .item-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
-  .item-title { font-size: 15px; font-weight: 700; color: var(--testo); letter-spacing: -0.2px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+  .item-title { font-size: 15px; font-weight: 700; color: var(--testo); letter-spacing: -0.2px; flex: 1; word-break: break-word; overflow-wrap: anywhere; line-height: 1.3; }
+  .item-card .badge { margin-top: 1px; }
   .item-sub { font-size: 13px; color: var(--testo-sec); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .item-meta { font-size: 12px; color: var(--testo-sec); margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f1f3; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
@@ -158,7 +159,10 @@
   /* Indicatore posizione corretta accanto all'indirizzo */
   .addr-line { display: flex; align-items: center; justify-content: flex-end; gap: 6px; text-align: right; }
   .addr-check { color: #059669; font-weight: 800; font-size: 14px; flex-shrink: 0; }
-  .addr-link { color: var(--blu); font-weight: 600; font-size: 12px; cursor: pointer; text-decoration: underline; flex-shrink: 0; }
+  .addr-click { color: var(--blu); font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(0,61,122,0.35); text-underline-offset: 3px; }
+  .addr-click:active { opacity: 0.6; }
+  .addr-link { color: var(--blu); cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; padding: 2px 4px; border-radius: 6px; transition: background 0.15s; }
+  .addr-link:active { background: #eef4fb; }
   .addr-tools { padding-top: 8px; border-top: 1px solid #f0f1f3; margin-top: 8px; }
 
   /* Dropdown filtri */
@@ -313,7 +317,7 @@
   </main>
 
   <div id="fab-menu" class="fab-menu" style="display:none;"></div>
-  <button class="fab" id="fab-immobili" onclick="toggleFabMenu()">+</button>
+  <button class="fab" id="fab-immobili" onclick="onFabClick()">+</button>
 
   <nav class="tabbar">
     <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Immobili</button>
@@ -661,7 +665,6 @@ tabButtons.forEach(btn => {
       if (tab === 'immobili') {
         fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">🏠 Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">🏢 Nuovo condominio</button>';
       } else if (tab === 'persone') {
-        // FAB dinamico in base al sub-tab attivo
         aggiornaFabPersone();
       }
 
@@ -672,12 +675,8 @@ tabButtons.forEach(btn => {
 });
 
 function aggiornaFabPersone() {
-  const fabMenu = document.getElementById('fab-menu');
-  if (pTabAttivo === 'acquirente') {
-    fabMenu.innerHTML = '<button onclick="fabMenuNuovoPersona()">🏠 Nuovo acquirente</button>';
-  } else if (pTabAttivo === 'professionista') {
-    fabMenu.innerHTML = '<button onclick="fabMenuNuovoPersona()">💼 Nuovo professionista</button>';
-  }
+  // Il FAB in Persone apre direttamente il form (vedi onFabClick)
+  document.getElementById('fab-menu').innerHTML = '';
 }
 
 function aggiornaInfoSistema() {
@@ -730,6 +729,18 @@ function chiudiFilterDD() {
 // =====================================================
 let fabMenuAperto = false;
 function toggleFabMenu() { fabMenuAperto = !fabMenuAperto; document.getElementById('fab-menu').style.display = fabMenuAperto ? 'flex' : 'none'; }
+function onFabClick() {
+  const activeTab = document.querySelector('.tabbar button.active');
+  const tab = activeTab ? activeTab.dataset.tab : null;
+  // In Persone c'è una sola azione: apri direttamente il form corretto
+  if (tab === 'persone') {
+    fabMenuAperto = false;
+    document.getElementById('fab-menu').style.display = 'none';
+    apriFormNuovaPersona();
+    return;
+  }
+  toggleFabMenu();
+}
 function fabMenuNuovoImmobile() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovo(); }
 function fabMenuNuovoCondominio() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoCondominio(); }
 function fabMenuNuovoPersona() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovaPersona(); }
@@ -1089,7 +1100,6 @@ function renderPersone() {
   const banner = document.getElementById('filtro-persone-attivo');
   if (!cont) return;
 
-  // Mostra filtro attivo + pulsante filtro
   const filtroLabel = getFiltroPersonaLabel();
   const isFiltroAttivo = (pTabAttivo === 'acquirente' && pStatoRRFiltro) || (pTabAttivo === 'professionista' && pTipoProfFiltro);
   banner.innerHTML = '<div class="chips" style="padding-bottom:0;"><button class="chip-dropdown' + (isFiltroAttivo ? ' active' : '') + '" onclick="apriFiltroPersone()">Filtra: ' + escapeHtml(filtroLabel) + ' <span class="caret">▼</span></button>' + (isFiltroAttivo ? '<button class="chip" onclick="resetFiltroPersone()">✕ Rimuovi</button>' : '') + '</div>';
@@ -1256,7 +1266,6 @@ function salvaNuovoAcquirente() {
   DB.persone.push(p);
   Storage.save(DB);
   chiudiModal();
-  // Forza il sub-tab su acquirente per vedere la persona appena creata
   pTabAttivo = 'acquirente';
   document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === 'acquirente'));
   aggiornaFabPersone();
@@ -2119,16 +2128,16 @@ function apriScheda(id) {
   html += '</div>';
   if (imm.z) html += '<div style="margin-bottom:12px;"><span class="zcode-badge">CODICE INTERNO: z' + imm.z + '</span></div>';
 
-  // Card principale - INDIRIZZO con check + link "correggi posizione" + tools
+  // Card principale - INDIRIZZO cliccabile (apre Google Maps) + icona chiave inglese per tools
   html += '<div class="card">';
   if (imm.indirizzo) {
     const checkIcon = haCoord && imm.geoPreciso === true ? ' <span class="addr-check">✓</span>' : '';
-    html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + checkIcon + ' <span class="addr-link" onclick="toggleAddrTools()">correggi posizione</span></span></div>';
+    const addrClickable = haCoord
+      ? ' class="addr-click" onclick="apriGoogleMaps(' + imm.lat + ',' + imm.lng + ')" title="Apri in Google Maps"'
+      : '';
+    const wrenchSvg = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>';
+    html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value"><span' + addrClickable + '>' + escapeHtml(imm.indirizzo) + '</span>' + checkIcon + ' <span class="addr-link" onclick="toggleAddrTools()" title="Correggi posizione">' + wrenchSvg + '</span></span></div>';
     html += '<div id="addr-tools" class="addr-tools" style="display:none;">';
-    if (haCoord) {
-      html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="apriGoogleMaps(' + imm.lat + ',' + imm.lng + ')">🗺️ Google Maps</button>';
-      html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="apriAppleMaps(' + imm.lat + ',' + imm.lng + ',\'' + escapeHtml(imm.indirizzo).replace(/'/g, "\\'") + '\')">🍎 Apple Maps</button>';
-    }
     html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="apriModificaCoordinate()">📍 Coordinate manuali</button>';
     if (haCoord) html += '<button class="btn btn-secondary" style="font-size:13px;" onclick="riGeocodificaImmobile(\'' + imm.id + '\')">🔄 Ri-geocodifica da indirizzo</button>';
     html += '</div>';
@@ -2166,6 +2175,14 @@ function apriScheda(id) {
   }
   html += '</div>';
 
+  // AZIONI RAPIDE - Chiama / WhatsApp (se c'è un telefono)
+  if (imm.telefono) {
+    html += '<div class="actions">';
+    html += '<button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(imm.telefono) + '\')"><span class="icon">📞</span>Chiama</button>';
+    html += '<button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(imm.telefono) + '\')"><span class="icon">💬</span>WhatsApp</button>';
+    html += '</div>';
+  }
+
   // AZIONI PRINCIPALI (modifica, stato, attività)
   html += '<div class="actions">';
   html += '<button class="action-btn" onclick="apriModifica()"><span class="icon">✏️</span>Modifica</button>';
@@ -2173,7 +2190,7 @@ function apriScheda(id) {
   html += '<button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">➕</span>Attività</button>';
   html += '</div>';
 
-  // TIMELINE ATTIVITÀ (subito dopo dettagli principali, come richiesto #9)
+  // TIMELINE ATTIVITÀ
   html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
   if (attivita.length === 0) html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
   else {
