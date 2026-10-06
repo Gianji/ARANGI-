@@ -221,7 +221,6 @@
 
   .tabbar button.active { color: var(--blu); }
 
-  /* ============ IMMOBILI ============ */
   .search-bar {
     width: 100%;
     padding: 12px 16px;
@@ -369,7 +368,6 @@
 
   .fab:active { transform: scale(0.92); }
 
-  /* ============ MODAL ============ */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -445,7 +443,6 @@
     padding-bottom: calc(20px + env(safe-area-inset-bottom));
   }
 
-  /* ============ FORM ============ */
   .form-group {
     background: var(--card);
     border-radius: 14px;
@@ -507,7 +504,6 @@
 
   .btn-row .btn { margin-bottom: 0; flex: 1; }
 
-  /* ============ TIMELINE ============ */
   .timeline-item {
     padding: 10px 0;
     border-bottom: 1px solid #f0f1f3;
@@ -536,7 +532,6 @@
     border-bottom: none;
   }
 
-  /* ============ AZIONI SHORTCUT ============ */
   .actions {
     display: flex;
     gap: 10px;
@@ -733,7 +728,8 @@ const Storage = {
   },
   default() {
     return {
-      versione: 2,
+      versione: 3,
+      nextSeq: 1,
       immobili: [],
       persone: [],
       attivita: [],
@@ -769,6 +765,15 @@ function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// Restituisce il prossimo numero di sequenza incrementale.
+// Serve per ordinare le attività inserite nello stesso minuto/secondo.
+function prossimoSeq() {
+  if (typeof DB.nextSeq !== 'number') DB.nextSeq = 1;
+  const s = DB.nextSeq;
+  DB.nextSeq = s + 1;
+  return s;
+}
+
 // =====================================================
 // NAVIGAZIONE TAB
 // =====================================================
@@ -781,7 +786,6 @@ tabButtons.forEach(btn => {
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
     document.querySelector('.app-content').scrollTop = 0;
-
     document.getElementById('fab-immobili').style.display = (tab === 'immobili') ? 'flex' : 'none';
   });
 });
@@ -803,12 +807,10 @@ function chiudiModal() {
 // =====================================================
 // IMMOBILI - TITOLO
 // =====================================================
-// Regola: tutto maiuscolo tranne "x" (separatore) e "z" (prefisso zona)
 function titoloImmobile(imm) {
-  if (imm.tipo === 'censito' || (imm.stato === 'IMM' && imm.z !== null)) {
+  if (imm.stato === 'IMM') {
     return 'IMM - ' + (imm.indirizzo || '').toUpperCase() + ' - z' + (imm.z || 1);
   }
-  // PA/NT/INK/VND
   const tipo = imm.stato;
   const nome = (imm.cognomeNome || '').toUpperCase();
   const tel = imm.telefono ? ' ' + imm.telefono : '';
@@ -839,10 +841,7 @@ document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
 function immobileMatchRicerca(imm, q) {
   if (!q) return true;
   const campi = [
-    imm.indirizzo, imm.cognomeNome, imm.telefono,
-    imm.proprietario && imm.proprietario.cognomeNome,
-    imm.proprietario && imm.proprietario.telefono,
-    imm.note
+    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.note
   ];
   return campi.some(c => (c || '').toLowerCase().includes(q));
 }
@@ -850,6 +849,20 @@ function immobileMatchRicerca(imm, q) {
 function dataEffettivaAttivita(a) {
   if (a.tipo === 'da_fare' && a.dataPrevista) return a.dataPrevista;
   return a.data;
+}
+
+// Comparatore attività: prima per data effettiva (crescente),
+// poi per seq (ordine di inserimento) se la data è identica.
+function compareAttivitaCrescente(a, b) {
+  const da = dataEffettivaAttivita(a);
+  const db = dataEffettivaAttivita(b);
+  const cmp = String(da).localeCompare(String(db));
+  if (cmp !== 0) return cmp;
+  return (a.seq || 0) - (b.seq || 0);
+}
+
+function compareAttivitaDecrescente(a, b) {
+  return compareAttivitaCrescente(b, a);
 }
 
 function renderListaImmobili() {
@@ -877,8 +890,7 @@ function renderListaImmobili() {
   let html = '';
   for (const imm of lista) {
     const titolo = titoloImmobile(imm);
-    const attivitaOrdinate = (imm.attivita || []).slice().sort((a,b) =>
-      dataEffettivaAttivita(b).localeCompare(dataEffettivaAttivita(a)));
+    const attivitaOrdinate = (imm.attivita || []).slice().sort(compareAttivitaDecrescente);
     const ultima = attivitaOrdinate[0];
 
     html += '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')">';
@@ -886,7 +898,7 @@ function renderListaImmobili() {
     html += '<div class="item-title">' + escapeHtml(titolo) + '</div>';
     html += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
     html += '</div>';
-    if (imm.telefono && imm.tipo !== 'censito') {
+    if (imm.telefono && imm.stato !== 'IMM') {
       html += '<div class="item-sub">📞 ' + escapeHtml(imm.telefono) + '</div>';
     }
     if (imm.sottotipo) {
@@ -898,7 +910,6 @@ function renderListaImmobili() {
     html += '</div>';
   }
   cont.innerHTML = html;
-
   aggiornaContatori();
 }
 
@@ -937,7 +948,7 @@ function aggiornaFormNuovo() {
       <div class="form-group">
         <div class="form-row">
           <label class="form-label">Indirizzo</label>
-          <input class="form-input" id="f-indirizzo" placeholder="Via Roma 1, Cremona" autocomplete="off">
+          <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off">
         </div>
       </div>
     `;
@@ -970,16 +981,16 @@ function aggiornaFormNuovo() {
     cont.innerHTML = `
       <div class="form-group">
         <div class="form-row">
-          <label class="form-label">Cognome e Nome</label>
+          <label class="form-label">Cognome e Nome proprietario</label>
           <input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off">
         </div>
         <div class="form-row">
-          <label class="form-label">Telefono</label>
+          <label class="form-label">Telefono proprietario</label>
           <input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off">
         </div>
         <div class="form-row">
-          <label class="form-label">Indirizzo</label>
-          <input class="form-input" id="f-indirizzo" placeholder="Via Roma 1, Cremona" autocomplete="off">
+          <label class="form-label">Indirizzo immobile</label>
+          <input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off">
         </div>
         ${sottotipoHtml}
       </div>
@@ -998,7 +1009,7 @@ function salvaNuovoImmobile() {
 
   if (tipoForm === 'censito') {
     const esistenti = DB.immobili.filter(i =>
-      (i.stato === 'IMM' || i.tipo === 'censito') &&
+      i.stato === 'IMM' &&
       (i.indirizzo || '').toUpperCase() === indirizzo);
 
     let z = 1;
@@ -1016,14 +1027,12 @@ function salvaNuovoImmobile() {
 
     const imm = {
       id: uid(),
-      tipo: 'censito',
       stato: 'IMM',
       indirizzo: indirizzo,
       z: z,
       cognomeNome: '',
       telefono: '',
       sottotipo: '',
-      proprietario: null,
       note: '',
       attivita: [],
       createdAt: adesso,
@@ -1037,7 +1046,6 @@ function salvaNuovoImmobile() {
     return;
   }
 
-  // PA/NT/INK
   const cognomeNomeRaw = (document.getElementById('f-cognomeNome') || {}).value || '';
   const cognomeNome = cognomeNomeRaw.trim().toUpperCase();
   const telefono = (document.getElementById('f-telefono') || {}).value || '';
@@ -1050,14 +1058,12 @@ function salvaNuovoImmobile() {
 
   const imm = {
     id: uid(),
-    tipo: tipoForm,
     stato: stato,
     indirizzo: indirizzo,
     z: null,
     cognomeNome: cognomeNome,
     telefono: telefono.trim(),
     sottotipo: sottotipo,
-    proprietario: null,
     note: '',
     attivita: [],
     createdAt: adesso,
@@ -1081,8 +1087,7 @@ function apriScheda(id) {
   immobileAperto = id;
 
   const titolo = titoloImmobile(imm);
-  const attivita = (imm.attivita || []).slice().sort((a,b) =>
-    dataEffettivaAttivita(a).localeCompare(dataEffettivaAttivita(b)));
+  const attivita = (imm.attivita || []).slice().sort(compareAttivitaCrescente);
 
   let html = '';
 
@@ -1095,10 +1100,8 @@ function apriScheda(id) {
 
   html += '<div class="card">';
   if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
+  if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
   if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
-  if (imm.proprietario && imm.proprietario.cognomeNome) {
-    html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.proprietario.cognomeNome) + '</span></div>';
-  }
   if (imm.note) html += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(imm.note) + '</span></div>';
   html += '</div>';
 
@@ -1142,32 +1145,24 @@ function apriModifica() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
 
+  const isCensito = imm.stato === 'IMM';
+
   let html = '<div class="form-group">';
 
   html += '<div class="form-row"><label class="form-label">Indirizzo</label>';
   html += '<input class="form-input" id="m-indirizzo" value="' + escapeHtml(imm.indirizzo || '') + '"></div>';
 
-  if (imm.tipo !== 'censito' && imm.stato !== 'IMM') {
-    html += '<div class="form-row"><label class="form-label">Cognome e Nome</label>';
+  if (!isCensito) {
+    html += '<div class="form-row"><label class="form-label">Cognome e Nome proprietario</label>';
     html += '<input class="form-input" id="m-cognomeNome" value="' + escapeHtml(imm.cognomeNome || '') + '"></div>';
 
-    html += '<div class="form-row"><label class="form-label">Telefono</label>';
+    html += '<div class="form-row"><label class="form-label">Telefono proprietario</label>';
     html += '<input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(imm.telefono || '') + '"></div>';
   }
 
   html += '<div class="form-row"><label class="form-label">Note</label>';
   html += '<textarea class="form-textarea" id="m-note" placeholder="Note libere...">' + escapeHtml(imm.note || '') + '</textarea></div>';
 
-  html += '</div>';
-  html += '<div class="card" style="padding:16px 16px 4px;"><h2><span class="dot"></span>Proprietario</h2></div>';
-  html += '<div class="form-group">';
-  const prop = imm.proprietario || {};
-  html += '<div class="form-row"><label class="form-label">Cognome e Nome</label>';
-  html += '<input class="form-input" id="m-prop-nome" value="' + escapeHtml(prop.cognomeNome || '') + '"></div>';
-  html += '<div class="form-row"><label class="form-label">Telefono</label>';
-  html += '<input class="form-input" id="m-prop-tel" type="tel" value="' + escapeHtml(prop.telefono || '') + '"></div>';
-  html += '<div class="form-row"><label class="form-label">Email</label>';
-  html += '<input class="form-input" id="m-prop-email" type="email" value="' + escapeHtml(prop.email || '') + '"></div>';
   html += '</div>';
 
   html += '<div class="btn-row">';
@@ -1192,15 +1187,6 @@ function salvaModifica() {
   }
 
   imm.note = (document.getElementById('m-note') || {}).value || '';
-
-  const propNome = ((document.getElementById('m-prop-nome') || {}).value || '').trim().toUpperCase();
-  const propTel = (document.getElementById('m-prop-tel') || {}).value || '';
-  const propEmail = (document.getElementById('m-prop-email') || {}).value || '';
-  if (propNome || propTel || propEmail) {
-    imm.proprietario = { cognomeNome: propNome, telefono: propTel, email: propEmail };
-  } else {
-    imm.proprietario = null;
-  }
 
   imm.updatedAt = new Date().toISOString();
   Storage.save(DB);
@@ -1255,12 +1241,60 @@ function cambiaStato(nuovoStato) {
   if (!imm) return;
 
   const vecchio = imm.stato;
+
+  if (vecchio === 'IMM' && nuovoStato !== 'IMM' && !imm.cognomeNome) {
+    const html = `
+      <div class="form-group">
+        <div class="form-row">
+          <label class="form-label">Cognome e Nome proprietario</label>
+          <input class="form-input" id="cs-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Telefono proprietario</label>
+          <input class="form-input" id="cs-telefono" type="tel" placeholder="333 333 3333" autocomplete="off">
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">
+        Stai passando da IMM a ${nuovoStato}. Inserisci i dati del proprietario.
+      </p>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="apriCambiaStato()">Annulla</button>
+        <button class="btn btn-primary" onclick="confermaCambioStato('${nuovoStato}')">Conferma</button>
+      </div>
+    `;
+    apriModal('Passaggio a ' + nuovoStato, html);
+    return;
+  }
+
+  eseguiCambioStato(imm, vecchio, nuovoStato);
+}
+
+function confermaCambioStato(nuovoStato) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+
+  const nomeEl = document.getElementById('cs-cognomeNome');
+  if (nomeEl) imm.cognomeNome = nomeEl.value.trim().toUpperCase();
+  const telEl = document.getElementById('cs-telefono');
+  if (telEl) imm.telefono = telEl.value || '';
+
+  const vecchio = imm.stato;
+  eseguiCambioStato(imm, vecchio, nuovoStato);
+}
+
+function eseguiCambioStato(imm, vecchio, nuovoStato) {
   imm.stato = nuovoStato;
-  imm.tipo = nuovoStato === 'IMM' ? 'censito' : nuovoStato.toLowerCase();
+
+  if (nuovoStato === 'IMM') {
+    imm.cognomeNome = '';
+    imm.telefono = '';
+    if (!imm.z) imm.z = 1;
+  }
 
   imm.attivita = imm.attivita || [];
   imm.attivita.push({
     id: uid(),
+    seq: prossimoSeq(),
     data: new Date().toISOString(),
     tipo: 'fatta',
     testo: 'Cambio stato: ' + vecchio + ' → ' + nuovoStato,
@@ -1306,7 +1340,7 @@ function aggiornaFormAttivita() {
       <div class="form-group">
         <div class="form-row">
           <label class="form-label">Data e ora svolgimento</label>
-          <input class="form-input" type="datetime-local" id="a-data" value="${adessoLocal()}">
+          <input class="form-input" type="datetime-local" step="1" id="a-data" value="${adessoLocal()}">
         </div>
         <div class="form-row">
           <label class="form-label">Testo</label>
@@ -1319,7 +1353,7 @@ function aggiornaFormAttivita() {
       <div class="form-group">
         <div class="form-row">
           <label class="form-label">Data e ora prevista</label>
-          <input class="form-input" type="datetime-local" id="a-dataPrevista" value="${adessoLocal()}">
+          <input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${adessoLocal()}">
         </div>
         <div class="form-row">
           <label class="form-label">Testo</label>
@@ -1333,7 +1367,7 @@ function aggiornaFormAttivita() {
 function adessoLocal() {
   const d = new Date();
   return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' +
-    pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+    pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
 }
 
 function salvaAttivita() {
@@ -1346,12 +1380,14 @@ function salvaAttivita() {
   if (!testo.trim()) { alert('Scrivi qualcosa'); return; }
 
   imm.attivita = imm.attivita || [];
+  const seq = prossimoSeq();
 
   if (tipo === 'fatta') {
     const dataLocal = document.getElementById('a-data').value;
     if (!dataLocal) { alert('Inserisci la data'); return; }
     imm.attivita.push({
       id: uid(),
+      seq: seq,
       data: new Date(dataLocal).toISOString(),
       tipo: 'fatta',
       testo: testo.trim(),
@@ -1362,6 +1398,7 @@ function salvaAttivita() {
     if (!dataPrevista) { alert('Inserisci la data prevista'); return; }
     imm.attivita.push({
       id: uid(),
+      seq: seq,
       data: new Date().toISOString(),
       tipo: 'da_fare',
       testo: testo.trim(),
