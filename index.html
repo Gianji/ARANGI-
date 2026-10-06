@@ -204,9 +204,14 @@
     transition: color 0.15s;
   }
 
-  .tabbar button span {
-    font-size: 20px;
-    line-height: 1;
+  .tabbar button svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   .tabbar button.active { color: var(--blu); }
@@ -309,11 +314,26 @@
   </main>
 
   <nav class="tabbar">
-    <button data-tab="immobili" class="active"><span>🏠</span>Immobili</button>
-    <button data-tab="persone"><span>👥</span>Persone</button>
-    <button data-tab="attivita"><span>✅</span>Attività</button>
-    <button data-tab="mappa"><span>🗺️</span>Mappa</button>
-    <button data-tab="altro"><span>⚙️</span>Altro</button>
+    <button data-tab="immobili" class="active">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Immobili
+    </button>
+    <button data-tab="persone">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+      Persone
+    </button>
+    <button data-tab="attivita">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Attività
+    </button>
+    <button data-tab="mappa">
+      <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+      Mappa
+    </button>
+    <button data-tab="altro">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>
+      Altro
+    </button>
   </nav>
 
 </div>
