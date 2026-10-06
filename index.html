@@ -32,11 +32,13 @@
   .card p { font-size: 14px; color: var(--testo-sec); line-height: 1.5; }
   .empty { text-align: center; padding: 32px 20px; color: var(--testo-sec); font-size: 14px; }
   .empty .icon { font-size: 40px; margin-bottom: 12px; opacity: 0.35; }
+  .empty .icon svg { width: 40px; height: 40px; color: var(--testo-sec); }
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 15px; border: none; border-radius: 14px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.15s; margin-bottom: 8px; letter-spacing: -0.2px; }
   .btn:active { opacity: 0.75; }
   .btn-primary { background: var(--arancione); color: white; }
   .btn-secondary { background: #eef0f3; color: var(--blu); }
   .btn-danger { background: #fef2f2; color: #dc2626; }
+  .btn svg { width: 18px; height: 18px; }
   .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); background: var(--sfondo); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; }
   .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; flex: 1; height: 100%; color: var(--testo-sec); font-family: inherit; font-size: 10px; font-weight: 500; cursor: pointer; transition: color 0.15s; position: relative; }
   .tabbar button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -77,14 +79,17 @@
   .tag { display: inline-block; background: #eef0f3; color: var(--testo-sec); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; margin-right: 4px; margin-top: 4px; }
   .fab { position: fixed; right: 20px; bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 28px; background: var(--arancione); color: white; border: none; font-size: 30px; font-weight: 300; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(255,107,0,0.4); cursor: pointer; z-index: 50; transition: transform 0.15s; }
   .fab:active { transform: scale(0.92); }
+  .fab svg { width: 26px; height: 26px; stroke-width: 2.2; }
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: none; align-items: flex-end; justify-content: center; animation: fadeIn 0.2s; }
   .modal-overlay.open { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   .modal-sheet { background: var(--sfondo); width: 100%; max-width: 600px; max-height: 92vh; border-radius: 22px 22px 0 0; display: flex; flex-direction: column; animation: slideUp 0.25s ease-out; overflow: hidden; }
   .modal-header { padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
-  .modal-header h2 { font-size: 19px; font-weight: 800; color: var(--blu); letter-spacing: -0.4px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .modal-header h2 { font-size: 19px; font-weight: 800; color: var(--blu); letter-spacing: -0.4px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display:flex; align-items:center; gap:8px; }
+  .modal-header h2 svg { flex-shrink: 0; }
   .modal-close { background: #e5e7eb; border: none; width: 32px; height: 32px; border-radius: 16px; font-size: 18px; color: var(--testo); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .modal-close svg { width: 16px; height: 16px; }
   .modal-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 16px 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
   .form-group { background: var(--card); border-radius: 14px; padding: 4px 16px; margin-bottom: 12px; box-shadow: var(--ombra); }
   .form-row { padding: 14px 0; border-bottom: 1px solid #f0f1f3; }
@@ -110,20 +115,25 @@
   .actions { display: flex; gap: 10px; margin-bottom: 12px; }
   .action-btn { flex: 1; background: var(--card); border: none; border-radius: 14px; padding: 14px 10px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; box-shadow: var(--ombra); transition: transform 0.1s; }
   .action-btn:active { transform: scale(0.97); }
-  .action-btn .icon { font-size: 22px; line-height: 1; }
+  .action-btn .icon { display: flex; align-items: center; justify-content: center; height: 24px; }
+  .action-btn .icon svg { width: 22px; height: 22px; }
   .info-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; gap: 12px; }
   .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
   .immobili-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
   .immobile-line { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.1s; }
   .immobile-line:active { background: #e8eaee; }
-  .immobile-line .txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .immobile-line .rm { background: none; border: none; color: #dc2626; font-size: 18px; cursor: pointer; padding: 0 4px; flex-shrink: 0; }
-  .add-btn { background: #eef0f3; border: none; border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--blu); cursor: pointer; width: 100%; margin-top: 6px; }
+  .immobile-line .txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display:flex; align-items:center; gap:6px; }
+  .immobile-line .txt svg { flex-shrink:0; }
+  .immobile-line .rm { background: none; border: none; color: #dc2626; font-size: 18px; cursor: pointer; padding: 0 4px; flex-shrink: 0; display:flex; align-items:center; }
+  .immobile-line .rm svg { width: 16px; height: 16px; }
+  .add-btn { background: #eef0f3; border: none; border-radius: 10px; padding: 10px 12px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--blu); cursor: pointer; width: 100%; margin-top: 6px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .add-btn svg { width: 16px; height: 16px; }
   .add-btn:active { opacity: 0.75; }
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-size: 14px; gap: 8px; }
   .sottotipo-line .lbl { color: var(--testo-sec); }
-  .sottotipo-line button { background: #eef0f3; border: none; border-radius: 8px; padding: 6px 12px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--blu); cursor: pointer; }
+  .sottotipo-line button { background: #eef0f3; border: none; border-radius: 8px; padding: 6px 12px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--blu); cursor: pointer; display:flex; align-items:center; gap:5px; }
+  .sottotipo-line button svg { width: 14px; height: 14px; }
   .condo-header { background: #eef4fb; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--blu); font-weight: 700; letter-spacing: 0.3px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
   .condo-card { background: var(--card); border-radius: 14px; padding: 16px; margin-bottom: 10px; box-shadow: var(--ombra); cursor: pointer; transition: transform 0.1s; display: flex; align-items: center; gap: 12px; }
   .condo-card:active { transform: scale(0.99); }
@@ -131,33 +141,39 @@
   .condo-card .condo-info { flex: 1; overflow: hidden; }
   .condo-card .condo-title { font-size: 15px; font-weight: 700; color: var(--testo); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); }
-  .condo-card .condo-arrow { color: #c4c9d2; font-size: 22px; flex-shrink: 0; }
-  .condo-card .condo-edit { background: none; border: none; padding: 8px; font-size: 16px; cursor: pointer; flex-shrink: 0; border-radius: 8px; }
+  .condo-card .condo-arrow { color: #c4c9d2; flex-shrink: 0; display:flex; align-items:center; }
+  .condo-card .condo-arrow svg { width: 18px; height: 18px; }
+  .condo-card .condo-edit { background: none; border: none; padding: 8px; cursor: pointer; flex-shrink: 0; border-radius: 8px; color: var(--blu); display:flex; align-items:center; justify-content:center; }
+  .condo-card .condo-edit svg { width: 18px; height: 18px; }
   .condo-card .condo-edit:active { background: #eef0f3; }
   .section-title { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 4px 8px; margin-top: 4px; }
   .prefill-banner { background: #eef4fb; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--blu); font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .prefill-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
   .inherit-banner { background: #e8f5ec; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #047857; font-weight: 600; margin-top: 8px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
-  .inherit-banner .ico { font-size: 16px; flex-shrink: 0; }
+  .inherit-banner .ico { flex-shrink: 0; color: #047857; }
+  .inherit-banner .ico svg { width: 18px; height: 18px; }
   .inherit-banner strong { display: block; margin-bottom: 2px; font-size: 13px; }
   .zone-summary { background: #f5f6f8; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--testo-sec); margin-top: 6px; line-height: 1.5; }
   .zone-summary strong { color: var(--blu); }
   .zdf-notice { background: #fff7ed; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #c2410c; margin-top: 8px; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+  .zdf-notice svg { width: 14px; height: 14px; flex-shrink: 0; }
   .zcode-badge { display: inline-block; background: var(--blu); color: white; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
   .villa-toggle { display: flex; gap: 8px; margin-top: 4px; }
-  .villa-toggle button { flex: 1; padding: 12px 10px; border: 2px solid #e5e7eb; background: var(--card); border-radius: 12px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.3; }
+  .villa-toggle button { flex: 1; padding: 12px 10px; border: 2px solid #e5e7eb; background: var(--card); border-radius: 12px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.3; display:flex; flex-direction:column; align-items:center; gap:6px; }
   .villa-toggle button.active { border-color: var(--blu); color: var(--blu); background: #eef4fb; }
-  .villa-toggle button .ico { font-size: 20px; display: block; margin-bottom: 4px; }
+  .villa-toggle button svg { width: 20px; height: 20px; }
   .fab-menu { position: fixed; right: 20px; bottom: calc(var(--tabbar-h) + 86px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; align-items: flex-end; z-index: 51; }
   .fab-menu button { background: white; border: none; padding: 12px 16px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--blu); box-shadow: 0 2px 8px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: opacity 0.15s; }
+  .fab-menu button svg { width: 18px; height: 18px; }
   .fab-menu button:active { opacity: 0.7; }
   .prop-card { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; }
   .prop-card .prop-nome { font-size: 13px; font-weight: 700; color: var(--testo); margin-bottom: 4px; }
   .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.5; }
-  .addr-line { display: flex; align-items: center; justify-content: flex-end; gap: 6px; text-align: right; }
   .addr-check { color: #059669; font-weight: 800; font-size: 14px; flex-shrink: 0; }
   .addr-click { color: var(--blu); font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(0,61,122,0.35); text-underline-offset: 3px; }
   .addr-click:active { opacity: 0.6; }
   .addr-link { color: var(--blu); cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; padding: 2px 4px; border-radius: 6px; transition: background 0.15s; }
+  .addr-link svg { width: 15px; height: 15px; }
   .addr-link:active { background: #eef4fb; }
   .addr-tools { padding-top: 8px; border-top: 1px solid #f0f1f3; margin-top: 8px; }
   .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; }
@@ -177,10 +193,12 @@
   .map-chip.active { background: var(--blu); color: white; }
   .map-status { background: rgba(255,255,255,0.95); border-radius: 12px; padding: 8px 12px; font-size: 12px; color: var(--testo-sec); box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .map-status .count { font-weight: 700; color: var(--blu); }
-  .map-status button { background: var(--blu); border: none; border-radius: 8px; padding: 6px 10px; font-family: inherit; font-size: 11px; font-weight: 600; color: white; cursor: pointer; }
+  .map-status button { background: var(--blu); border: none; border-radius: 8px; padding: 6px 10px; font-family: inherit; font-size: 11px; font-weight: 600; color: white; cursor: pointer; display:flex; align-items:center; gap:5px; }
+  .map-status button svg { width: 13px; height: 13px; }
   .map-status button:disabled { opacity: 0.5; cursor: wait; }
   .map-overlay-bottom { position: absolute; bottom: 80px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; }
-  .map-btn { width: 44px; height: 44px; border-radius: 22px; background: white; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
+  .map-btn { width: 44px; height: 44px; border-radius: 22px; background: white; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--blu); }
+  .map-btn svg { width: 20px; height: 20px; }
   .map-btn:active { background: #f0f1f3; }
   .pin-wrap { position: relative; width: 32px; height: 40px; cursor: pointer; }
   .pin-body { position: absolute; bottom: 0; left: 50%; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
@@ -196,9 +214,9 @@
   .arangiò-popup .pop-titolo { font-size: 13px; font-weight: 700; color: var(--blu); margin-bottom: 4px; line-height: 1.3; }
   .arangiò-popup .pop-sub { font-size: 11px; color: var(--testo-sec); margin-bottom: 8px; line-height: 1.3; }
   .arangiò-popup .pop-badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 9px; font-weight: 700; color: white; margin-right: 4px; }
-  .arangiò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
+  .arangiò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; display:flex; align-items:center; justify-content:center; gap:6px; }
+  .arangiò-popup .pop-btn svg { width: 14px; height: 14px; }
   .arangiò-popup .pop-btn.btn-nav { background: var(--blu); margin-top: 4px; }
-  .arangiò-popup .pop-zone { font-size: 10px; color: var(--testo-sec); margin-top: 4px; }
   #map-container.map-hidden { visibility: hidden !important; pointer-events: none !important; }
   #map-container.map-hidden #map { visibility: hidden !important; }
   .leaflet-pane { z-index: 1 !important; }
@@ -239,13 +257,15 @@
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
   .app-item-card.tipo-acq { border-left-color: var(--rr); }
   .app-item-card.tipo-entrambi { border-left-color: var(--vnd); }
-  .app-item-card .app-tipo-badge { display: inline-block; background: var(--blu); color: white; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 5px; letter-spacing: 0.3px; margin-bottom: 5px; }
+  .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--blu); color: white; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 5px; letter-spacing: 0.3px; margin-bottom: 5px; }
+  .app-item-card .app-tipo-badge svg { width: 11px; height: 11px; }
   .app-item-card.tipo-vend .app-tipo-badge { background: var(--pa); }
   .app-item-card.tipo-acq .app-tipo-badge { background: var(--rr); }
   .app-item-card.tipo-entrambi .app-tipo-badge { background: var(--vnd); }
   .app-item-card .app-titolo { font-size: 14px; font-weight: 700; color: var(--testo); margin-bottom: 4px; line-height: 1.3; word-break: break-word; }
   .app-item-card .app-data { font-size: 12px; color: var(--testo-sec); font-weight: 600; }
-  .app-item-card .app-esito { font-size: 11px; margin-top: 6px; padding: 4px 8px; border-radius: 6px; display: inline-block; }
+  .app-item-card .app-esito { font-size: 11px; margin-top: 6px; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items:center; gap:4px; }
+  .app-item-card .app-esito svg { width: 12px; height: 12px; }
   .app-item-card .app-esito.ok { background: #e8f5ec; color: #047857; }
   .app-item-card .app-esito.ko { background: #fef2f2; color: #dc2626; }
   .app-item-card .app-esito.neutral { background: #f0f1f3; color: var(--testo-sec); }
@@ -253,23 +273,27 @@
   .tipo-app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
   .tipo-app-btn { background: var(--card); border: 2px solid transparent; border-radius: 12px; padding: 12px 10px; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.15s; box-shadow: var(--ombra); position: relative; }
   .tipo-app-btn:active { transform: scale(0.97); }
-  .tipo-app-btn .sigla { font-size: 13px; font-weight: 800; color: var(--blu); margin-bottom: 2px; letter-spacing: 0.2px; }
+  .tipo-app-btn .sigla { font-size: 13px; font-weight: 800; color: var(--blu); margin-bottom: 2px; letter-spacing: 0.2px; display:flex; align-items:center; gap:5px; }
+  .tipo-app-btn .sigla svg { width: 16px; height: 16px; flex-shrink: 0; }
   .tipo-app-btn .desc { font-size: 10px; color: var(--testo-sec); line-height: 1.3; }
   .tipo-app-btn.tipo-vend { border-left: 4px solid var(--pa); }
   .tipo-app-btn.tipo-acq { border-left: 4px solid var(--rr); }
   .tipo-app-btn.tipo-entrambi { border-left: 4px solid var(--vnd); }
-  .tipo-app-btn .custom-star { position: absolute; top: 6px; right: 8px; font-size: 11px; }
+  .tipo-app-btn .custom-star { position: absolute; top: 6px; right: 8px; color: var(--arancione); }
+  .tipo-app-btn .custom-star svg { width: 13px; height: 13px; fill: var(--arancione); stroke: var(--arancione); }
   .tipo-app-btn.custom { border-color: #e5e7eb; background: #fafbfc; }
 
   .att-gruppo { background: var(--card); border-radius: 14px; margin-bottom: 10px; box-shadow: var(--ombra); overflow: hidden; }
   .att-gruppo-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; }
   .att-gruppo-header:active { background: #f5f6f8; }
   .att-icona-ent { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; }
+  .att-icona-ent svg { width: 20px; height: 20px; }
   .att-info { flex: 1; min-width: 0; }
   .att-titolo { font-size: 14px; font-weight: 700; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .att-meta { font-size: 11px; color: var(--testo-sec); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .att-count { background: var(--arancione); color: white; font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: 10px; }
-  .att-arrow { color: #c4c9d2; font-size: 20px; transition: transform 0.2s; }
+  .att-arrow { color: #c4c9d2; transition: transform 0.2s; display:flex; align-items:center; }
+  .att-arrow svg { width: 18px; height: 18px; }
   .att-gruppo.espanso .att-arrow { transform: rotate(90deg); }
   .att-gruppo-body { display: none; border-top: 1px solid #f0f1f3; padding: 4px 0; }
   .att-gruppo.espanso .att-gruppo-body { display: block; }
@@ -285,6 +309,11 @@
   .att-data.oggi { color: var(--arancione); }
   .att-data.scaduta { color: #dc2626; }
   .att-testo { font-size: 14px; color: var(--testo); line-height: 1.35; word-break: break-word; }
+
+  .app-header h1 { display:flex; align-items:center; gap:8px; }
+  .header-info { display:flex; align-items:center; gap:6px; }
+  .icona-inline { display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; }
+  .icona-inline svg { width: 14px; height: 14px; }
 </style>
 </head>
 <body>
@@ -314,8 +343,8 @@
         <button class="chip" data-filtro="NT">NT</button>
         <button class="chip" data-filtro="INK">INK</button>
         <button class="chip" data-filtro="VND">VND</button>
-        <button class="chip" data-filtro="ZONE">📍 ZONE</button>
-        <button class="chip" data-filtro="COND">🏢 COND</button>
+        <button class="chip" data-filtro="ZONE" id="chip-zone"></button>
+        <button class="chip" data-filtro="COND" id="chip-cond"></button>
       </div>
       <div id="filtro-attivo"></div>
       <div id="lista-immobili"></div>
@@ -323,8 +352,8 @@
 
     <section id="view-persone" class="view">
       <div class="chips" id="persone-tabs" style="padding-bottom:14px;">
-        <button class="chip sub active" data-ptab="acquirente">🏠 Acquirenti</button>
-        <button class="chip sub" data-ptab="professionista">💼 Professionisti</button>
+        <button class="chip sub active" data-ptab="acquirente" id="chip-ptab-acq"></button>
+        <button class="chip sub" data-ptab="professionista" id="chip-ptab-prof"></button>
       </div>
       <input type="search" class="search-bar" id="search-persone" placeholder="Cerca per nome, telefono, email...">
       <div id="filtro-persone-attivo" style="margin-bottom:10px;"></div>
@@ -375,12 +404,12 @@
           </div>
           <div class="map-status">
             <div><span class="count" id="map-count">0</span> pin <span id="map-tot" style="color:var(--testo-sec);">/ 0</span></div>
-            <button id="btn-geocode-all" onclick="geocodificaTutti()">🔍 Geocodifica tutti</button>
+            <button id="btn-geocode-all" onclick="geocodificaTutti()" data-icon="lente">Geocodifica tutti</button>
           </div>
         </div>
         <div class="map-overlay-bottom">
-          <button class="map-btn" onclick="centraMappaSuCittaPrincipale()">🏠</button>
-          <button class="map-btn" onclick="fitBoundsImmobili()">🎯</button>
+          <button class="map-btn" onclick="centraMappaSuCittaPrincipale()" data-icon="casa"></button>
+          <button class="map-btn" onclick="fitBoundsImmobili()" data-icon="target"></button>
         </div>
       </div>
     </section>
@@ -389,23 +418,23 @@
       <div class="card">
         <h2><span class="dot"></span>Appuntamenti personalizzati</h2>
         <p style="margin-bottom:12px;">Gestisci i tuoi tipi di appuntamento personalizzati.</p>
-        <button class="btn btn-secondary" onclick="apriGestioneTipiApp()">⚙️ Gestisci tipi appuntamento</button>
+        <button class="btn btn-secondary" onclick="apriGestioneTipiApp()" data-icon="stella">Gestisci tipi appuntamento</button>
       </div>
       <div class="card">
         <h2><span class="dot"></span>Città principale</h2>
         <p style="margin-bottom:12px;">La città usata per geocodificare gli indirizzi su mappa.</p>
-        <button class="btn btn-secondary" onclick="apriImpostazioniCitta()">⚙️ Cambia città principale</button>
+        <button class="btn btn-secondary" onclick="apriImpostazioniCitta()" data-icon="ingranaggio">Cambia città principale</button>
       </div>
       <div class="card">
         <h2><span class="dot"></span>Dati</h2>
         <p style="margin-bottom:16px;">Esporta un backup di tutti i dati in un file.</p>
-        <button class="btn btn-secondary" onclick="esportaBackup()">📥 Esporta backup</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">📤 Importa backup</button>
+        <button class="btn btn-secondary" onclick="esportaBackup()" data-icon="download">Esporta backup</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()" data-icon="uploadBox">Importa backup</button>
         <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaBackup(event)">
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">1.2 (Modulo 10)</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.3 (Modulo 11)</span></div>
         <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
         <div class="info-row"><span class="label">Tipi personalizzati</span><span class="value" id="sistema-n-tipi">0</span></div>
@@ -414,7 +443,7 @@
       <div class="card">
         <h2><span class="dot"></span>Zona pericolosa</h2>
         <p style="margin-bottom:16px;">Cancella tutti i dati. Operazione irreversibile.</p>
-        <button class="btn btn-danger" onclick="cancellaTutto()">🗑️ Cancella tutti i dati</button>
+        <button class="btn btn-danger" onclick="cancellaTutto()" data-icon="cestino">Cancella tutti i dati</button>
       </div>
     </section>
   </main>
@@ -423,15 +452,15 @@
   <button class="fab" id="fab-immobili" onclick="onFabClick()">+</button>
 
   <nav class="tabbar">
-    <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Immobili</button>
-    <button data-tab="persone"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Persone</button>
+    <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Immobili</button>
+    <button data-tab="persone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Persone</button>
     <button data-tab="attivita" id="tab-attivita">
-      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span class="badge-tab" id="tab-badge-attivita">0</span>
       Attività
     </button>
-    <button data-tab="mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mappa</button>
-    <button data-tab="altro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>Altro</button>
+    <button data-tab="mappa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mappa</button>
+    <button data-tab="altro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>Altro</button>
   </nav>
 </div>
 
@@ -439,7 +468,7 @@
   <div class="modal-sheet">
     <div class="modal-header">
       <h2 id="modal-title">Titolo</h2>
-      <button class="modal-close" onclick="chiudiModal()">✕</button>
+      <button class="modal-close" onclick="chiudiModal()" id="btn-modal-close"></button>
     </div>
     <div class="modal-body" id="modal-body"></div>
   </div>
@@ -451,6 +480,73 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+// =====================================================
+// ICONE SVG (sostituiscono tutte le emoji)
+// =====================================================
+const ICON_PATHS = {
+  calendario: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  clipboard: '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>',
+  righello: '<path d="M16 2l6 6L8 22l-6-6z"/><path d="M14 6l4 4"/><path d="M10 10l4 4"/><path d="M6 14l4 4"/>',
+  trendUp: '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  penna: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  occhio: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  valigetta: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  inbox: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  landmark: '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+  chiave: '<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/>',
+  calendarioGen: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/>',
+  chiaveInglese: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  grafico: '<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  checkCerchio: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  moneta: '<circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/>',
+  casa: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  villa: '<path d="M3 21V8l9-6 9 6v13"/><rect x="9" y="13" width="6" height="8"/>',
+  telefono: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  whatsapp: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  email: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  modifica: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/>',
+  aggiorna: '<polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  piu: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  cestino: '<polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  stella: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  fuoco: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  ingranaggio: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  uploadBox: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  pacco: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  lente: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  attenzione: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  clessidra: '<path d="M6 2h12M6 22h12M6 2v3a6 6 0 0 0 6 6 6 6 0 0 0 6-6V2M6 22v-3a6 6 0 0 1 6-6 6 6 0 0 1 6 6v3"/>',
+  sole: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  freccia: '<polyline points="9 18 15 12 9 6"/>',
+  utente: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  utenti: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>',
+  orologio: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  campanello: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  condominio: '<rect x="3" y="2" width="11" height="20" rx="1"/><rect x="14" y="8" width="7" height="14" rx="1"/><path d="M6 6h1.5M6 10h1.5M6 14h1.5M6 18h1.5M10 6h1.5M10 10h1.5M10 14h1.5M10 18h1.5M16.5 12h1.5M16.5 16h1.5M16.5 20h1.5"/>'
+};
+function ico(name, size) {
+  const p = ICON_PATHS[name]; if (!p) return '';
+  const s = size || 16;
+  return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;">' + p + '</svg>';
+}
+// Applica icona a tutti i bottoni con data-icon
+function applicaIcone() {
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    const n = el.dataset.icon; if (!n) return;
+    const sz = el.classList.contains('map-btn') ? 20 : (el.classList.contains('btn') ? 18 : 14);
+    const prev = el.querySelector(':scope > .icona-inline');
+    if (prev) prev.remove();
+    el.insertAdjacentHTML('afterbegin', '<span class="icona-inline">' + ico(n, sz) + '</span>');
+  });
+}
+
 // =====================================================
 // STORAGE
 // =====================================================
@@ -480,7 +576,7 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 35, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
+  default() { return { versione: 36, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
 };
 
 let DB = Storage.load();
@@ -514,25 +610,25 @@ const STATI_RR = [
 ];
 
 const TIPI_APPUNTAMENTO = [
-  { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: '📋', desc: 'Ribassi, rinnovi, contratto' },
-  { sigla: 'VAL', nome: 'Valutazione (acquisizione)', chi: 'vend', icona: '📐', desc: 'Sopralluogo per valutazione (PA/NT)' },
-  { sigla: 'RIVAL', nome: 'Rivalutazione', chi: 'vend', icona: '📈', desc: 'Esposizione valutazione (NT già valutata)' },
-  { sigla: 'ACC PROP', nome: 'Accettazione proposta', chi: 'vend', icona: '✍️', desc: 'Venditore risponde alla proposta' },
-  { sigla: 'APP', nome: 'Appuntamento di visita', chi: 'visita', icona: '👀', desc: 'Visita (acquirente + NT/INK)' },
-  { sigla: 'CONS', nome: 'Consulenza Kiron', chi: 'acq', icona: '💼', desc: 'Verifica mutuabilità (solo acquirenti)' },
-  { sigla: 'RIT PROP', nome: 'Ritiro proposta', chi: 'visita', icona: '📤', desc: 'Proposta acquirente (NT/INK)' },
-  { sigla: 'NOT ACC PROP', nome: 'Notifica acc. proposta', chi: 'vend', icona: '📬', desc: 'Comunica accettazione' },
-  { sigla: 'PRELIMINARE', nome: 'Preliminare', chi: 'entrambi', icona: '📝', desc: 'Firma preliminare' },
-  { sigla: 'ROGITO', nome: 'Rogito / Atto notarile', chi: 'entrambi', icona: '🏛️', desc: 'Atto notarile definitivo' },
-  { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: '📅', desc: 'Con immobile, persona o entrambi' },
-  { sigla: 'SOPRALLUOGO', nome: 'Sopralluogo tecnico', chi: 'gen', icona: '🔧', desc: 'Con professionista' },
-  { sigla: 'PERIZIA', nome: 'Perizia', chi: 'gen', icona: '📊', desc: 'Con perito/geometra' }
+  { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: 'clipboard', desc: 'Ribassi, rinnovi, contratto (solo INK)' },
+  { sigla: 'VAL', nome: 'Valutazione (acquisizione)', chi: 'vend', icona: 'righello', desc: 'Sopralluogo per valutazione (PA/NT)' },
+  { sigla: 'RIVAL', nome: 'Rivalutazione', chi: 'vend', icona: 'trendUp', desc: 'Esposizione valutazione (NT valutata)' },
+  { sigla: 'ACC PROP', nome: 'Accettazione proposta', chi: 'vend', icona: 'penna', desc: 'Venditore risponde alla proposta' },
+  { sigla: 'APP', nome: 'Appuntamento di visita', chi: 'visita', icona: 'occhio', desc: 'Visita (acquirente + NT/INK)' },
+  { sigla: 'CONS', nome: 'Consulenza Kiron', chi: 'acq', icona: 'valigetta', desc: 'Verifica mutuabilità (acquirenti)' },
+  { sigla: 'RIT PROP', nome: 'Ritiro proposta', chi: 'visita', icona: 'upload', desc: 'Proposta acquirente (NT/INK)' },
+  { sigla: 'NOT ACC PROP', nome: 'Notifica acc. proposta', chi: 'vend', icona: 'inbox', desc: 'Comunica accettazione' },
+  { sigla: 'PRELIMINARE', nome: 'Preliminare', chi: 'entrambi', icona: 'file', desc: 'Firma preliminare' },
+  { sigla: 'ROGITO', nome: 'Rogito / Atto notarile', chi: 'entrambi', icona: 'landmark', desc: 'Atto notarile definitivo' },
+  { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: 'calendario', desc: 'Con immobile, persona o entrambi' },
+  { sigla: 'SOPRALLUOGO', nome: 'Sopralluogo tecnico', chi: 'gen', icona: 'chiaveInglese', desc: 'Con professionista' },
+  { sigla: 'PERIZIA', nome: 'Perizia', chi: 'gen', icona: 'grafico', desc: 'Con perito/geometra' }
 ];
 
 const ESITI_APPUNTAMENTO = [
-  { id: 'piace', label: 'Visto e piace', icona: '✅', tipo: 'ok' },
-  { id: 'prezzo', label: 'Non piace per prezzo', icona: '💰', tipo: 'ko' },
-  { id: 'immobile', label: 'Non piace per immobile', icona: '🏠', tipo: 'ko' }
+  { id: 'piace', label: 'Visto e piace', icona: 'checkCerchio', tipo: 'ok' },
+  { id: 'prezzo', label: 'Non piace per prezzo', icona: 'moneta', tipo: 'ko' },
+  { id: 'immobile', label: 'Non piace per immobile', icona: 'casa', tipo: 'ko' }
 ];
 
 // =====================================================
@@ -556,11 +652,8 @@ function applicaEreditaCondominio(imm) { if (imm.villa) return imm; const condo 
 function getCittaPrincipale() { return DB.cittaPrincipale || CITTA_DEFAULT; }
 function getNomeCittaPrincipale() { return getCittaPrincipale().split(',')[0].trim(); }
 function rinumeraZCondominio(condo) { if (!condo) return; const immobili = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo); immobili.sort((a, b) => (a.z || 0) - (b.z || 0)); immobili.forEach((imm, idx) => { const nuovoZ = idx + 1; if (imm.z !== nuovoZ) { imm.z = nuovoZ; imm.updatedAt = new Date().toISOString(); } }); }
-function iconaCampanello() { return '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:2px;color:var(--arancione);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>'; }
-function iconaCondo(size) {
-  const s = size || 16;
-  return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><rect x="3" y="2" width="11" height="20" rx="1"/><rect x="14" y="8" width="7" height="14" rx="1"/><path d="M6 6h1.5M6 10h1.5M6 14h1.5M6 18h1.5M10 6h1.5M10 10h1.5M10 14h1.5M10 18h1.5M16.5 12h1.5M16.5 16h1.5M16.5 20h1.5"/></svg>';
-}
+function iconaCampanello() { return ico('campanello', 13); }
+function iconaCondo(size) { return ico('condominio', size || 16); }
 const MAPPA_LOCALI = {1:'monolocale',2:'bilocale',3:'trilocale',4:'quadrilocale',5:'pentavani',6:'sei locali',7:'sette locali'};
 function normalizzaTipoImmobile(s) {
   if (!s) return '';
@@ -647,19 +740,19 @@ async function geocodificaCittaPrincipale() {
 }
 async function geocodificaTutti() {
   const btn = document.getElementById('btn-geocode-all');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ In corso...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = ico('clessidra',13) + ' In corso...'; }
   const daFare = DB.immobili.filter(i => !i.lat || !i.lng);
   let fatti = 0, falliti = 0;
   for (const imm of daFare) {
     const r = await geocodificaIndirizzo(imm.indirizzo);
     if (r) { imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.preciso; fatti++; } else falliti++;
     await new Promise(res => setTimeout(res, 1100));
-    if (btn) btn.textContent = '⏳ ' + (fatti + falliti) + '/' + daFare.length;
+    if (btn) btn.innerHTML = ico('clessidra',13) + ' ' + (fatti + falliti) + '/' + daFare.length;
   }
   Storage.save(DB);
-  if (btn) { btn.disabled = false; btn.textContent = '🔍 Geocodifica tutti'; }
+  if (btn) { btn.disabled = false; btn.innerHTML = ico('lente',13) + ' Geocodifica tutti'; }
   aggiornaMappa();
-  alert('Geocodifica completata:\n✅ ' + fatti + ' trovati\n❌ ' + falliti + ' non trovati');
+  alert('Geocodifica completata:\n' + fatti + ' trovati\n' + falliti + ' non trovati');
 }
 async function riGeocodificaImmobile(id) {
   const imm = DB.immobili.find(i => i.id === id); if (!imm) return;
@@ -668,7 +761,7 @@ async function riGeocodificaImmobile(id) {
   if (parsed) { const cacheKey = [parsed.via, parsed.citta, parsed.cap].join('|'); delete geocodeCache[cacheKey]; salvaGeocodeCache(); }
   const r = await geocodificaIndirizzo(imm.indirizzo);
   if (r) { imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.preciso; Storage.save(DB); apriScheda(imm.id); if (map) aggiornaMappa(); }
-  else alert('❌ Indirizzo non trovato. Prova ad aggiungere CAP e città.');
+  else alert('Indirizzo non trovato. Prova ad aggiungere CAP e città.');
 }
 
 // =====================================================
@@ -699,9 +792,9 @@ tabButtons.forEach(btn => {
       else fab.style.display = 'none';
       fabMenu.style.display = 'none';
       fabMenuAperto = false;
-      if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">🏠 Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">' + iconaCondo(16) + ' Nuovo condominio</button>';
+      if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">' + ico('casa',16) + ' Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">' + iconaCondo(16) + ' Nuovo condominio</button>';
       else if (tab === 'persone') aggiornaFabPersone();
-      else if (tab === 'attivita') { fabMenu.innerHTML = '<button onclick="fabMenuNuovaAttivita()">✅ Nuova attività</button><button onclick="fabMenuNuovoAppuntamento()">📅 Nuovo appuntamento</button>'; renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); }
+      else if (tab === 'attivita') { fabMenu.innerHTML = '<button onclick="fabMenuNuovaAttivita()">' + ico('check',16) + ' Nuova attività</button><button onclick="fabMenuNuovoAppuntamento()">' + ico('calendario',16) + ' Nuovo appuntamento</button>'; renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); }
       if (tab === 'altro') aggiornaInfoSistema();
       if (tab === 'persone') renderPersone();
     }
@@ -713,13 +806,18 @@ function aggiornaInfoSistema() { const el = document.getElementById('sistema-cit
 // =====================================================
 // MODAL
 // =====================================================
-function apriModal(titolo, html) { document.getElementById('modal-title').textContent = titolo; document.getElementById('modal-body').innerHTML = html; document.getElementById('modal').classList.add('open'); const mc = document.getElementById('map-container'); if (mc) mc.classList.add('map-hidden'); }
+function apriModal(titolo, html) {
+  document.getElementById('modal-title').innerHTML = titolo;
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+  const mc = document.getElementById('map-container'); if (mc) mc.classList.add('map-hidden');
+}
 function chiudiModal() { document.getElementById('modal').classList.remove('open'); document.getElementById('modal-body').innerHTML = ''; const mc = document.getElementById('map-container'); if (mc) mc.classList.remove('map-hidden'); }
 
 // =====================================================
 // FILTRI DROPDOWN
 // =====================================================
-function apriFilterDD(titolo, opzioni, sel, cb) { let h = '<h3>' + titolo + '</h3>'; for (const o of opzioni) { const s = o.value === sel ? ' selected' : ''; h += '<div class="opt' + s + '" onclick="selezionaFilterDD(\'' + String(o.value).replace(/'/g, "\\'") + '\')">' + escapeHtml(o.label) + (s ? ' ✓' : '') + '</div>'; } document.getElementById('filter-dd').innerHTML = h; document.getElementById('filter-dd-overlay').classList.add('open'); window._filterDDCallback = cb; }
+function apriFilterDD(titolo, opzioni, sel, cb) { let h = '<h3>' + titolo + '</h3>'; for (const o of opzioni) { const s = o.value === sel ? ' selected' : ''; h += '<div class="opt' + s + '" onclick="selezionaFilterDD(\'' + String(o.value).replace(/'/g, "\\'") + '\')">' + escapeHtml(o.label) + (s ? ' ' + ico('check',14) : '') + '</div>'; } document.getElementById('filter-dd').innerHTML = h; document.getElementById('filter-dd-overlay').classList.add('open'); window._filterDDCallback = cb; }
 function selezionaFilterDD(v) { const cb = window._filterDDCallback; chiudiFilterDD(); if (cb) cb(v === '' ? null : v); }
 function chiudiFilterDD() { document.getElementById('filter-dd-overlay').classList.remove('open'); window._filterDDCallback = null; }
 
@@ -766,7 +864,7 @@ function immobileMatchRicerca(imm, q) { if (!q) return true; const condo = getCo
 function dataEffettivaAttivita(a) { if (a.tipo === 'da_fare' && a.dataPrevista) return a.dataPrevista; return a.data; }
 function compareAttivitaCrescente(a, b) { const da = dataEffettivaAttivita(a), db = dataEffettivaAttivita(b); const cmp = String(da).localeCompare(String(db)); if (cmp !== 0) return cmp; return (a.seq || 0) - (b.seq || 0); }
 function compareAttivitaDecrescente(a, b) { return compareAttivitaCrescente(b, a); }
-function renderBannerFiltroAttivo() { const cont = document.getElementById('filtro-attivo'); const p = []; if (condoSelezionato) p.push(iconaCondo(12) + ' ' + condoSelezionato); if (statoSelezionato) p.push(statoSelezionato); if (zonaSelezionata) p.push('📍 ' + zonaSelezionata); if (p.length === 0) { cont.innerHTML = ''; return; } cont.innerHTML = '<div class="active-filter-banner"><span>' + p.join(' · ') + '</span><button class="x" onclick="rimuoviTuttiFiltri()">✕</button></div>'; }
+function renderBannerFiltroAttivo() { const cont = document.getElementById('filtro-attivo'); const p = []; if (condoSelezionato) p.push(iconaCondo(12) + ' ' + condoSelezionato); if (statoSelezionato) p.push(statoSelezionato); if (zonaSelezionata) p.push(ico('pin',12) + ' ' + zonaSelezionata); if (p.length === 0) { cont.innerHTML = ''; return; } cont.innerHTML = '<div class="active-filter-banner"><span>' + p.join(' · ') + '</span><button class="x" onclick="rimuoviTuttiFiltri()">' + ico('x',12) + '</button></div>'; }
 function rimuoviTuttiFiltri() { condoSelezionato = null; zonaSelezionata = null; if (!vistaCondomini) statoSelezionato = null; aggiornaChips(); renderListaImmobili(); }
 
 // =====================================================
@@ -781,7 +879,7 @@ function renderListaImmobili() {
   lista = lista.filter(i => immobileHaZonaValida(i));
   if (queryRicerca) lista = lista.filter(i => immobileMatchRicerca(i, queryRicerca));
   renderBannerFiltroAttivo();
-  if (lista.length === 0) { cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏠</div>' + (DB.immobili.length === 0 ? 'Nessun immobile. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
+  if (lista.length === 0) { cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + ico('casa',40) + '</div>' + (DB.immobili.length === 0 ? 'Nessun immobile. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
   const gC = {}; const ind = [];
   for (const imm of lista) { const condo = getCondominio(imm); const r = condo && !condoSelezionato && imm.stato !== 'PA' && imm.stato !== 'NT' && imm.stato !== 'INK'; if (r) { if (!gC[condo]) gC[condo] = []; gC[condo].push(imm); } else ind.push(imm); }
   const gF = {}; for (const condo in gC) { if (gC[condo].length >= 2) gF[condo] = gC[condo]; else ind.push(gC[condo][0]); }
@@ -792,7 +890,7 @@ function renderListaImmobili() {
   el.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
   let html = '';
   for (const e of el) {
-    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(28) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s;">›</div></div>'; if (esp) { html += '<div style="margin-left:14px;margin-bottom:8px;border-left:2px solid #e5e7eb;padding-left:10px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
+    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(28) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s;">' + ico('freccia',18) + '</div></div>'; if (esp) { html += '<div style="margin-left:14px;margin-bottom:8px;border-left:2px solid #e5e7eb;padding-left:10px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
     else html += renderItemCardImmobile(e.imm);
   }
   cont.innerHTML = html; aggiornaContatori();
@@ -805,14 +903,14 @@ function renderItemCardImmobile(imm) {
   const condo = getCondominio(imm); const f = immobiliStessoCondominio(imm); const isCondo = f.length > 0;
   const ze = getZoneEffettive(imm);
   let h = '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')"><div class="item-row"><div class="item-title">' + escapeHtml(titolo) + '</div>';
-  if (imm.villa) h += '<span style="font-size:11px;color:#059669;font-weight:700;">🏠 VILLA</span>';
+  if (imm.villa) h += '<span style="font-size:11px;color:#059669;font-weight:700;">VILLA</span>';
   h += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span></div>';
   if (imm.stato === 'IMM' && imm.citofono) h += '<div class="item-sub">' + iconaCampanello() + ' ' + escapeHtml(imm.citofono) + '</div>';
-  if (imm.telefono && imm.stato !== 'IMM') h += '<div class="item-sub">📞 ' + escapeHtml(imm.telefono) + '</div>';
+  if (imm.telefono && imm.stato !== 'IMM') h += '<div class="item-sub">' + ico('telefono',12) + ' ' + escapeHtml(imm.telefono) + '</div>';
   if (imm.sottotipo) h += '<div class="item-sub">' + escapeHtml(imm.sottotipo) + '</div>';
-  if (imm.inTrattativa) h += '<div class="item-sub" style="color:#d97706;font-weight:700;">🔥 In trattativa' + (imm.propostaNotificata ? ' · notificata' : (imm.propostaAccettata ? ' · accettata' : '')) + '</div>';
+  if (imm.inTrattativa) h += '<div class="item-sub" style="color:#d97706;font-weight:700;">' + ico('fuoco',12) + ' In trattativa' + (imm.propostaNotificata ? ' · notificata' : (imm.propostaAccettata ? ' · accettata' : '')) + '</div>';
   if (isCondo) h += '<div class="item-sub">' + iconaCondo(12) + ' - ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
-  if (ze.length > 0) h += '<div class="item-sub">📍 ' + escapeHtml(ze.join(' · ')) + '</div>';
+  if (ze.length > 0) h += '<div class="item-sub">' + ico('pin',12) + ' ' + escapeHtml(ze.join(' · ')) + '</div>';
   if (ultima) h += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 40)) + (ultima.testo.length > 40 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(ultima)) + '</span></div>';
   h += '</div>'; return h;
 }
@@ -826,12 +924,12 @@ function renderListaCondomini(cont) {
   let h = '';
   for (const x of c) {
     const im = g[x] || []; const v = im.filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)); const det = (DB.condomini && DB.condomini[x]) || {};
-    const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · 📍 ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili';
+    const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · ' + ico('pin',11) + ' ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili';
     h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">';
     h += '<div class="condo-icon">' + iconaCondo(28) + '</div>';
     h += '<div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div>';
-    h += '<button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">✏️</button>';
-    h += '<div class="condo-arrow">›</div>';
+    h += '<button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',18) + '</button>';
+    h += '<div class="condo-arrow">' + ico('freccia',18) + '</div>';
     h += '</div>';
   }
   cont.innerHTML = h; aggiornaContatori();
@@ -851,7 +949,7 @@ function apriSelezioneZone() {
   h += '</div><div class="section-title" style="margin-top:14px;">Speciali</div><div class="zone-chips">';
   for (const z of [ZONA_ZDF].concat(ZONE_SPECIALI)) { const a = zonaSelezionata === z; h += '<button type="button" class="zone-chip special' + (a ? ' active' : '') + '" onclick="toggleZoneFiltro(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\')">' + escapeHtml(z) + '</button>'; }
   h += '</div><div class="btn-row" style="margin-top:18px;"><button class="btn btn-secondary" onclick="azzeraZoneFiltro()">Azzera</button><button class="btn btn-primary" onclick="confermaZoneFiltro()">Conferma</button></div>';
-  apriModal('📍 Filtra per zona', h);
+  apriModal(ico('pin',20) + ' Filtra per zona', h);
 }
 function toggleZoneFiltro(z) { zonaSelezionata = (zonaSelezionata === z) ? null : z; apriSelezioneZone(); }
 function azzeraZoneFiltro() { zonaSelezionata = null; apriSelezioneZone(); }
@@ -866,7 +964,7 @@ function htmlSelettoreZone(idPrefix) {
   let h = '<div class="section-title" style="padding-left:0;">Zone</div><div class="zone-chips">';
   for (const z of ZONE_BASE) { const a = st.base.includes(z); h += '<button type="button" class="zone-chip' + (a ? ' active' : '') + '" onclick="toggleZonaBase(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\', \'' + idPrefix + '\')">' + escapeHtml(z) + '</button>'; }
   h += '</div>';
-  if (hb) h += '<div class="zdf-notice">📍 Selezionata almeno una zona → ZONA ZdF applicata automaticamente</div>';
+  if (hb) h += '<div class="zdf-notice">' + ico('pin',14) + ' Selezionata almeno una zona → ZONA ZdF applicata automaticamente</div>';
   else { h += '<div class="section-title" style="padding-left:0;margin-top:12px;">Fuori zona ZdF</div><div class="zone-chips">'; for (const z of ZONE_SPECIALI) { const a = st.speciale === z; h += '<button type="button" class="zone-chip special' + (a ? ' active' : '') + '" onclick="toggleZonaSpeciale(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\', \'' + idPrefix + '\')">' + escapeHtml(z) + '</button>'; } h += '<button type="button" class="zone-chip special' + (st.speciale === null ? ' active' : '') + '" onclick="toggleZonaSpeciale(\'\', \'' + idPrefix + '\')">Niente</button></div>'; }
   h += '<div class="zone-summary">' + riepilogoZone(idPrefix) + '</div>'; return h;
 }
@@ -887,13 +985,13 @@ function apriFiltroPersone() { if (pTabAttivo === 'acquirente') { const o = [{ v
 function renderPersone() {
   const c = document.getElementById('lista-persone'); const b = document.getElementById('filtro-persone-attivo'); if (!c) return;
   const fl = getFiltroPersonaLabel(); const ia = (pTabAttivo === 'acquirente' && pStatoRRFiltro) || (pTabAttivo === 'professionista' && pTipoProfFiltro);
-  b.innerHTML = '<div class="chips" style="padding-bottom:0;"><button class="chip-dropdown' + (ia ? ' active' : '') + '" onclick="apriFiltroPersone()">Filtra: ' + escapeHtml(fl) + ' <span class="caret">▼</span></button>' + (ia ? '<button class="chip" onclick="resetFiltroPersone()">✕ Rimuovi</button>' : '') + '</div>';
+  b.innerHTML = '<div class="chips" style="padding-bottom:0;"><button class="chip-dropdown' + (ia ? ' active' : '') + '" onclick="apriFiltroPersone()">Filtra: ' + escapeHtml(fl) + ' <span class="caret">▼</span></button>' + (ia ? '<button class="chip" onclick="resetFiltroPersone()">' + ico('x',12) + ' Rimuovi</button>' : '') + '</div>';
   let l = DB.persone.filter(p => p.tipo === pTabAttivo);
   if (pTabAttivo === 'acquirente' && pStatoRRFiltro) l = l.filter(p => p.statoRR === pStatoRRFiltro);
   if (pTabAttivo === 'professionista' && pTipoProfFiltro) l = l.filter(p => p.tipoProf === pTipoProfFiltro);
   if (pQueryRicerca) l = l.filter(p => { const c = [p.cognomeNome, p.telefono, p.telefonoCell, p.telefonoUff, p.email, p.indirizzoUff, p.residenza, p.note, (p.immobili || []).join(' '), p.collega, p.zona, p.tipoImmobile, p.budget, p.box, p.esigenze]; return c.some(x => (x || '').toLowerCase().includes(pQueryRicerca)); });
   l.sort((a, b) => (a.cognomeNome || '').localeCompare(b.cognomeNome || ''));
-  if (l.length === 0) { const ls = pTabAttivo === 'acquirente' ? 'acquirente' : 'professionista'; c.innerHTML = '<div class="card"><div class="empty"><div class="icon">👥</div>' + (DB.persone.filter(p => p.tipo === pTabAttivo).length === 0 ? 'Nessun ' + ls + '. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
+  if (l.length === 0) { const ls = pTabAttivo === 'acquirente' ? 'acquirente' : 'professionista'; c.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + ico('utenti',40) + '</div>' + (DB.persone.filter(p => p.tipo === pTabAttivo).length === 0 ? 'Nessun ' + ls + '. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
   let h = '';
   for (const p of l) {
     const t = titoloPersona(p); const tag = getTagPersona(p); const lt = getLabelTipoPersona(p);
@@ -903,9 +1001,9 @@ function renderPersone() {
     else if (p.tipo === 'professionista') h += '<span class="badge badge-PROF">PROF</span>';
     h += '</div>';
     if (lt) h += '<div class="item-sub">' + escapeHtml(lt) + '</div>';
-    const tel = p.telefonoCell || p.telefono; if (tel) h += '<div class="item-sub">📞 ' + escapeHtml(tel) + '</div>';
-    if (p.tipo === 'acquirente') { if (p.zona) h += '<div class="item-sub">📍 ' + escapeHtml(p.zona) + '</div>'; if (p.budget) h += '<div class="item-sub">💰 ' + escapeHtml(p.budget) + '</div>'; }
-    else if (p.indirizzoUff) h += '<div class="item-sub">🏢 ' + escapeHtml(p.indirizzoUff) + '</div>';
+    const tel = p.telefonoCell || p.telefono; if (tel) h += '<div class="item-sub">' + ico('telefono',12) + ' ' + escapeHtml(tel) + '</div>';
+    if (p.tipo === 'acquirente') { if (p.zona) h += '<div class="item-sub">' + ico('pin',12) + ' ' + escapeHtml(p.zona) + '</div>'; if (p.budget) h += '<div class="item-sub">' + ico('moneta',12) + ' ' + escapeHtml(p.budget) + '</div>'; }
+    else if (p.indirizzoUff) h += '<div class="item-sub">' + ico('casa',12) + ' ' + escapeHtml(p.indirizzoUff) + '</div>';
     h += '<div style="margin-top:4px;"><span class="tag">' + tag + '</span></div>';
     if (u) h += '<div class="item-meta"><span>' + escapeHtml(u.testo.slice(0, 40)) + (u.testo.length > 40 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(u)) + '</span></div>';
     h += '</div>';
@@ -990,25 +1088,25 @@ function apriSchedaPersona(id) {
   if (p.email) h += '<div class="info-row"><span class="label">Email</span><span class="value">' + escapeHtml(p.email) + '</span></div>';
   if (p.indirizzoUff) h += '<div class="info-row"><span class="label">Indirizzo ufficio</span><span class="value">' + escapeHtml(p.indirizzoUff) + '</span></div>';
   if (p.residenza) h += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(p.residenza) + '</span></div>';
-  if (p.tipo === 'acquirente') { if (p.collega) h += '<div class="info-row"><span class="label">Cliente di</span><span class="value">' + escapeHtml(p.collega.toUpperCase()) + '</span></div>'; if (p.budget) h += '<div class="info-row"><span class="label">Budget</span><span class="value">' + escapeHtml(p.budget) + '</span></div>'; if (p.tipoImmobile) h += '<div class="info-row"><span class="label">Cerca</span><span class="value">' + escapeHtml(p.tipoImmobile) + '</span></div>'; if (p.zona) h += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(p.zona) + '</span></div>'; if (p.box) h += '<div class="info-row"><span class="label">Box</span><span class="value">' + escapeHtml(p.box) + '</span></div>'; if (p.esigenze) h += '<div class="info-row"><span class="label">Esigenze</span><span class="value">' + escapeHtml(p.esigenze) + '</span></div>'; }
+  if (p.tipo === 'acquirente') { if (p.collega) h += '<div class="info-row"><span class="label">Cliente di</span><span class="value">' + escapeHtml(p.collega.toUpperCase()) + '</span></div>'; if (p.budget) h += '<div class="info-row"><span class="label">Budget</span><span class="value">' + escapeHtml(p.budget) + '</span></div>'; if (p.tipoImmobile) h += '<div class="info-row"><span class="label">Cerca</span><span class="value">' + escapeHtml(p.tipoImmobile) + '</span></div>'; if (p.zona) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + escapeHtml(p.zona) + '</span></div>'; if (p.box) h += '<div class="info-row"><span class="label">Box</span><span class="value">' + escapeHtml(p.box) + '</span></div>'; if (p.esigenze) h += '<div class="info-row"><span class="label">Esigenze</span><span class="value">' + escapeHtml(p.esigenze) + '</span></div>'; }
   if (p.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(p.note) + '</span></div>';
   h += '<div style="margin-top:8px;"><span class="tag">' + tag + '</span></div></div>';
-  if (p.tipo === 'acquirente' && p.immobili && p.immobili.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Immobili interessati (' + p.immobili.length + ')</h2><div class="immobili-list">'; for (const im of p.immobili) h += '<div class="immobile-line"><span class="txt">🏠 ' + escapeHtml(im) + '</span></div>'; h += '</div></div>'; }
+  if (p.tipo === 'acquirente' && p.immobili && p.immobili.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Immobili interessati (' + p.immobili.length + ')</h2><div class="immobili-list">'; for (const im of p.immobili) h += '<div class="immobile-line"><span class="txt">' + ico('casa',14) + ' ' + escapeHtml(im) + '</span></div>'; h += '</div></div>'; }
   if (app.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Appuntamenti (' + app.length + ')</h2>'; for (const a of app) h += renderItemAppuntamento(a); h += '</div>'; }
   h += '<div class="actions">';
-  if (tp) { h += '<button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(tp) + '\')"><span class="icon">📞</span>Chiama</button>'; h += '<button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(tp) + '\')"><span class="icon">💬</span>WhatsApp</button>'; }
-  if (p.email) h += '<button class="action-btn" onclick="scriviEmail(\'' + escapeHtml(p.email) + '\')"><span class="icon">✉️</span>Email</button>';
+  if (tp) { h += '<button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(tp) + '\')"><span class="icon">' + ico('telefono',22) + '</span>Chiama</button>'; h += '<button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(tp) + '\')"><span class="icon">' + ico('whatsapp',22) + '</span>WhatsApp</button>'; }
+  if (p.email) h += '<button class="action-btn" onclick="scriviEmail(\'' + escapeHtml(p.email) + '\')"><span class="icon">' + ico('email',22) + '</span>Email</button>';
   h += '</div>';
-  h += '<div class="actions"><button class="action-btn" onclick="apriModificaPersona()"><span class="icon">✏️</span>Modifica</button>';
-  if (p.tipo === 'acquirente') h += '<button class="action-btn" onclick="apriCambiaStatoRR()"><span class="icon">🔄</span>Stato</button>';
-  h += '<button class="action-btn" onclick="apriNuovaAttivitaPersona()"><span class="icon">➕</span>Attività</button></div>';
-  if (p.tipo === 'acquirente') h += '<button class="btn btn-secondary" onclick="apriMatchNTINKPerAcquirente(\'' + p.id + '\')">🎯 Associa NT/INK (matching)</button>';
-  h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoPersona(\'' + p.id + '\')">📅 Nuovo appuntamento</button>';
+  h += '<div class="actions"><button class="action-btn" onclick="apriModificaPersona()"><span class="icon">' + ico('modifica',22) + '</span>Modifica</button>';
+  if (p.tipo === 'acquirente') h += '<button class="action-btn" onclick="apriCambiaStatoRR()"><span class="icon">' + ico('aggiorna',22) + '</span>Stato</button>';
+  h += '<button class="action-btn" onclick="apriNuovaAttivitaPersona()"><span class="icon">' + ico('piu',22) + '</span>Attività</button></div>';
+  if (p.tipo === 'acquirente') h += '<button class="btn btn-secondary" onclick="apriMatchNTINKPerAcquirente(\'' + p.id + '\')">' + ico('target',18) + ' Associa NT/INK (matching)</button>';
+  h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoPersona(\'' + p.id + '\')">' + ico('calendario',18) + ' Nuovo appuntamento</button>';
   h += '<div class="card"><h2><span class="dot"></span>Attività (' + att.length + ')</h2>';
   if (att.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività.</p>';
   else { for (const a of att) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivitaPersona(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
-  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-danger" onclick="eliminaPersona()">🗑️ Elimina</button></div>';
+  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-danger" onclick="eliminaPersona()">' + ico('cestino',18) + ' Elimina</button></div>';
   apriModal(t, h);
 }
 function apriModificaPersona() { const p = DB.persone.find(x => x.id === personaAperta); if (!p) return; if (p.tipo === 'acquirente') apriModificaAcquirente(p); else if (p.tipo === 'professionista') apriModificaProfessionista(p); }
@@ -1095,8 +1193,8 @@ function apriAzioniAttivitaPersona(idA) {
   const p = DB.persone.find(x => x.id === personaAperta); const a = (p.attivita || []).find(x => x.id === idA); if (!a) return;
   const df = a.tipo === 'da_fare' && !a.completata;
   let h = '<div class="card" style="padding:16px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:6px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:15px;">' + escapeHtml(a.testo) + '</div></div>';
-  if (df) h += '<button class="btn btn-primary" onclick="segnaComeFattaPersona(\'' + idA + '\')">✅ Segna come fatta</button>';
-  h += '<button class="btn btn-secondary" onclick="apriModificaAttivitaPersona(\'' + idA + '\')">✏️ Modifica</button><button class="btn btn-danger" onclick="eliminaAttivitaPersona(\'' + idA + '\')">🗑️ Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
+  if (df) h += '<button class="btn btn-primary" onclick="segnaComeFattaPersona(\'' + idA + '\')">' + ico('check',18) + ' Segna come fatta</button>';
+  h += '<button class="btn btn-secondary" onclick="apriModificaAttivitaPersona(\'' + idA + '\')">' + ico('modifica',18) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivitaPersona(\'' + idA + '\')">' + ico('cestino',18) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
   apriModal('Attività', h);
 }
 function segnaComeFattaPersona(idA) {
@@ -1116,7 +1214,7 @@ function apriModificaAttivitaPersona(idA) {
   const p = DB.persone.find(x => x.id === personaAperta); const a = (p.attivita || []).find(x => x.id === idA);
   const df = a.tipo === 'da_fare' && !a.completata; const dv = isoToLocalInput(df ? (a.dataPrevista || a.data) : a.data);
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="datetime-local" step="1" id="mpa-data" value="${dv}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="mpa-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivitaPersona('${idA}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAttivitaPersona('${idA}')">Salva</button></div>`;
-  apriModal('✏️ Modifica', h);
+  apriModal(ico('modifica',18) + ' Modifica', h);
 }
 function salvaModificaAttivitaPersona(idA) {
   const p = DB.persone.find(x => x.id === personaAperta); const a = (p.attivita || []).find(x => x.id === idA);
@@ -1167,10 +1265,10 @@ function apriMatchNTINKPerAcquirente(pid) {
   const sel = (p.immobili || []);
   let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona/deseleziona NT/INK da associare all\'acquirente.</p>';
   if (match.length > 0) {
-    h += '<div class="section-title">✅ Match consigliati</div><div class="card" style="padding:8px 0;">';
+    h += '<div class="section-title">' + ico('check',12) + ' Match consigliati</div><div class="card" style="padding:8px 0;">';
     for (const m of match) {
       const isSel = sel.includes(titoloImmobile(m.imm));
-      h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + m.imm.id + '\')"><span class="txt">' + (isSel ? '☑️ ' : '⬜ ') + escapeHtml(titoloImmobile(m.imm)) + '</span><span class="badge badge-' + m.imm.stato + '">' + m.imm.stato + '</span></div>';
+      h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + m.imm.id + '\')"><span class="txt">' + (isSel ? ico('check',14) : '') + ' ' + escapeHtml(titoloImmobile(m.imm)) + '</span><span class="badge badge-' + m.imm.stato + '">' + m.imm.stato + '</span></div>';
     }
     h += '</div>';
   }
@@ -1178,13 +1276,13 @@ function apriMatchNTINKPerAcquirente(pid) {
     h += '<div class="section-title">Altri NT/INK</div><div class="card" style="padding:8px 0;">';
     for (const i of tutti) {
       const isSel = sel.includes(titoloImmobile(i));
-      h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + i.id + '\')"><span class="txt">' + (isSel ? '☑️ ' : '⬜ ') + escapeHtml(titoloImmobile(i)) + '</span><span class="badge badge-' + i.stato + '">' + i.stato + '</span></div>';
+      h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + i.id + '\')"><span class="txt">' + (isSel ? ico('check',14) : '') + ' ' + escapeHtml(titoloImmobile(i)) + '</span><span class="badge badge-' + i.stato + '">' + i.stato + '</span></div>';
     }
     h += '</div>';
   }
-  if (match.length === 0 && tutti.length === 0) h += '<div class="card"><div class="empty"><div class="icon">🔍</div>Nessun NT/INK disponibile</div></div>';
+  if (match.length === 0 && tutti.length === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('lente',30) + '</div>Nessun NT/INK disponibile</div></div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + pid + '\')">Chiudi</button></div>';
-  apriModal('🎯 Match NT/INK', h);
+  apriModal(ico('target',18) + ' Match NT/INK', h);
 }
 function toggleImmobileAcquirente(pid, iid) {
   const p = DB.persone.find(x => x.id === pid); const i = DB.immobili.find(x => x.id === iid); if (!p || !i) return;
@@ -1229,10 +1327,11 @@ function apriProssimoAppuntamento() { const p = getProssimoAppuntamento(); if (p
 function renderItemAppuntamento(a) {
   const t = getTipoApp(a.tipo); const c = getClasseChiApp(t.chi);
   let e = '';
-  if (a.esito) { const x = ESITI_APPUNTAMENTO.find(y => y.id === a.esito); if (x) e = '<div class="app-esito ' + x.tipo + '">' + x.icona + ' ' + x.label + (a.descrizioneEsito ? ' · ' + escapeHtml(a.descrizioneEsito) : '') + '</div>'; }
-  else if (a.stato === 'eseguito') e = '<div class="app-esito neutral">✔ Eseguito</div>';
-  let h = '<div class="app-item-card ' + c + '" onclick="apriSchedaAppuntamento(\'' + a.id + '\')"><div class="app-tipo-badge">' + escapeHtml(a.tipo) + '</div><div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">📅 ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
-  if (a.luogo) h += '<div class="app-data">📍 ' + escapeHtml(a.luogo) + '</div>';
+  if (a.esito) { const x = ESITI_APPUNTAMENTO.find(y => y.id === a.esito); if (x) e = '<div class="app-esito ' + x.tipo + '">' + ico(x.icona,12) + ' ' + x.label + (a.descrizioneEsito ? ' · ' + escapeHtml(a.descrizioneEsito) : '') + '</div>'; }
+  else if (a.stato === 'eseguito') e = '<div class="app-esito neutral">' + ico('check',12) + ' Eseguito</div>';
+  const icT = ico(t.icona || 'calendario', 11);
+  let h = '<div class="app-item-card ' + c + '" onclick="apriSchedaAppuntamento(\'' + a.id + '\')"><div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div><div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">' + ico('calendario',12) + ' ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
+  if (a.luogo) h += '<div class="app-data">' + ico('pin',12) + ' ' + escapeHtml(a.luogo) + '</div>';
   h += e + '</div>'; return h;
 }
 function apriGoogleCalendarApp(a) {
@@ -1247,64 +1346,38 @@ function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.
 
 // ---------------------------------------------
 // FILTRO TIPI APPUNTAMENTO (regole di flusso)
+// FIX: se non c'è contesto, mostra tutti i tipi
 // ---------------------------------------------
 function tipiAppValidi(imm, per) {
+  // Nessun contesto → mostra tutti i tipi (l'utente sceglierà e verrà guidato)
+  if (!imm && !per) return getTuttiTipiApp();
   return getTuttiTipiApp().filter(t => {
     const s = t.sigla;
-    const tipoValutata = imm ? ((imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non')) : false;
-
-    // 2) Gestione incarico: solo su immobili INK
-    if (s === 'G INK') {
-      if (!imm || imm.stato !== 'INK') return false;
+    if (imm) {
+      const tv = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non');
+      // 2) G INK solo su INK
+      if (s === 'G INK' && imm.stato !== 'INK') return false;
+      // 3) VAL solo su PA/NT non valutate
+      if (s === 'VAL') {
+        if (imm.stato !== 'PA' && imm.stato !== 'NT') return false;
+        if (imm.stato === 'NT' && tv) return false;
+      }
+      // 4) RIVAL solo su NT valutate
+      if (s === 'RIVAL' && (imm.stato !== 'NT' || !tv)) return false;
+      // 5) ACC PROP solo se in trattativa
+      if (s === 'ACC PROP' && !imm.inTrattativa) return false;
+      // 6/7) APP e RIT PROP solo su NT/INK
+      if ((s === 'APP' || s === 'RIT PROP') && imm.stato !== 'NT' && imm.stato !== 'INK') return false;
+      // 8) NOT ACC PROP solo se in trattativa + proposta accettata
+      if (s === 'NOT ACC PROP' && (!imm.inTrattativa || !imm.propostaAccettata)) return false;
+      // 9/10) PRELIMINARE e ROGITO solo se proposta accettata/notificata
+      if ((s === 'PRELIMINARE' || s === 'ROGITO') && !imm.propostaAccettata && !imm.propostaNotificata) return false;
     }
-    // 3) Valutazione (acquisizione): solo su PA e NT non ancora valutate
-    if (s === 'VAL') {
-      if (!imm) return false;
-      if (imm.stato !== 'PA' && imm.stato !== 'NT') return false;
-      if (imm.stato === 'NT' && tipoValutata) return false;
-    }
-    // 4) Rivalutazione: solo su NT già valutate
-    if (s === 'RIVAL') {
-      if (!imm || imm.stato !== 'NT' || !tipoValutata) return false;
-    }
-    // 5) Accettazione proposta: solo su immobili in trattativa
-    if (s === 'ACC PROP') {
-      if (!imm || !imm.inTrattativa) return false;
-    }
-    // 6) Appuntamento di visita: solo su acquirenti (+ immobile NT/INK)
-    if (s === 'APP') {
-      if (!per || per.tipo !== 'acquirente') return false;
-      if (imm && imm.stato !== 'NT' && imm.stato !== 'INK') return false;
-    }
-    // 7) Ritiro proposta: solo su acquirenti che hanno visto almeno un NT/INK
-    if (s === 'RIT PROP') {
-      if (!per || per.tipo !== 'acquirente') return false;
-      if (!acquirenteHaVistoNTINK(per)) return false;
-      if (imm && imm.stato !== 'NT' && imm.stato !== 'INK') return false;
-    }
-    // 8) Notifica accettazione proposta: solo su immobili in trattativa con proposta accettata
-    if (s === 'NOT ACC PROP') {
-      if (!imm) return false;
-      if (!imm.inTrattativa) return false;
-      if (!imm.propostaAccettata) return false;
-    }
-    // 9) Preliminare: solo su immobili in trattativa con proposta accettata/notificata
-    if (s === 'PRELIMINARE') {
-      if (!imm) return false;
-      if (!imm.propostaAccettata && !imm.propostaNotificata) return false;
-    }
-    // 10) Rogito: solo su immobili in trattativa con proposta accettata/notificata (poi VND)
-    if (s === 'ROGITO') {
-      if (!imm) return false;
-      if (!imm.propostaAccettata && !imm.propostaNotificata) return false;
-    }
-    // 11) Consulenza Kiron: solo acquirenti
-    if (s === 'CONS') {
-      if (!per || per.tipo !== 'acquirente') return false;
-    }
-    // 23) APP GEN, SOPRALLUOGO, PERIZIA: serve almeno un contesto
-    if (s === 'APP GEN' || s === 'SOPRALLUOGO' || s === 'PERIZIA') {
-      if (!imm && !per) return false;
+    if (per) {
+      // 6/7/11) APP, RIT PROP, CONS solo acquirenti
+      if ((s === 'APP' || s === 'RIT PROP' || s === 'CONS') && per.tipo !== 'acquirente') return false;
+      // 7) RIT PROP solo se ha visto almeno un NT/INK
+      if (s === 'RIT PROP' && !acquirenteHaVistoNTINK(per)) return false;
     }
     return true;
   });
@@ -1315,21 +1388,21 @@ function apriSelezioneTipoApp(immPre, perPre) {
   const tipi = tipiAppValidi(immPre, perPre);
   let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona il tipo di appuntamento.</p>';
   if (tipi.length === 0) {
-    h += '<div class="card"><div class="empty"><div class="icon">⚠️</div>Nessun tipo di appuntamento valido per questo contesto.</div></div>';
+    h += '<div class="card"><div class="empty"><div class="icon">' + ico('attenzione',30) + '</div>Nessun tipo di appuntamento valido per questo contesto.</div></div>';
   } else {
     h += '<div class="tipo-app-grid">';
     for (const t of tipi) {
       const c = getClasseChiApp(t.chi);
       const isCustom = isTipoCustom(t.sigla);
       h += '<button type="button" class="tipo-app-btn ' + c + (isCustom ? ' custom' : '') + '" onclick="selezionaTipoApp(\'' + t.sigla.replace(/'/g, "\\'") + '\')">';
-      if (isCustom) h += '<span class="custom-star">⭐</span>';
-      h += '<div class="sigla">' + (t.icona || '📅') + ' ' + escapeHtml(t.sigla) + '</div><div class="desc">' + escapeHtml(t.desc || t.nome) + '</div></button>';
+      if (isCustom) h += '<span class="custom-star">' + ico('stella',13) + '</span>';
+      h += '<div class="sigla">' + ico(t.icona || 'calendario',16) + ' ' + escapeHtml(t.sigla) + '</div><div class="desc">' + escapeHtml(t.desc || t.nome) + '</div></button>';
     }
     h += '</div>';
   }
-  h += '<button class="btn btn-secondary" onclick="apriCreaTipoCustomDaSelezione()">➕ Aggiungi tipo personalizzato</button>';
+  h += '<button class="btn btn-secondary" onclick="apriCreaTipoCustomDaSelezione()">' + ico('piu',18) + ' Aggiungi tipo personalizzato</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
-  apriModal('📅 Nuovo appuntamento', h);
+  apriModal(ico('calendario',20) + ' Nuovo appuntamento', h);
 }
 
 function apriCreaTipoCustomDaSelezione() {
@@ -1344,7 +1417,6 @@ function selezionaTipoApp(sigla) {
   const imm = window._appImmPre; const per = window._appPersPre;
   if (t.chi === 'solo') { apriFormAppuntamento(null, null, t); return; }
   if (t.chi === 'visita') {
-    // Serve acquirente + immobile NT/INK
     if (imm && per) { apriFormAppuntamento(imm, per, t); return; }
     if (per && !imm) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t)); return; }
     if (imm && !per) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t)); return; }
@@ -1375,9 +1447,9 @@ function cercaEntitaPicker(te, q, cb) {
   if (te === 'immobile') { for (const imm of DB.immobili) { const t = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), badge: imm.stato, villa: !!imm.villa }); } }
   else { for (const p of DB.persone) { const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) { let b = p.tipo === 'acquirente' ? 'RR' : 'PROF'; r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: b }); } } }
   r = r.slice(0, 40);
-  if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">🔍</div>Nessun risultato</div></div>'; return; }
+  if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">' + ico('lente',30) + '</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? '🏠' : iconaCondo(14)) : (x.badge === 'RR' ? '👤' : '💼'); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
+  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',14) : iconaCondo(14)) : (x.badge === 'RR' ? ico('utente',14) : ico('valigetta',14)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPicker(t, id) {
@@ -1393,7 +1465,7 @@ function apriFormAppuntamento(imm, per, tipo) {
   const iD = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ad.getHours(), 0);
   const fD = new Date(iD.getTime() + 60 * 60 * 1000);
   const lu = imm ? imm.indirizzo : (per && per.indirizzoUff ? per.indirizzoUff : '');
-  let h = '<div class="prefill-banner">📅 ' + escapeHtml((tipo.icona || '📅') + ' ' + (tipo.nome || tipo.sigla)) + '</div>';
+  let h = '<div class="prefill-banner">' + ico(tipo.icona || 'calendario',16) + ' ' + escapeHtml((tipo.nome || tipo.sigla)) + '</div>';
   if (imm) h += '<div class="card" style="padding:12px 14px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:4px;">Immobile</div><div style="font-size:14px;font-weight:600;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>';
   if (per) h += '<div class="card" style="padding:12px 14px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:4px;">Persona</div><div style="font-size:14px;font-weight:600;">' + escapeHtml(titoloPersona(per)) + '</div></div>';
   h += '<div class="form-group"><div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"></div>';
@@ -1404,7 +1476,7 @@ function apriFormAppuntamento(imm, per, tipo) {
   if (tipo.sigla === 'APP') { const hc = imm && imm.dettagli && imm.dettagli.chiavi === 'Sì'; h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dettagli visita</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Chiavi?</label><select class="form-select" id="ap-chiavi"><option value="Sì"' + (hc ? ' selected' : '') + '>Sì</option><option value="No"' + (!hc ? ' selected' : '') + '>No</option></select></div><div class="form-row"><label class="form-label">Proprietario presente?</label><select class="form-select" id="ap-prop-presente"><option value="No">No</option><option value="Sì">Sì</option></select></div></div>'; }
   if (tipo.sigla === 'CONS') { h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Consulenza Kiron</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mutuabile?</label><select class="form-select" id="ap-mutuabile"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option></select></div><div class="form-row"><label class="form-label">Importo mutuo</label><input class="form-input" id="ap-importo"></div><div class="form-row"><label class="form-label">Percentuale</label><input class="form-input" id="ap-perc"></div></div>'; }
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaAppuntamento()">Salva</button></div>';
-  apriModal('📅 Appuntamento', h);
+  apriModal(ico('calendario',20) + ' Appuntamento', h);
 }
 function syncFineAppuntamentoNew() {
   const i = document.getElementById('ap-inizio').value; if (!i) return;
@@ -1443,26 +1515,27 @@ function apriSchedaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
   const imm = a.immobileId ? DB.immobili.find(x => x.id === a.immobileId) : null;
   const per = a.personaId ? DB.persone.find(x => x.id === a.personaId) : null;
-  let h = '<div style="margin-bottom:14px;"><span class="app-tipo-badge" style="display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;color:white;background:var(--blu);">' + escapeHtml(a.tipo) + '</span>' + (isTipoCustom(a.tipo) ? ' <span style="font-size:11px;color:var(--arancione);font-weight:700;margin-left:8px;">⭐ personalizzato</span>' : '') + '</div>';
+  const t = getTipoApp(a.tipo);
+  let h = '<div style="margin-bottom:14px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;color:white;background:var(--blu);">' + ico(t.icona || 'calendario',12) + ' ' + escapeHtml(a.tipo) + '</span>' + (isTipoCustom(a.tipo) ? ' <span style="font-size:11px;color:var(--arancione);font-weight:700;margin-left:8px;">' + ico('stella',12) + ' personalizzato</span>' : '') + '</div>';
   h += '<div class="card">';
   h += '<div class="info-row"><span class="label">Quando</span><span class="value">' + formattaDataOraCompleta(a.dataInizio) + '</span></div>';
   if (a.luogo) h += '<div class="info-row"><span class="label">Luogo</span><span class="value">' + escapeHtml(a.luogo) + '</span></div>';
   if (a.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(a.note) + '</span></div>';
   h += '<div class="info-row"><span class="label">Stato</span><span class="value">' + escapeHtml(a.stato) + '</span></div>';
-  if (a.esito) { const e = ESITI_APPUNTAMENTO.find(x => x.id === a.esito); if (e) h += '<div class="info-row"><span class="label">Esito</span><span class="value">' + e.icona + ' ' + e.label + '</span></div>'; }
+  if (a.esito) { const e = ESITI_APPUNTAMENTO.find(x => x.id === a.esito); if (e) h += '<div class="info-row"><span class="label">Esito</span><span class="value">' + ico(e.icona,12) + ' ' + e.label + '</span></div>'; }
   if (a.descrizioneEsito) h += '<div class="info-row"><span class="label">Descrizione</span><span class="value">' + escapeHtml(a.descrizioneEsito) + '</span></div>';
   h += '</div>';
   if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">' + iconaCondo(14) + ' ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
-  if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">👤 ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
-  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (imm ? '🔄 Cambia immobile' : (iconaCondo(14) + ' Collega immobile')) + '</button>';
-  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (per ? '🔄 Cambia persona' : '👤 Collega persona') + '</button>';
-  h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">📅 Aggiungi a Google Calendar</button>';
-  h += '<button class="btn btn-secondary" onclick="apriModificaAppuntamento(\'' + a.id + '\')">✏️ Modifica appuntamento</button>';
+  if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">' + ico('utente',14) + ' ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
+  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (imm ? ico('aggiorna',16) + ' Cambia immobile' : iconaCondo(14) + ' Collega immobile') + '</button>';
+  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (per ? ico('aggiorna',16) + ' Cambia persona' : ico('utente',14) + ' Collega persona') + '</button>';
+  h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">' + ico('calendario',18) + ' Aggiungi a Google Calendar</button>';
+  h += '<button class="btn btn-secondary" onclick="apriModificaAppuntamento(\'' + a.id + '\')">' + ico('modifica',18) + ' Modifica appuntamento</button>';
   const adesso = new Date();
   const passato = new Date(a.dataFine) < adesso;
-  if (a.stato !== 'eseguito' && a.stato !== 'annullato' && passato) h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">✅ Chiudi con esito</button>';
-  h += '<button class="btn btn-secondary" onclick="eliminaAppuntamento(\'' + a.id + '\')">🗑️ Elimina</button>';
-  apriModal('📅 ' + a.titolo, h);
+  if (a.stato !== 'eseguito' && a.stato !== 'annullato' && passato) h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',18) + ' Chiudi con esito</button>';
+  h += '<button class="btn btn-secondary" onclick="eliminaAppuntamento(\'' + a.id + '\')">' + ico('cestino',18) + ' Elimina</button>';
+  apriModal(ico(t.icona || 'calendario',20) + ' ' + a.titolo, h);
 }
 
 function apriChiusuraAppuntamento(id) {
@@ -1470,7 +1543,7 @@ function apriChiusuraAppuntamento(id) {
   window._appChius = id;
   let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Come è andato l\'appuntamento?</p>';
   h += '<div class="tipo-app-grid" style="grid-template-columns:1fr;">';
-  for (const e of ESITI_APPUNTAMENTO) h += '<button type="button" class="tipo-app-btn" onclick="selezionaEsitoApp(\'' + e.id + '\')"><div class="sigla">' + e.icona + ' ' + e.label + '</div></button>';
+  for (const e of ESITI_APPUNTAMENTO) h += '<button type="button" class="tipo-app-btn" onclick="selezionaEsitoApp(\'' + e.id + '\')"><div class="sigla">' + ico(e.icona,16) + ' ' + e.label + '</div></button>';
   h += '</div><div class="form-group"><div class="form-row"><label class="form-label">Descrizione (opzionale)</label><textarea class="form-textarea" id="ch-desc"></textarea></div></div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
   apriModal('Esito appuntamento', h);
@@ -1490,13 +1563,11 @@ function selezionaEsitoApp(esitoId) {
   if (a.tipo === 'G INK' && imm) { const r = prompt('Ribasso richiesto? (lascia vuoto per saltare)', ''); if (r) { imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Ribasso incarico: ' + r, completata: true }); } }
 
   // === FLUSSO TRATTATIVA ===
-  // 7) RIT PROP → immobile diventa in trattativa
   if (a.tipo === 'RIT PROP' && imm) {
     imm.inTrattativa = true;
     imm.attivita = imm.attivita || [];
-    imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - 🔥 Proposta ricevuta → in trattativa', completata: true });
+    imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Proposta ricevuta → in trattativa', completata: true });
   }
-  // 5) ACC PROP → proposta accettata
   if (a.tipo === 'ACC PROP' && imm) {
     const acc = confirm('Proposta accettata? (OK = accettata · Annulla = rifiutata)');
     if (acc) {
@@ -1509,13 +1580,11 @@ function selezionaEsitoApp(esitoId) {
       if (per && per.tipo === 'acquirente') { per.statoRR = 'in-attesa'; }
     }
   }
-  // 8) NOT ACC PROP → proposta notificata
   if (a.tipo === 'NOT ACC PROP' && imm) {
     imm.propostaNotificata = true;
     imm.attivita = imm.attivita || [];
     imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Proposta NOTIFICATA', completata: true });
   }
-  // 10) ROGITO → immobile diventa VND
   if (a.tipo === 'ROGITO' && imm) {
     imm.stato = 'VND';
     imm.inTrattativa = false;
@@ -1540,7 +1609,7 @@ function eliminaAppuntamento(id) {
 // =====================================================
 function apriModificaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
-  let h = '<div class="prefill-banner">📅 Modifica: ' + escapeHtml(a.tipo) + '</div>';
+  let h = '<div class="prefill-banner">' + ico('calendario',16) + ' Modifica: ' + escapeHtml(a.tipo) + '</div>';
   h += '<div class="form-group">';
   h += '<div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="mapp-titolo" value="' + escapeHtml(a.titolo || '') + '"></div>';
   h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="mapp-inizio" value="' + isoToLocalInput(a.dataInizio) + '" onchange="syncFineAppuntamento()"></div>';
@@ -1562,12 +1631,12 @@ function apriModificaAppuntamento(id) {
   }
   if (a.esito || a.stato === 'eseguito') {
     h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Esito</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Esito attuale</label><div style="font-weight:600;font-size:14px;">';
-    if (a.esito) { const e = ESITI_APPUNTAMENTO.find(x => x.id === a.esito); h += e ? (e.icona + ' ' + e.label) : a.esito; } else h += '✔ Eseguito (senza esito)';
+    if (a.esito) { const e = ESITI_APPUNTAMENTO.find(x => x.id === a.esito); h += e ? (ico(e.icona,12) + ' ' + e.label) : a.esito; } else h += ico('check',12) + ' Eseguito (senza esito)';
     h += '</div></div><div class="form-row"><label class="form-label">Descrizione esito</label><textarea class="form-textarea" id="mapp-desc-esito">' + escapeHtml(a.descrizioneEsito || '') + '</textarea></div></div>';
-    h += '<button class="btn btn-secondary" onclick="rimuoviEsitoAppuntamento(\'' + a.id + '\')">↩️ Riporta a "Programmato"</button>';
+    h += '<button class="btn btn-secondary" onclick="rimuoviEsitoAppuntamento(\'' + a.id + '\')">Riporta a "Programmato"</button>';
   }
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaAppuntamento(\'' + a.id + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAppuntamento(\'' + a.id + '\')">Salva</button></div>';
-  apriModal('✏️ Modifica appuntamento', h);
+  apriModal(ico('modifica',20) + ' Modifica appuntamento', h);
 }
 function salvaModificaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
@@ -1601,38 +1670,48 @@ function rimuoviEsitoAppuntamento(id) {
 function apriGestioneTipiApp() {
   const c = DB.customTipiApp || [];
   let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Tipi di appuntamento personalizzati.</p>';
-  if (c.length === 0) h += '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">⭐</div>Nessun tipo personalizzato</div></div>';
+  if (c.length === 0) h += '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">' + ico('stella',30) + '</div>Nessun tipo personalizzato</div></div>';
   else {
     h += '<div class="card" style="padding:8px 0;">';
     for (const t of c) {
       h += '<div class="immobile-line" style="margin:4px 8px;" onclick="apriFormTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\', apriGestioneTipiApp)">';
-      h += '<span class="txt">' + (t.icona || '📅') + ' <strong>' + escapeHtml(t.sigla) + '</strong> · ' + escapeHtml(t.nome) + '</span>';
+      h += '<span class="txt">' + ico(t.icona || 'calendario',16) + ' <strong>' + escapeHtml(t.sigla) + '</strong> · ' + escapeHtml(t.nome) + '</span>';
       h += '<span class="badge badge-' + (t.chi === 'vend' ? 'PA' : t.chi === 'acq' ? 'RR-attiva' : t.chi === 'entrambi' ? 'VND' : 'IMM') + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml((t.chi || '').toUpperCase()) + '</span>';
       h += '</div>';
     }
     h += '</div>';
   }
-  h += '<button class="btn btn-primary" onclick="apriFormTipoCustom(null, apriGestioneTipiApp)">➕ Aggiungi tipo personalizzato</button>';
+  h += '<button class="btn btn-primary" onclick="apriFormTipoCustom(null, apriGestioneTipiApp)">' + ico('piu',18) + ' Aggiungi tipo personalizzato</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
-  apriModal('⭐ Tipi appuntamento', h);
+  apriModal(ico('stella',20) + ' Tipi appuntamento', h);
 }
 
 function apriFormTipoCustom(siglaEsistente, dopoSalva) {
   const t = siglaEsistente ? (DB.customTipiApp || []).find(x => x.sigla === siglaEsistente) : null;
   const isEdit = !!t;
   window._customTipoDopoSalva = dopoSalva;
+  const iconeDisp = ['calendario','clipboard','righello','trendUp','penna','occhio','valigetta','upload','inbox','file','landmark','chiaveInglese','grafico','check','casa','telefono','whatsapp','email','stella','fuoco','target','pignone','clessidra','utente','utenti','campanello','orologio'];
   let h = '<div class="form-group">';
   h += '<div class="form-row"><label class="form-label">Sigla breve (max 20 caratteri)</label><input class="form-input" id="ct-sigla" maxlength="20" value="' + escapeHtml(t ? t.sigla : '') + '" placeholder="es. MEETING"></div>';
   h += '<div class="form-row" style="position:relative;"><label class="form-label">Nome esteso</label><input class="form-input" id="ct-nome" value="' + escapeHtml(t ? t.nome : '') + '" placeholder="es. Meeting interno" autocomplete="off" oninput="autocompleteNomeCustom(this)"><div id="ct-autocomplete" style="position:absolute;top:100%;left:16px;right:16px;background:white;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:100;display:none;max-height:180px;overflow-y:auto;"></div></div>';
-  h += '<div class="form-row"><label class="form-label">Icona (emoji)</label><input class="form-input" id="ct-icona" maxlength="4" value="' + escapeHtml(t ? (t.icona || '📅') : '📅') + '" placeholder="📅"></div>';
+  h += '<div class="form-row"><label class="form-label">Icona</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">';
+  for (const icn of iconeDisp) {
+    const sel = t && t.icona === icn;
+    h += '<button type="button" class="zone-chip' + (sel ? ' active' : '') + '" style="padding:8px 10px;" onclick="setIconaCustom(\'' + icn + '\')" data-icon-custom="' + icn + '" id="ico-sel-' + icn + '">' + ico(icn,18) + '</button>';
+  }
+  h += '</div><input type="hidden" id="ct-icona" value="' + escapeHtml(t ? (t.icona || 'calendario') : 'calendario') + '"></div>';
   h += '<div class="form-row"><label class="form-label">Descrizione breve</label><input class="form-input" id="ct-desc" value="' + escapeHtml(t ? (t.desc || '') : '') + '" placeholder="es. Riunione con colleghi"></div>';
   h += '<div class="form-row"><label class="form-label">Chi partecipa?</label><select class="form-select" id="ct-chi">';
   const opts = [['solo', 'Solo io (nessuno collegato)'], ['vend', 'Solo venditore (immobile)'], ['acq', 'Solo acquirente (persona)'], ['entrambi', 'Entrambi (immobile + persona)'], ['visita', 'Visita (acquirente + NT/INK)'], ['gen', 'Generico (uno dei due)']];
   for (const [v, l] of opts) h += '<option value="' + v + '"' + (t && t.chi === v ? ' selected' : '') + '>' + l + '</option>';
   h += '</select></div></div>';
-  if (isEdit) h += '<button class="btn btn-danger" onclick="eliminaTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\')">🗑️ Elimina tipo</button>';
+  if (isEdit) h += '<button class="btn btn-danger" onclick="eliminaTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\')">' + ico('cestino',18) + ' Elimina tipo</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal();if(window._customTipoDopoSalva)setTimeout(window._customTipoDopoSalva,100)">Annulla</button><button class="btn btn-primary" onclick="salvaTipoCustom(' + (isEdit ? "'" + escapeHtml(t.sigla).replace(/'/g, "\\'") + "'" : 'null') + ')">Salva</button></div>';
-  apriModal(isEdit ? '✏️ Modifica tipo' : '⭐ Nuovo tipo', h);
+  apriModal(isEdit ? ico('modifica',20) + ' Modifica tipo' : ico('stella',20) + ' Nuovo tipo', h);
+}
+function setIconaCustom(n) {
+  document.getElementById('ct-icona').value = n;
+  document.querySelectorAll('[data-icon-custom]').forEach(b => b.classList.toggle('active', b.dataset.iconCustom === n));
 }
 
 function autocompleteNomeCustom(inp) {
@@ -1662,7 +1741,7 @@ function salvaTipoCustom(siglaOriginale) {
   const g = (id) => document.getElementById(id);
   const sigla = ((g('ct-sigla') || {}).value || '').trim().toUpperCase();
   const nome = ((g('ct-nome') || {}).value || '').trim();
-  const icona = ((g('ct-icona') || {}).value || '').trim() || '📅';
+  const icona = ((g('ct-icona') || {}).value || '').trim() || 'calendario';
   const desc = ((g('ct-desc') || {}).value || '').trim();
   const chi = (g('ct-chi') || {}).value || 'gen';
   if (!sigla) { alert('Inserisci la sigla'); return; }
@@ -1740,9 +1819,9 @@ function apriAppGiorno(iso) {
   const m = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
   const t = g.getDate() + ' ' + m[g.getMonth()] + ' ' + g.getFullYear();
   let h = '';
-  if (ag.length === 0) h += '<div class="card"><div class="empty"><div class="icon">📅</div>Nessun appuntamento</div></div>';
+  if (ag.length === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('calendario',30) + '</div>Nessun appuntamento</div></div>';
   else for (const a of ag) h += renderItemAppuntamento(a);
-  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-primary" onclick="chiudiModal();setTimeout(function(){apriNuovoAppuntamentoGlobale()},100)">📅 Nuovo appuntamento</button></div>';
+  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-primary" onclick="chiudiModal();setTimeout(function(){apriNuovoAppuntamentoGlobale()},100)">' + ico('calendario',18) + ' Nuovo appuntamento</button></div>';
   apriModal(t, h);
 }
 
@@ -1783,7 +1862,7 @@ function renderAttivita() {
   else if (attTabFiltro === 'prossime') t = t.filter(a => { if (a.tipo !== 'da_fare' || a.completata) return false; return new Date(a.dataPrevista) >= d; });
   if (attQueryRicerca) t = t.filter(a => ((a.testo || '') + ' ' + (a.entitaTitolo || '')).toLowerCase().includes(attQueryRicerca));
   t.sort(compareAttivitaCrescente);
-  if (t.length === 0) { let ic = '✅', ms = 'Nessuna attività.'; if (attTabFiltro === 'oggi') { ic = '☀️'; ms = 'Nessuna attività per oggi.'; } else if (attTabFiltro === 'scadute') { ic = '✅'; ms = 'Nessuna attività scaduta. Bravo!'; } else if (attTabFiltro === 'prossime') { ic = '📅'; ms = 'Nessuna attività in programma.'; } c.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + ic + '</div>' + ms + '</div></div>'; return; }
+  if (t.length === 0) { let icn = 'check', ms = 'Nessuna attività.'; if (attTabFiltro === 'oggi') { icn = 'sole'; ms = 'Nessuna attività per oggi.'; } else if (attTabFiltro === 'scadute') { icn = 'check'; ms = 'Nessuna attività scaduta. Bravo!'; } else if (attTabFiltro === 'prossime') { icn = 'calendario'; ms = 'Nessuna attività in programma.'; } c.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + ico(icn,40) + '</div>' + ms + '</div></div>'; return; }
   const g = {};
   for (const a of t) { const k = a.entitaTipo + ':' + a.entitaId; if (!g[k]) g[k] = { entitaTipo: a.entitaTipo, entitaId: a.entitaId, entitaTitolo: a.entitaTitolo, entitaStato: a.entitaStato, entitaVilla: a.entitaVilla, entitaStatoRR: a.entitaStatoRR, entitaTipoPersona: a.entitaTipoPersona, items: [] }; g[k].items.push(a); }
   const ga = Object.values(g); ga.sort((a, b) => Math.min(...a.items.map(x => new Date(dataEffettivaAttivita(x)).getTime())) - Math.min(...b.items.map(x => new Date(dataEffettivaAttivita(x)).getTime())));
@@ -1791,14 +1870,14 @@ function renderAttivita() {
   for (const gg of ga) {
     const k = gg.entitaTipo + ':' + gg.entitaId; const e = !!attGruppiEspansi[k];
     const isI = gg.entitaTipo === 'immobile';
-    const ic = isI ? (gg.entitaVilla ? '🏠' : iconaCondo(20)) : (gg.entitaTipoPersona === 'acquirente' ? '👤' : '💼');
+    const ic = isI ? (gg.entitaVilla ? ico('villa',20) : iconaCondo(20)) : (gg.entitaTipoPersona === 'acquirente' ? ico('utente',20) : ico('valigetta',20));
     let be = '';
     if (isI) be = '<span class="badge badge-' + gg.entitaStato + '">' + gg.entitaStato + '</span>';
     else if (gg.entitaTipoPersona === 'acquirente' && gg.entitaStatoRR) { const s = STATI_RR.find(x => x.id === gg.entitaStatoRR) || STATI_RR[0]; be = '<span class="badge badge-RR-' + s.id + '">' + s.id.replace('-', ' ').toUpperCase() + '</span>'; }
     else be = '<span class="badge badge-PROF">PROF</span>';
     const di = Math.min(...gg.items.map(x => new Date(dataEffettivaAttivita(x)).getTime())); const di2 = new Date(di);
-    let dl = formattaDataBreve(di2.toISOString()); if (di2 < o) dl = '⚠️ ' + dl;
-    h += '<div class="att-gruppo' + (e ? ' espanso' : '') + '"><div class="att-gruppo-header" onclick="toggleAttGruppo(\'' + k + '\')"><span class="att-icona-ent">' + ic + '</span><div class="att-info"><div class="att-titolo">' + escapeHtml(gg.entitaTitolo) + '</div><div class="att-meta">' + be + ' <span>· ' + dl + '</span></div></div><span class="att-count">' + gg.items.length + '</span><span class="att-arrow">›</span></div><div class="att-gruppo-body">';
+    let dl = formattaDataBreve(di2.toISOString()); if (di2 < o) dl = ico('attenzione',11) + ' ' + dl;
+    h += '<div class="att-gruppo' + (e ? ' espanso' : '') + '"><div class="att-gruppo-header" onclick="toggleAttGruppo(\'' + k + '\')"><span class="att-icona-ent">' + ic + '</span><div class="att-info"><div class="att-titolo">' + escapeHtml(gg.entitaTitolo) + '</div><div class="att-meta">' + be + ' <span>· ' + dl + '</span></div></div><span class="att-count">' + gg.items.length + '</span><span class="att-arrow">' + ico('freccia',18) + '</span></div><div class="att-gruppo-body">';
     for (const a of gg.items) h += renderAttivitaItem(a);
     h += '</div></div>';
   }
@@ -1815,7 +1894,7 @@ function toggleAttGruppo(k) { attGruppiEspansi[k] = !attGruppiEspansi[k]; render
 function apriAzioniAttivitaGlobale(idA, t, id) { if (t === 'immobile') { immobileAperto = id; apriAzioniAttivita(idA); } else { personaAperta = id; apriAzioniAttivitaPersona(idA); } }
 function apriNuovaAttivitaGlobale() {
   const h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Cerca l\'immobile o la persona.</p><input type="search" class="search-bar" id="ng-search" placeholder="Cognome, indirizzo, telefono..."><div id="ng-risultati"></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
-  apriModal('➕ Nuova attività', h);
+  apriModal(ico('piu',20) + ' Nuova attività', h);
   setTimeout(() => { const i = document.getElementById('ng-search'); if (i) { i.focus(); i.addEventListener('input', (e) => cercaPerNuovaAttivita(e.target.value)); } cercaPerNuovaAttivita(''); }, 100);
 }
 function cercaPerNuovaAttivita(q) {
@@ -1824,9 +1903,9 @@ function cercaPerNuovaAttivita(q) {
   for (const imm of DB.immobili) { const t = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), badge: imm.stato, villa: !!imm.villa }); }
   for (const p of DB.persone) { const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: p.tipo === 'acquirente' ? 'RR' : 'PROF' }); }
   const ms = r.slice(0, 40);
-  if (ms.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">🔍</div>Nessun risultato</div></div>'; return; }
+  if (ms.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">' + ico('lente',30) + '</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? '🏠' : iconaCondo(14)) : (x.badge === 'RR' ? '👤' : '💼'); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
+  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',14) : iconaCondo(14)) : (x.badge === 'RR' ? ico('utente',14) : ico('valigetta',14)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
@@ -1842,7 +1921,7 @@ function apriFormNuovo() {
   window._villaNuovo = false; window._proprietariTemp = []; window._showPropForm = false; window._propEditingIndex = -1;
   const h = `${bh}<div class="form-group"><div class="form-row"><label class="form-label">Tipo immobile</label><select class="form-select" id="f-tipo" onchange="aggiornaFormNuovo()"><option value="censito">Immobile censito</option><option value="pa">Possibile Acquisizione (PA)</option><option value="nt">Notizia (NT)</option><option value="ink">Incarico (INK)</option></select></div></div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Tipo struttura</h2></div>
-    <div class="form-group" style="padding:14px 16px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)"><span class="ico">${iconaCondo(20)}</span>In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)"><span class="ico">🏠</span>Villa / Singolo</button></div></div>
+    <div class="form-group" style="padding:14px 16px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)">${iconaCondo(20)}In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)">${ico('villa',20)}Villa / Singolo</button></div></div>
     <div id="campi-dinamici"></div>
     <div id="f-zone-block"><div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 16px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div></div>
     <div class="form-group" style="padding:14px 16px;"><label style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--blu);cursor:pointer;"><input type="checkbox" id="f-chiedi-attivita" checked style="width:18px;height:18px;accent-color:var(--arancione);">Aggiungi subito un'attività</label></div>
@@ -1886,8 +1965,8 @@ function htmlPropList() {
   }
   let h = '';
   if (window._proprietariTemp.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);padding:4px 0;">Nessun altro proprietario.</p>';
-  else { h += '<div class="immobili-list">'; window._proprietariTemp.forEach((p, i) => { h += '<div class="immobile-line" onclick="apriModificaProprietario(' + i + ')"><span class="txt">' + escapeHtml(p.cognomeNome || '(senza nome)') + (p.quota ? ' · ' + escapeHtml(p.quota) : '') + '</span><button type="button" class="rm" onclick="event.stopPropagation();rimuoviProprietario(' + i + ')">✕</button></div>'; }); h += '</div>'; }
-  h += '<button type="button" class="add-btn" onclick="apriNuovoProprietario()">➕ Aggiungi proprietario</button>';
+  else { h += '<div class="immobili-list">'; window._proprietariTemp.forEach((p, i) => { h += '<div class="immobile-line" onclick="apriModificaProprietario(' + i + ')"><span class="txt">' + escapeHtml(p.cognomeNome || '(senza nome)') + (p.quota ? ' · ' + escapeHtml(p.quota) : '') + '</span><button type="button" class="rm" onclick="event.stopPropagation();rimuoviProprietario(' + i + ')">' + ico('x',16) + '</button></div>'; }); h += '</div>'; }
+  h += '<button type="button" class="add-btn" onclick="apriNuovoProprietario()">' + ico('piu',16) + ' Aggiungi proprietario</button>';
   return h;
 }
 function renderProprietariForm() { const c = document.getElementById('prop-list-container'); if (c) c.innerHTML = htmlPropList(); }
@@ -1907,7 +1986,7 @@ function aggiornaBloccoZoneDaCondominio(c, p) {
   if (window._villaNuovo) return;
   const co = normalizzaIndirizzo(c); const b = document.getElementById('f-zone-block'); if (!b) return;
   const det = (DB.condomini && DB.condomini[co]) || {}; const zc = det.zone || [];
-  if (zc.length > 0) { let h = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div><div class="inherit-banner"><span class="ico">' + iconaCondo(18) + '</span><div><strong>Dettagli ereditati da: ' + escapeHtml(co) + '</strong>📍 Zona: ' + escapeHtml(zc.join(' · ')); if (det.annoCostruzione) h += '<br>Anno: ' + escapeHtml(det.annoCostruzione); if (det.amministratore && det.amministratore.nome) h += '<br>Amministratore: ' + escapeHtml(det.amministratore.nome); h += '</div></div>'; b.innerHTML = h; zoneTemp[p].base = []; zoneTemp[p].speciale = null; zoneTemp[p].eredita = true; }
+  if (zc.length > 0) { let h = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div><div class="inherit-banner"><span class="ico">' + iconaCondo(18) + '</span><div><strong>Dettagli ereditati da: ' + escapeHtml(co) + '</strong>' + ico('pin',12) + ' Zona: ' + escapeHtml(zc.join(' · ')); if (det.annoCostruzione) h += '<br>Anno: ' + escapeHtml(det.annoCostruzione); if (det.amministratore && det.amministratore.nome) h += '<br>Amministratore: ' + escapeHtml(det.amministratore.nome); h += '</div></div>'; b.innerHTML = h; zoneTemp[p].base = []; zoneTemp[p].speciale = null; zoneTemp[p].eredita = true; }
   else { if (!document.getElementById(p + '-zone-container')) b.innerHTML = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 16px;"><div id="' + p + '-zone-container">' + htmlSelettoreZone(p) + '</div></div>'; zoneTemp[p].eredita = false; }
 }
 function salvaNuovoImmobile() {
@@ -1946,32 +2025,32 @@ function apriScheda(id) {
   const hd = !im.villa && (dc.annoCostruzione || dc.statoCondominio || dc.cappotto || dc.ascensoreCondominiale || (dc.amministratore && dc.amministratore.nome));
   const ap2 = im.altriProprietari || []; const hc = !!(im.lat && im.lng);
   let h = '<div style="margin-bottom:14px;"><span class="badge badge-' + im.stato + '">' + im.stato + '</span>';
-  if (im.villa) h += ' <span style="font-size:11px;color:#059669;font-weight:700;margin-left:8px;">🏠 VILLA</span>';
+  if (im.villa) h += ' <span style="font-size:11px;color:#059669;font-weight:700;margin-left:8px;">' + ico('villa',11) + ' VILLA</span>';
   if (im.sottotipo) h += ' <span style="font-size:12px;color:var(--testo-sec);margin-left:8px;">' + escapeHtml(im.sottotipo) + '</span>';
-  if (im.inTrattativa) h += ' <span class="badge" style="background:#d97706;margin-left:8px;">🔥 TRATTATIVA</span>';
+  if (im.inTrattativa) h += ' <span class="badge" style="background:#d97706;margin-left:8px;">' + ico('fuoco',11) + ' TRATTATIVA</span>';
   if (im.propostaAccettata) h += ' <span class="badge" style="background:#059669;margin-left:4px;">PROP. ACC.</span>';
   if (im.propostaNotificata) h += ' <span class="badge" style="background:#1e40af;margin-left:4px;">PROP. NOT.</span>';
   h += '</div>';
   if (im.z) h += '<div style="margin-bottom:12px;"><span class="zcode-badge">CODICE INTERNO: z' + im.z + '</span></div>';
   h += '<div class="card">';
-  if (im.indirizzo) { const ci = hc && im.geoPreciso === true ? ' <span class="addr-check">✓</span>' : ''; const ac = hc ? ' class="addr-click" onclick="apriAppleMaps(' + im.lat + ',' + im.lng + ', \'' + escapeHtml(im.indirizzo).replace(/'/g, "\\'") + '\')"' : ''; const ws = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'; h += '<div class="info-row"><span class="label">Indirizzo</span><span class="value"><span' + ac + '>' + escapeHtml(im.indirizzo) + '</span>' + ci + ' <span class="addr-link" onclick="toggleAddrTools()">' + ws + '</span></span></div>'; h += '<div id="addr-tools" class="addr-tools" style="display:none;"><button class="btn btn-secondary" style="font-size:13px;" onclick="apriModificaCoordinate()">📍 Coordinate manuali</button>'; if (hc) h += '<button class="btn btn-secondary" style="font-size:13px;" onclick="riGeocodificaImmobile(\'' + im.id + '\')">🔄 Ri-geocodifica</button>'; h += '</div>'; }
+  if (im.indirizzo) { const ci = hc && im.geoPreciso === true ? ' <span class="addr-check">' + ico('check',14) + '</span>' : ''; const ac = hc ? ' class="addr-click" onclick="apriAppleMaps(' + im.lat + ',' + im.lng + ', \'' + escapeHtml(im.indirizzo).replace(/'/g, "\\'") + '\')"' : ''; h += '<div class="info-row"><span class="label">Indirizzo</span><span class="value"><span' + ac + '>' + escapeHtml(im.indirizzo) + '</span>' + ci + ' <span class="addr-link" onclick="toggleAddrTools()">' + ico('chiaveInglese',15) + '</span></span></div>'; h += '<div id="addr-tools" class="addr-tools" style="display:none;"><button class="btn btn-secondary" style="font-size:13px;" onclick="apriModificaCoordinate()">' + ico('pin',14) + ' Coordinate manuali</button>'; if (hc) h += '<button class="btn btn-secondary" style="font-size:13px;" onclick="riGeocodificaImmobile(\'' + im.id + '\')">' + ico('aggiorna',14) + ' Ri-geocodifica</button>'; h += '</div>'; }
   if (im.citofono) h += '<div class="info-row"><span class="label">Citofono</span><span class="value">' + iconaCampanello() + ' ' + escapeHtml(im.citofono) + '</span></div>';
   if (im.cognomeNome) h += '<div class="info-row"><span class="label">Proprietario principale</span><span class="value">' + escapeHtml(im.cognomeNome) + '</span></div>';
   if (im.telefono) h += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(im.telefono) + '</span></div>';
   if (im.residenza) h += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(im.residenza) + '</span></div>';
   if (im.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(im.note) + '</span></div>';
-  if (im.stato === 'NT') { const iv = (im.sottotipo || '').toLowerCase().includes('valutata') && !(im.sottotipo || '').toLowerCase().includes('non'); h += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;"><div class="sottotipo-line"><span class="lbl">Stato notizia</span><button onclick="toggleValutazione()">' + (iv ? '✅ Valutata' : '⏳ Non valutata') + ' — cambia</button></div></div>'; }
-  if (ap2.length > 0) { h += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:8px;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:600;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push('📞 ' + escapeHtml(p.telefono)); if (p.email) ip.push('✉️ ' + escapeHtml(p.email)); if (p.residenza) ip.push('🏠 ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
+  if (im.stato === 'NT') { const iv = (im.sottotipo || '').toLowerCase().includes('valutata') && !(im.sottotipo || '').toLowerCase().includes('non'); h += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;"><div class="sottotipo-line"><span class="lbl">Stato notizia</span><button onclick="toggleValutazione()">' + (iv ? ico('check',14) + ' Valutata' : ico('clessidra',14) + ' Non valutata') + ' — cambia</button></div></div>'; }
+  if (ap2.length > 0) { h += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:8px;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:600;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push(ico('telefono',12) + ' ' + escapeHtml(p.telefono)); if (p.email) ip.push(ico('email',12) + ' ' + escapeHtml(p.email)); if (p.residenza) ip.push(ico('casa',12) + ' ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
   h += '</div>';
-  if (im.telefono) { h += '<div class="actions"><button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">📞</span>Chiama</button><button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">💬</span>WhatsApp</button></div>'; }
-  h += '<div class="actions"><button class="action-btn" onclick="apriModifica()"><span class="icon">✏️</span>Modifica</button><button class="action-btn" onclick="apriCambiaStato()"><span class="icon">🔄</span>Stato</button><button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">➕</span>Attività</button></div>';
-  h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoImmobile(\'' + im.id + '\')">📅 Nuovo appuntamento</button>';
+  if (im.telefono) { h += '<div class="actions"><button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('telefono',22) + '</span>Chiama</button><button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('whatsapp',22) + '</span>WhatsApp</button></div>'; }
+  h += '<div class="actions"><button class="action-btn" onclick="apriModifica()"><span class="icon">' + ico('modifica',22) + '</span>Modifica</button><button class="action-btn" onclick="apriCambiaStato()"><span class="icon">' + ico('aggiorna',22) + '</span>Stato</button><button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">' + ico('piu',22) + '</span>Attività</button></div>';
+  h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoImmobile(\'' + im.id + '\')">' + ico('calendario',18) + ' Nuovo appuntamento</button>';
   if (ap.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Appuntamenti (' + ap.length + ')</h2>'; for (const a of ap) h += renderItemAppuntamento(a); h += '</div>'; }
   h += '<div class="card"><h2><span class="dot"></span>Attività (' + at.length + ')</h2>';
   if (at.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività.</p>';
   else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
-  if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(14) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">✏️ Modifica condominio</button>'; h += '</div>'; }
+  if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(14) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + ico('pin',12) + ' ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">' + ico('modifica',16) + ' Modifica condominio</button>'; h += '</div>'; }
   if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:11px;color:#059669;font-weight:600;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
   const d = im.dettagli || {};
   const gu = [['Scala', d.scala], ['Piano', d.piano], ['Interno', d.interno]].filter(([_, v]) => v && v !== '');
@@ -1981,13 +2060,13 @@ function apriScheda(id) {
   const gst = [['Stato conservativo', d.statoConservativo]].filter(([_, v]) => v && v !== '');
   if (gu.length + gs.length + gd.length + ge.length + gst.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Dettagli unità</h2>'; if (gu.length) { h += '<div class="section-title">Unità</div>'; for (const [k, v] of gu) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gs.length) { h += '<div class="section-title">Superficie</div>'; for (const [k, v] of gs) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gd.length) { h += '<div class="section-title">Dotazioni</div>'; for (const [k, v] of gd) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (ge.length) { h += '<div class="section-title">Energetico</div>'; for (const [k, v] of ge) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gst.length) { h += '<div class="section-title">Stato</div>'; for (const [k, v] of gst) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } h += '</div>'; }
   if (fr.length > 0) { h += '<div class="card"><div class="condo-header">' + iconaCondo(14) + ' CONDOMINIO · ' + escapeHtml(co) + '</div><div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;">' + (fr.length + 1) + ' immobili</div><div class="immobili-list">'; for (const f of fr) h += '<div class="immobile-line" onclick="apriScheda(\'' + f.id + '\')"><span class="txt">' + escapeHtml(titoloImmobile(f)) + '</span><span class="badge badge-' + f.stato + '" style="font-size:9px;padding:2px 6px;">' + f.stato + '</span></div>'; h += '</div></div>'; }
-  h += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + im.id + '\')">📋 Duplica immobile</button>';
-  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="eliminaImmobile()">🗑️ Elimina</button>';
-  if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">📦 Archivia</button>';
+  h += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + im.id + '\')">' + ico('file',18) + ' Duplica immobile</button>';
+  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="eliminaImmobile()">' + ico('cestino',18) + ' Elimina</button>';
+  if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">' + ico('pacco',18) + ' Archivia</button>';
   h += '</div>';
   apriModal(t, h);
 }
-function apriModificaCoordinate() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const h = `<div class="form-group"><div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${i.lat || ''}" inputmode="decimal"></div><div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${i.lng || ''}" inputmode="decimal"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateManuali('${i.id}')">Salva</button></div>`; apriModal('📍 Coordinate', h); }
+function apriModificaCoordinate() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const h = `<div class="form-group"><div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${i.lat || ''}" inputmode="decimal"></div><div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${i.lng || ''}" inputmode="decimal"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateManuali('${i.id}')">Salva</button></div>`; apriModal(ico('pin',20) + ' Coordinate', h); }
 function salvaCoordinateManuali(id) { const i = DB.immobili.find(x => x.id === id); if (!i) return; const a = ((document.getElementById('coord-lat') || {}).value || '').trim(); const b = ((document.getElementById('coord-lng') || {}).value || '').trim(); if (!a || !b) { if (!a && !b) { i.lat = null; i.lng = null; i.geoPreciso = null; Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); return; } alert('Entrambe'); return; } const an = parseFloat(a.replace(',', '.')); const bn = parseFloat(b.replace(',', '.')); if (isNaN(an) || isNaN(bn)) { alert('Non valide'); return; } i.lat = an; i.lng = bn; i.geoPreciso = true; i.updatedAt = new Date().toISOString(); Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); }
 function apriCoordinateCondominio(co) {
   const c = (DB.coordinateCondomini && DB.coordinateCondomini[co]) || {};
@@ -1995,9 +2074,9 @@ function apriCoordinateCondominio(co) {
     <div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="co-lat" value="${c.lat || ''}" inputmode="decimal"></div>
     <div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="co-lng" value="${c.lng || ''}" inputmode="decimal"></div>
   </div>
-  <button class="btn btn-secondary" onclick="autoGeocodeCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">🔍 Geocodifica automatica</button>
+  <button class="btn btn-secondary" onclick="autoGeocodeCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('lente',18)} Geocodifica automatica</button>
   <div class="btn-row"><button class="btn btn-secondary" onclick="apriModificaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Salva</button></div>`;
-  apriModal('📍 Coordinate condominio', h);
+  apriModal(ico('pin',20) + ' Coordinate condominio', h);
 }
 function salvaCoordinateCondominio(co) {
   const lat = parseFloat((document.getElementById('co-lat').value || '').replace(',', '.'));
@@ -2019,7 +2098,7 @@ function apriModificaCondominio(co) {
   zoneTemp.condo = { base: [], speciale: null };
   if (d.zone && d.zone.length > 0) { const s = d.zone.filter(z => ZONA_ZDF === z || ZONE_SPECIALI.includes(z)); const b = d.zone.filter(z => ZONE_BASE.includes(z)); if (b.length > 0) zoneTemp.condo.base = b; else if (s.length === 1 && ZONE_SPECIALI.includes(s[0])) zoneTemp.condo.speciale = s[0]; }
   const h = `<div class="prefill-banner">${iconaCondo(14)} Condominio: ${escapeHtml(co)}</div>
-    <button class="btn btn-secondary" onclick="apriCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">📍 Coordinate ${coord.lat ? '✓' : ''}</button>
+    <button class="btn btn-secondary" onclick="apriCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('pin',18)} Coordinate ${coord.lat ? ico('check',14) : ''}</button>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" value="${escapeHtml(d.annoCostruzione || '')}"></div>
       <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (d.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
@@ -2034,12 +2113,12 @@ function apriModificaCondominio(co) {
       <div class="form-row"><label class="form-label">Studio</label><input class="form-input" id="cd-amm-studio" value="${escapeHtml(a.studio || '')}"></div>
       <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="cd-note">${escapeHtml(d.note || '')}</textarea></div>
     </div>
-    <button class="btn btn-danger" onclick="eliminaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">🗑️ Elimina condominio</button>
+    <button class="btn btn-danger" onclick="eliminaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('cestino',18)} Elimina condominio</button>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Salva</button></div>`;
   apriModal('Dettagli condominio', h);
 }
 function salvaCondominio(co) { if (!DB.condomini) DB.condomini = {}; const g = (id) => document.getElementById(id); const zc = calcolaZoneFinali('condo'); DB.condomini[co] = { annoCostruzione: ((g('cd-anno') || {}).value || '').trim(), statoCondominio: ((g('cd-stato') || {}).value || '').trim(), cappotto: ((g('cd-cappotto') || {}).value || '').trim(), ascensoreCondominiale: ((g('cd-ascensore') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('cd-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('cd-amm-tel') || {}).value || '', email: (g('cd-amm-email') || {}).value || '', studio: ((g('cd-amm-studio') || {}).value || '').trim() }, note: (g('cd-note') || {}).value || '' }; for (const i of DB.immobili) if (!i.villa && getCondominio(i) === co) { i.zone = zc.slice(); i.updatedAt = new Date().toISOString(); } Storage.save(DB); if (immobileAperto) apriScheda(immobileAperto); else chiudiModal(); }
-function eliminaCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); const m = i.length > 0 ? 'Contiene ' + i.length + ' immobili. Continuare?' : 'Eliminare?'; if (!confirm(m)) return; if (DB.condomini && DB.condomini[co]) delete DB.condomini[co]; if (DB.coordinateCondomini && DB.coordinateCondomini[co]) delete DB.coordinateCondomini[co]; Storage.save(DB); chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('🗑️'); }
+function eliminaCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); const m = i.length > 0 ? 'Contiene ' + i.length + ' immobili. Continuare?' : 'Eliminare?'; if (!confirm(m)) return; if (DB.condomini && DB.condomini[co]) delete DB.condomini[co]; if (DB.coordinateCondomini && DB.coordinateCondomini[co]) delete DB.coordinateCondomini[co]; Storage.save(DB); chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Eliminato'); }
 
 function apriModifica() {
   const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return;
@@ -2051,7 +2130,7 @@ function apriModifica() {
   window._villaModifica = !!i.villa; window._proprietariTemp = (i.altriProprietari || []).map(p => ({ ...p })); window._showPropForm = false; window._propEditingIndex = -1;
   let h = '<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="m-indirizzo" value="' + escapeHtml(i.indirizzo || '') + '"></div>';
   if (ic) h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="m-citofono" value="' + escapeHtml(i.citofono || '') + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Tipo struttura</label><div class="villa-toggle"><button type="button" id="m-btn-condominio" class="' + (!i.villa ? 'active' : '') + '" onclick="setVillaModifica(false)"><span class="ico">' + iconaCondo(20) + '</span>Condominio</button><button type="button" id="m-btn-villa" class="' + (i.villa ? 'active' : '') + '" onclick="setVillaModifica(true)"><span class="ico">🏠</span>Villa</button></div></div>';
+  h += '<div class="form-row"><label class="form-label">Tipo struttura</label><div class="villa-toggle"><button type="button" id="m-btn-condominio" class="' + (!i.villa ? 'active' : '') + '" onclick="setVillaModifica(false)">' + iconaCondo(20) + 'Condominio</button><button type="button" id="m-btn-villa" class="' + (i.villa ? 'active' : '') + '" onclick="setVillaModifica(true)">' + ico('villa',20) + 'Villa</button></div></div>';
   if (!i.villa) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="m-condominio" value="' + escapeHtml(i.condominio || '') + '"></div>';
   if (!ic) { h += '<div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="m-cognomeNome" value="' + escapeHtml(i.cognomeNome || '') + '"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(i.telefono || '') + '"></div><div class="form-row"><label class="form-label">Residenza</label><input class="form-input" id="m-residenza" value="' + escapeHtml(i.residenza || '') + '"></div>'; if (i.stato === 'NT') { const iv = (i.sottotipo || '').toLowerCase().includes('valutata') && !(i.sottotipo || '').toLowerCase().includes('non'); h += '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="m-sottotipo"><option value="NT non ancora valutata"' + (!iv ? ' selected' : '') + '>NT non ancora valutata</option><option value="NT valutata"' + (iv ? ' selected' : '') + '>NT valutata</option></select></div>'; } if (i.stato === 'INK') { const ie = (i.sottotipo || '').toLowerCase().includes('esclusiva'); h += '<div class="form-row"><label class="form-label">Tipo incarico</label><select class="form-select" id="m-sottotipo"><option value="">—</option><option value="INK gestione"' + (!ie && i.sottotipo ? ' selected' : '') + '>INK gestione</option><option value="INK esclusiva"' + (ie ? ' selected' : '') + '>INK esclusiva</option></select></div>'; } }
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-note">' + escapeHtml(i.note || '') + '</textarea></div></div>';
@@ -2071,7 +2150,7 @@ function apriModifica() {
   h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Stato</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Stato conservativo</label><select class="form-select" id="d-statoConservativo">';
   for (const s of ['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare']) h += '<option value="' + s + '"' + (d.statoConservativo === s ? ' selected' : '') + '>' + (s || '—') + '</option>';
   h += '</select></div></div>';
-  if (!ic) { const l = i.altriImmobili || []; h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili</h2><div id="altri-immobili-list">'; if (l.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun altro immobile.</p>'; else { h += '<div class="immobili-list">'; for (let k = 0; k < l.length; k++) h += '<div class="immobile-line"><span class="txt">🏠 ' + escapeHtml(l[k]) + '</span><button class="rm" onclick="rimuoviAltroImmobile(' + k + ')">✕</button></div>'; h += '</div>'; } h += '</div><button class="add-btn" onclick="aggiungiAltroImmobile()">➕ Aggiungi altro immobile</button></div>'; }
+  if (!ic) { const l = i.altriImmobili || []; h += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili</h2><div id="altri-immobili-list">'; if (l.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun altro immobile.</p>'; else { h += '<div class="immobili-list">'; for (let k = 0; k < l.length; k++) h += '<div class="immobile-line"><span class="txt">' + ico('casa',14) + ' ' + escapeHtml(l[k]) + '</span><button class="rm" onclick="rimuoviAltroImmobile(' + k + ')">' + ico('x',16) + '</button></div>'; h += '</div>'; } h += '</div><button class="add-btn" onclick="aggiungiAltroImmobile()">' + ico('piu',16) + ' Aggiungi altro immobile</button></div>'; }
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaModifica()">Salva</button></div>';
   apriModal('Modifica', h);
 }
@@ -2102,15 +2181,15 @@ function eseguiCambioStato(i, v, ns) { i.stato = ns; if (ns === 'IMM') { i.cogno
 function apriNuovaAttivita() { const h = `<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="a-tipo" onchange="aggiornaFormAttivita()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div></div><div id="a-campi"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${immobileAperto}')">Annulla</button><button class="btn btn-primary" onclick="salvaAttivita()">Salva</button></div>`; apriModal('Nuova attività', h); aggiornaFormAttivita(); }
 function aggiornaFormAttivita() { const t = document.getElementById('a-tipo').value; const c = document.getElementById('a-campi'); if (t === 'fatta') c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora</label><input class="form-input" type="datetime-local" step="1" id="a-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; else c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data prevista</label><input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; }
 function salvaAttivita() { const i = DB.immobili.find(x => x.id === immobileAperto); const t = document.getElementById('a-tipo').value; const tx = (document.getElementById('a-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } i.attivita = i.attivita || []; const s = prossimoSeq(); if (t === 'fatta') { const d = document.getElementById('a-data').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); } else { const d = document.getElementById('a-dataPrevista').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); } i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
-function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:16px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:6px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:15px;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">✅ Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">✏️ Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">🗑️ Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
+function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:16px;"><div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;margin-bottom:6px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:15px;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">' + ico('check',18) + ' Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">' + ico('modifica',18) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">' + ico('cestino',18) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
 function segnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora esecuzione</label><input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="sf-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idA}')">Conferma</button></div>`; apriModal('Segna come fatta', h); }
 function confermaSegnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const d = document.getElementById('sf-data').value; const tx = (document.getElementById('sf-testo') || {}).value || a.testo; if (!d) { alert('Data'); return; } a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date(d).toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.testo = tx.trim(); a.updatedAt = new Date().toISOString(); a.seq = prossimoSeq(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
-function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const df = a.tipo === 'da_fare' && !a.completata; const dv = isoToLocalInput(df ? (a.dataPrevista || a.data) : a.data); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="datetime-local" step="1" id="ma-data" value="${dv}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ma-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAttivita('${idA}')">Salva</button></div>`; apriModal('✏️ Modifica', h); }
+function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const df = a.tipo === 'da_fare' && !a.completata; const dv = isoToLocalInput(df ? (a.dataPrevista || a.data) : a.data); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="datetime-local" step="1" id="ma-data" value="${dv}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ma-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAttivita('${idA}')">Salva</button></div>`; apriModal(ico('modifica',18) + ' Modifica', h); }
 function salvaModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const tx = (document.getElementById('ma-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } const d = document.getElementById('ma-data').value; if (!d) { alert('Data'); return; } const df = a.tipo === 'da_fare' && !a.completata; a.testo = tx.trim(); if (df) a.dataPrevista = new Date(d).toISOString(); else a.data = new Date(d).toISOString(); a.updatedAt = new Date().toISOString(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function eliminaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!confirm('Eliminare?\n\n' + a.testo)) return; i.attivita = (i.attivita || []).filter(x => x.id !== idA); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function toggleValutazione() { const i = DB.immobili.find(x => x.id === immobileAperto); const c = i.sottotipo || ''; const v = c.toLowerCase().includes('valutata') && !c.toLowerCase().includes('non'); i.sottotipo = v ? 'NT non ancora valutata' : 'NT valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Stato notizia: ' + (v ? '→ non ancora valutata' : '→ valutata'), completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(i.id); }
 function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa(); }
-function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('✅'); }
+function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Archiviato'); }
 function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
 
 function apriFormNuovoCondominio() {
@@ -2122,29 +2201,39 @@ function apriFormNuovoCondominio() {
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea</button></div>`;
   apriModal('Nuovo condominio', h);
 }
-function salvaNuovoCondominio() { const i = normalizzaIndirizzo((document.getElementById('nc-indirizzo') || {}).value); if (!i) { alert('Indirizzo'); return; } if (DB.condomini && DB.condomini[i]) { if (!confirm('Esiste. Sovrascrivere?')) return; } const g = (id) => document.getElementById(id); const zc = calcolaZoneFinali('condo'); if (!DB.condomini) DB.condomini = {}; DB.condomini[i] = { annoCostruzione: ((g('nc-anno') || {}).value || '').trim(), statoCondominio: ((g('nc-stato') || {}).value || '').trim(), cappotto: ((g('nc-cappotto') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('nc-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('nc-amm-tel') || {}).value || '' }, note: '' }; Storage.save(DB); chiudiModal(); alert('✅ ' + i); vistaCondomini = true; aggiornaChips(); renderListaImmobili(); }
+function salvaNuovoCondominio() { const i = normalizzaIndirizzo((document.getElementById('nc-indirizzo') || {}).value); if (!i) { alert('Indirizzo'); return; } if (DB.condomini && DB.condomini[i]) { if (!confirm('Esiste. Sovrascrivere?')) return; } const g = (id) => document.getElementById(id); const zc = calcolaZoneFinali('condo'); if (!DB.condomini) DB.condomini = {}; DB.condomini[i] = { annoCostruzione: ((g('nc-anno') || {}).value || '').trim(), statoCondominio: ((g('nc-stato') || {}).value || '').trim(), cappotto: ((g('nc-cappotto') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('nc-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('nc-amm-tel') || {}).value || '' }, note: '' }; Storage.save(DB); chiudiModal(); alert('Creato: ' + i); vistaCondomini = true; aggiornaChips(); renderListaImmobili(); }
 
 // MAPPA
 let map = null; let markersLayer = null; window._condoPopups = [];
 function initMappa() { if (map) return; const c = _coordsCittaPrincipale || CREMONA_CENTER; map = L.map('map', { center: c, zoom: 14, zoomControl: true }); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map); markersLayer = L.layerGroup().addTo(map); aggiornaMappa(); }
-function creaPinIcona(i) { const s = i.stato; const v = !!i.villa; let c = 'pin-' + s; if (v) c = 'pin-villa'; const h = `<div class="pin-wrap ${c}"><div class="pin-body"><div class="pin-label">${v ? '🏠' : s}</div></div></div>`; const sz = v ? [28, 28] : [32, 40]; const an = v ? [14, 14] : [16, 40]; return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: sz, iconAnchor: an, popupAnchor: [0, -40] }); }
+function creaPinIcona(i) { const s = i.stato; const v = !!i.villa; let c = 'pin-' + s; if (v) c = 'pin-villa'; const h = `<div class="pin-wrap ${c}"><div class="pin-body"><div class="pin-label">${v ? '' : s}</div></div></div>`; const sz = v ? [28, 28] : [32, 40]; const an = v ? [14, 14] : [16, 40]; return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: sz, iconAnchor: an, popupAnchor: [0, -40] }); }
 function creaPinCondominio(n) { const h = `<div class="pin-wrap pin-condo"><div class="pin-body"><div class="pin-label">${n}</div></div></div>`; return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] }); }
 function apriPopupImmobile(id) { chiudiModal(); apriScheda(id); }
 function apriPopupCondominioByIndex(i) { const c = window._condoPopups[i]; if (c) apriPopupCondominio(c); }
-function apriPopupCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); let h = '<div class="prefill-banner">' + iconaCondo(14) + ' ' + escapeHtml(co) + '</div>'; if (i.length === 0) h += '<div class="card"><div class="empty" style="padding:12px 0;"><div class="icon">' + iconaCondo(30) + '</div>Nessun immobile in questo condominio</div></div>'; else { h += '<div class="card"><h2><span class="dot"></span>Immobili (' + i.length + ')</h2><div class="immobili-list">'; for (const im of i) h += '<div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + escapeHtml(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; h += '</div></div>'; } h += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')},100)">✏️ Modifica condominio</button>'; apriModal(iconaCondo(14) + ' ' + co, h); }
-function aggiornaMappa() { if (!map || !markersLayer) return; markersLayer.clearLayers(); window._condoPopups = []; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); const gc = {}; const vs = []; for (const im of l) { const c = getCondominio(im); if (!c) vs.push(im); else { if (!gc[c]) gc[c] = []; gc[c].push(im); } } let pt = 0; for (const c in gc) { const im = gc[c]; const p = im[0]; const cc = (DB.coordinateCondomini && DB.coordinateCondomini[c]) || null; const lat = cc ? cc.lat : p.lat; const lng = cc ? cc.lng : p.lng; if (im.length === 1) { const x = im[0]; const mk = L.marker([x.lat, x.lng], { icon: creaPinIcona(x) }); const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">🔔 Citofono: ${escapeHtml(x.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">📋</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } else { window._condoPopups.push(c); const idx = window._condoPopups.length - 1; const mk = L.marker([lat, lng], { icon: creaPinCondominio(im.length) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(13)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">🏢</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } } for (const im of vs) { const mk = L.marker([im.lat, im.lng], { icon: creaPinIcona(im) }); const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">🔔 Citofono: ${escapeHtml(im.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub">${im.villa ? '🏠 ' : ''}<span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">📋</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">🧭</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } const t = DB.immobili.length; const g = DB.immobili.filter(i => i.lat && i.lng).length; document.getElementById('map-count').textContent = pt; document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)'; }
+function apriPopupCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); let h = '<div class="prefill-banner">' + iconaCondo(14) + ' ' + escapeHtml(co) + '</div>'; if (i.length === 0) h += '<div class="card"><div class="empty" style="padding:12px 0;"><div class="icon">' + iconaCondo(30) + '</div>Nessun immobile in questo condominio</div></div>'; else { h += '<div class="card"><h2><span class="dot"></span>Immobili (' + i.length + ')</h2><div class="immobili-list">'; for (const im of i) h += '<div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + escapeHtml(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; h += '</div></div>'; } h += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')},100)">' + ico('modifica',18) + ' Modifica condominio</button>'; apriModal(iconaCondo(14) + ' ' + co, h); }
+function aggiornaMappa() { if (!map || !markersLayer) return; markersLayer.clearLayers(); window._condoPopups = []; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); const gc = {}; const vs = []; for (const im of l) { const c = getCondominio(im); if (!c) vs.push(im); else { if (!gc[c]) gc[c] = []; gc[c].push(im); } } let pt = 0; for (const c in gc) { const im = gc[c]; const p = im[0]; const cc = (DB.coordinateCondomini && DB.coordinateCondomini[c]) || null; const lat = cc ? cc.lat : p.lat; const lng = cc ? cc.lng : p.lng; if (im.length === 1) { const x = im[0]; const mk = L.marker([x.lat, x.lng], { icon: creaPinIcona(x) }); const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">${ico('campanello',11)} Citofono: ${escapeHtml(x.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">${ico('file',14)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">${ico('pin',14)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } else { window._condoPopups.push(c); const idx = window._condoPopups.length - 1; const mk = L.marker([lat, lng], { icon: creaPinCondominio(im.length) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(13)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">${iconaCondo(14)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">${ico('pin',14)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } } for (const im of vs) { const mk = L.marker([im.lat, im.lng], { icon: creaPinIcona(im) }); const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">${ico('campanello',11)} Citofono: ${escapeHtml(im.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">${ico('file',14)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">${ico('pin',14)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } const t = DB.immobili.length; const g = DB.immobili.filter(i => i.lat && i.lng).length; document.getElementById('map-count').textContent = pt; document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)'; }
 async function centraMappaSuCittaPrincipale() { if (!map) return; if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); map.setView(_coordsCittaPrincipale, 14); }
 function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); if (l.length === 0) { centraMappaSuCittaPrincipale(); return; } const b = L.latLngBounds(l.map(i => [i.lat, i.lng])); map.fitBounds(b, { padding: [60, 60], maxZoom: 17 }); }
 
 // CONTATORI / BACKUP
 function aggiornaContatori() { const ep = document.getElementById('count-persone'); const ea = document.getElementById('count-acquirenti'); if (ep) ep.textContent = (DB.persone || []).length; if (ea) ea.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length; const info = document.getElementById('storage-info'); if (info) { const r = localStorage.getItem(DB_KEY) || ''; info.textContent = (r.length / 1024).toFixed(2) + ' KB'; } }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
-function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('✅'); } catch (err) { alert('❌ ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
-function cancellaTutto() { if (!confirm('⚠️ Cancellare TUTTI i dati?')) return; if (!confirm('⚠️ Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('🗑️'); }
-function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">↩️ Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal('⚙️ Città', h); }
-function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('✅ ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
+function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
+function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati?')) return; if (!confirm('Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
+function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal(ico('ingranaggio',20) + ' Città', h); }
+function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('Città: ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
 
+// =====================================================
 // AVVIO
+// =====================================================
+// Imposta le icone sui chip statici
+document.getElementById('chip-zone').innerHTML = ico('pin',14) + ' ZONE';
+document.getElementById('chip-cond').innerHTML = iconaCondo(14) + ' COND';
+document.getElementById('chip-ptab-acq').innerHTML = ico('casa',14) + ' Acquirenti';
+document.getElementById('chip-ptab-prof').innerHTML = ico('valigetta',14) + ' Professionisti';
+document.getElementById('btn-modal-close').innerHTML = ico('x',16);
+
+applicaIcone();
 aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema(); aggiornaFabPersone(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp();
 </script>
 
