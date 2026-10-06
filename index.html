@@ -1538,4 +1538,169 @@ function salvaModifica() {
 }
 
 // =====================================================
-//
+// CAMBIA STATO
+// =====================================================
+function apriCambiaStato() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const ordine = ['IMM', 'PA', 'NT', 'INK', 'VND'];
+  const idx = ordine.indexOf(imm.stato);
+  let html = '<div class="form-group"><div class="form-row"><label class="form-label">Stato attuale</label><div style="font-weight:700;font-size:15px;">' + imm.stato + '</div></div></div>';
+  html += '<div class="card" style="padding:16px;"><h2><span class="dot"></span>Upgrade</h2>';
+  if (idx < ordine.length - 1) html += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + ordine[idx + 1] + '\')">→ ' + ordine[idx + 1] + '</button>';
+  else html += '<p style="font-size:13px;">Già allo stato massimo</p>';
+  html += '</div>';
+  html += '<div class="card" style="padding:16px;"><h2><span class="dot"></span>Degrade</h2>';
+  if (idx > 0) html += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + ordine[idx - 1] + '\')">→ ' + ordine[idx - 1] + '</button>';
+  else html += '<p style="font-size:13px;">Già allo stato minimo</p>';
+  html += '</div>';
+  if (imm.stato !== 'VND') html += '<div class="card" style="padding:16px;"><h2><span class="dot"></span>Vendi</h2><button class="btn btn-primary" onclick="cambiaStato(\'VND\')">→ VND (Venduto)</button></div>';
+  html += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + imm.id + '\')">Annulla</button></div>';
+  apriModal('Cambia stato', html);
+}
+function cambiaStato(nuovoStato) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  const vecchio = imm.stato;
+  if (vecchio === 'IMM' && nuovoStato !== 'IMM' && !imm.cognomeNome) {
+    const html = `
+      <div class="form-group">
+        <div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="cs-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
+        <div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="cs-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
+        <div class="form-row"><label class="form-label">Residenza (opzionale)</label><input class="form-input" id="cs-residenza" placeholder="VIA ..." autocomplete="off"></div>
+      </div>
+      <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Stai passando da IMM a ${nuovoStato}. Inserisci i dati del proprietario.</p>
+      <div class="btn-row"><button class="btn btn-secondary" onclick="apriCambiaStato()">Annulla</button><button class="btn btn-primary" onclick="confermaCambioStato('${nuovoStato}')">Conferma</button></div>`;
+    apriModal('Passaggio a ' + nuovoStato, html);
+    return;
+  }
+  eseguiCambioStato(imm, vecchio, nuovoStato);
+}
+function confermaCambioStato(nuovoStato) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  const nomeEl = document.getElementById('cs-cognomeNome');
+  if (nomeEl) imm.cognomeNome = nomeEl.value.trim().toUpperCase();
+  const telEl = document.getElementById('cs-telefono');
+  if (telEl) imm.telefono = telEl.value || '';
+  const resEl = document.getElementById('cs-residenza');
+  if (resEl) imm.residenza = (resEl.value || '').trim().toUpperCase();
+  eseguiCambioStato(imm, imm.stato, nuovoStato);
+}
+function eseguiCambioStato(imm, vecchio, nuovoStato) {
+  imm.stato = nuovoStato;
+  if (nuovoStato === 'IMM') { imm.cognomeNome = ''; imm.telefono = ''; imm.residenza = ''; imm.altriImmobili = []; }
+  if (nuovoStato === 'NT' && !imm.sottotipo) imm.sottotipo = 'NT non ancora valutata';
+  imm.attivita = imm.attivita || [];
+  imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Cambio stato: ' + vecchio + ' → ' + nuovoStato, completata: true });
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
+}
+
+// =====================================================
+// NUOVA ATTIVITÀ
+// =====================================================
+function apriNuovaAttivita() {
+  const html = `
+    <div class="form-group">
+      <div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="a-tipo" onchange="aggiornaFormAttivita()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div>
+    </div>
+    <div id="a-campi"></div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${immobileAperto}')">Annulla</button><button class="btn btn-primary" onclick="salvaAttivita()">Salva</button></div>
+  `;
+  apriModal('Nuova attività', html);
+  aggiornaFormAttivita();
+}
+function aggiornaFormAttivita() {
+  const tipo = document.getElementById('a-tipo').value;
+  const cont = document.getElementById('a-campi');
+  if (tipo === 'fatta') cont.innerHTML = `
+      <div class="form-group">
+        <div class="form-row"><label class="form-label">Data e ora svolgimento</label><input class="form-input" type="datetime-local" step="1" id="a-data" value="${adessoLocal()}"></div>
+        <div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo" placeholder="Cosa hai fatto?"></textarea></div>
+      </div>`;
+  else cont.innerHTML = `
+      <div class="form-group">
+        <div class="form-row"><label class="form-label">Data e ora prevista</label><input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${adessoLocal()}"></div>
+        <div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo" placeholder="Cosa devi fare?"></textarea></div>
+      </div>`;
+}
+function salvaAttivita() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  const tipo = document.getElementById('a-tipo').value;
+  const testo = (document.getElementById('a-testo') || {}).value || '';
+  if (!testo.trim()) { alert('Scrivi qualcosa'); return; }
+  imm.attivita = imm.attivita || [];
+  const seq = prossimoSeq();
+  if (tipo === 'fatta') {
+    const dataLocal = document.getElementById('a-data').value;
+    if (!dataLocal) { alert('Inserisci la data'); return; }
+    imm.attivita.push({ id: uid(), seq, data: new Date(dataLocal).toISOString(), tipo: 'fatta', testo: testo.trim(), completata: true });
+  } else {
+    const dataPrevista = document.getElementById('a-dataPrevista').value;
+    if (!dataPrevista) { alert('Inserisci la data prevista'); return; }
+    imm.attivita.push({ id: uid(), seq, data: new Date().toISOString(), tipo: 'da_fare', testo: testo.trim(), dataPrevista: new Date(dataPrevista).toISOString(), completata: false });
+  }
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB); renderListaImmobili(); apriScheda(imm.id);
+}
+
+function eliminaImmobile() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!confirm('Eliminare "' + titoloImmobile(imm) + '"?\nOperazione irreversibile.')) return;
+  DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
+  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili();
+}
+function archiviaImmobile() {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!confirm('Archiviare "' + titoloImmobile(imm) + '"?')) return;
+  DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
+  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili();
+  alert('✅ Immobile archiviato');
+}
+
+function aggiornaContatori() {
+  const elPers = document.getElementById('count-persone');
+  const elAcq = document.getElementById('count-acquirenti');
+  if (elPers) elPers.textContent = (DB.persone || []).length;
+  if (elAcq) elAcq.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length;
+  const info = document.getElementById('storage-info');
+  if (info) { const raw = localStorage.getItem(DB_KEY) || ''; info.textContent = (raw.length / 1024).toFixed(2) + ' KB'; }
+}
+
+function esportaBackup() {
+  const data = JSON.stringify(DB, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const oggi = new Date();
+  const nome = 'arangiò_backup_' + oggi.getFullYear() + '-' + pad2(oggi.getMonth() + 1) + '-' + pad2(oggi.getDate()) + '.json';
+  const a = document.createElement('a');
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importaBackup(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported || typeof imported !== 'object') throw new Error('Formato non valido');
+      if (!confirm('Importare questo backup? I dati attuali verranno sostituiti.')) return;
+      DB = Object.assign(Storage.default(), imported);
+      Storage.save(DB); renderListaImmobili(); aggiornaContatori();
+      alert('✅ Backup importato');
+    } catch (err) { alert('❌ Errore: ' + err.message); }
+  };
+  reader.readAsText(file); event.target.value = '';
+}
+function cancellaTutto() {
+  if (!confirm('⚠️ Cancellare TUTTI i dati?')) return;
+  if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
+  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori();
+  alert('🗑️ Tutti i dati cancellati');
+}
+
+aggiornaChips(); renderListaImmobili(); aggiornaContatori();
+</script>
+
+</body>
+</html>
