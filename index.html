@@ -175,13 +175,6 @@
   .btn-primary { background: var(--arancione); color: white; }
   .btn-secondary { background: #eef0f3; color: var(--blu); }
   .btn-danger { background: #fef2f2; color: #dc2626; }
-  .btn-small {
-    padding: 8px 12px;
-    font-size: 13px;
-    width: auto;
-    margin-bottom: 6px;
-    margin-right: 6px;
-  }
 
   .tabbar {
     position: fixed;
@@ -511,15 +504,20 @@
 
   .btn-row .btn { margin-bottom: 0; flex: 1; }
 
+  /* Timeline */
   .timeline-item {
-    padding: 10px 0;
+    padding: 12px 0;
     border-bottom: 1px solid #f0f1f3;
     font-size: 14px;
     color: var(--testo);
     line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.1s;
   }
 
   .timeline-item:last-child { border-bottom: none; }
+
+  .timeline-item:active { background: #f8f9fb; margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 8px; }
 
   .timeline-item .data {
     font-size: 11px;
@@ -534,9 +532,29 @@
   .timeline-item.da-fare {
     background: #fff7ed;
     margin: 4px -12px;
-    padding: 10px 12px;
+    padding: 12px;
     border-radius: 8px;
     border-bottom: none;
+  }
+
+  .timeline-item.da-fare:active {
+    background: #ffedd5;
+    margin: 4px -12px;
+  }
+
+  .timeline-item .meta {
+    font-size: 11px;
+    color: var(--testo-sec);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .timeline-item .chev {
+    float: right;
+    color: #c4c9d2;
+    font-size: 18px;
+    line-height: 1;
+    margin-left: 8px;
   }
 
   .actions {
@@ -582,7 +600,6 @@
   .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
 
-  /* Lista immobili nella scheda proprietario */
   .immobili-list {
     display: flex;
     flex-direction: column;
@@ -811,7 +828,7 @@ const Storage = {
   },
   default() {
     return {
-      versione: 4,
+      versione: 5,
       nextSeq: 1,
       immobili: [],
       persone: [],
@@ -838,6 +855,12 @@ function formattaData(iso) {
     '-' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
 }
 
+function formattaDataCompleta(iso) {
+  const d = new Date(iso);
+  return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2) +
+    '-' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+}
+
 function formattaDataBreve(iso) {
   const d = new Date(iso);
   return pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + String(d.getFullYear()).slice(-2);
@@ -853,6 +876,18 @@ function prossimoSeq() {
   const s = DB.nextSeq;
   DB.nextSeq = s + 1;
   return s;
+}
+
+function adessoLocal() {
+  const d = new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' +
+    pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
+}
+
+function isoToLocalInput(iso) {
+  const d = new Date(iso);
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' +
+    pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
 }
 
 // =====================================================
@@ -922,8 +957,7 @@ document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
 function immobileMatchRicerca(imm, q) {
   if (!q) return true;
   const campi = [
-    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza,
-    imm.note
+    imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza, imm.note
   ];
   return campi.some(c => (c || '').toLowerCase().includes(q));
 }
@@ -1194,7 +1228,6 @@ function apriScheda(id) {
   if (imm.residenza) html += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(imm.residenza) + '</span></div>';
   if (imm.note) html += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(imm.note) + '</span></div>';
 
-  // Altri immobili
   if (imm.altriImmobili && imm.altriImmobili.length > 0) {
     html += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;">';
     html += '<div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Altri immobili di proprietà</div>';
@@ -1205,7 +1238,6 @@ function apriScheda(id) {
     html += '</div></div>';
   }
 
-  // Per NT: mostra pulsante cambio stato valutazione
   if (imm.stato === 'NT') {
     const isValutata = (imm.sottotipo || '').toLowerCase().includes('valutata') &&
       !(imm.sottotipo || '').toLowerCase().includes('non');
@@ -1230,11 +1262,19 @@ function apriScheda(id) {
   } else {
     for (const a of attivita) {
       const isDaFare = a.tipo === 'da_fare' && !a.completata;
-      html += '<div class="timeline-item ' + (isDaFare ? 'da-fare' : '') + '">';
+      html += '<div class="timeline-item ' + (isDaFare ? 'da-fare' : '') + '" onclick="apriAzioniAttivita(\'' + a.id + '\')">';
+      html += '<span class="chev">›</span>';
       html += '<span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>';
       html += escapeHtml(a.testo);
       if (isDaFare) {
         html += ' <span style="color:var(--arancione);font-weight:600;">[da fare]</span>';
+      }
+      // Meta info
+      const metaParts = [];
+      if (a.updatedAt) metaParts.push('aggiornata il ' + formattaData(a.updatedAt));
+      if (a.dataEsecuzione) metaParts.push('eseguita il ' + formattaData(a.dataEsecuzione));
+      if (metaParts.length > 0) {
+        html += '<div class="meta">' + metaParts.join(' · ') + '</div>';
       }
       html += '</div>';
     }
@@ -1251,7 +1291,195 @@ function apriScheda(id) {
   apriModal(titolo, html);
 }
 
-// Cambio rapido valutazione NT
+// =====================================================
+// ATTIVITÀ - AZIONI (tap su una riga della timeline)
+// =====================================================
+function apriAzioniAttivita(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const isDaFare = att.tipo === 'da_fare' && !att.completata;
+  const dataRif = formattaData(dataEffettivaAttivita(att));
+
+  let html = '';
+  html += '<div class="card" style="padding:16px;">';
+  html += '<div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">' + (isDaFare ? 'Da fare' : 'Fatta') + ' · ' + dataRif + '</div>';
+  html += '<div style="font-size:15px;line-height:1.4;">' + escapeHtml(att.testo) + '</div>';
+  if (att.updatedAt) html += '<div style="font-size:11px;color:var(--testo-sec);margin-top:8px;">Aggiornata il ' + formattaData(att.updatedAt) + '</div>';
+  if (att.dataEsecuzione) html += '<div style="font-size:11px;color:var(--testo-sec);margin-top:2px;">Eseguita il ' + formattaData(att.dataEsecuzione) + '</div>';
+  html += '</div>';
+
+  if (isDaFare) {
+    html += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idAtt + '\')">✅ Segna come fatta</button>';
+    html += '<button class="btn btn-secondary" onclick="modificaDataPrevista(\'' + idAtt + '\')">📅 Modifica data prevista</button>';
+  }
+  html += '<button class="btn btn-secondary" onclick="modificaTestoAttivita(\'' + idAtt + '\')">✏️ Modifica testo</button>';
+  html += '<button class="btn btn-danger" onclick="eliminaAttivita(\'' + idAtt + '\')">🗑️ Elimina</button>';
+  html += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + imm.id + '\')">Chiudi</button></div>';
+
+  apriModal('Attività', html);
+}
+
+function segnaComeFatta(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const html = `
+    <div class="form-group">
+      <div class="form-row">
+        <label class="form-label">Data e ora esecuzione</label>
+        <input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Testo (invariato o modificabile)</label>
+        <textarea class="form-textarea" id="sf-testo">${escapeHtml(att.testo)}</textarea>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">
+      Era prevista per il ${formattaData(att.dataPrevista)}.<br>
+      Verrà registrata come "attività del ${formattaData(att.dataPrevista)}".
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="apriAzioniAttivita('${idAtt}')">Annulla</button>
+      <button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idAtt}')">Conferma</button>
+    </div>
+  `;
+  apriModal('Segna come fatta', html);
+}
+
+function confermaSegnaComeFatta(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const dataLocal = document.getElementById('sf-data').value;
+  const testo = (document.getElementById('sf-testo') || {}).value || att.testo;
+
+  if (!dataLocal) { alert('Inserisci la data'); return; }
+
+  // Salva i riferimenti
+  att.dataPrevistaOriginale = att.dataPrevista;
+  att.dataEsecuzione = new Date(dataLocal).toISOString();
+  att.data = att.dataEsecuzione; // la data effettiva diventa l'esecuzione
+  att.dataPrevista = null;
+  att.tipo = 'fatta';
+  att.completata = true;
+  att.testo = testo.trim();
+  att.updatedAt = new Date().toISOString();
+  att.seq = prossimoSeq();
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+function modificaDataPrevista(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const dataAttuale = att.dataPrevista ? isoToLocalInput(att.dataPrevista) : adessoLocal();
+
+  const html = `
+    <div class="form-group">
+      <div class="form-row">
+        <label class="form-label">Nuova data e ora prevista</label>
+        <input class="form-input" type="datetime-local" step="1" id="md-data" value="${dataAttuale}">
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">
+      Data attuale: ${formattaData(att.dataPrevista)}
+    </p>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="apriAzioniAttivita('${idAtt}')">Annulla</button>
+      <button class="btn btn-primary" onclick="confermaModificaData('${idAtt}')">Salva</button>
+    </div>
+  `;
+  apriModal('Modifica data prevista', html);
+}
+
+function confermaModificaData(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const nuovaData = document.getElementById('md-data').value;
+  if (!nuovaData) { alert('Inserisci la data'); return; }
+
+  att.dataPrevista = new Date(nuovaData).toISOString();
+  att.updatedAt = new Date().toISOString();
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+function modificaTestoAttivita(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const html = `
+    <div class="form-group">
+      <div class="form-row">
+        <label class="form-label">Testo</label>
+        <textarea class="form-textarea" id="mt-testo">${escapeHtml(att.testo)}</textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="apriAzioniAttivita('${idAtt}')">Annulla</button>
+      <button class="btn btn-primary" onclick="confermaModificaTesto('${idAtt}')">Salva</button>
+    </div>
+  `;
+  apriModal('Modifica testo', html);
+}
+
+function confermaModificaTesto(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  const nuovo = (document.getElementById('mt-testo') || {}).value || '';
+  if (!nuovo.trim()) { alert('Il testo non può essere vuoto'); return; }
+
+  att.testo = nuovo.trim();
+  att.updatedAt = new Date().toISOString();
+
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+function eliminaAttivita(idAtt) {
+  const imm = DB.immobili.find(i => i.id === immobileAperto);
+  if (!imm) return;
+  const att = (imm.attivita || []).find(a => a.id === idAtt);
+  if (!att) return;
+
+  if (!confirm('Eliminare questa attività?\n\n' + att.testo)) return;
+
+  imm.attivita = (imm.attivita || []).filter(a => a.id !== idAtt);
+  imm.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  renderListaImmobili();
+  apriScheda(imm.id);
+}
+
+// =====================================================
+// NT - toggle valutazione
+// =====================================================
 function toggleValutazione() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
@@ -1302,7 +1530,6 @@ function apriModifica() {
     html += '<div class="form-row"><label class="form-label">Residenza proprietario</label>';
     html += '<input class="form-input" id="m-residenza" value="' + escapeHtml(imm.residenza || '') + '"></div>';
 
-    // Sottotipo NT modificabile
     if (imm.stato === 'NT') {
       const isValutata = (imm.sottotipo || '').toLowerCase().includes('valutata') &&
         !(imm.sottotipo || '').toLowerCase().includes('non');
@@ -1313,7 +1540,6 @@ function apriModifica() {
       html += '</select></div>';
     }
 
-    // Sottotipo INK modificabile
     if (imm.stato === 'INK') {
       const isEsclusiva = (imm.sottotipo || '').toLowerCase().includes('esclusiva');
       html += '<div class="form-row"><label class="form-label">Tipo incarico</label>';
@@ -1330,7 +1556,6 @@ function apriModifica() {
 
   html += '</div>';
 
-  // Altri immobili
   if (!isCensito) {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili di proprietà</h2>';
     html += '<div id="altri-immobili-list">';
@@ -1361,7 +1586,6 @@ function aggiungiAltroImmobile() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
 
-  // Salva temporaneamente i campi correnti prima di chiedere il nuovo
   salvaCampiTemp(imm);
 
   const nuovo = prompt('Indirizzo del nuovo immobile di proprietà:');
@@ -1386,8 +1610,6 @@ function rimuoviAltroImmobile(idx) {
   apriModifica();
 }
 
-// Salva temporaneamente i campi del form modifica, per non perderli
-// quando si aggiunge/rimuove un altro immobile
 function salvaCampiTemp(imm) {
   const elInd = document.getElementById('m-indirizzo');
   if (elInd) imm.indirizzo = (elInd.value || '').trim().toUpperCase();
@@ -1428,7 +1650,6 @@ function salvaModifica() {
   if (elSotto) {
     const nuovo = elSotto.value || '';
     if (nuovo !== imm.sottotipo) {
-      // Aggiungi attività cambio sottotipo
       imm.attivita = imm.attivita || [];
       imm.attivita.push({
         id: uid(),
@@ -1555,7 +1776,6 @@ function eseguiCambioStato(imm, vecchio, nuovoStato) {
     if (!imm.z) imm.z = 1;
   }
 
-  // Se passa a NT senza sottotipo, default = non ancora valutata
   if (nuovoStato === 'NT' && !imm.sottotipo) {
     imm.sottotipo = 'NT non ancora valutata';
   }
@@ -1577,7 +1797,7 @@ function eseguiCambioStato(imm, vecchio, nuovoStato) {
 }
 
 // =====================================================
-// ATTIVITÀ
+// NUOVA ATTIVITÀ
 // =====================================================
 function apriNuovaAttivita() {
   const html = `
@@ -1631,12 +1851,6 @@ function aggiornaFormAttivita() {
       </div>
     `;
   }
-}
-
-function adessoLocal() {
-  const d = new Date();
-  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' +
-    pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds());
 }
 
 function salvaAttivita() {
