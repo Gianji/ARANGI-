@@ -137,6 +137,11 @@
   .fab-menu button { background: white; border: none; padding: 12px 16px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--blu); box-shadow: 0 2px 8px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: opacity 0.15s; }
   .fab-menu button:active { opacity: 0.7; }
 
+  /* Proprietario card in scheda */
+  .prop-card { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; }
+  .prop-card .prop-nome { font-size: 13px; font-weight: 700; color: var(--testo); margin-bottom: 4px; }
+  .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.5; }
+
   #map-container { position: relative; width: 100%; height: calc(100vh - 60px); height: calc(100dvh - 60px); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
   .map-overlay-top { position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -332,7 +337,7 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 21, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
+  default() { return { versione: 22, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -386,7 +391,7 @@ function getCittaPrincipale() { return DB.cittaPrincipale || CITTA_DEFAULT; }
 function getNomeCittaPrincipale() { return getCittaPrincipale().split(',')[0].trim(); }
 
 // =====================================================
-// RINUMERAZIONE Z (continuità dopo eliminazione)
+// RINUMERAZIONE Z
 // =====================================================
 function rinumeraZCondominio(condo) {
   if (!condo) return;
@@ -399,6 +404,102 @@ function rinumeraZCondominio(condo) {
       imm.updatedAt = new Date().toISOString();
     }
   });
+}
+
+// =====================================================
+// PROPRIETARI AGGIUNTIVI - STATO TEMPORANEO
+// =====================================================
+window._proprietariTemp = [];
+window._showPropForm = false;
+window._propEditingIndex = -1;
+
+function htmlPropList() {
+  if (window._showPropForm) {
+    const p = window._propEditingIndex >= 0 ? window._proprietariTemp[window._propEditingIndex] : {};
+    let html = '<div style="padding:0 0 12px;border-bottom:1px solid #f0f1f3;margin-bottom:12px;">';
+    html += '<div class="form-row"><label class="form-label">Cognome e Nome *</label><input class="form-input" id="p-nome" value="' + escapeHtml(p.cognomeNome || '') + '" placeholder="VERDI LUIGI"></div>';
+    html += '<div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="p-telefono" type="tel" value="' + escapeHtml(p.telefono || '') + '" placeholder="333 333 3333"></div>';
+    html += '<div class="form-row"><label class="form-label">Email</label><input class="form-input" id="p-email" type="email" value="' + escapeHtml(p.email || '') + '" placeholder="nome@email.it"></div>';
+    html += '<div class="form-row"><label class="form-label">Residenza</label><input class="form-input" id="p-residenza" value="' + escapeHtml(p.residenza || '') + '" placeholder="VIA ..."></div>';
+    html += '<div class="form-row"><label class="form-label">Quota di proprietà</label><input class="form-input" id="p-quota" value="' + escapeHtml(p.quota || '') + '" placeholder="es. 50%, 1/3, nuda proprietà"></div>';
+    html += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="p-note" placeholder="Note libere...">' + escapeHtml(p.note || '') + '</textarea></div>';
+    html += '</div>';
+    html += '<div class="btn-row" style="margin-bottom:8px;">';
+    html += '<button type="button" class="btn btn-secondary" onclick="annullaProprietario()">Annulla</button>';
+    html += '<button type="button" class="btn btn-primary" onclick="salvaProprietario()">Salva</button>';
+    html += '</div>';
+    return html;
+  }
+  let html = '';
+  if (window._proprietariTemp.length === 0) {
+    html += '<p style="font-size:13px;color:var(--testo-sec);padding:4px 0;">Nessun altro proprietario.</p>';
+  } else {
+    html += '<div class="immobili-list">';
+    window._proprietariTemp.forEach((p, i) => {
+      html += '<div class="immobile-line" onclick="apriModificaProprietario(' + i + ')">';
+      html += '<span class="txt">' + escapeHtml(p.cognomeNome || '(senza nome)') + (p.quota ? ' · ' + escapeHtml(p.quota) : '') + '</span>';
+      html += '<button type="button" class="rm" onclick="event.stopPropagation();rimuoviProprietario(' + i + ')">✕</button>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  html += '<button type="button" class="add-btn" onclick="apriNuovoProprietario()">➕ Aggiungi proprietario</button>';
+  return html;
+}
+
+function renderProprietariForm() {
+  const cont = document.getElementById('prop-list-container');
+  if (!cont) return;
+  cont.innerHTML = htmlPropList();
+}
+
+function apriNuovoProprietario() {
+  window._showPropForm = true;
+  window._propEditingIndex = -1;
+  renderProprietariForm();
+}
+
+function apriModificaProprietario(idx) {
+  if (idx < 0 || idx >= window._proprietariTemp.length) return;
+  window._showPropForm = true;
+  window._propEditingIndex = idx;
+  renderProprietariForm();
+}
+
+function annullaProprietario() {
+  window._showPropForm = false;
+  window._propEditingIndex = -1;
+  renderProprietariForm();
+}
+
+function salvaProprietario() {
+  const g = (id) => document.getElementById(id);
+  const nome = ((g('p-nome') || {}).value || '').trim().toUpperCase();
+  if (!nome) { alert('Inserisci cognome e nome'); return; }
+  const prop = {
+    id: (window._propEditingIndex >= 0 && window._proprietariTemp[window._propEditingIndex].id) || uid(),
+    cognomeNome: nome,
+    telefono: (g('p-telefono') || {}).value || '',
+    email: (g('p-email') || {}).value || '',
+    residenza: ((g('p-residenza') || {}).value || '').trim().toUpperCase(),
+    quota: ((g('p-quota') || {}).value || '').trim(),
+    note: (g('p-note') || {}).value || ''
+  };
+  if (window._propEditingIndex >= 0) {
+    window._proprietariTemp[window._propEditingIndex] = prop;
+  } else {
+    window._proprietariTemp.push(prop);
+  }
+  window._showPropForm = false;
+  window._propEditingIndex = -1;
+  renderProprietariForm();
+}
+
+function rimuoviProprietario(idx) {
+  if (idx < 0 || idx >= window._proprietariTemp.length) return;
+  if (!confirm('Rimuovere questo proprietario?')) return;
+  window._proprietariTemp.splice(idx, 1);
+  renderProprietariForm();
 }
 
 // =====================================================
@@ -429,22 +530,14 @@ function parseIndirizzoStrutturato(indirizzo) {
 async function geocodificaIndirizzo(indirizzo) {
   const parsed = parseIndirizzoStrutturato(indirizzo);
   if (!parsed || !parsed.via) return null;
-
   const cacheKey = [parsed.via, parsed.citta, parsed.cap].join('|');
   if (geocodeCache[cacheKey]) return geocodeCache[cacheKey];
-
-  // Prova 1: structured query con CAP
   try {
     const params = new URLSearchParams({
-      format: 'json',
-      limit: '5',
-      countrycodes: 'it',
-      addressdetails: '1',
-      street: parsed.via,
-      city: parsed.citta
+      format: 'json', limit: '5', countrycodes: 'it', addressdetails: '1',
+      street: parsed.via, city: parsed.citta
     });
     if (parsed.cap) params.set('postalcode', parsed.cap);
-
     const url = 'https://nominatim.openstreetmap.org/search?' + params.toString();
     const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
     if (resp.ok) {
@@ -452,20 +545,13 @@ async function geocodificaIndirizzo(indirizzo) {
       if (data && data.length > 0) {
         let migliore = data.find(r => r.address && r.address.house_number);
         if (!migliore) migliore = data[0];
-        const r = {
-          lat: parseFloat(migliore.lat),
-          lng: parseFloat(migliore.lon),
-          display: migliore.display_name,
-          preciso: !!(migliore.address && migliore.address.house_number)
-        };
+        const r = { lat: parseFloat(migliore.lat), lng: parseFloat(migliore.lon), display: migliore.display_name, preciso: !!(migliore.address && migliore.address.house_number) };
         geocodeCache[cacheKey] = r;
         salvaGeocodeCache();
         return r;
       }
     }
   } catch (e) { console.warn('Geocode structured error:', e); }
-
-  // Prova 2: free-form
   try {
     const q = parsed.via + ', ' + parsed.citta + (parsed.cap ? ', ' + parsed.cap : '') + ', ITALIA';
     const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=it&q=' + encodeURIComponent(q);
@@ -480,18 +566,14 @@ async function geocodificaIndirizzo(indirizzo) {
       }
     }
   } catch (e) { console.warn('Geocode free error:', e); }
-
   return null;
 }
 
-// Geocodifica NON bloccante: se fallisce, l'immobile è comunque creato
 function avviaGeocodificaBackground(imm) {
   if (imm.lat && imm.lng) return;
   geocodificaIndirizzo(imm.indirizzo).then(r => {
     if (r) {
-      imm.lat = r.lat;
-      imm.lng = r.lng;
-      imm.geoPreciso = r.preciso;
+      imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.preciso;
       Storage.save(DB);
       if (typeof aggiornaMappa === 'function' && map) aggiornaMappa();
     }
@@ -501,15 +583,9 @@ function avviaGeocodificaBackground(imm) {
 let _coordsCittaPrincipale = null;
 async function geocodificaCittaPrincipale() {
   const nomeCitta = getNomeCittaPrincipale();
-  if (nomeCitta.toLowerCase() === 'cremona') {
-    _coordsCittaPrincipale = CREMONA_CENTER;
-    return CREMONA_CENTER;
-  }
+  if (nomeCitta.toLowerCase() === 'cremona') { _coordsCittaPrincipale = CREMONA_CENTER; return CREMONA_CENTER; }
   const r = await geocodificaIndirizzo(getCittaPrincipale());
-  if (r) {
-    _coordsCittaPrincipale = [r.lat, r.lng];
-    return _coordsCittaPrincipale;
-  }
+  if (r) { _coordsCittaPrincipale = [r.lat, r.lng]; return _coordsCittaPrincipale; }
   _coordsCittaPrincipale = CREMONA_CENTER;
   return CREMONA_CENTER;
 }
@@ -521,14 +597,8 @@ async function geocodificaTutti() {
   let fatti = 0, falliti = 0;
   for (const imm of daFare) {
     const r = await geocodificaIndirizzo(imm.indirizzo);
-    if (r) {
-      imm.lat = r.lat;
-      imm.lng = r.lng;
-      imm.geoPreciso = r.preciso;
-      fatti++;
-    } else {
-      falliti++;
-    }
+    if (r) { imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.preciso; fatti++; }
+    else { falliti++; }
     await new Promise(res => setTimeout(res, 1100));
     if (btn) btn.textContent = '⏳ ' + (fatti + falliti) + '/' + daFare.length;
   }
@@ -550,9 +620,7 @@ async function riGeocodificaImmobile(id) {
   }
   const r = await geocodificaIndirizzo(imm.indirizzo);
   if (r) {
-    imm.lat = r.lat;
-    imm.lng = r.lng;
-    imm.geoPreciso = r.preciso;
+    imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.preciso;
     Storage.save(DB);
     apriScheda(imm.id);
     if (map) aggiornaMappa();
@@ -722,6 +790,12 @@ function immobileMatchRicerca(imm, q) {
   const detCondo = (condo && DB.condomini && DB.condomini[condo]) || {};
   const campi = [imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza, imm.note, imm.condominio, imm.citofono, getZoneEffettive(imm).join(' '),
     detCondo.amministratore && detCondo.amministratore.nome, detCondo.amministratore && detCondo.amministratore.telefono];
+  // Aggiungi proprietari aggiuntivi alla ricerca
+  if (imm.altriProprietari && imm.altriProprietari.length > 0) {
+    for (const p of imm.altriProprietari) {
+      campi.push(p.cognomeNome, p.telefono, p.email, p.residenza);
+    }
+  }
   return campi.some(c => (c || '').toLowerCase().includes(q));
 }
 function dataEffettivaAttivita(a) { if (a.tipo === 'da_fare' && a.dataPrevista) return a.dataPrevista; return a.data; }
@@ -972,6 +1046,9 @@ function apriFormNuovo() {
   const bannerHtml = daCondominio ? '<div class="prefill-banner">🏢 Creando in: ' + escapeHtml(condoSelezionato) + '</div>' : '';
   zoneTemp.nuovo = { base: [], speciale: null };
   window._villaNuovo = false;
+  window._proprietariTemp = [];
+  window._showPropForm = false;
+  window._propEditingIndex = -1;
   const html = `
     ${bannerHtml}
     <div class="form-group">
@@ -1034,12 +1111,16 @@ function aggiornaFormNuovo() {
     let condHtml = '';
     if (!isVilla) condHtml = '<div class="form-row"><label class="form-label">Condominio (opzionale)</label><input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l\'indirizzo" autocomplete="off" value="' + prefillCondo + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>';
     cont.innerHTML = `<div class="form-group">
-      <div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
-      <div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
+      <div class="form-row"><label class="form-label">Cognome e Nome proprietario principale</label><input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
+      <div class="form-row"><label class="form-label">Telefono proprietario principale</label><input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
       <div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="${escapeHtml(placeholderInd)}" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
       <div class="form-row"><label class="form-label">Residenza proprietario (opzionale)</label><input class="form-input" id="f-residenza" placeholder="VIA ..." autocomplete="off"></div>
       ${condHtml}
       ${sottotipoHtml}
+    </div>
+    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri proprietari</h2></div>
+    <div class="form-group" style="padding:14px 16px;">
+      <div id="prop-list-container">${htmlPropList()}</div>
     </div>`;
   }
 }
@@ -1125,25 +1206,23 @@ function salvaNuovoImmobile() {
   let imm;
   if (tipoForm === 'censito') {
     const citofono = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase();
-    imm = { id: uid(), stato: 'IMM', indirizzo, z, citofono, villa: isVilla, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], condominio, sottotipo: '', note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
+    imm = { id: uid(), stato: 'IMM', indirizzo, z, citofono, villa: isVilla, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio, sottotipo: '', note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
   } else {
     const cognomeNome = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase();
     const telefono = (document.getElementById('f-telefono') || {}).value || '';
     const residenza = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase();
     const sottotipoEl = document.getElementById('f-sottotipo');
     const sottotipo = sottotipoEl ? sottotipoEl.value : '';
-    if (!cognomeNome) { alert('Inserisci cognome e nome'); return; }
+    if (!cognomeNome) { alert('Inserisci cognome e nome del proprietario principale'); return; }
     const stato = tipoForm === 'pa' ? 'PA' : tipoForm === 'nt' ? 'NT' : 'INK';
-    imm = { id: uid(), stato, indirizzo, z, citofono: '', villa: isVilla, cognomeNome, telefono: telefono.trim(), residenza, altriImmobili: [], condominio, sottotipo, note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
+    imm = { id: uid(), stato, indirizzo, z, citofono: '', villa: isVilla, cognomeNome, telefono: telefono.trim(), residenza, altriImmobili: [], altriProprietari: window._proprietariTemp.slice(), condominio, sottotipo, note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
   }
   applicaEreditaCondominio(imm);
-  // Salva SUBITO (la geocodifica è in background, non blocca)
   DB.immobili.push(imm);
   Storage.save(DB);
   chiudiModal();
   renderListaImmobili();
   setTimeout(() => apriScheda(imm.id), 200);
-  // Geocodifica in background
   avviaGeocodificaBackground(imm);
 }
 
@@ -1218,7 +1297,6 @@ function salvaNuovoCondominio() {
 function duplicaImmobile(id) {
   const originale = DB.immobili.find(i => i.id === id);
   if (!originale) return;
-
   if (originale.villa) {
     const nuovoIndirizzo = prompt('Indirizzo della nuova villa:', originale.indirizzo);
     if (!nuovoIndirizzo || !nuovoIndirizzo.trim()) return;
@@ -1227,6 +1305,7 @@ function duplicaImmobile(id) {
     copia.indirizzo = nuovoIndirizzo.trim().toUpperCase();
     copia.lat = null; copia.lng = null; copia.geoPreciso = null;
     copia.attivita = [];
+    copia.altriProprietari = (copia.altriProprietari || []).map(p => ({ ...p, id: uid() }));
     copia.createdAt = new Date().toISOString();
     copia.updatedAt = copia.createdAt;
     DB.immobili.push(copia);
@@ -1236,16 +1315,14 @@ function duplicaImmobile(id) {
     avviaGeocodificaBackground(copia);
     return;
   }
-
-  // In condominio: mantieni indirizzo, incrementa z
   const condo = getCondominio(originale);
   const copia = JSON.parse(JSON.stringify(originale));
   copia.id = uid();
   copia.z = prossimoZPerCondominio(condo);
   copia.attivita = [];
+  copia.altriProprietari = (copia.altriProprietari || []).map(p => ({ ...p, id: uid() }));
   copia.createdAt = new Date().toISOString();
   copia.updatedAt = copia.createdAt;
-  // Se villa non era il tipo, ok. Se era villa non arriva qui.
   DB.immobili.push(copia);
   Storage.save(DB);
   renderListaImmobili();
@@ -1269,6 +1346,7 @@ function apriScheda(id) {
   const zoneEff = getZoneEffettive(imm);
   const zoneDaCondo = !imm.villa && detCondo.zone && detCondo.zone.length > 0;
   const haDettagliCondo = !imm.villa && (detCondo.annoCostruzione || detCondo.ristrutturazioneInterna || detCondo.ristrutturazioneEsterna || detCondo.statoCondominio || detCondo.cappotto || detCondo.ascensoreCondominiale || (detCondo.amministratore && detCondo.amministratore.nome));
+  const altriProp = imm.altriProprietari || [];
   let html = '';
   html += '<div style="margin-bottom:14px;"><span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
   if (imm.villa) html += ' <span style="font-size:11px;color:#059669;font-weight:700;margin-left:8px;">🏠 VILLA</span>';
@@ -1282,7 +1360,7 @@ function apriScheda(id) {
     html += '<div class="info-row"><span class="label">Coordinate</span><span class="value" style="font-size:12px;">' + imm.lat.toFixed(5) + ', ' + imm.lng.toFixed(5) + ' ' + prec + '</span></div>';
   }
   if (imm.citofono) html += '<div class="info-row"><span class="label">Citofono</span><span class="value">' + escapeHtml(imm.citofono) + '</span></div>';
-  if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
+  if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario principale</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
   if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
   if (imm.residenza) html += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(imm.residenza) + '</span></div>';
   if (imm.note) html += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(imm.note) + '</span></div>';
@@ -1305,6 +1383,23 @@ function apriScheda(id) {
     const isValutata = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non');
     html += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;"><div class="sottotipo-line"><span class="lbl">Stato notizia</span>';
     html += '<button onclick="toggleValutazione()">' + (isValutata ? '✅ Valutata' : '⏳ Non valutata') + ' — cambia</button></div></div>';
+  }
+  // Altri proprietari
+  if (altriProp.length > 0) {
+    html += '<div style="padding-top:12px;border-top:1px solid #f0f1f3;margin-top:8px;">';
+    html += '<div style="font-size:11px;font-weight:700;color:var(--testo-sec);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Altri proprietari (' + altriProp.length + ')</div>';
+    for (const p of altriProp) {
+      html += '<div class="prop-card">';
+      html += '<div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:600;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>';
+      let infoParts = [];
+      if (p.telefono) infoParts.push('📞 ' + escapeHtml(p.telefono));
+      if (p.email) infoParts.push('✉️ ' + escapeHtml(p.email));
+      if (p.residenza) infoParts.push('🏠 ' + escapeHtml(p.residenza));
+      if (p.note) infoParts.push('📝 ' + escapeHtml(p.note));
+      if (infoParts.length > 0) html += '<div class="prop-info">' + infoParts.join('<br>') + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
   }
   html += '</div>';
   if (!imm.villa) {
@@ -1402,14 +1497,8 @@ function apriModificaCoordinate() {
   const html = `
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Coordinate manuali</h2></div>
     <div class="form-group">
-      <div class="form-row">
-        <label class="form-label">Latitudine</label>
-        <input class="form-input" id="coord-lat" value="${imm.lat || ''}" placeholder="45.13330" inputmode="decimal">
-      </div>
-      <div class="form-row">
-        <label class="form-label">Longitudine</label>
-        <input class="form-input" id="coord-lng" value="${imm.lng || ''}" placeholder="10.01670" inputmode="decimal">
-      </div>
+      <div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${imm.lat || ''}" placeholder="45.13330" inputmode="decimal"></div>
+      <div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${imm.lng || ''}" placeholder="10.01670" inputmode="decimal"></div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Come trovarle</h2></div>
     <div class="form-group">
@@ -1436,7 +1525,6 @@ function salvaCoordinateManuali(id) {
   const latRaw = ((document.getElementById('coord-lat') || {}).value || '').trim();
   const lngRaw = ((document.getElementById('coord-lng') || {}).value || '').trim();
   if (!latRaw || !lngRaw) {
-    // Se entrambi vuoti, azzera
     if (!latRaw && !lngRaw) {
       imm.lat = null; imm.lng = null; imm.geoPreciso = null;
       Storage.save(DB);
@@ -1667,6 +1755,9 @@ function apriModifica() {
     else if (speciali.length === 1) zoneTemp.modifica.speciale = speciali[0];
   }
   window._villaModifica = !!imm.villa;
+  window._proprietariTemp = (imm.altriProprietari || []).map(p => ({ ...p }));
+  window._showPropForm = false;
+  window._propEditingIndex = -1;
   let html = '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="m-indirizzo" value="' + escapeHtml(imm.indirizzo || '') + '"></div>';
   if (isCensito) html += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="m-citofono" value="' + escapeHtml(imm.citofono || '') + '" placeholder="Nome sul citofono"></div>';
@@ -1676,9 +1767,9 @@ function apriModifica() {
   html += '</div></div>';
   if (!imm.villa) html += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="m-condominio" value="' + escapeHtml(imm.condominio || '') + '" placeholder="Lascia vuoto per usare l\'indirizzo"></div>';
   if (!isCensito) {
-    html += '<div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="m-cognomeNome" value="' + escapeHtml(imm.cognomeNome || '') + '"></div>';
-    html += '<div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(imm.telefono || '') + '"></div>';
-    html += '<div class="form-row"><label class="form-label">Residenza proprietario</label><input class="form-input" id="m-residenza" value="' + escapeHtml(imm.residenza || '') + '"></div>';
+    html += '<div class="form-row"><label class="form-label">Cognome e Nome proprietario principale</label><input class="form-input" id="m-cognomeNome" value="' + escapeHtml(imm.cognomeNome || '') + '"></div>';
+    html += '<div class="form-row"><label class="form-label">Telefono proprietario principale</label><input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(imm.telefono || '') + '"></div>';
+    html += '<div class="form-row"><label class="form-label">Residenza proprietario principale</label><input class="form-input" id="m-residenza" value="' + escapeHtml(imm.residenza || '') + '"></div>';
     if (imm.stato === 'NT') {
       const isValutata = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non');
       html += '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="m-sottotipo">';
@@ -1695,6 +1786,13 @@ function apriModifica() {
   }
   html += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-note">' + escapeHtml(imm.note || '') + '</textarea></div>';
   html += '</div>';
+  // Altri proprietari (solo per non-censito e non-villa)
+  if (!isCensito && !imm.villa) {
+    html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri proprietari</h2></div>';
+    html += '<div class="form-group" style="padding:14px 16px;">';
+    html += '<div id="prop-list-container">' + htmlPropList() + '</div>';
+    html += '</div>';
+  }
   if (zoneDaCondo) {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div>';
     html += '<div class="inherit-banner"><span class="ico">🏢</span><div><strong>Zona del condominio</strong>' + escapeHtml(zoneCondo.join(' · ')) + '<br><span style="font-weight:500;">Non modificabile dal singolo immobile</span></div></div>';
@@ -1818,6 +1916,8 @@ function salvaModifica() {
     imm.sottotipo = nuovo;
   }
   imm.note = (g('m-note') || {}).value || '';
+  // Salva altri proprietari
+  imm.altriProprietari = window._proprietariTemp.slice();
   if (imm.villa) {
     imm.zone = calcolaZoneFinali('modifica');
   } else {
@@ -1843,7 +1943,6 @@ function salvaModifica() {
     riscaldamento: ((g('d-riscaldamento') || {}).value || '').trim(),
     statoConservativo: ((g('d-statoConservativo') || {}).value || '').trim()
   };
-  // Se indirizzo cambiato, ri-geocodifica in background (non blocca)
   if (vecchioIndirizzo !== imm.indirizzo) {
     imm.lat = null; imm.lng = null; imm.geoPreciso = null;
     avviaGeocodificaBackground(imm);
@@ -1881,11 +1980,11 @@ function cambiaStato(nuovoStato) {
   if (vecchio === 'IMM' && nuovoStato !== 'IMM' && !imm.cognomeNome) {
     const html = `
       <div class="form-group">
-        <div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="cs-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
-        <div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="cs-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
+        <div class="form-row"><label class="form-label">Cognome e Nome proprietario principale</label><input class="form-input" id="cs-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
+        <div class="form-row"><label class="form-label">Telefono proprietario principale</label><input class="form-input" id="cs-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
         <div class="form-row"><label class="form-label">Residenza (opzionale)</label><input class="form-input" id="cs-residenza" placeholder="VIA ..." autocomplete="off"></div>
       </div>
-      <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Stai passando da IMM a ${nuovoStato}. Inserisci i dati del proprietario.</p>
+      <p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Stai passando da IMM a ${nuovoStato}. Inserisci i dati del proprietario principale.</p>
       <div class="btn-row"><button class="btn btn-secondary" onclick="apriCambiaStato()">Annulla</button><button class="btn btn-primary" onclick="confermaCambioStato('${nuovoStato}')">Conferma</button></div>`;
     apriModal('Passaggio a ' + nuovoStato, html);
     return;
@@ -1904,7 +2003,7 @@ function confermaCambioStato(nuovoStato) {
 }
 function eseguiCambioStato(imm, vecchio, nuovoStato) {
   imm.stato = nuovoStato;
-  if (nuovoStato === 'IMM') { imm.cognomeNome = ''; imm.telefono = ''; imm.residenza = ''; imm.altriImmobili = []; }
+  if (nuovoStato === 'IMM') { imm.cognomeNome = ''; imm.telefono = ''; imm.residenza = ''; imm.altriImmobili = []; imm.altriProprietari = []; }
   if (nuovoStato === 'NT' && !imm.sottotipo) imm.sottotipo = 'NT non ancora valutata';
   imm.attivita = imm.attivita || [];
   imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Cambio stato: ' + vecchio + ' → ' + nuovoStato, completata: true });
@@ -1966,7 +2065,6 @@ function eliminaImmobile() {
   if (!confirm('Eliminare "' + titoloImmobile(imm) + '"?\nOperazione irreversibile.')) return;
   const condo = getCondominio(imm);
   DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
-  // Rinumera z se era in condominio
   if (condo) rinumeraZCondominio(condo);
   Storage.save(DB);
   immobileAperto = null;
@@ -2012,9 +2110,7 @@ function creaPinIcona(imm) {
   if (isVilla) cls = 'pin-villa';
   const html = `
     <div class="pin-wrap ${cls}">
-      <div class="pin-body">
-        <div class="pin-label">${isVilla ? '🏠' : stato}</div>
-      </div>
+      <div class="pin-body"><div class="pin-label">${isVilla ? '🏠' : stato}</div></div>
     </div>
   `;
   const size = isVilla ? [28, 28] : [32, 40];
@@ -2031,10 +2127,7 @@ function creaPinCondominio(num) {
   return L.divIcon({ className: 'arangiò-pin', html: html, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] });
 }
 
-function apriPopupImmobile(immId) {
-  chiudiModal();
-  apriScheda(immId);
-}
+function apriPopupImmobile(immId) { chiudiModal(); apriScheda(immId); }
 
 function apriPopupCondominioByIndex(idx) {
   const condo = window._condoPopups[idx];
@@ -2059,11 +2152,7 @@ function apriPopupCondominio(condo) {
   if (det.annoCostruzione || det.statoCondominio || det.amministratore || (det.zone && det.zone.length > 0)) {
     html += '<div class="card"><h2><span class="dot"></span>Dettagli condominio</h2>';
     if (det.annoCostruzione) html += '<div class="info-row"><span class="label">Anno costruzione</span><span class="value">' + escapeHtml(det.annoCostruzione) + '</span></div>';
-    if (det.ristrutturazioneInterna) html += '<div class="info-row"><span class="label">Ristrutturazione interna</span><span class="value">' + escapeHtml(det.ristrutturazioneInterna) + '</span></div>';
-    if (det.ristrutturazioneEsterna) html += '<div class="info-row"><span class="label">Ristrutturazione esterna</span><span class="value">' + escapeHtml(det.ristrutturazioneEsterna) + '</span></div>';
     if (det.statoCondominio) html += '<div class="info-row"><span class="label">Stato</span><span class="value">' + escapeHtml(det.statoCondominio) + '</span></div>';
-    if (det.cappotto) html += '<div class="info-row"><span class="label">Cappotto</span><span class="value">' + escapeHtml(det.cappotto) + '</span></div>';
-    if (det.ascensoreCondominiale) html += '<div class="info-row"><span class="label">Ascensore</span><span class="value">' + escapeHtml(det.ascensoreCondominiale) + '</span></div>';
     if (det.zone && det.zone.length > 0) html += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(det.zone.join(' · ')) + '</span></div>';
     if (det.amministratore && det.amministratore.nome) {
       html += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(det.amministratore.nome) + '</span></div>';
@@ -2228,7 +2317,7 @@ function cancellaTutto() {
   if (!confirm('⚠️ Cancellare TUTTI i dati?')) return;
   if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
   DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema();
-  alert('🗑️ Tutti i dati sono stati cancellati');
+  alert('🗑️ Tutti i dati cancellati');
 }
 
 aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema();
