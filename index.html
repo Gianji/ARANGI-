@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="ARANGIÒ">
 <meta name="theme-color" content="#f2f3f5">
 <title>ARANGIÒ</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {
     --blu: #003d7a; --arancione: #ff6b00; --sfondo: #f2f3f5; --card: #ffffff;
@@ -135,6 +136,145 @@
   .fab-menu { position: fixed; right: 20px; bottom: calc(var(--tabbar-h) + 86px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; align-items: flex-end; z-index: 51; }
   .fab-menu button { background: white; border: none; padding: 12px 16px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--blu); box-shadow: 0 2px 8px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: opacity 0.15s; }
   .fab-menu button:active { opacity: 0.7; }
+
+  /* MAPPA */
+  #map-container {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 60px);
+    height: calc(100dvh - 60px);
+    overflow: hidden;
+    background: #e5e7eb;
+  }
+  #map { width: 100%; height: 100%; }
+  .map-overlay-top {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .map-overlay-top > * { pointer-events: auto; }
+  .map-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .map-chips::-webkit-scrollbar { display: none; }
+  .map-chip { background: #eef0f3; border: none; padding: 6px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+  .map-chip.active { background: var(--blu); color: white; }
+  .map-status {
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--testo-sec);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .map-status .count { font-weight: 700; color: var(--blu); }
+  .map-status button { background: var(--blu); border: none; border-radius: 8px; padding: 6px 10px; font-family: inherit; font-size: 11px; font-weight: 600; color: white; cursor: pointer; }
+  .map-status button:disabled { opacity: 0.5; cursor: wait; }
+  .map-overlay-bottom {
+    position: absolute;
+    bottom: 80px;
+    right: 12px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .map-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    background: white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-btn:active { background: #f0f1f3; }
+
+  /* Pin */
+  .pin-wrap {
+    position: relative;
+    width: 32px;
+    height: 40px;
+    cursor: pointer;
+  }
+  .pin-body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 28px;
+    height: 28px;
+    border-radius: 50% 50% 50% 0;
+    transform: translateX(-50%) rotate(-45deg);
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-body .pin-label {
+    transform: rotate(45deg);
+    font-size: 9px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.3px;
+  }
+  .pin-IMM .pin-body { background: var(--imm); }
+  .pin-PA .pin-body { background: var(--pa); }
+  .pin-NT .pin-body { background: var(--nt); }
+  .pin-INK .pin-body { background: var(--ink); }
+  .pin-VND .pin-body { background: var(--vnd); }
+  .pin-villa .pin-body { background: #059669; border-radius: 50%; transform: translateX(-50%); }
+  .pin-villa .pin-body .pin-label { transform: none; font-size: 14px; }
+
+  /* Pin condominio */
+  .pin-condo .pin-body {
+    background: var(--blu);
+    width: 34px;
+    height: 34px;
+    border-width: 3px;
+  }
+  .pin-condo .pin-body .pin-label {
+    font-size: 14px;
+  }
+  .pin-condo.misto .pin-body {
+    background: linear-gradient(135deg, #003d7a 50%, var(--arancione) 50%);
+  }
+
+  /* Popup */
+  .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; overflow: hidden; }
+  .leaflet-popup-content { margin: 0; min-width: 200px; }
+  .arangiò-popup { padding: 12px 14px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
+  .arangiò-popup .pop-titolo { font-size: 13px; font-weight: 700; color: var(--blu); margin-bottom: 4px; line-height: 1.3; }
+  .arangiò-popup .pop-sub { font-size: 11px; color: var(--testo-sec); margin-bottom: 8px; line-height: 1.3; }
+  .arangiò-popup .pop-badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 9px; font-weight: 700; color: white; margin-right: 4px; }
+  .arangiò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; }
+  .arangiò-popup .pop-zone { font-size: 10px; color: var(--testo-sec); margin-top: 4px; }
+  .arangiò-popup .pop-list { margin-top: 6px; max-height: 180px; overflow-y: auto; }
+  .arangiò-popup .pop-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f0f1f3; font-size: 11px; }
+  .arangiò-popup .pop-item:last-child { border-bottom: none; }
+  .arangiò-popup .pop-item .pop-item-txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -145,7 +285,7 @@
     <div class="sub">Assistente agente immobiliare</div>
   </header>
 
-  <main class="app-content">
+  <main class="app-content" id="app-content">
     <section id="view-immobili" class="view active">
       <input type="search" class="search-bar" id="search-immobili" placeholder="Cerca per indirizzo, nome, zone...">
       <div class="filter-label">Filtra per</div>
@@ -175,8 +315,31 @@
       <div class="card"><h2><span class="dot"></span>Attività</h2><div class="empty"><div class="icon">✅</div>Il modulo Attività sarà attivato nel Modulo 5</div></div>
     </section>
 
-    <section id="view-mappa" class="view">
-      <div class="card"><h2><span class="dot"></span>Mappa</h2><div class="empty"><div class="icon">🗺️</div>La mappa sarà attivata nel Modulo 3</div></div>
+    <section id="view-mappa" class="view" style="padding:0;margin:0;">
+      <div id="map-container">
+        <div id="map"></div>
+        <div class="map-overlay-top">
+          <div class="map-chips" id="map-chips">
+            <button class="map-chip active" data-filtro="tutti">Tutti</button>
+            <button class="map-chip" data-filtro="IMM">IMM</button>
+            <button class="map-chip" data-filtro="PA">PA</button>
+            <button class="map-chip" data-filtro="NT">NT</button>
+            <button class="map-chip" data-filtro="INK">INK</button>
+            <button class="map-chip" data-filtro="VND">VND</button>
+          </div>
+          <div class="map-status">
+            <div>
+              <span class="count" id="map-count">0</span> pin
+              <span id="map-tot" style="color:var(--testo-sec);">/ 0</span>
+            </div>
+            <button id="btn-geocode-all" onclick="geocodificaTutti()">🔍 Geocodifica tutti</button>
+          </div>
+        </div>
+        <div class="map-overlay-bottom">
+          <button class="map-btn" onclick="centraMappaSuCremona()" title="Centra su Cremona">🏠</button>
+          <button class="map-btn" onclick="fitBoundsImmobili()" title="Mostra tutti">🎯</button>
+        </div>
+      </div>
     </section>
 
     <section id="view-altro" class="view">
@@ -189,7 +352,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 2)</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 3)</span></div>
         <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
         <div class="info-row"><span class="label">Occupato</span><span class="value" id="storage-info">—</span></div>
       </div>
@@ -227,6 +390,7 @@
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // =====================================================
 // STORAGE
@@ -252,13 +416,13 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 16, nextSeq: 1, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
+  default() { return { versione: 18, nextSeq: 1, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
 };
 
 let DB = Storage.load();
 
 // =====================================================
-// COSTANTI ZONE
+// COSTANTI
 // =====================================================
 const ZONE_BASE = [
   'CASTELLO', 'GHINAGLIA', 'PIAZZA RISORGIMENTO', 'VIA DANTE', 'STAZIONE',
@@ -268,6 +432,7 @@ const ZONE_BASE = [
 ];
 const ZONA_ZDF = 'ZONA ZdF';
 const ZONE_SPECIALI = ['ZONA Libera', 'ZONA ZdF altrui'];
+const CREMONA_CENTER = [45.1333, 10.0167];
 
 // =====================================================
 // UTILITY
@@ -303,6 +468,60 @@ function applicaEreditaCondominio(imm) {
 }
 
 // =====================================================
+// GEOCODING
+// =====================================================
+const GEOCODE_CACHE_KEY = 'arangiò_geocode_cache_v1';
+let geocodeCache = {};
+try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
+function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
+
+async function geocodificaIndirizzo(indirizzo) {
+  const ind = normalizzaIndirizzo(indirizzo);
+  if (!ind) return null;
+  if (geocodeCache[ind]) return geocodeCache[ind];
+  let query = ind;
+  if (!/cremona/i.test(query)) query += ', CREMONA';
+  if (!/italia|italy/i.test(query)) query += ', ITALIA';
+  try {
+    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=it&q=' + encodeURIComponent(query);
+    const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+    if (data && data.length > 0) {
+      const r = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display: data[0].display_name };
+      geocodeCache[ind] = r;
+      salvaGeocodeCache();
+      return r;
+    }
+  } catch (e) { console.warn('Geocode error:', e); }
+  return null;
+}
+
+async function geocodificaImmobile(imm) {
+  if (imm.lat && imm.lng) return true;
+  const r = await geocodificaIndirizzo(imm.indirizzo);
+  if (r) { imm.lat = r.lat; imm.lng = r.lng; return true; }
+  return false;
+}
+
+async function geocodificaTutti() {
+  const btn = document.getElementById('btn-geocode-all');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ In corso...'; }
+  const daFare = DB.immobili.filter(i => !i.lat || !i.lng);
+  let fatti = 0, falliti = 0;
+  for (const imm of daFare) {
+    const ok = await geocodificaImmobile(imm);
+    if (ok) fatti++; else falliti++;
+    await new Promise(r => setTimeout(r, 1100));
+    if (btn) btn.textContent = '⏳ ' + (fatti + falliti) + '/' + daFare.length;
+  }
+  Storage.save(DB);
+  if (btn) { btn.disabled = false; btn.textContent = '🔍 Geocodifica tutti'; }
+  aggiornaMappa();
+  alert('Geocodifica completata:\n✅ ' + fatti + ' trovati\n❌ ' + falliti + ' non trovati');
+}
+
+// =====================================================
 // NAVIGAZIONE
 // =====================================================
 const tabButtons = document.querySelectorAll('.tabbar button');
@@ -312,20 +531,42 @@ tabButtons.forEach(btn => {
     const tab = btn.dataset.tab;
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
-    document.querySelector('.app-content').scrollTop = 0;
-    document.getElementById('fab-immobili').style.display = (tab === 'immobili') ? 'flex' : 'none';
-    document.getElementById('fab-menu').style.display = 'none';
+    if (tab === 'mappa') {
+      document.querySelector('.app-header').style.display = 'none';
+      document.getElementById('app-content').style.padding = '0';
+      document.getElementById('app-content').style.overflow = 'hidden';
+      document.getElementById('fab-immobili').style.display = 'none';
+      document.getElementById('fab-menu').style.display = 'none';
+      setTimeout(() => {
+        if (!map) initMappa();
+        else map.invalidateSize();
+        aggiornaMappa();
+      }, 100);
+    } else {
+      document.querySelector('.app-header').style.display = '';
+      document.getElementById('app-content').style.padding = '';
+      document.getElementById('app-content').style.overflow = '';
+      document.querySelector('.app-content').scrollTop = 0;
+      document.getElementById('fab-immobili').style.display = (tab === 'immobili') ? 'flex' : 'none';
+    }
   });
 });
 
 // =====================================================
 // MODAL
 // =====================================================
-function apriModal(titolo, contenutoHtml) { document.getElementById('modal-title').textContent = titolo; document.getElementById('modal-body').innerHTML = contenutoHtml; document.getElementById('modal').classList.add('open'); }
-function chiudiModal() { document.getElementById('modal').classList.remove('open'); document.getElementById('modal-body').innerHTML = ''; }
+function apriModal(titolo, contenutoHtml) {
+  document.getElementById('modal-title').textContent = titolo;
+  document.getElementById('modal-body').innerHTML = contenutoHtml;
+  document.getElementById('modal').classList.add('open');
+}
+function chiudiModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modal-body').innerHTML = '';
+}
 
 // =====================================================
-// FAB MENU
+// FAB
 // =====================================================
 let fabMenuAperto = false;
 function toggleFabMenu() { fabMenuAperto = !fabMenuAperto; document.getElementById('fab-menu').style.display = fabMenuAperto ? 'flex' : 'none'; }
@@ -333,7 +574,7 @@ function fabMenuNuovoImmobile() { fabMenuAperto = false; document.getElementById
 function fabMenuNuovoCondominio() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoCondominio(); }
 
 // =====================================================
-// TITOLO IMMOBILE
+// TITOLO
 // =====================================================
 function titoloImmobile(imm) {
   if (imm.stato === 'IMM') {
@@ -348,13 +589,14 @@ function titoloImmobile(imm) {
 }
 
 // =====================================================
-// FILTRI (mutuamente esclusivi per stato e zona)
+// FILTRI
 // =====================================================
-let statoSelezionato = null;    // uno solo: 'IMM' | 'PA' | 'NT' | 'INK' | 'VND' | null
-let zonaSelezionata = null;     // una sola zona | null
+let statoSelezionato = null;
+let zonaSelezionata = null;
 let vistaCondomini = false;
 let condoSelezionato = null;
 let queryRicerca = '';
+let mappaFiltroStato = null;
 
 document.getElementById('search-immobili').addEventListener('input', (e) => {
   queryRicerca = e.target.value.toLowerCase().trim();
@@ -364,20 +606,31 @@ document.getElementById('search-immobili').addEventListener('input', (e) => {
 document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
   chip.addEventListener('click', () => {
     const f = chip.dataset.filtro;
-    if (f === 'tutti') {
-      statoSelezionato = null; zonaSelezionata = null; vistaCondomini = false; condoSelezionato = null;
-    } else if (f === 'COND') {
-      vistaCondomini = !vistaCondomini; condoSelezionato = null;
-    } else if (f === 'ZONE') {
-      apriSelezioneZone(); return;
-    } else {
-      // Stato: mutuamente esclusivo
-      statoSelezionato = (statoSelezionato === f) ? null : f;
-    }
+    if (f === 'tutti') { statoSelezionato = null; zonaSelezionata = null; vistaCondomini = false; condoSelezionato = null; }
+    else if (f === 'COND') { vistaCondomini = !vistaCondomini; condoSelezionato = null; }
+    else if (f === 'ZONE') { apriSelezioneZone(); return; }
+    else { statoSelezionato = (statoSelezionato === f) ? null : f; }
     aggiornaChips();
     renderListaImmobili();
   });
 });
+
+document.querySelectorAll('#map-chips .map-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const f = chip.dataset.filtro;
+    mappaFiltroStato = (f === 'tutti' || mappaFiltroStato === f) ? null : f;
+    aggiornaMapChips();
+    aggiornaMappa();
+  });
+});
+
+function aggiornaMapChips() {
+  document.querySelectorAll('#map-chips .map-chip').forEach(c => {
+    const f = c.dataset.filtro;
+    if (f === 'tutti') c.classList.toggle('active', !mappaFiltroStato);
+    else c.classList.toggle('active', mappaFiltroStato === f);
+  });
+}
 
 function aggiornaChips() {
   document.querySelectorAll('#chips-immobili .chip').forEach(c => {
@@ -417,8 +670,7 @@ function renderBannerFiltroAttivo() {
   cont.innerHTML = '<div class="active-filter-banner"><span>' + escapeHtml(parti.join(' · ')) + '</span><button class="x" onclick="rimuoviTuttiFiltri()">✕</button></div>';
 }
 function rimuoviTuttiFiltri() {
-  condoSelezionato = null;
-  zonaSelezionata = null;
+  condoSelezionato = null; zonaSelezionata = null;
   if (!vistaCondomini) statoSelezionato = null;
   aggiornaChips();
   renderListaImmobili();
@@ -427,22 +679,18 @@ function rimuoviTuttiFiltri() {
 function renderListaImmobili() {
   const cont = document.getElementById('lista-immobili');
   if (vistaCondomini) { renderBannerFiltroAttivo(); renderListaCondomini(cont); return; }
-
   let lista = DB.immobili.slice();
   if (condoSelezionato) lista = lista.filter(i => getCondominio(i) === condoSelezionato);
   lista = lista.filter(i => immobileHaStatoValido(i));
   lista = lista.filter(i => immobileHaZonaValida(i));
   if (queryRicerca) lista = lista.filter(i => immobileMatchRicerca(i, queryRicerca));
   lista.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
-
   renderBannerFiltroAttivo();
-
   if (lista.length === 0) {
     cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏠</div>' + (DB.immobili.length === 0 ? 'Nessun immobile. Tocca + per aggiungerne uno.' : 'Nessun risultato') + '</div></div>';
     aggiornaContatori();
     return;
   }
-
   let html = '';
   for (const imm of lista) {
     const titolo = titoloImmobile(imm);
@@ -452,7 +700,6 @@ function renderListaImmobili() {
     const fratelli = immobiliStessoCondominio(imm);
     const isCondo = fratelli.length > 0;
     const zoneEff = getZoneEffettive(imm);
-
     html += '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')">';
     html += '<div class="item-row"><div class="item-title">' + escapeHtml(titolo) + '</div>';
     if (imm.villa) html += '<span style="font-size:11px;color:#059669;font-weight:700;">🏠 VILLA</span>';
@@ -478,23 +725,19 @@ function renderListaCondomini(cont) {
     gruppi[c].push(imm);
   }
   const condominiVuoti = Object.keys(DB.condomini || {}).filter(c => !gruppi[c]);
-
   const tuttiCondomini = new Set();
   Object.keys(gruppi).forEach(c => {
     if (gruppi[c].filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)).length > 0) tuttiCondomini.add(c);
   });
   condominiVuoti.forEach(c => tuttiCondomini.add(c));
-
   let condomini = Array.from(tuttiCondomini);
   if (queryRicerca) condomini = condomini.filter(c => c.toLowerCase().includes(queryRicerca));
   condomini.sort();
-
   if (condomini.length === 0) {
     cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏢</div>Nessun condominio trovato</div></div>';
     aggiornaContatori();
     return;
   }
-
   let html = '';
   for (const c of condomini) {
     const immobiliC = gruppi[c] || [];
@@ -516,7 +759,7 @@ function renderListaCondomini(cont) {
 function selezionaCondominio(condo) { condoSelezionato = condo; vistaCondomini = false; aggiornaChips(); renderListaImmobili(); }
 
 // =====================================================
-// SELEZIONE ZONE (filtro)
+// SELEZIONE ZONE
 // =====================================================
 function apriSelezioneZone() {
   let html = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona una zona per filtrare gli immobili.</p>';
@@ -534,15 +777,12 @@ function apriSelezioneZone() {
   html += '<button class="btn btn-primary" onclick="confermaZoneFiltro()">Conferma</button></div>';
   apriModal('📍 Filtra per zona', html);
 }
-function toggleZoneFiltro(z) {
-  zonaSelezionata = (zonaSelezionata === z) ? null : z;
-  apriSelezioneZone();
-}
+function toggleZoneFiltro(z) { zonaSelezionata = (zonaSelezionata === z) ? null : z; apriSelezioneZone(); }
 function azzeraZoneFiltro() { zonaSelezionata = null; apriSelezioneZone(); }
 function confermaZoneFiltro() { chiudiModal(); aggiornaChips(); renderListaImmobili(); }
 
 // =====================================================
-// SELEZIONE ZONE (form)
+// SELETTORE ZONE FORM
 // =====================================================
 const zoneTemp = { nuovo: { base: [], speciale: null }, modifica: { base: [], speciale: null }, condo: { base: [], speciale: null } };
 
@@ -609,7 +849,6 @@ function apriFormNuovo() {
   const bannerHtml = daCondominio ? '<div class="prefill-banner">🏢 Creando in: ' + escapeHtml(condoSelezionato) + '</div>' : '';
   zoneTemp.nuovo = { base: [], speciale: null };
   window._villaNuovo = false;
-
   const html = `
     ${bannerHtml}
     <div class="form-group">
@@ -626,12 +865,8 @@ function apriFormNuovo() {
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Tipo struttura</h2></div>
     <div class="form-group" style="padding:14px 16px;">
       <div class="villa-toggle">
-        <button type="button" id="btn-condominio" class="active" onclick="setVilla(false)">
-          <span class="ico">🏢</span>In condominio
-        </button>
-        <button type="button" id="btn-villa" onclick="setVilla(true)">
-          <span class="ico">🏠</span>Villa / Singolo
-        </button>
+        <button type="button" id="btn-condominio" class="active" onclick="setVilla(false)"><span class="ico">🏢</span>In condominio</button>
+        <button type="button" id="btn-villa" onclick="setVilla(true)"><span class="ico">🏠</span>Villa / Singolo</button>
       </div>
     </div>
     <div id="campi-dinamici"></div>
@@ -639,10 +874,7 @@ function apriFormNuovo() {
       <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div>
       <div class="form-group" style="padding:14px 16px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
-      <button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button>
-    </div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>
   `;
   apriModal(titoloForm, html);
   aggiornaFormNuovo();
@@ -662,33 +894,28 @@ function aggiornaFormNuovo() {
   const isVilla = window._villaNuovo === true;
   const prefillInd = condoSelezionato && !isVilla ? escapeHtml(condoSelezionato) : '';
   const prefillCondo = condoSelezionato && !isVilla ? escapeHtml(condoSelezionato) : '';
-
   if (tipo === 'censito') {
     let condHtml = '';
     if (!isVilla) condHtml = '<div class="form-row"><label class="form-label">Condominio (opzionale)</label><input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l\'indirizzo" autocomplete="off" value="' + prefillCondo + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>';
-    cont.innerHTML = `
-      <div class="form-group">
-        <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
-        <div class="form-row"><label class="form-label">Citofono (opzionale)</label><input class="form-input" id="f-citofono" placeholder="Nome sul citofono" autocomplete="off"></div>
-        ${condHtml}
-      </div>
-    `;
+    cont.innerHTML = `<div class="form-group">
+      <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
+      <div class="form-row"><label class="form-label">Citofono (opzionale)</label><input class="form-input" id="f-citofono" placeholder="Nome sul citofono" autocomplete="off"></div>
+      ${condHtml}
+    </div>`;
   } else {
     let sottotipoHtml = '';
     if (tipo === 'nt') sottotipoHtml = '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="f-sottotipo"><option value="NT non ancora valutata">NT non ancora valutata</option><option value="NT valutata">NT valutata</option></select></div>';
     else if (tipo === 'ink') sottotipoHtml = '<div class="form-row"><label class="form-label">Tipo incarico</label><select class="form-select" id="f-sottotipo"><option value="">— Seleziona —</option><option value="INK gestione">INK gestione</option><option value="INK esclusiva">INK esclusiva</option></select></div>';
     let condHtml = '';
     if (!isVilla) condHtml = '<div class="form-row"><label class="form-label">Condominio (opzionale)</label><input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l\'indirizzo" autocomplete="off" value="' + prefillCondo + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>';
-    cont.innerHTML = `
-      <div class="form-group">
-        <div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
-        <div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
-        <div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
-        <div class="form-row"><label class="form-label">Residenza proprietario (opzionale)</label><input class="form-input" id="f-residenza" placeholder="VIA ..." autocomplete="off"></div>
-        ${condHtml}
-        ${sottotipoHtml}
-      </div>
-    `;
+    cont.innerHTML = `<div class="form-group">
+      <div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
+      <div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
+      <div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
+      <div class="form-row"><label class="form-label">Residenza proprietario (opzionale)</label><input class="form-input" id="f-residenza" placeholder="VIA ..." autocomplete="off"></div>
+      ${condHtml}
+      ${sottotipoHtml}
+    </div>`;
   }
 }
 
@@ -712,7 +939,6 @@ function aggiornaBloccoZoneDaCondominio(condoInput, idPrefix) {
   if (!block) return;
   const det = (DB.condomini && DB.condomini[condo]) || {};
   const zoneCondo = det.zone || '';
-
   if (zoneCondo.length > 0) {
     let html = '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div>';
     html += '<div class="inherit-banner"><span class="ico">🏢</span><div>';
@@ -733,15 +959,13 @@ function aggiornaBloccoZoneDaCondominio(condoInput, idPrefix) {
   }
 }
 
-function salvaNuovoImmobile() {
+async function salvaNuovoImmobile() {
   const tipoForm = document.getElementById('f-tipo').value;
   const indirizzo = ((document.getElementById('f-indirizzo') || {}).value || '').trim().toUpperCase();
   if (!indirizzo) { alert('Inserisci un indirizzo'); return; }
-
   const isVilla = window._villaNuovo === true;
   const condoInput = isVilla ? '' : normalizzaIndirizzo((document.getElementById('f-condominio') || {}).value);
   const adesso = new Date().toISOString();
-
   let condominio = '';
   if (!isVilla) {
     condominio = condoInput || indirizzo;
@@ -750,11 +974,9 @@ function salvaNuovoImmobile() {
       if (conStessoIndirizzo.length > 0) condominio = conStessoIndirizzo[0].condominio || normalizzaIndirizzo(conStessoIndirizzo[0].indirizzo);
     }
   }
-
   const detCondo = (!isVilla && DB.condomini && DB.condomini[condominio]) || {};
   const zoneCondo = detCondo.zone || [];
   const zone = isVilla ? calcolaZoneFinali('nuovo') : (zoneCondo.length > 0 ? zoneCondo.slice() : calcolaZoneFinali('nuovo'));
-
   let z = null;
   if (!isVilla) {
     if (tipoForm === 'censito') {
@@ -775,29 +997,22 @@ function salvaNuovoImmobile() {
       z = prossimoZPerCondominio(condominio);
     }
   }
-
+  let imm;
   if (tipoForm === 'censito') {
     const citofono = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase();
-    const imm = { id: uid(), stato: 'IMM', indirizzo, z, citofono, villa: isVilla, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], condominio, sottotipo: '', note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
-    applicaEreditaCondominio(imm);
-    DB.immobili.push(imm);
-    Storage.save(DB);
-    chiudiModal();
-    renderListaImmobili();
-    setTimeout(() => apriScheda(imm.id), 200);
-    return;
+    imm = { id: uid(), stato: 'IMM', indirizzo, z, citofono, villa: isVilla, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], condominio, sottotipo: '', note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
+  } else {
+    const cognomeNome = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase();
+    const telefono = (document.getElementById('f-telefono') || {}).value || '';
+    const residenza = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase();
+    const sottotipoEl = document.getElementById('f-sottotipo');
+    const sottotipo = sottotipoEl ? sottotipoEl.value : '';
+    if (!cognomeNome) { alert('Inserisci cognome e nome'); return; }
+    const stato = tipoForm === 'pa' ? 'PA' : tipoForm === 'nt' ? 'NT' : 'INK';
+    imm = { id: uid(), stato, indirizzo, z, citofono: '', villa: isVilla, cognomeNome, telefono: telefono.trim(), residenza, altriImmobili: [], condominio, sottotipo, note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
   }
-
-  const cognomeNome = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase();
-  const telefono = (document.getElementById('f-telefono') || {}).value || '';
-  const residenza = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase();
-  const sottotipoEl = document.getElementById('f-sottotipo');
-  const sottotipo = sottotipoEl ? sottotipoEl.value : '';
-  if (!cognomeNome) { alert('Inserisci cognome e nome'); return; }
-
-  const stato = tipoForm === 'pa' ? 'PA' : tipoForm === 'nt' ? 'NT' : 'INK';
-  const imm = { id: uid(), stato, indirizzo, z, citofono: '', villa: isVilla, cognomeNome, telefono: telefono.trim(), residenza, altriImmobili: [], condominio, sottotipo, note: '', zone, dettagli: {}, attivita: [], createdAt: adesso, updatedAt: adesso };
   applicaEreditaCondominio(imm);
+  await geocodificaImmobile(imm);
   DB.immobili.push(imm);
   Storage.save(DB);
   chiudiModal();
@@ -812,28 +1027,18 @@ function apriFormNuovoCondominio() {
   zoneTemp.condo = { base: [], speciale: null };
   const html = `
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Nuovo condominio</h2></div>
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off"></div>
-    </div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off"></div></div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Caratteristiche condominio</h2></div>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="nc-anno" inputmode="numeric"></div>
       <div class="form-row"><label class="form-label">Ristrutturazione interna</label><input class="form-input" id="nc-rint"></div>
       <div class="form-row"><label class="form-label">Ristrutturazione esterna</label><input class="form-input" id="nc-rext"></div>
-      <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="nc-stato">
-        ${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}
-      </select></div>
-      <div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="nc-cappotto">
-        ${['', 'Sì', 'No'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}
-      </select></div>
-      <div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="nc-ascensore">
-        ${['', 'Sì', 'No'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}
-      </select></div>
+      <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="nc-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}</select></div>
+      <div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="nc-cappotto">${['', 'Sì', 'No'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}</select></div>
+      <div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="nc-ascensore">${['', 'Sì', 'No'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}</select></div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zona del condominio</h2></div>
-    <div class="form-group" style="padding:14px 16px;">
-      <div id="condo-zone-container">${htmlSelettoreZone('condo')}</div>
-    </div>
+    <div class="form-group" style="padding:14px 16px;"><div id="condo-zone-container">${htmlSelettoreZone('condo')}</div></div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Amministratore</h2></div>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="nc-amm-nome"></div>
@@ -842,13 +1047,8 @@ function apriFormNuovoCondominio() {
       <div class="form-row"><label class="form-label">Studio / Indirizzo</label><input class="form-input" id="nc-amm-studio"></div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Note</h2></div>
-    <div class="form-group">
-      <div class="form-row"><textarea class="form-textarea" id="nc-note" placeholder="Note libere..."></textarea></div>
-    </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
-      <button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea condominio</button>
-    </div>
+    <div class="form-group"><div class="form-row"><textarea class="form-textarea" id="nc-note" placeholder="Note libere..."></textarea></div></div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea condominio</button></div>
   `;
   apriModal('Nuovo condominio', html);
 }
@@ -893,7 +1093,6 @@ function apriScheda(id) {
   const imm = DB.immobili.find(i => i.id === id);
   if (!imm) return;
   immobileAperto = id;
-
   const titolo = titoloImmobile(imm);
   const attivita = (imm.attivita || []).slice().sort(compareAttivitaCrescente);
   const condo = getCondominio(imm);
@@ -902,17 +1101,15 @@ function apriScheda(id) {
   const zoneEff = getZoneEffettive(imm);
   const zoneDaCondo = !imm.villa && detCondo.zone && detCondo.zone.length > 0;
   const haDettagliCondo = !imm.villa && (detCondo.annoCostruzione || detCondo.ristrutturazioneInterna || detCondo.ristrutturazioneEsterna || detCondo.statoCondominio || detCondo.cappotto || detCondo.ascensoreCondominiale || (detCondo.amministratore && detCondo.amministratore.nome));
-
   let html = '';
   html += '<div style="margin-bottom:14px;"><span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
   if (imm.villa) html += ' <span style="font-size:11px;color:#059669;font-weight:700;margin-left:8px;">🏠 VILLA</span>';
   if (imm.sottotipo) html += ' <span style="font-size:12px;color:var(--testo-sec);margin-left:8px;">' + escapeHtml(imm.sottotipo) + '</span>';
   html += '</div>';
-
   if (imm.z) html += '<div style="margin-bottom:12px;"><span class="zcode-badge">CODICE INTERNO: z' + imm.z + '</span></div>';
-
   html += '<div class="card">';
   if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
+  if (imm.lat && imm.lng) html += '<div class="info-row"><span class="label">Coordinate</span><span class="value" style="font-size:12px;">' + imm.lat.toFixed(4) + ', ' + imm.lng.toFixed(4) + '</span></div>';
   if (imm.citofono) html += '<div class="info-row"><span class="label">Citofono</span><span class="value">' + escapeHtml(imm.citofono) + '</span></div>';
   if (imm.cognomeNome) html += '<div class="info-row"><span class="label">Proprietario</span><span class="value">' + escapeHtml(imm.cognomeNome) + '</span></div>';
   if (imm.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(imm.telefono) + '</span></div>';
@@ -929,7 +1126,6 @@ function apriScheda(id) {
     html += '<button onclick="toggleValutazione()">' + (isValutata ? '✅ Valutata' : '⏳ Non valutata') + ' — cambia</button></div></div>';
   }
   html += '</div>';
-
   if (!imm.villa) {
     const detCondoMostrati = [];
     if (detCondo.annoCostruzione) detCondoMostrati.push(['Anno costruzione', detCondo.annoCostruzione]);
@@ -938,7 +1134,6 @@ function apriScheda(id) {
     if (detCondo.statoCondominio) detCondoMostrati.push(['Stato condominio', detCondo.statoCondominio]);
     if (detCondo.cappotto) detCondoMostrati.push(['Cappotto', detCondo.cappotto]);
     if (detCondo.ascensoreCondominiale) detCondoMostrati.push(['Ascensore condominiale', detCondo.ascensoreCondominiale]);
-
     html += '<div class="card"><h2><span class="dot"></span>🏢 Dettagli condominio</h2>';
     if (haDettagliCondo || zoneDaCondo) {
       html += '<div class="inherit-banner" style="margin-top:0;margin-bottom:12px;"><span class="ico">ℹ️</span><div><strong>Dettagli condivisi con tutti gli immobili del condominio</strong>Le modifiche si applicano a tutte le unità</div></div>';
@@ -955,7 +1150,6 @@ function apriScheda(id) {
     if (condo) html += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')">✏️ Modifica dettagli condominio</button>';
     html += '</div>';
   }
-
   if (zoneEff.length > 0) {
     html += '<div class="card"><h2><span class="dot"></span>Zone' + (zoneDaCondo ? ' <span style="font-size:11px;color:#059669;font-weight:600;text-transform:none;letter-spacing:0;">(ereditate dal condominio)</span>' : '') + '</h2><div class="zone-chips">';
     for (const z of zoneEff) {
@@ -964,7 +1158,6 @@ function apriScheda(id) {
     }
     html += '</div></div>';
   }
-
   const det = imm.dettagli || {};
   const gruppoUnita = [['Scala', det.scala], ['Piano', det.piano], ['Interno', det.interno]].filter(([_, v]) => v && v !== '');
   const gruppoSuperficie = [['Mq', det.mq], ['Vani', det.vani], ['Camere', det.camere], ['Bagni', det.bagni]].filter(([_, v]) => v && v !== '');
@@ -980,7 +1173,6 @@ function apriScheda(id) {
     if (gruppoStato.length) { html += '<div class="section-title">Stato</div>'; for (const [k, v] of gruppoStato) html += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; }
     html += '</div>';
   }
-
   if (fratelli.length > 0) {
     html += '<div class="card"><div class="condo-header">🏢 CONDOMINIO · ' + escapeHtml(condo) + '</div>';
     html += '<div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;">' + (fratelli.length + 1) + ' immobili in questo condominio</div><div class="immobili-list">';
@@ -991,13 +1183,11 @@ function apriScheda(id) {
     }
     html += '</div></div>';
   }
-
   html += '<div class="actions">';
   html += '<button class="action-btn" onclick="apriModifica()"><span class="icon">✏️</span>Modifica</button>';
   html += '<button class="action-btn" onclick="apriCambiaStato()"><span class="icon">🔄</span>Stato</button>';
   html += '<button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">➕</span>Attività</button>';
   html += '</div>';
-
   html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
   if (attivita.length === 0) html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
   else {
@@ -1015,11 +1205,9 @@ function apriScheda(id) {
     }
   }
   html += '</div>';
-
   html += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="eliminaImmobile()">🗑️ Elimina</button>';
   if (imm.stato === 'VND') html += '<button class="btn btn-primary" onclick="archiviaImmobile()">📦 Archivia</button>';
   html += '</div>';
-
   apriModal(titolo, html);
 }
 
@@ -1029,7 +1217,6 @@ function apriScheda(id) {
 function apriModificaCondominio(condo) {
   const det = getDettagliCondominio(condo);
   const amm = det.amministratore || {};
-
   zoneTemp.condo = { base: [], speciale: null };
   if (det.zone && det.zone.length > 0) {
     const speciali = det.zone.filter(z => ZONA_ZDF === z || ZONE_SPECIALI.includes(z));
@@ -1037,7 +1224,6 @@ function apriModificaCondominio(condo) {
     if (base.length > 0) zoneTemp.condo.base = base;
     else if (speciali.length === 1 && ZONE_SPECIALI.includes(speciali[0])) zoneTemp.condo.speciale = speciali[0];
   }
-
   const html = `
     <div class="prefill-banner">🏢 Condominio: ${escapeHtml(condo)}</div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Caratteristiche condominio</h2></div>
@@ -1045,15 +1231,9 @@ function apriModificaCondominio(condo) {
       <div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" inputmode="numeric" value="${escapeHtml(det.annoCostruzione || '')}"></div>
       <div class="form-row"><label class="form-label">Ristrutturazione interna</label><input class="form-input" id="cd-rint" value="${escapeHtml(det.ristrutturazioneInterna || '')}"></div>
       <div class="form-row"><label class="form-label">Ristrutturazione esterna</label><input class="form-input" id="cd-rext" value="${escapeHtml(det.ristrutturazioneEsterna || '')}"></div>
-      <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">
-        ${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (det.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}
-      </select></div>
-      <div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="cd-cappotto">
-        ${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (det.cappotto === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}
-      </select></div>
-      <div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="cd-ascensore">
-        ${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (det.ascensoreCondominiale === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}
-      </select></div>
+      <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (det.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
+      <div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="cd-cappotto">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (det.cappotto === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
+      <div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="cd-ascensore">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (det.ascensoreCondominiale === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zona del condominio</h2></div>
     <div class="form-group" style="padding:14px 16px;">
@@ -1068,15 +1248,10 @@ function apriModificaCondominio(condo) {
       <div class="form-row"><label class="form-label">Studio / Indirizzo</label><input class="form-input" id="cd-amm-studio" value="${escapeHtml(amm.studio || '')}"></div>
     </div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Note condominio</h2></div>
-    <div class="form-group">
-      <div class="form-row"><textarea class="form-textarea" id="cd-note" placeholder="Note libere...">${escapeHtml(det.note || '')}</textarea></div>
-    </div>
+    <div class="form-group"><div class="form-row"><textarea class="form-textarea" id="cd-note" placeholder="Note libere...">${escapeHtml(det.note || '')}</textarea></div></div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Azioni</h2></div>
     <button class="btn btn-danger" onclick="eliminaCondominio('${escapeHtml(condo).replace(/'/g, "\\'")}')">🗑️ Elimina condominio</button>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
-      <button class="btn btn-primary" onclick="salvaCondominio('${escapeHtml(condo).replace(/'/g, "\\'")}')">Salva</button>
-    </div>
+    <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCondominio('${escapeHtml(condo).replace(/'/g, "\\'")}')">Salva</button></div>
   `;
   apriModal('Dettagli condominio', html);
 }
@@ -1229,14 +1404,12 @@ function toggleValutazione() {
 function apriModifica() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
-
   const isCensito = imm.stato === 'IMM';
   const det = imm.dettagli || {};
   const condo = getCondominio(imm);
   const detCondo = (condo && DB.condomini && DB.condomini[condo]) || {};
   const zoneCondo = detCondo.zone || [];
   const zoneDaCondo = !imm.villa && zoneCondo.length > 0;
-
   zoneTemp.modifica = { base: [], speciale: null };
   if (!zoneDaCondo && imm.zone && imm.zone.length > 0) {
     const speciali = imm.zone.filter(z => ZONE_SPECIALI.includes(z));
@@ -1244,9 +1417,7 @@ function apriModifica() {
     if (base.length > 0) zoneTemp.modifica.base = base;
     else if (speciali.length === 1) zoneTemp.modifica.speciale = speciali[0];
   }
-
   window._villaModifica = !!imm.villa;
-
   let html = '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="m-indirizzo" value="' + escapeHtml(imm.indirizzo || '') + '"></div>';
   if (isCensito) html += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="m-citofono" value="' + escapeHtml(imm.citofono || '') + '" placeholder="Nome sul citofono"></div>';
@@ -1275,7 +1446,6 @@ function apriModifica() {
   }
   html += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-note">' + escapeHtml(imm.note || '') + '</textarea></div>';
   html += '</div>';
-
   if (zoneDaCondo) {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div>';
     html += '<div class="inherit-banner"><span class="ico">🏢</span><div><strong>Zona del condominio</strong>' + escapeHtml(zoneCondo.join(' · ')) + '<br><span style="font-weight:500;">Non modificabile dal singolo immobile</span></div></div>';
@@ -1283,14 +1453,12 @@ function apriModifica() {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div>';
     html += '<div class="form-group" style="padding:14px 16px;"><div id="modifica-zone-container">' + htmlSelettoreZone('modifica') + '</div></div>';
   }
-
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Unità immobiliare</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(det.scala || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Piano</label><input class="form-input" id="d-piano" value="' + escapeHtml(det.piano || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(det.interno || '') + '"></div>';
   html += '</div>';
-
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Superficie e locali</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(det.mq || '') + '"></div>';
@@ -1298,7 +1466,6 @@ function apriModifica() {
   html += '<div class="form-row"><label class="form-label">Camere</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(det.camere || '') + '"></div>';
   html += '<div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(det.bagni || '') + '"></div>';
   html += '</div>';
-
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dotazioni</h2></div>';
   html += '<div class="form-group">';
   for (const [key, label] of [['ascensore', 'Ascensore'], ['balcone', 'Balcone'], ['terrazzo', 'Terrazzo'], ['giardino', 'Giardino'], ['box', 'Box'], ['cantina', 'Cantina']]) {
@@ -1307,7 +1474,6 @@ function apriModifica() {
     html += '</select></div>';
   }
   html += '</div>';
-
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dati energetici</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Classe energetica</label><select class="form-select" id="d-classe">';
@@ -1316,12 +1482,10 @@ function apriModifica() {
   html += '<div class="form-row"><label class="form-label">Riscaldamento</label><select class="form-select" id="d-riscaldamento">';
   for (const r of ['', 'Autonomo', 'Centralizzato', 'Assente']) html += '<option value="' + r + '"' + (det.riscaldamento === r ? ' selected' : '') + '>' + (r || '—') + '</option>';
   html += '</select></div></div>';
-
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Stato</h2></div>';
   html += '<div class="form-group"><div class="form-row"><label class="form-label">Stato conservativo</label><select class="form-select" id="d-statoConservativo">';
   for (const s of ['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare']) html += '<option value="' + s + '"' + (det.statoConservativo === s ? ' selected' : '') + '>' + (s || '—') + '</option>';
   html += '</select></div></div>';
-
   if (!isCensito) {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili di proprietà</h2><div id="altri-immobili-list">';
     const lista = imm.altriImmobili || [];
@@ -1333,10 +1497,8 @@ function apriModifica() {
     }
     html += '</div><button class="add-btn" onclick="aggiungiAltroImmobile()">➕ Aggiungi altro immobile</button></div>';
   }
-
   html += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + imm.id + '\')">Annulla</button>';
   html += '<button class="btn btn-primary" onclick="salvaModifica()">Salva</button></div>';
-
   apriModal('Modifica', html);
 }
 
@@ -1345,7 +1507,6 @@ function setVillaModifica(isVilla) {
   document.getElementById('m-btn-condominio').classList.toggle('active', !isVilla);
   document.getElementById('m-btn-villa').classList.toggle('active', isVilla);
 }
-
 function aggiungiAltroImmobile() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   salvaCampiTemp(imm);
@@ -1373,19 +1534,17 @@ function salvaCampiTemp(imm) {
   Storage.save(DB);
 }
 
-function salvaModifica() {
+async function salvaModifica() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!imm) return;
   const g = (id) => document.getElementById(id);
-
   const vecchioVilla = !!imm.villa;
   const vecchioCondominio = getCondominio(imm);
+  const vecchioIndirizzo = imm.indirizzo;
   const nuovoVilla = window._villaModifica === true;
-
   imm.villa = nuovoVilla;
   imm.indirizzo = ((g('m-indirizzo') || {}).value || '').trim().toUpperCase();
   if (g('m-citofono')) imm.citofono = ((g('m-citofono') || {}).value || '').trim().toUpperCase();
-
   if (nuovoVilla) {
     imm.condominio = ''; imm.z = null;
   } else {
@@ -1396,7 +1555,6 @@ function salvaModifica() {
       imm.z = prossimoZPerCondominio(nuovoCondominio);
     }
   }
-
   if (g('m-cognomeNome')) {
     imm.cognomeNome = (g('m-cognomeNome').value || '').trim().toUpperCase();
     imm.telefono = (g('m-telefono') || {}).value || '';
@@ -1411,7 +1569,6 @@ function salvaModifica() {
     imm.sottotipo = nuovo;
   }
   imm.note = (g('m-note') || {}).value || '';
-
   if (imm.villa) {
     imm.zone = calcolaZoneFinali('modifica');
   } else {
@@ -1419,7 +1576,6 @@ function salvaModifica() {
     const zoneCondo = detCondo.zone || [];
     imm.zone = zoneCondo.length > 0 ? zoneCondo.slice() : calcolaZoneFinali('modifica');
   }
-
   imm.dettagli = {
     scala: ((g('d-scala') || {}).value || '').trim(),
     piano: ((g('d-piano') || {}).value || '').trim(),
@@ -1438,7 +1594,10 @@ function salvaModifica() {
     riscaldamento: ((g('d-riscaldamento') || {}).value || '').trim(),
     statoConservativo: ((g('d-statoConservativo') || {}).value || '').trim()
   };
-
+  if (vecchioIndirizzo !== imm.indirizzo) {
+    imm.lat = null; imm.lng = null;
+    await geocodificaImmobile(imm);
+  }
   imm.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderListaImmobili();
@@ -1555,16 +1714,239 @@ function eliminaImmobile() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!confirm('Eliminare "' + titoloImmobile(imm) + '"?\nOperazione irreversibile.')) return;
   DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
-  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili();
+  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaMappa();
 }
 function archiviaImmobile() {
   const imm = DB.immobili.find(i => i.id === immobileAperto);
   if (!confirm('Archiviare "' + titoloImmobile(imm) + '"?')) return;
   DB.immobili = DB.immobili.filter(i => i.id !== immobileAperto);
-  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili();
+  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaMappa();
   alert('✅ Immobile archiviato');
 }
 
+// =====================================================
+// MAPPA
+// =====================================================
+let map = null;
+let markersLayer = null;
+window._condoPopups = []; // array di condomini per i popup
+
+function initMappa() {
+  if (map) return;
+  map = L.map('map', { center: CREMONA_CENTER, zoom: 14, zoomControl: true, attributionControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+  markersLayer = L.layerGroup().addTo(map);
+  aggiornaMappa();
+}
+
+function creaPinIcona(imm) {
+  const stato = imm.stato;
+  const isVilla = !!imm.villa;
+  let cls = 'pin-' + stato;
+  if (isVilla) cls = 'pin-villa';
+  const html = `
+    <div class="pin-wrap ${cls}">
+      <div class="pin-body">
+        <div class="pin-label">${isVilla ? '🏠' : stato}</div>
+      </div>
+    </div>
+  `;
+  const size = isVilla ? [28, 28] : [32, 40];
+  const anchor = isVilla ? [14, 14] : [16, 40];
+  return L.divIcon({ className: 'arangiò-pin', html: html, iconSize: size, iconAnchor: anchor, popupAnchor: [0, -40] });
+}
+
+function creaPinCondominio(num) {
+  const html = `
+    <div class="pin-wrap pin-condo">
+      <div class="pin-body">
+        <div class="pin-label">${num}</div>
+      </div>
+    </div>
+  `;
+  return L.divIcon({ className: 'arangiò-pin', html: html, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] });
+}
+
+function apriPopupImmobile(immId) {
+  chiudiModal();
+  apriScheda(immId);
+}
+
+function apriPopupCondominioByIndex(idx) {
+  const condo = window._condoPopups[idx];
+  if (!condo) return;
+  apriPopupCondominio(condo);
+}
+
+function apriPopupCondominio(condo) {
+  const immobili = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo);
+  const det = (DB.condomini && DB.condomini[condo]) || {};
+
+  let html = '<div class="prefill-banner">🏢 ' + escapeHtml(condo) + '</div>';
+
+  html += '<div class="card"><h2><span class="dot"></span>Immobili (' + immobili.length + ')</h2>';
+  html += '<div class="immobili-list">';
+  for (const imm of immobili) {
+    const t = titoloImmobile(imm);
+    html += '<div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)">';
+    html += '<span class="txt">' + escapeHtml(t) + '</span>';
+    html += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span>';
+    html += '</div>';
+  }
+  html += '</div></div>';
+
+  if (det.annoCostruzione || det.statoCondominio || det.amministratore || (det.zone && det.zone.length > 0)) {
+    html += '<div class="card"><h2><span class="dot"></span>Dettagli condominio</h2>';
+    if (det.annoCostruzione) html += '<div class="info-row"><span class="label">Anno costruzione</span><span class="value">' + escapeHtml(det.annoCostruzione) + '</span></div>';
+    if (det.ristrutturazioneInterna) html += '<div class="info-row"><span class="label">Ristrutturazione interna</span><span class="value">' + escapeHtml(det.ristrutturazioneInterna) + '</span></div>';
+    if (det.ristrutturazioneEsterna) html += '<div class="info-row"><span class="label">Ristrutturazione esterna</span><span class="value">' + escapeHtml(det.ristrutturazioneEsterna) + '</span></div>';
+    if (det.statoCondominio) html += '<div class="info-row"><span class="label">Stato</span><span class="value">' + escapeHtml(det.statoCondominio) + '</span></div>';
+    if (det.cappotto) html += '<div class="info-row"><span class="label">Cappotto</span><span class="value">' + escapeHtml(det.cappotto) + '</span></div>';
+    if (det.ascensoreCondominiale) html += '<div class="info-row"><span class="label">Ascensore</span><span class="value">' + escapeHtml(det.ascensoreCondominiale) + '</span></div>';
+    if (det.zone && det.zone.length > 0) html += '<div class="info-row"><span class="label">Zona</span><span class="value">📍 ' + escapeHtml(det.zone.join(' · ')) + '</span></div>';
+    if (det.amministratore && det.amministratore.nome) {
+      html += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(det.amministratore.nome) + '</span></div>';
+      if (det.amministratore.telefono) html += '<div class="info-row"><span class="label">Telefono</span><span class="value">' + escapeHtml(det.amministratore.telefono) + '</span></div>';
+    }
+    html += '</div>';
+  }
+
+  html += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')},100)">✏️ Modifica dettagli condominio</button>';
+
+  apriModal('🏢 ' + condo, html);
+}
+
+function aggiornaMappa() {
+  if (!map || !markersLayer) return;
+  markersLayer.clearLayers();
+  window._condoPopups = [];
+
+  let lista = DB.immobili.filter(i => i.lat && i.lng);
+  if (mappaFiltroStato) lista = lista.filter(i => i.stato === mappaFiltroStato);
+
+  // Raggruppa per condominio
+  const gruppiCondo = {}; // condo -> array immobili
+  const villaOSingoli = []; // immobili senza condominio
+
+  for (const imm of lista) {
+    const condo = getCondominio(imm);
+    if (!condo) {
+      villaOSingoli.push(imm);
+    } else {
+      if (!gruppiCondo[condo]) gruppiCondo[condo] = [];
+      gruppiCondo[condo].push(imm);
+    }
+  }
+
+  let pinTotali = 0;
+
+  // 1. Gruppi condominio
+  for (const condo in gruppiCondo) {
+    const immobili = gruppiCondo[condo];
+    const primo = immobili[0];
+
+    if (immobili.length === 1) {
+      // Un solo immobile → pin individuale
+      const imm = immobili[0];
+      const icon = creaPinIcona(imm);
+      const marker = L.marker([imm.lat, imm.lng], { icon: icon });
+      const titolo = titoloImmobile(imm);
+      const zone = getZoneEffettive(imm);
+      const zoneStr = zone.length > 0 ? '📍 ' + zone.join(' · ') : '';
+      const tel = imm.telefono ? '📞 ' + escapeHtml(imm.telefono) : '';
+      const popup = `
+        <div class="arangiò-popup">
+          <div class="pop-titolo">${escapeHtml(titolo)}</div>
+          <div class="pop-sub"><span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
+          ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
+          ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
+          <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">Apri scheda</button>
+        </div>
+      `;
+      marker.bindPopup(popup, { maxWidth: 260, minWidth: 200 });
+      marker.addTo(markersLayer);
+      pinTotali++;
+    } else {
+      // Più immobili → pin condominio
+      window._condoPopups.push(condo);
+      const idx = window._condoPopups.length - 1;
+      const icon = creaPinCondominio(immobili.length);
+      const marker = L.marker([primo.lat, primo.lng], { icon: icon });
+
+      // Popup con lista breve
+      let listaHtml = '<div class="pop-list">';
+      const mostraMax = 5;
+      for (let i = 0; i < Math.min(immobili.length, mostraMax); i++) {
+        const imm = immobili[i];
+        listaHtml += '<div class="pop-item">';
+        listaHtml += '<span class="pop-item-txt">' + escapeHtml(titoloImmobile(imm).slice(0, 30)) + (titoloImmobile(imm).length > 30 ? '…' : '') + '</span>';
+        listaHtml += '<span class="pop-badge badge-' + imm.stato + '" style="font-size:8px;padding:1px 5px;">' + imm.stato + '</span>';
+        listaHtml += '</div>';
+      }
+      if (immobili.length > mostraMax) {
+        listaHtml += '<div class="pop-item" style="color:var(--testo-sec);font-style:italic;">+ altri ' + (immobili.length - mostraMax) + '…</div>';
+      }
+      listaHtml += '</div>';
+
+      const popup = `
+        <div class="arangiò-popup">
+          <div class="pop-titolo">🏢 CONDOMINIO</div>
+          <div class="pop-sub">${escapeHtml(condo)}</div>
+          <div class="pop-sub"><strong>${immobili.length} immobili</strong></div>
+          ${listaHtml}
+          <button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">Apri condominio</button>
+        </div>
+      `;
+      marker.bindPopup(popup, { maxWidth: 280, minWidth: 240 });
+      marker.addTo(markersLayer);
+      pinTotali++;
+    }
+  }
+
+  // 2. Ville e singoli
+  for (const imm of villaOSingoli) {
+    const icon = creaPinIcona(imm);
+    const marker = L.marker([imm.lat, imm.lng], { icon: icon });
+    const titolo = titoloImmobile(imm);
+    const zone = getZoneEffettive(imm);
+    const zoneStr = zone.length > 0 ? '📍 ' + zone.join(' · ') : '';
+    const tel = imm.telefono ? '📞 ' + escapeHtml(imm.telefono) : '';
+    const villaTag = imm.villa ? '<span style="font-size:9px;color:#059669;font-weight:700;">🏠 VILLA</span> ' : '';
+    const popup = `
+      <div class="arangiò-popup">
+        <div class="pop-titolo">${escapeHtml(titolo)}</div>
+        <div class="pop-sub">${villaTag}<span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
+        ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
+        ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
+        <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">Apri scheda</button>
+      </div>
+    `;
+    marker.bindPopup(popup, { maxWidth: 260, minWidth: 200 });
+    marker.addTo(markersLayer);
+    pinTotali++;
+  }
+
+  // Contatori
+  const totImm = DB.immobili.length;
+  const geocodificati = DB.immobili.filter(i => i.lat && i.lng).length;
+  document.getElementById('map-count').textContent = pinTotali;
+  document.getElementById('map-tot').textContent = '/ ' + totImm + ' (' + geocodificati + ' geo)';
+}
+
+function centraMappaSuCremona() { if (map) map.setView(CREMONA_CENTER, 14); }
+
+function fitBoundsImmobili() {
+  if (!map) return;
+  let lista = DB.immobili.filter(i => i.lat && i.lng);
+  if (mappaFiltroStato) lista = lista.filter(i => i.stato === mappaFiltroStato);
+  if (lista.length === 0) { centraMappaSuCremona(); return; }
+  const bounds = L.latLngBounds(lista.map(i => [i.lat, i.lng]));
+  map.fitBounds(bounds, { padding: [60, 60], maxZoom: 17 });
+}
+
+// =====================================================
+// BACKUP
+// =====================================================
 function aggiornaContatori() {
   const elPers = document.getElementById('count-persone');
   const elAcq = document.getElementById('count-acquirenti');
@@ -1594,7 +1976,7 @@ function importaBackup(event) {
       if (!imported || typeof imported !== 'object') throw new Error('Formato non valido');
       if (!confirm('Importare questo backup? I dati attuali verranno sostituiti.')) return;
       DB = Object.assign(Storage.default(), imported);
-      Storage.save(DB); renderListaImmobili(); aggiornaContatori();
+      Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa();
       alert('✅ Backup importato');
     } catch (err) { alert('❌ Errore: ' + err.message); }
   };
@@ -1603,7 +1985,7 @@ function importaBackup(event) {
 function cancellaTutto() {
   if (!confirm('⚠️ Cancellare TUTTI i dati?')) return;
   if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
-  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori();
+  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa();
   alert('🗑️ Tutti i dati cancellati');
 }
 
