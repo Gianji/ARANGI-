@@ -138,131 +138,29 @@
   .fab-menu button:active { opacity: 0.7; }
 
   /* MAPPA */
-  #map-container {
-    position: relative;
-    width: 100%;
-    height: calc(100vh - 60px);
-    height: calc(100dvh - 60px);
-    overflow: hidden;
-    background: #e5e7eb;
-  }
+  #map-container { position: relative; width: 100%; height: calc(100vh - 60px); height: calc(100dvh - 60px); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
-  .map-overlay-top {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    right: 12px;
-    z-index: 500;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    pointer-events: none;
-  }
+  .map-overlay-top { position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
   .map-overlay-top > * { pointer-events: auto; }
-  .map-chips {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 8px 10px;
-    background: rgba(255,255,255,0.95);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
+  .map-chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 10px; background: rgba(255,255,255,0.95); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .map-chips::-webkit-scrollbar { display: none; }
   .map-chip { background: #eef0f3; border: none; padding: 6px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; }
   .map-chip.active { background: var(--blu); color: white; }
-  .map-status {
-    background: rgba(255,255,255,0.95);
-    border-radius: 12px;
-    padding: 8px 12px;
-    font-size: 12px;
-    color: var(--testo-sec);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
+  .map-status { background: rgba(255,255,255,0.95); border-radius: 12px; padding: 8px 12px; font-size: 12px; color: var(--testo-sec); box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .map-status .count { font-weight: 700; color: var(--blu); }
   .map-status button { background: var(--blu); border: none; border-radius: 8px; padding: 6px 10px; font-family: inherit; font-size: 11px; font-weight: 600; color: white; cursor: pointer; }
   .map-status button:disabled { opacity: 0.5; cursor: wait; }
-  .map-overlay-bottom {
-    position: absolute;
-    bottom: 80px;
-    right: 12px;
-    z-index: 500;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .map-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 22px;
-    background: white;
-    border: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    cursor: pointer;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .map-overlay-bottom { position: absolute; bottom: 80px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; }
+  .map-btn { width: 44px; height: 44px; border-radius: 22px; background: white; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; }
   .map-btn:active { background: #f0f1f3; }
-
-  /* Pin */
-  .pin-wrap {
-    position: relative;
-    width: 32px;
-    height: 40px;
-    cursor: pointer;
-  }
-  .pin-body {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 28px;
-    height: 28px;
-    border-radius: 50% 50% 50% 0;
-    transform: translateX(-50%) rotate(-45deg);
-    border: 2px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .pin-body .pin-label {
-    transform: rotate(45deg);
-    font-size: 9px;
-    font-weight: 800;
-    color: white;
-    letter-spacing: 0.3px;
-  }
-  .pin-IMM .pin-body { background: var(--imm); }
-  .pin-PA .pin-body { background: var(--pa); }
-  .pin-NT .pin-body { background: var(--nt); }
-  .pin-INK .pin-body { background: var(--ink); }
-  .pin-VND .pin-body { background: var(--vnd); }
+  .pin-wrap { position: relative; width: 32px; height: 40px; cursor: pointer; }
+  .pin-body { position: absolute; bottom: 0; left: 50%; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+  .pin-body .pin-label { transform: rotate(45deg); font-size: 9px; font-weight: 800; color: white; letter-spacing: 0.3px; }
+  .pin-IMM .pin-body { background: var(--imm); } .pin-PA .pin-body { background: var(--pa); } .pin-NT .pin-body { background: var(--nt); } .pin-INK .pin-body { background: var(--ink); } .pin-VND .pin-body { background: var(--vnd); }
   .pin-villa .pin-body { background: #059669; border-radius: 50%; transform: translateX(-50%); }
   .pin-villa .pin-body .pin-label { transform: none; font-size: 14px; }
-
-  /* Pin condominio */
-  .pin-condo .pin-body {
-    background: var(--blu);
-    width: 34px;
-    height: 34px;
-    border-width: 3px;
-  }
-  .pin-condo .pin-body .pin-label {
-    font-size: 14px;
-  }
-  .pin-condo.misto .pin-body {
-    background: linear-gradient(135deg, #003d7a 50%, var(--arancione) 50%);
-  }
-
-  /* Popup */
+  .pin-condo .pin-body { background: var(--blu); width: 34px; height: 34px; border-width: 3px; }
+  .pin-condo .pin-body .pin-label { font-size: 14px; }
   .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; overflow: hidden; }
   .leaflet-popup-content { margin: 0; min-width: 200px; }
   .arangiò-popup { padding: 12px 14px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
@@ -275,6 +173,12 @@
   .arangiò-popup .pop-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #f0f1f3; font-size: 11px; }
   .arangiò-popup .pop-item:last-child { border-bottom: none; }
   .arangiò-popup .pop-item .pop-item-txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* IMPOSTAZIONI */
+  .setting-row { padding: 14px 0; border-bottom: 1px solid #f0f1f3; }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-label { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+  .setting-hint { font-size: 11px; color: var(--testo-sec); margin-top: 6px; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -336,13 +240,18 @@
           </div>
         </div>
         <div class="map-overlay-bottom">
-          <button class="map-btn" onclick="centraMappaSuCremona()" title="Centra su Cremona">🏠</button>
+          <button class="map-btn" onclick="centraMappaSuCittaPrincipale()" title="Centra sulla città principale">🏠</button>
           <button class="map-btn" onclick="fitBoundsImmobili()" title="Mostra tutti">🎯</button>
         </div>
       </div>
     </section>
 
     <section id="view-altro" class="view">
+      <div class="card">
+        <h2><span class="dot"></span>Città principale</h2>
+        <p style="margin-bottom:12px;">La città usata per geocodificare gli indirizzi su mappa (se non ne specifichi un'altra).</p>
+        <button class="btn btn-secondary" onclick="apriImpostazioniCitta()">⚙️ Cambia città principale</button>
+      </div>
       <div class="card">
         <h2><span class="dot"></span>Dati</h2>
         <p style="margin-bottom:16px;">Esporta un backup di tutti i dati in un file.</p>
@@ -354,6 +263,7 @@
         <h2><span class="dot"></span>Sistema</h2>
         <div class="info-row"><span class="label">Versione</span><span class="value">1.0 (Modulo 3)</span></div>
         <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
+        <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
         <div class="info-row"><span class="label">Occupato</span><span class="value" id="storage-info">—</span></div>
       </div>
       <div class="card">
@@ -396,6 +306,8 @@
 // STORAGE
 // =====================================================
 const DB_KEY = 'arangiò_db_v1';
+const CITTA_DEFAULT = 'CREMONA, CR, 26100';
+const CREMONA_CENTER = [45.1333, 10.0167]; // fallback
 
 const Storage = {
   load() {
@@ -407,6 +319,7 @@ const Storage = {
       return {
         versione: parsed.versione || def.versione,
         nextSeq: parsed.nextSeq || def.nextSeq,
+        cittaPrincipale: parsed.cittaPrincipale || def.cittaPrincipale,
         immobili: parsed.immobili || [],
         persone: parsed.persone || [],
         attivita: parsed.attivita || [],
@@ -416,7 +329,7 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 18, nextSeq: 1, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
+  default() { return { versione: 19, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -432,7 +345,6 @@ const ZONE_BASE = [
 ];
 const ZONA_ZDF = 'ZONA ZdF';
 const ZONE_SPECIALI = ['ZONA Libera', 'ZONA ZdF altrui'];
-const CREMONA_CENTER = [45.1333, 10.0167];
 
 // =====================================================
 // UTILITY
@@ -467,6 +379,14 @@ function applicaEreditaCondominio(imm) {
   return imm;
 }
 
+// Città principale - stringa utente (es. "CREMONA, CR, 26100")
+function getCittaPrincipale() { return DB.cittaPrincipale || CITTA_DEFAULT; }
+// Nome breve della città (prima parte prima della virgola)
+function getNomeCittaPrincipale() {
+  const full = getCittaPrincipale();
+  return full.split(',')[0].trim();
+}
+
 // =====================================================
 // GEOCODING
 // =====================================================
@@ -475,13 +395,29 @@ let geocodeCache = {};
 try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
 function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
 
+// Costruisce la query per Nominatim
+function costruisciQueryGeocode(indirizzo) {
+  const ind = normalizzaIndirizzo(indirizzo);
+  if (!ind) return '';
+  const parti = ind.split(',').map(s => s.trim()).filter(s => s.length > 0);
+  let query;
+  if (parti.length <= 1) {
+    // Solo via/civico → aggiungi città principale
+    query = ind + ', ' + getCittaPrincipale();
+  } else {
+    // L'utente ha già specificato una città (o parte di essa)
+    query = ind;
+  }
+  if (!/italia|italy/i.test(query)) query += ', ITALIA';
+  return query;
+}
+
 async function geocodificaIndirizzo(indirizzo) {
   const ind = normalizzaIndirizzo(indirizzo);
   if (!ind) return null;
-  if (geocodeCache[ind]) return geocodeCache[ind];
-  let query = ind;
-  if (!/cremona/i.test(query)) query += ', CREMONA';
-  if (!/italia|italy/i.test(query)) query += ', ITALIA';
+  const query = costruisciQueryGeocode(ind);
+  const cacheKey = query;
+  if (geocodeCache[cacheKey]) return geocodeCache[cacheKey];
   try {
     const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=it&q=' + encodeURIComponent(query);
     const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
@@ -489,7 +425,7 @@ async function geocodificaIndirizzo(indirizzo) {
     const data = await resp.json();
     if (data && data.length > 0) {
       const r = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display: data[0].display_name };
-      geocodeCache[ind] = r;
+      geocodeCache[cacheKey] = r;
       salvaGeocodeCache();
       return r;
     }
@@ -502,6 +438,23 @@ async function geocodificaImmobile(imm) {
   const r = await geocodificaIndirizzo(imm.indirizzo);
   if (r) { imm.lat = r.lat; imm.lng = r.lng; return true; }
   return false;
+}
+
+// Geocodifica la città principale (per centrare la mappa)
+let _coordsCittaPrincipale = null;
+async function geocodificaCittaPrincipale() {
+  const nomeCitta = getNomeCittaPrincipale();
+  if (nomeCitta.toLowerCase() === 'cremona') {
+    _coordsCittaPrincipale = CREMONA_CENTER;
+    return CREMONA_CENTER;
+  }
+  const r = await geocodificaIndirizzo(getCittaPrincipale());
+  if (r) {
+    _coordsCittaPrincipale = [r.lat, r.lng];
+    return _coordsCittaPrincipale;
+  }
+  _coordsCittaPrincipale = CREMONA_CENTER;
+  return CREMONA_CENTER;
 }
 
 async function geocodificaTutti() {
@@ -537,9 +490,10 @@ tabButtons.forEach(btn => {
       document.getElementById('app-content').style.overflow = 'hidden';
       document.getElementById('fab-immobili').style.display = 'none';
       document.getElementById('fab-menu').style.display = 'none';
-      setTimeout(() => {
+      setTimeout(async () => {
         if (!map) initMappa();
         else map.invalidateSize();
+        if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale();
         aggiornaMappa();
       }, 100);
     } else {
@@ -548,9 +502,15 @@ tabButtons.forEach(btn => {
       document.getElementById('app-content').style.overflow = '';
       document.querySelector('.app-content').scrollTop = 0;
       document.getElementById('fab-immobili').style.display = (tab === 'immobili') ? 'flex' : 'none';
+      if (tab === 'altro') aggiornaInfoSistema();
     }
   });
 });
+
+function aggiornaInfoSistema() {
+  const el = document.getElementById('sistema-citta');
+  if (el) el.textContent = getCittaPrincipale();
+}
 
 // =====================================================
 // MODAL
@@ -841,6 +801,63 @@ function calcolaZoneFinali(idPrefix) {
 }
 
 // =====================================================
+// IMPOSTAZIONI CITTÀ
+// =====================================================
+function apriImpostazioniCitta() {
+  const citta = getCittaPrincipale();
+  const html = `
+    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Città principale</h2></div>
+    <div class="form-group">
+      <div class="form-row">
+        <label class="form-label">Città (comune, provincia, CAP)</label>
+        <input class="form-input" id="imp-citta" value="${escapeHtml(citta)}" placeholder="CREMONA, CR, 26100">
+        <div class="setting-hint">Verrà usata per geocodificare gli indirizzi che non hanno una città specificata.</div>
+      </div>
+    </div>
+    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Esempi</h2></div>
+    <div class="form-group">
+      <div class="form-row">
+        <div style="font-size:13px;color:var(--testo-sec);line-height:1.6;">
+          <div style="margin-bottom:8px;"><strong>"VIA ROMA 1"</strong> → cerca a <em>${escapeHtml(getNomeCittaPrincipale())}</em></div>
+          <div><strong>"VIA ROMA 1, MILANO"</strong> → cerca a <em>Milano</em> (la tua città principale viene ignorata)</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Azioni</h2></div>
+    <button class="btn btn-secondary" onclick="resettaCittaPrincipale()">↩️ Ripristina Cremona, CR, 26100</button>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button>
+    </div>
+  `;
+  apriModal('⚙️ Città principale', html);
+}
+
+function salvaCittaPrincipale() {
+  const val = (document.getElementById('imp-citta') || {}).value || '';
+  const nuova = val.trim().toUpperCase();
+  if (!nuova) { alert('Inserisci una città'); return; }
+  DB.cittaPrincipale = nuova;
+  Storage.save(DB);
+  // Reset coords città
+  _coordsCittaPrincipale = null;
+  // Reset cache geocoding (opzionale: gli indirizzi potrebbero essere cambiati)
+  if (confirm('Vuoi anche svuotare la cache delle geocodifiche?\n\nConsigliato se la nuova città è molto diversa.\n\nOK = Svuota cache\nAnnulla = Mantieni cache')) {
+    geocodeCache = {};
+    salvaGeocodeCache();
+  }
+  chiudiModal();
+  alert('✅ Città principale: ' + nuova);
+  aggiornaInfoSistema();
+  aggiornaMappa();
+}
+
+function resettaCittaPrincipale() {
+  const el = document.getElementById('imp-citta');
+  if (el) el.value = CITTA_DEFAULT;
+}
+
+// =====================================================
 // FORM NUOVO IMMOBILE
 // =====================================================
 function apriFormNuovo() {
@@ -849,6 +866,7 @@ function apriFormNuovo() {
   const bannerHtml = daCondominio ? '<div class="prefill-banner">🏢 Creando in: ' + escapeHtml(condoSelezionato) + '</div>' : '';
   zoneTemp.nuovo = { base: [], speciale: null };
   window._villaNuovo = false;
+  const nomeCitta = getNomeCittaPrincipale();
   const html = `
     ${bannerHtml}
     <div class="form-group">
@@ -892,13 +910,15 @@ function aggiornaFormNuovo() {
   const tipo = document.getElementById('f-tipo').value;
   const cont = document.getElementById('campi-dinamici');
   const isVilla = window._villaNuovo === true;
+  const nomeCitta = getNomeCittaPrincipale();
   const prefillInd = condoSelezionato && !isVilla ? escapeHtml(condoSelezionato) : '';
   const prefillCondo = condoSelezionato && !isVilla ? escapeHtml(condoSelezionato) : '';
+  const placeholderInd = 'VIA ROMA 1, ' + nomeCitta;
   if (tipo === 'censito') {
     let condHtml = '';
     if (!isVilla) condHtml = '<div class="form-row"><label class="form-label">Condominio (opzionale)</label><input class="form-input" id="f-condominio" placeholder="Lascia vuoto per usare l\'indirizzo" autocomplete="off" value="' + prefillCondo + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>';
     cont.innerHTML = `<div class="form-group">
-      <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
+      <div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-indirizzo" placeholder="${escapeHtml(placeholderInd)}" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
       <div class="form-row"><label class="form-label">Citofono (opzionale)</label><input class="form-input" id="f-citofono" placeholder="Nome sul citofono" autocomplete="off"></div>
       ${condHtml}
     </div>`;
@@ -911,7 +931,7 @@ function aggiornaFormNuovo() {
     cont.innerHTML = `<div class="form-group">
       <div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="f-cognomeNome" placeholder="ROSSI MARIO" autocomplete="off"></div>
       <div class="form-row"><label class="form-label">Telefono proprietario</label><input class="form-input" id="f-telefono" type="tel" placeholder="333 333 3333" autocomplete="off"></div>
-      <div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
+      <div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="${escapeHtml(placeholderInd)}" autocomplete="off" value="${prefillInd}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div>
       <div class="form-row"><label class="form-label">Residenza proprietario (opzionale)</label><input class="form-input" id="f-residenza" placeholder="VIA ..." autocomplete="off"></div>
       ${condHtml}
       ${sottotipoHtml}
@@ -1025,9 +1045,10 @@ async function salvaNuovoImmobile() {
 // =====================================================
 function apriFormNuovoCondominio() {
   zoneTemp.condo = { base: [], speciale: null };
+  const nomeCitta = getNomeCittaPrincipale();
   const html = `
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Nuovo condominio</h2></div>
-    <div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-indirizzo" placeholder="VIA ROMA 1, CREMONA" autocomplete="off"></div></div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-indirizzo" placeholder="VIA ROMA 1, ${escapeHtml(nomeCitta)}" autocomplete="off"></div></div>
     <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Caratteristiche condominio</h2></div>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="nc-anno" inputmode="numeric"></div>
@@ -1729,13 +1750,17 @@ function archiviaImmobile() {
 // =====================================================
 let map = null;
 let markersLayer = null;
-window._condoPopups = []; // array di condomini per i popup
+window._condoPopups = [];
 
 function initMappa() {
   if (map) return;
   map = L.map('map', { center: CREMONA_CENTER, zoom: 14, zoomControl: true, attributionControl: true });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
   markersLayer = L.layerGroup().addTo(map);
+  // Prova a geocodificare la città principale per centrare
+  if (_coordsCittaPrincipale) {
+    map.setView(_coordsCittaPrincipale, 14);
+  }
   aggiornaMappa();
 }
 
@@ -1759,9 +1784,7 @@ function creaPinIcona(imm) {
 function creaPinCondominio(num) {
   const html = `
     <div class="pin-wrap pin-condo">
-      <div class="pin-body">
-        <div class="pin-label">${num}</div>
-      </div>
+      <div class="pin-body"><div class="pin-label">${num}</div></div>
     </div>
   `;
   return L.divIcon({ className: 'arangiò-pin', html: html, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] });
@@ -1781,9 +1804,7 @@ function apriPopupCondominioByIndex(idx) {
 function apriPopupCondominio(condo) {
   const immobili = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo);
   const det = (DB.condomini && DB.condomini[condo]) || {};
-
   let html = '<div class="prefill-banner">🏢 ' + escapeHtml(condo) + '</div>';
-
   html += '<div class="card"><h2><span class="dot"></span>Immobili (' + immobili.length + ')</h2>';
   html += '<div class="immobili-list">';
   for (const imm of immobili) {
@@ -1794,7 +1815,6 @@ function apriPopupCondominio(condo) {
     html += '</div>';
   }
   html += '</div></div>';
-
   if (det.annoCostruzione || det.statoCondominio || det.amministratore || (det.zone && det.zone.length > 0)) {
     html += '<div class="card"><h2><span class="dot"></span>Dettagli condominio</h2>';
     if (det.annoCostruzione) html += '<div class="info-row"><span class="label">Anno costruzione</span><span class="value">' + escapeHtml(det.annoCostruzione) + '</span></div>';
@@ -1810,9 +1830,7 @@ function apriPopupCondominio(condo) {
     }
     html += '</div>';
   }
-
   html += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')},100)">✏️ Modifica dettagli condominio</button>';
-
   apriModal('🏢 ' + condo, html);
 }
 
@@ -1820,33 +1838,23 @@ function aggiornaMappa() {
   if (!map || !markersLayer) return;
   markersLayer.clearLayers();
   window._condoPopups = [];
-
   let lista = DB.immobili.filter(i => i.lat && i.lng);
   if (mappaFiltroStato) lista = lista.filter(i => i.stato === mappaFiltroStato);
-
-  // Raggruppa per condominio
-  const gruppiCondo = {}; // condo -> array immobili
-  const villaOSingoli = []; // immobili senza condominio
-
+  const gruppiCondo = {};
+  const villaOSingoli = [];
   for (const imm of lista) {
     const condo = getCondominio(imm);
-    if (!condo) {
-      villaOSingoli.push(imm);
-    } else {
+    if (!condo) villaOSingoli.push(imm);
+    else {
       if (!gruppiCondo[condo]) gruppiCondo[condo] = [];
       gruppiCondo[condo].push(imm);
     }
   }
-
   let pinTotali = 0;
-
-  // 1. Gruppi condominio
   for (const condo in gruppiCondo) {
     const immobili = gruppiCondo[condo];
     const primo = immobili[0];
-
     if (immobili.length === 1) {
-      // Un solo immobile → pin individuale
       const imm = immobili[0];
       const icon = creaPinIcona(imm);
       const marker = L.marker([imm.lat, imm.lng], { icon: icon });
@@ -1854,56 +1862,42 @@ function aggiornaMappa() {
       const zone = getZoneEffettive(imm);
       const zoneStr = zone.length > 0 ? '📍 ' + zone.join(' · ') : '';
       const tel = imm.telefono ? '📞 ' + escapeHtml(imm.telefono) : '';
-      const popup = `
-        <div class="arangiò-popup">
-          <div class="pop-titolo">${escapeHtml(titolo)}</div>
-          <div class="pop-sub"><span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
-          ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
-          ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
-          <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">Apri scheda</button>
-        </div>
-      `;
+      const popup = `<div class="arangiò-popup">
+        <div class="pop-titolo">${escapeHtml(titolo)}</div>
+        <div class="pop-sub"><span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
+        ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
+        ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
+        <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">Apri scheda</button>
+      </div>`;
       marker.bindPopup(popup, { maxWidth: 260, minWidth: 200 });
       marker.addTo(markersLayer);
       pinTotali++;
     } else {
-      // Più immobili → pin condominio
       window._condoPopups.push(condo);
       const idx = window._condoPopups.length - 1;
       const icon = creaPinCondominio(immobili.length);
       const marker = L.marker([primo.lat, primo.lng], { icon: icon });
-
-      // Popup con lista breve
       let listaHtml = '<div class="pop-list">';
       const mostraMax = 5;
       for (let i = 0; i < Math.min(immobili.length, mostraMax); i++) {
         const imm = immobili[i];
-        listaHtml += '<div class="pop-item">';
-        listaHtml += '<span class="pop-item-txt">' + escapeHtml(titoloImmobile(imm).slice(0, 30)) + (titoloImmobile(imm).length > 30 ? '…' : '') + '</span>';
-        listaHtml += '<span class="pop-badge badge-' + imm.stato + '" style="font-size:8px;padding:1px 5px;">' + imm.stato + '</span>';
-        listaHtml += '</div>';
+        listaHtml += '<div class="pop-item"><span class="pop-item-txt">' + escapeHtml(titoloImmobile(imm).slice(0, 30)) + (titoloImmobile(imm).length > 30 ? '…' : '') + '</span>';
+        listaHtml += '<span class="pop-badge badge-' + imm.stato + '" style="font-size:8px;padding:1px 5px;">' + imm.stato + '</span></div>';
       }
-      if (immobili.length > mostraMax) {
-        listaHtml += '<div class="pop-item" style="color:var(--testo-sec);font-style:italic;">+ altri ' + (immobili.length - mostraMax) + '…</div>';
-      }
+      if (immobili.length > mostraMax) listaHtml += '<div class="pop-item" style="color:var(--testo-sec);font-style:italic;">+ altri ' + (immobili.length - mostraMax) + '…</div>';
       listaHtml += '</div>';
-
-      const popup = `
-        <div class="arangiò-popup">
-          <div class="pop-titolo">🏢 CONDOMINIO</div>
-          <div class="pop-sub">${escapeHtml(condo)}</div>
-          <div class="pop-sub"><strong>${immobili.length} immobili</strong></div>
-          ${listaHtml}
-          <button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">Apri condominio</button>
-        </div>
-      `;
+      const popup = `<div class="arangiò-popup">
+        <div class="pop-titolo">🏢 CONDOMINIO</div>
+        <div class="pop-sub">${escapeHtml(condo)}</div>
+        <div class="pop-sub"><strong>${immobili.length} immobili</strong></div>
+        ${listaHtml}
+        <button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">Apri condominio</button>
+      </div>`;
       marker.bindPopup(popup, { maxWidth: 280, minWidth: 240 });
       marker.addTo(markersLayer);
       pinTotali++;
     }
   }
-
-  // 2. Ville e singoli
   for (const imm of villaOSingoli) {
     const icon = creaPinIcona(imm);
     const marker = L.marker([imm.lat, imm.lng], { icon: icon });
@@ -1912,34 +1906,34 @@ function aggiornaMappa() {
     const zoneStr = zone.length > 0 ? '📍 ' + zone.join(' · ') : '';
     const tel = imm.telefono ? '📞 ' + escapeHtml(imm.telefono) : '';
     const villaTag = imm.villa ? '<span style="font-size:9px;color:#059669;font-weight:700;">🏠 VILLA</span> ' : '';
-    const popup = `
-      <div class="arangiò-popup">
-        <div class="pop-titolo">${escapeHtml(titolo)}</div>
-        <div class="pop-sub">${villaTag}<span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
-        ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
-        ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
-        <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">Apri scheda</button>
-      </div>
-    `;
+    const popup = `<div class="arangiò-popup">
+      <div class="pop-titolo">${escapeHtml(titolo)}</div>
+      <div class="pop-sub">${villaTag}<span class="pop-badge badge-${imm.stato}">${imm.stato}</span> ${imm.z ? 'z' + imm.z : ''}</div>
+      ${tel ? '<div class="pop-sub">' + tel + '</div>' : ''}
+      ${zoneStr ? '<div class="pop-zone">' + escapeHtml(zoneStr) + '</div>' : ''}
+      <button class="pop-btn" onclick="apriPopupImmobile('${imm.id}')">Apri scheda</button>
+    </div>`;
     marker.bindPopup(popup, { maxWidth: 260, minWidth: 200 });
     marker.addTo(markersLayer);
     pinTotali++;
   }
-
-  // Contatori
   const totImm = DB.immobili.length;
   const geocodificati = DB.immobili.filter(i => i.lat && i.lng).length;
   document.getElementById('map-count').textContent = pinTotali;
   document.getElementById('map-tot').textContent = '/ ' + totImm + ' (' + geocodificati + ' geo)';
 }
 
-function centraMappaSuCremona() { if (map) map.setView(CREMONA_CENTER, 14); }
+async function centraMappaSuCittaPrincipale() {
+  if (!map) return;
+  if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale();
+  map.setView(_coordsCittaPrincipale, 14);
+}
 
 function fitBoundsImmobili() {
   if (!map) return;
   let lista = DB.immobili.filter(i => i.lat && i.lng);
   if (mappaFiltroStato) lista = lista.filter(i => i.stato === mappaFiltroStato);
-  if (lista.length === 0) { centraMappaSuCremona(); return; }
+  if (lista.length === 0) { centraMappaSuCittaPrincipale(); return; }
   const bounds = L.latLngBounds(lista.map(i => [i.lat, i.lng]));
   map.fitBounds(bounds, { padding: [60, 60], maxZoom: 17 });
 }
@@ -1976,7 +1970,7 @@ function importaBackup(event) {
       if (!imported || typeof imported !== 'object') throw new Error('Formato non valido');
       if (!confirm('Importare questo backup? I dati attuali verranno sostituiti.')) return;
       DB = Object.assign(Storage.default(), imported);
-      Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa();
+      Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema();
       alert('✅ Backup importato');
     } catch (err) { alert('❌ Errore: ' + err.message); }
   };
@@ -1985,11 +1979,11 @@ function importaBackup(event) {
 function cancellaTutto() {
   if (!confirm('⚠️ Cancellare TUTTI i dati?')) return;
   if (!confirm('⚠️ Sei sicuro? Non si può recuperare.')) return;
-  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa();
+  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema();
   alert('🗑️ Tutti i dati cancellati');
 }
 
-aggiornaChips(); renderListaImmobili(); aggiornaContatori();
+aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema();
 </script>
 
 </body>
