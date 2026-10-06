@@ -50,7 +50,7 @@
   .filter-label { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.6px; padding: 0 4px 8px; }
   .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { background: var(--card); border: none; padding: 8px 14px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; box-shadow: var(--ombra); transition: background 0.15s, color 0.15s; }
+  .chip { background: var(--card); border: none; padding: 8px 14px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; box-shadow: var(--ombra); transition: background 0.15s, color 0.15s; display:inline-flex; align-items:center; gap:5px; }
   .chip.active { background: var(--blu); color: white; }
   .chip.sub { font-size: 12px; padding: 6px 12px; }
   .chip.sub.active { background: var(--arancione); }
@@ -58,7 +58,7 @@
   .chip-dropdown.active { background: var(--blu); color: white; }
   .chip-dropdown .caret { font-size: 10px; }
   .zone-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .zone-chip { background: #f5f6f8; border: 1px solid transparent; padding: 7px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--testo-sec); cursor: pointer; transition: all 0.15s; }
+  .zone-chip { background: #f5f6f8; border: 1px solid transparent; padding: 7px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--testo-sec); cursor: pointer; transition: all 0.15s; display:inline-flex; align-items:center; gap:4px; }
   .zone-chip.active { background: var(--blu); color: white; border-color: var(--blu); }
   .zone-chip.special { font-size: 11px; }
   .zone-chip.special.active { background: var(--arancione); border-color: var(--arancione); }
@@ -69,7 +69,8 @@
   .item-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
   .item-title { font-size: 15px; font-weight: 700; color: var(--testo); letter-spacing: -0.2px; flex: 1; word-break: break-word; overflow-wrap: anywhere; line-height: 1.3; }
   .item-card .badge { margin-top: 1px; }
-  .item-sub { font-size: 13px; color: var(--testo-sec); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-sub { font-size: 13px; color: var(--testo-sec); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display:flex; align-items:center; gap:5px; }
+  .item-sub svg { flex-shrink:0; }
   .item-meta { font-size: 12px; color: var(--testo-sec); margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f1f3; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
   .badge { display: inline-block; padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; color: white; letter-spacing: 0.3px; flex-shrink: 0; }
@@ -146,7 +147,7 @@
   .condo-card .condo-edit { background: none; border: none; padding: 8px; cursor: pointer; flex-shrink: 0; border-radius: 8px; color: var(--blu); display:flex; align-items:center; justify-content:center; }
   .condo-card .condo-edit svg { width: 18px; height: 18px; }
   .condo-card .condo-edit:active { background: #eef0f3; }
-  .section-title { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 4px 8px; margin-top: 4px; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--testo-sec); text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 4px 8px; margin-top: 4px; display:flex; align-items:center; gap:5px; }
   .prefill-banner { background: #eef4fb; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--blu); font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
   .prefill-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
   .inherit-banner { background: #e8f5ec; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #047857; font-weight: 600; margin-top: 8px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
@@ -169,7 +170,8 @@
   .prop-card { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; }
   .prop-card .prop-nome { font-size: 13px; font-weight: 700; color: var(--testo); margin-bottom: 4px; }
   .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.5; }
-  .addr-check { color: #059669; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .addr-check { color: #059669; font-weight: 800; font-size: 14px; flex-shrink: 0; display:inline-flex; align-items:center; }
+  .addr-check svg { width: 14px; height: 14px; }
   .addr-click { color: var(--blu); font-weight: 600; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(0,61,122,0.35); text-underline-offset: 3px; }
   .addr-click:active { opacity: 0.6; }
   .addr-link { color: var(--blu); cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; padding: 2px 4px; border-radius: 6px; transition: background 0.15s; }
@@ -211,8 +213,8 @@
   .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; overflow: hidden; }
   .leaflet-popup-content { margin: 0; min-width: 200px; }
   .arangiò-popup { padding: 12px 14px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
-  .arangiò-popup .pop-titolo { font-size: 13px; font-weight: 700; color: var(--blu); margin-bottom: 4px; line-height: 1.3; }
-  .arangiò-popup .pop-sub { font-size: 11px; color: var(--testo-sec); margin-bottom: 8px; line-height: 1.3; }
+  .arangiò-popup .pop-titolo { font-size: 13px; font-weight: 700; color: var(--blu); margin-bottom: 4px; line-height: 1.3; display:flex; align-items:center; gap:5px; }
+  .arangiò-popup .pop-sub { font-size: 11px; color: var(--testo-sec); margin-bottom: 8px; line-height: 1.3; display:flex; align-items:center; gap:5px; }
   .arangiò-popup .pop-badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 9px; font-weight: 700; color: white; margin-right: 4px; }
   .arangiò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 8px; display:flex; align-items:center; justify-content:center; gap:6px; }
   .arangiò-popup .pop-btn svg { width: 14px; height: 14px; }
@@ -263,7 +265,7 @@
   .app-item-card.tipo-acq .app-tipo-badge { background: var(--rr); }
   .app-item-card.tipo-entrambi .app-tipo-badge { background: var(--vnd); }
   .app-item-card .app-titolo { font-size: 14px; font-weight: 700; color: var(--testo); margin-bottom: 4px; line-height: 1.3; word-break: break-word; }
-  .app-item-card .app-data { font-size: 12px; color: var(--testo-sec); font-weight: 600; }
+  .app-item-card .app-data { font-size: 12px; color: var(--testo-sec); font-weight: 600; display:flex; align-items:center; gap:4px; }
   .app-item-card .app-esito { font-size: 11px; margin-top: 6px; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items:center; gap:4px; }
   .app-item-card .app-esito svg { width: 12px; height: 12px; }
   .app-item-card .app-esito.ok { background: #e8f5ec; color: #047857; }
@@ -311,7 +313,6 @@
   .att-testo { font-size: 14px; color: var(--testo); line-height: 1.35; word-break: break-word; }
 
   .app-header h1 { display:flex; align-items:center; gap:8px; }
-  .header-info { display:flex; align-items:center; gap:6px; }
   .icona-inline { display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; }
   .icona-inline svg { width: 14px; height: 14px; }
 </style>
@@ -434,7 +435,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">1.3 (Modulo 11)</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.4 (Modulo 12)</span></div>
         <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
         <div class="info-row"><span class="label">Tipi personalizzati</span><span class="value" id="sistema-n-tipi">0</span></div>
@@ -481,7 +482,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // =====================================================
-// ICONE SVG (sostituiscono tutte le emoji)
+// ICONE SVG
 // =====================================================
 const ICON_PATHS = {
   calendario: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
@@ -536,7 +537,6 @@ function ico(name, size) {
   const s = size || 16;
   return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;">' + p + '</svg>';
 }
-// Applica icona a tutti i bottoni con data-icon
 function applicaIcone() {
   document.querySelectorAll('[data-icon]').forEach(el => {
     const n = el.dataset.icon; if (!n) return;
@@ -576,7 +576,7 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 36, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
+  default() { return { versione: 37, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
 };
 
 let DB = Storage.load();
@@ -1345,42 +1345,56 @@ function apriNuovoAppuntamentoPersona(pid) { const p = DB.persone.find(x => x.id
 function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.id === iid); apriSelezioneTipoApp(i, null); }
 
 // ---------------------------------------------
-// FILTRO TIPI APPUNTAMENTO (regole di flusso)
-// FIX: se non c'è contesto, mostra tutti i tipi
+// FILTRO TIPI APPUNTAMENTO
 // ---------------------------------------------
 function tipiAppValidi(imm, per) {
-  // Nessun contesto → mostra tutti i tipi (l'utente sceglierà e verrà guidato)
+  // Nessun contesto → mostra tutti i tipi
   if (!imm && !per) return getTuttiTipiApp();
   return getTuttiTipiApp().filter(t => {
     const s = t.sigla;
     if (imm) {
       const tv = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non');
-      // 2) G INK solo su INK
       if (s === 'G INK' && imm.stato !== 'INK') return false;
-      // 3) VAL solo su PA/NT non valutate
       if (s === 'VAL') {
         if (imm.stato !== 'PA' && imm.stato !== 'NT') return false;
         if (imm.stato === 'NT' && tv) return false;
       }
-      // 4) RIVAL solo su NT valutate
       if (s === 'RIVAL' && (imm.stato !== 'NT' || !tv)) return false;
-      // 5) ACC PROP solo se in trattativa
       if (s === 'ACC PROP' && !imm.inTrattativa) return false;
-      // 6/7) APP e RIT PROP solo su NT/INK
       if ((s === 'APP' || s === 'RIT PROP') && imm.stato !== 'NT' && imm.stato !== 'INK') return false;
-      // 8) NOT ACC PROP solo se in trattativa + proposta accettata
       if (s === 'NOT ACC PROP' && (!imm.inTrattativa || !imm.propostaAccettata)) return false;
-      // 9/10) PRELIMINARE e ROGITO solo se proposta accettata/notificata
       if ((s === 'PRELIMINARE' || s === 'ROGITO') && !imm.propostaAccettata && !imm.propostaNotificata) return false;
     }
     if (per) {
-      // 6/7/11) APP, RIT PROP, CONS solo acquirenti
       if ((s === 'APP' || s === 'RIT PROP' || s === 'CONS') && per.tipo !== 'acquirente') return false;
-      // 7) RIT PROP solo se ha visto almeno un NT/INK
       if (s === 'RIT PROP' && !acquirenteHaVistoNTINK(per)) return false;
     }
     return true;
   });
+}
+
+// Validazione entità per tipo (usata dal picker e da salvaAppuntamento)
+function immobileValidoPerTipo(tipoSigla, imm) {
+  if (!imm) return false;
+  const s = tipoSigla;
+  const tv = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non');
+  if (s === 'G INK') return imm.stato === 'INK';
+  if (s === 'VAL') return (imm.stato === 'PA' || imm.stato === 'NT') && !(imm.stato === 'NT' && tv);
+  if (s === 'RIVAL') return imm.stato === 'NT' && tv;
+  if (s === 'ACC PROP') return !!imm.inTrattativa;
+  if (s === 'APP') return imm.stato === 'NT' || imm.stato === 'INK';
+  if (s === 'RIT PROP') return imm.stato === 'NT' || imm.stato === 'INK';
+  if (s === 'NOT ACC PROP') return !!imm.inTrattativa && !!imm.propostaAccettata;
+  if (s === 'PRELIMINARE') return !!imm.propostaAccettata || !!imm.propostaNotificata;
+  if (s === 'ROGITO') return !!imm.propostaAccettata || !!imm.propostaNotificata;
+  return true;
+}
+function personaValidaPerTipo(tipoSigla, per) {
+  if (!per) return false;
+  const s = tipoSigla;
+  if (s === 'APP' || s === 'CONS') return per.tipo === 'acquirente';
+  if (s === 'RIT PROP') return per.tipo === 'acquirente' && acquirenteHaVistoNTINK(per);
+  return true;
 }
 
 function apriSelezioneTipoApp(immPre, perPre) {
@@ -1415,39 +1429,55 @@ function selezionaTipoApp(sigla) {
   const t = getTipoApp(sigla);
   window._appTipoSel = t;
   const imm = window._appImmPre; const per = window._appPersPre;
+  const ts = t.sigla;
   if (t.chi === 'solo') { apriFormAppuntamento(null, null, t); return; }
   if (t.chi === 'visita') {
     if (imm && per) { apriFormAppuntamento(imm, per, t); return; }
-    if (per && !imm) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t)); return; }
-    if (imm && !per) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t)); return; }
-    apriPickerEntita('persona', (p) => apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, p, t)));
+    if (per && !imm) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t), ts); return; }
+    if (imm && !per) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t), ts); return; }
+    apriPickerEntita('persona', (p) => apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, p, t), ts), ts);
     return;
   }
-  if (t.chi === 'vend') { if (imm) { apriFormAppuntamento(imm, null, t); return; } apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, null, t)); return; }
-  if (t.chi === 'acq') { if (per) { apriFormAppuntamento(null, per, t); return; } apriPickerEntita('persona', (p) => apriFormAppuntamento(null, p, t)); return; }
+  if (t.chi === 'vend') { if (imm) { apriFormAppuntamento(imm, null, t); return; } apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, null, t), ts); return; }
+  if (t.chi === 'acq') { if (per) { apriFormAppuntamento(null, per, t); return; } apriPickerEntita('persona', (p) => apriFormAppuntamento(null, p, t), ts); return; }
   if (t.chi === 'entrambi') {
     if (imm && per) { apriFormAppuntamento(imm, per, t); return; }
-    if (!imm && !per) { apriPickerEntita('immobile', (i) => apriPickerEntita('persona', (p) => apriFormAppuntamento(i, p, t))); return; }
-    if (imm && !per) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t)); return; }
-    if (!imm && per) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t)); return; }
+    if (!imm && !per) { apriPickerEntita('immobile', (i) => apriPickerEntita('persona', (p) => apriFormAppuntamento(i, p, t), ts), ts); return; }
+    if (imm && !per) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t), ts); return; }
+    if (!per && imm) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t), ts); return; }
+    if (!imm && per) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t), ts); return; }
   }
   apriFormAppuntamento(imm, per, t);
 }
 
-function apriPickerEntita(te, cb) {
+function apriPickerEntita(te, cb, tipoSigla) {
   const t = te === 'immobile' ? 'Seleziona immobile' : 'Seleziona persona';
-  const h = '<input type="search" class="search-bar" id="pk-search" placeholder="Cerca..."><div id="pk-risultati"></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
+  const banner = tipoSigla ? '<div class="prefill-banner">' + ico('calendario',14) + ' ' + escapeHtml(tipoSigla) + ' · verranno mostrate solo le entità compatibili</div>' : '';
+  const h = banner + '<input type="search" class="search-bar" id="pk-search" placeholder="Cerca..."><div id="pk-risultati"></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
   apriModal(t, h);
-  setTimeout(() => { const i = document.getElementById('pk-search'); if (i) { i.focus(); i.addEventListener('input', (e) => cercaEntitaPicker(te, e.target.value, cb)); } cercaEntitaPicker(te, '', cb); }, 100);
-  window._pickerCallback = cb; window._pickerTipo = te;
+  setTimeout(() => { const i = document.getElementById('pk-search'); if (i) { i.focus(); i.addEventListener('input', (e) => cercaEntitaPicker(te, e.target.value, cb, tipoSigla)); } cercaEntitaPicker(te, '', cb, tipoSigla); }, 100);
+  window._pickerCallback = cb; window._pickerTipo = te; window._pickerTipoApp = tipoSigla || null;
 }
-function cercaEntitaPicker(te, q, cb) {
+function cercaEntitaPicker(te, q, cb, tipoSigla) {
   const c = document.getElementById('pk-risultati'); if (!c) return;
+  const ts = tipoSigla || window._pickerTipoApp;
   const qq = (q || '').toLowerCase().trim(); let r = [];
-  if (te === 'immobile') { for (const imm of DB.immobili) { const t = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), badge: imm.stato, villa: !!imm.villa }); } }
-  else { for (const p of DB.persone) { const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) { let b = p.tipo === 'acquirente' ? 'RR' : 'PROF'; r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: b }); } } }
+  if (te === 'immobile') {
+    for (const imm of DB.immobili) {
+      if (ts && !immobileValidoPerTipo(ts, imm)) continue;
+      const t = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase();
+      if (!qq || t.includes(qq)) r.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), badge: imm.stato, villa: !!imm.villa });
+    }
+  }
+  else {
+    for (const p of DB.persone) {
+      if (ts && !personaValidaPerTipo(ts, p)) continue;
+      const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase();
+      if (!qq || t.includes(qq)) { let b = p.tipo === 'acquirente' ? 'RR' : 'PROF'; r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: b }); }
+    }
+  }
   r = r.slice(0, 40);
-  if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">' + ico('lente',30) + '</div>Nessun risultato</div></div>'; return; }
+  if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">' + ico('lente',30) + '</div>' + (ts ? 'Nessuna entità compatibile con il tipo ' + escapeHtml(ts) : 'Nessun risultato') + '</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
   for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',14) : iconaCondo(14)) : (x.badge === 'RR' ? ico('utente',14) : ico('valigetta',14)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
   h += '</div>'; c.innerHTML = h;
@@ -1497,6 +1527,9 @@ function salvaAppuntamento() {
   if (!t || !i || !f) { alert('Titolo, inizio e fine obbligatori'); return; }
   if (new Date(f) <= new Date(i)) { alert('Fine deve essere dopo inizio'); return; }
   const imm = window._appImm || null; const per = window._appPers || null; const tp = window._appTipo;
+  // Validazione finale: l'immobile/persona devono essere compatibili col tipo
+  if (imm && !immobileValidoPerTipo(tp.sigla, imm)) { alert('Immobile non compatibile con il tipo ' + tp.sigla + '.\n\nScegli un altro immobile o cambia tipo.'); return; }
+  if (per && !personaValidaPerTipo(tp.sigla, per)) { alert('Persona non compatibile con il tipo ' + tp.sigla + '.\n\nScegli un\'altra persona o cambia tipo.'); return; }
   const ad = new Date().toISOString();
   const ap = { id: uid(), tipo: tp.sigla, tipoChi: tp.chi, titolo: t, dataInizio: new Date(i).toISOString(), dataFine: new Date(f).toISOString(), luogo: l, note: n, immobileId: imm ? imm.id : null, personaId: per ? per.id : null, esito: null, descrizioneEsito: '', stato: 'programmato', createdAt: ad, updatedAt: ad };
   if (tp.sigla === 'APP') { ap.extraChiavi = (g('ap-chiavi') || {}).value || ''; ap.extraPropPresente = (g('ap-prop-presente') || {}).value || ''; if (imm) { imm.dettagli = imm.dettagli || {}; if (ap.extraChiavi) imm.dettagli.chiavi = ap.extraChiavi; } }
@@ -1527,8 +1560,9 @@ function apriSchedaAppuntamento(id) {
   h += '</div>';
   if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">' + iconaCondo(14) + ' ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
   if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">' + ico('utente',14) + ' ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
-  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (imm ? ico('aggiorna',16) + ' Cambia immobile' : iconaCondo(14) + ' Collega immobile') + '</button>';
-  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);})">' + (per ? ico('aggiorna',16) + ' Cambia persona' : ico('utente',14) + ' Collega persona') + '</button>';
+  // Cambio immobile filtrato per tipo
+  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (imm ? ico('aggiorna',16) + ' Cambia immobile' : iconaCondo(14) + ' Collega immobile') + '</button>';
+  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (per ? ico('aggiorna',16) + ' Cambia persona' : ico('utente',14) + ' Collega persona') + '</button>';
   h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">' + ico('calendario',18) + ' Aggiungi a Google Calendar</button>';
   h += '<button class="btn btn-secondary" onclick="apriModificaAppuntamento(\'' + a.id + '\')">' + ico('modifica',18) + ' Modifica appuntamento</button>';
   const adesso = new Date();
@@ -1562,7 +1596,6 @@ function selezionaEsitoApp(esitoId) {
   if (a.tipo === 'VAL' && imm && imm.stato === 'NT') { const ev = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non'); if (!ev) { imm.sottotipo = 'NT valutata'; } }
   if (a.tipo === 'G INK' && imm) { const r = prompt('Ribasso richiesto? (lascia vuoto per saltare)', ''); if (r) { imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Ribasso incarico: ' + r, completata: true }); } }
 
-  // === FLUSSO TRATTATIVA ===
   if (a.tipo === 'RIT PROP' && imm) {
     imm.inTrattativa = true;
     imm.attivita = imm.attivita || [];
@@ -1690,14 +1723,14 @@ function apriFormTipoCustom(siglaEsistente, dopoSalva) {
   const t = siglaEsistente ? (DB.customTipiApp || []).find(x => x.sigla === siglaEsistente) : null;
   const isEdit = !!t;
   window._customTipoDopoSalva = dopoSalva;
-  const iconeDisp = ['calendario','clipboard','righello','trendUp','penna','occhio','valigetta','upload','inbox','file','landmark','chiaveInglese','grafico','check','casa','telefono','whatsapp','email','stella','fuoco','target','pignone','clessidra','utente','utenti','campanello','orologio'];
+  const iconeDisp = ['calendario','clipboard','righello','trendUp','penna','occhio','valigetta','upload','inbox','file','landmark','chiaveInglese','grafico','check','casa','telefono','whatsapp','email','stella','fuoco','target','ingranaggio','clessidra','utente','utenti','campanello','orologio'];
   let h = '<div class="form-group">';
   h += '<div class="form-row"><label class="form-label">Sigla breve (max 20 caratteri)</label><input class="form-input" id="ct-sigla" maxlength="20" value="' + escapeHtml(t ? t.sigla : '') + '" placeholder="es. MEETING"></div>';
   h += '<div class="form-row" style="position:relative;"><label class="form-label">Nome esteso</label><input class="form-input" id="ct-nome" value="' + escapeHtml(t ? t.nome : '') + '" placeholder="es. Meeting interno" autocomplete="off" oninput="autocompleteNomeCustom(this)"><div id="ct-autocomplete" style="position:absolute;top:100%;left:16px;right:16px;background:white;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15);z-index:100;display:none;max-height:180px;overflow-y:auto;"></div></div>';
   h += '<div class="form-row"><label class="form-label">Icona</label><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">';
   for (const icn of iconeDisp) {
     const sel = t && t.icona === icn;
-    h += '<button type="button" class="zone-chip' + (sel ? ' active' : '') + '" style="padding:8px 10px;" onclick="setIconaCustom(\'' + icn + '\')" data-icon-custom="' + icn + '" id="ico-sel-' + icn + '">' + ico(icn,18) + '</button>';
+    h += '<button type="button" class="zone-chip' + (sel ? ' active' : '') + '" style="padding:8px 10px;" onclick="setIconaCustom(\'' + icn + '\')" data-icon-custom="' + icn + '">' + ico(icn,18) + '</button>';
   }
   h += '</div><input type="hidden" id="ct-icona" value="' + escapeHtml(t ? (t.icona || 'calendario') : 'calendario') + '"></div>';
   h += '<div class="form-row"><label class="form-label">Descrizione breve</label><input class="form-input" id="ct-desc" value="' + escapeHtml(t ? (t.desc || '') : '') + '" placeholder="es. Riunione con colleghi"></div>';
@@ -2226,7 +2259,6 @@ function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta'
 // =====================================================
 // AVVIO
 // =====================================================
-// Imposta le icone sui chip statici
 document.getElementById('chip-zone').innerHTML = ico('pin',14) + ' ZONE';
 document.getElementById('chip-cond').innerHTML = iconaCondo(14) + ' COND';
 document.getElementById('chip-ptab-acq').innerHTML = ico('casa',14) + ' Acquirenti';
