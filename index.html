@@ -675,7 +675,6 @@ tabButtons.forEach(btn => {
 });
 
 function aggiornaFabPersone() {
-  // Il FAB in Persone apre direttamente il form (vedi onFabClick)
   document.getElementById('fab-menu').innerHTML = '';
 }
 
@@ -732,7 +731,6 @@ function toggleFabMenu() { fabMenuAperto = !fabMenuAperto; document.getElementBy
 function onFabClick() {
   const activeTab = document.querySelector('.tabbar button.active');
   const tab = activeTab ? activeTab.dataset.tab : null;
-  // In Persone c'è una sola azione: apri direttamente il form corretto
   if (tab === 'persone') {
     fabMenuAperto = false;
     document.getElementById('fab-menu').style.display = 'none';
@@ -909,6 +907,8 @@ function renderListaImmobili() {
     html += '<div class="item-row"><div class="item-title">' + escapeHtml(titolo) + '</div>';
     if (imm.villa) html += '<span style="font-size:11px;color:#059669;font-weight:700;">🏠 VILLA</span>';
     html += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span></div>';
+    // Citofono visibile subito in lista (per immobili censiti)
+    if (imm.stato === 'IMM' && imm.citofono) html += '<div class="item-sub">🔔 ' + escapeHtml(imm.citofono) + '</div>';
     if (imm.telefono && imm.stato !== 'IMM') html += '<div class="item-sub">📞 ' + escapeHtml(imm.telefono) + '</div>';
     if (imm.sottotipo) html += '<div class="item-sub">' + escapeHtml(imm.sottotipo) + '</div>';
     if (isCondo) html += '<div class="item-sub">🏢 - ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
@@ -1111,7 +1111,7 @@ function renderPersone() {
   if (pQueryRicerca) {
     lista = lista.filter(p => {
       const campi = [p.cognomeNome, p.telefono, p.telefonoCell, p.telefonoUff, p.email, p.indirizzoUff, p.residenza, p.note,
-        (p.immobili || []).join(' '), p.collega, p.zona, p.tipoImmobile, p.budget];
+        (p.immobili || []).join(' '), p.collega, p.zona, p.tipoImmobile, p.budget, p.esigenze];
       return campi.some(c => (c || '').toLowerCase().includes(pQueryRicerca));
     });
   }
@@ -1166,7 +1166,7 @@ function resetFiltroPersone() {
 }
 
 // =====================================================
-// FORM NUOVA PERSONA (in base al sub-tab attivo)
+// FORM NUOVA PERSONA
 // =====================================================
 function apriFormNuovaPersona() {
   if (pTabAttivo === 'acquirente') apriFormNuovoAcquirente();
@@ -1394,7 +1394,6 @@ function apriSchedaPersona(id) {
     html += '</div></div>';
   }
 
-  // Azioni rapide
   html += '<div class="actions">';
   const telAzione = p.telefonoCell || p.telefono;
   if (telAzione) {
@@ -1406,7 +1405,6 @@ function apriSchedaPersona(id) {
   }
   html += '</div>';
 
-  // Azioni principali
   html += '<div class="actions">';
   html += '<button class="action-btn" onclick="apriModificaPersona()"><span class="icon">✏️</span>Modifica</button>';
   if (p.tipo === 'acquirente') {
@@ -1415,7 +1413,6 @@ function apriSchedaPersona(id) {
   html += '<button class="action-btn" onclick="apriNuovaAttivitaPersona()"><span class="icon">➕</span>Attività</button>';
   html += '</div>';
 
-  // Timeline attività
   html += '<div class="card"><h2><span class="dot"></span>Attività (' + attivita.length + ')</h2>';
   if (attivita.length === 0) html += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività. Tocca ➕ per aggiungerne una.</p>';
   else {
@@ -1504,6 +1501,15 @@ function salvaModificaAcquirente(id) {
   const p = DB.persone.find(x => x.id === id);
   if (!p) return;
   const g = (id) => document.getElementById(id);
+  // Salva i valori precedenti per confronto
+  const vecchieEsigenze = p.esigenze || '';
+  const vecchioBudget = p.budget || '';
+  const vecchioTipoImm = p.tipoImmobile || '';
+  const vecchiaZona = p.zona || '';
+  const vecchiImmobili = (p.immobili || []).join(' / ');
+  const vecchioStatoRR = p.statoRR;
+  const vecchioCollega = p.collega || '';
+
   p.cognomeNome = ((g('m-a-cognomeNome') || {}).value || '').trim().toUpperCase();
   p.telefono = (g('m-a-telefono') || {}).value || '';
   p.email = (g('m-a-email') || {}).value || '';
@@ -1517,6 +1523,61 @@ function salvaModificaAcquirente(id) {
   p.immobili = ((g('m-a-immobili') || {}).value || '').split('/').map(s => s.trim().toUpperCase()).filter(s => s);
   p.note = (g('m-a-note') || {}).value || '';
   p.updatedAt = new Date().toISOString();
+
+  // Registra attività per le modifiche rilevanti (esigenze in primis)
+  p.attivita = p.attivita || [];
+  const adesso = new Date().toISOString();
+  const nuoveEsigenze = p.esigenze || '';
+  if (vecchieEsigenze !== nuoveEsigenze) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Esigenze aggiornate: ' + (nuoveEsigenze || '—'),
+      completata: true
+    });
+  }
+  if (vecchioBudget !== p.budget) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Budget aggiornato: ' + (vecchioBudget || '—') + ' → ' + (p.budget || '—'),
+      completata: true
+    });
+  }
+  if (vecchioTipoImm !== p.tipoImmobile) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Tipo immobile: ' + (vecchioTipoImm || '—') + ' → ' + (p.tipoImmobile || '—'),
+      completata: true
+    });
+  }
+  if (vecchiaZona !== p.zona) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Zona preferita: ' + (vecchiaZona || '—') + ' → ' + (p.zona || '—'),
+      completata: true
+    });
+  }
+  if (vecchiImmobili !== p.immobili.join(' / ')) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Immobili interessati: ' + (p.immobili.join(' / ') || '—'),
+      completata: true
+    });
+  }
+  if (vecchioStatoRR !== p.statoRR) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Cambio stato: ' + (getStatoRR({ statoRR: vecchioStatoRR, tipo: 'acquirente' }).label) + ' → ' + getStatoRR(p).label,
+      completata: true
+    });
+  }
+  if ((vecchioCollega || '') !== (p.collega || '')) {
+    p.attivita.push({
+      id: uid(), seq: prossimoSeq(), data: adesso, tipo: 'fatta',
+      testo: 'Cliente di: ' + (p.collega || 'mio'),
+      completata: true
+    });
+  }
+
   Storage.save(DB);
   renderPersone();
   apriSchedaPersona(p.id);
@@ -1748,6 +1809,7 @@ function apriFormNuovo() {
   window._proprietariTemp = [];
   window._showPropForm = false;
   window._propEditingIndex = -1;
+  window._chiediAttivitaDopo = true;
   const html = `
     ${bannerHtml}
     <div class="form-group">
@@ -1772,6 +1834,12 @@ function apriFormNuovo() {
     <div id="f-zone-block">
       <div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Zone</h2></div>
       <div class="form-group" style="padding:14px 16px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div>
+    </div>
+    <div class="form-group" style="padding:14px 16px;">
+      <label style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--blu);cursor:pointer;">
+        <input type="checkbox" id="f-chiedi-attivita" checked style="width:18px;height:18px;accent-color:var(--arancione);">
+        Aggiungi subito un'attività
+      </label>
     </div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>
   `;
@@ -1936,6 +2004,7 @@ function salvaNuovoImmobile() {
   if (!indirizzo) { alert('Inserisci un indirizzo'); return; }
   const isVilla = window._villaNuovo === true;
   const condoInput = isVilla ? '' : normalizzaIndirizzo((document.getElementById('f-condominio') || {}).value);
+  const chiediAttivita = (() => { const el = document.getElementById('f-chiedi-attivita'); return el ? el.checked : true; })();
   const adesso = new Date().toISOString();
   let condominio = '';
   if (!isVilla) {
@@ -1987,8 +2056,14 @@ function salvaNuovoImmobile() {
   Storage.save(DB);
   chiudiModal();
   renderListaImmobili();
-  setTimeout(() => apriScheda(imm.id), 200);
   avviaGeocodificaBackground(imm);
+  // Apri la scheda e, se richiesto, apri direttamente il form attività
+  setTimeout(() => {
+    apriScheda(imm.id);
+    if (chiediAttivita) {
+      setTimeout(() => apriNuovaAttivita(), 350);
+    }
+  }, 200);
 }
 
 // =====================================================
@@ -2128,7 +2203,6 @@ function apriScheda(id) {
   html += '</div>';
   if (imm.z) html += '<div style="margin-bottom:12px;"><span class="zcode-badge">CODICE INTERNO: z' + imm.z + '</span></div>';
 
-  // Card principale - INDIRIZZO cliccabile (apre Google Maps) + icona chiave inglese per tools
   html += '<div class="card">';
   if (imm.indirizzo) {
     const checkIcon = haCoord && imm.geoPreciso === true ? ' <span class="addr-check">✓</span>' : '';
