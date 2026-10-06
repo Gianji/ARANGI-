@@ -76,11 +76,41 @@
   .chip { background: var(--card); border: none; padding: 8px 14px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; box-shadow: var(--ombra); }
   .chip.active { background: var(--blu); color: white; }
 
+  .active-filter-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #eef4fb;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--blu);
+    font-weight: 600;
+    gap: 8px;
+  }
+  .active-filter-banner .x {
+    background: #dbe6f3;
+    border: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--blu);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
   .item-card { background: var(--card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--ombra); cursor: pointer; transition: transform 0.1s; }
   .item-card:active { transform: scale(0.99); }
   .item-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
   .item-title { font-size: 15px; font-weight: 700; color: var(--testo); letter-spacing: -0.2px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .item-sub { font-size: 13px; color: var(--testo-sec); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-code { font-size: 10px; color: var(--testo-sec); font-weight: 600; letter-spacing: 0.4px; }
   .item-meta { font-size: 12px; color: var(--testo-sec); margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f1f3; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
@@ -134,6 +164,20 @@
   .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
 
+  .code-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f5f6f8;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--blu);
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    margin-bottom: 10px;
+  }
+
   .immobili-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
   .immobile-line { background: #f5f6f8; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.1s; }
   .immobile-line:active { background: #e8eaee; }
@@ -180,22 +224,6 @@
   .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); }
   .condo-card .condo-arrow { color: #c4c9d2; font-size: 22px; flex-shrink: 0; }
 
-  .back-btn {
-    background: none;
-    border: none;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--blu);
-    cursor: pointer;
-    padding: 8px 0;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .back-btn:active { opacity: 0.7; }
-
   .section-title {
     font-size: 11px;
     font-weight: 700;
@@ -232,7 +260,7 @@
   <main class="app-content">
 
     <section id="view-immobili" class="view active">
-      <input type="search" class="search-bar" id="search-immobili" placeholder="Cerca per indirizzo, nome o telefono...">
+      <input type="search" class="search-bar" id="search-immobili" placeholder="Cerca per indirizzo, nome, codice interno...">
       <div class="chips" id="chips-immobili">
         <button class="chip active" data-filtro="tutti">Tutti</button>
         <button class="chip" data-filtro="IMM">IMM</button>
@@ -242,6 +270,7 @@
         <button class="chip" data-filtro="VND">VND</button>
         <button class="chip" data-filtro="COND">🏢 COND</button>
       </div>
+      <div id="filtro-attivo"></div>
       <div id="lista-immobili"></div>
     </section>
 
@@ -373,8 +402,9 @@ const Storage = {
   },
   default() {
     return {
-      versione: 8,
+      versione: 9,
       nextSeq: 1,
+      nextCodiceInterno: 1,
       immobili: [],
       persone: [],
       attivita: [],
@@ -415,6 +445,18 @@ function prossimoSeq() {
   const s = DB.nextSeq;
   DB.nextSeq = s + 1;
   return s;
+}
+
+function prossimoCodiceInterno() {
+  if (typeof DB.nextCodiceInterno !== 'number') DB.nextCodiceInterno = 1;
+  const c = DB.nextCodiceInterno;
+  DB.nextCodiceInterno = c + 1;
+  return c;
+}
+
+function formatCodice(n) {
+  if (n === undefined || n === null) return '';
+  return '#' + String(n).padStart(4, '0');
 }
 
 function adessoLocal() {
@@ -487,11 +529,12 @@ function titoloImmobile(imm) {
 }
 
 // =====================================================
-// IMMOBILI - LISTA
+// IMMOBILI - FILTRI (multipli)
 // =====================================================
-let filtroStato = 'tutti';
+let filtroStato = 'tutti';     // 'tutti', 'IMM', 'PA', 'NT', 'INK', 'VND'
+let condoSelezionato = null;   // null o indirizzo condominio
+let vistaCondomini = false;    // true = mostra elenco condomini
 let queryRicerca = '';
-let condoSelezionato = null;
 
 document.getElementById('search-immobili').addEventListener('input', (e) => {
   queryRicerca = e.target.value.toLowerCase().trim();
@@ -500,10 +543,20 @@ document.getElementById('search-immobili').addEventListener('input', (e) => {
 
 document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
   chip.addEventListener('click', () => {
-    document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    filtroStato = chip.dataset.filtro;
-    condoSelezionato = null;
+    const f = chip.dataset.filtro;
+    if (f === 'COND') {
+      // Vai alla vista condomini (mantieni filtro stato)
+      vistaCondomini = true;
+      condoSelezionato = null;
+      document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    } else {
+      // Filtro stato normale
+      vistaCondomini = false;
+      filtroStato = f;
+      document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    }
     renderListaImmobili();
   });
 });
@@ -512,7 +565,8 @@ function immobileMatchRicerca(imm, q) {
   if (!q) return true;
   const campi = [
     imm.indirizzo, imm.cognomeNome, imm.telefono, imm.residenza, imm.note,
-    imm.condominio, imm.citofono
+    imm.condominio, imm.citofono,
+    formatCodice(imm.codiceInterno)
   ];
   return campi.some(c => (c || '').toLowerCase().includes(q));
 }
@@ -534,44 +588,66 @@ function compareAttivitaDecrescente(a, b) {
   return compareAttivitaCrescente(b, a);
 }
 
+function renderBannerFiltroAttivo() {
+  const cont = document.getElementById('filtro-attivo');
+  if (!condoSelezionato) { cont.innerHTML = ''; return; }
+
+  cont.innerHTML =
+    '<div class="active-filter-banner">' +
+    '<span>🏢 ' + escapeHtml(condoSelezionato) + (filtroStato !== 'tutti' ? ' · ' + filtroStato : '') + '</span>' +
+    '<button class="x" onclick="rimuoviFiltroCondominio()">✕</button>' +
+    '</div>';
+}
+
+function rimuoviFiltroCondominio() {
+  condoSelezionato = null;
+  vistaCondomini = false;
+  document.querySelectorAll('#chips-immobili .chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.filtro === filtroStato);
+  });
+  renderListaImmobili();
+}
+
 function renderListaImmobili() {
   const cont = document.getElementById('lista-immobili');
 
-  if (filtroStato === 'COND' && !condoSelezionato) {
+  // Vista condomini
+  if (vistaCondomini) {
+    renderBannerFiltroAttivo();
     renderListaCondomini(cont);
     return;
   }
 
   let lista = DB.immobili.slice();
 
-  if (filtroStato === 'COND' && condoSelezionato) {
+  // Filtro condominio
+  if (condoSelezionato) {
     lista = lista.filter(i => getCondominio(i) === condoSelezionato);
-  } else if (filtroStato !== 'tutti') {
+  }
+
+  // Filtro stato
+  if (filtroStato !== 'tutti') {
     lista = lista.filter(i => i.stato === filtroStato);
   }
 
+  // Ricerca
   if (queryRicerca) {
     lista = lista.filter(i => immobileMatchRicerca(i, queryRicerca));
   }
 
   lista.sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
 
-  let html = '';
-
-  if (filtroStato === 'COND' && condoSelezionato) {
-    html += '<button class="back-btn" onclick="tornaAiCondomini()">← Tutti i condomini</button>';
-    html += '<div style="font-size:13px;font-weight:700;color:var(--blu);margin-bottom:10px;">🏢 ' + escapeHtml(condoSelezionato) + '</div>';
-  }
+  renderBannerFiltroAttivo();
 
   if (lista.length === 0) {
-    html += '<div class="card"><div class="empty"><div class="icon">🏠</div>' +
+    cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">🏠</div>' +
       (DB.immobili.length === 0 ? 'Nessun immobile. Tocca + per aggiungerne uno.' : 'Nessun risultato') +
       '</div></div>';
-    cont.innerHTML = html;
     aggiornaContatori();
     return;
   }
 
+  let html = '';
   for (const imm of lista) {
     const titolo = titoloImmobile(imm);
     const attivitaOrdinate = (imm.attivita || []).slice().sort(compareAttivitaDecrescente);
@@ -594,6 +670,9 @@ function renderListaImmobili() {
     if (isCondo) {
       html += '<div class="item-sub">🏢 - ' + escapeHtml(condo) + '</div>';
     }
+    if (imm.codiceInterno) {
+      html += '<div class="item-code">' + formatCodice(imm.codiceInterno) + '</div>';
+    }
     if (ultima) {
       html += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 40)) + (ultima.testo.length > 40 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(ultima)) + '</span></div>';
     }
@@ -612,7 +691,13 @@ function renderListaCondomini(cont) {
     gruppi[c].push(imm);
   }
 
-  let condomini = Object.keys(gruppi).filter(c => gruppi[c].length > 1);
+  // Filtra in base a filtroStato (se attivo)
+  let condomini = Object.keys(gruppi).filter(c => {
+    const immobiliFiltrati = filtroStato === 'tutti'
+      ? gruppi[c]
+      : gruppi[c].filter(i => i.stato === filtroStato);
+    return immobiliFiltrati.length > 0;
+  });
 
   if (queryRicerca) {
     condomini = condomini.filter(c => c.toLowerCase().includes(queryRicerca));
@@ -628,12 +713,15 @@ function renderListaCondomini(cont) {
 
   let html = '';
   for (const c of condomini) {
-    const count = gruppi[c].length;
+    const immobiliFiltrati = filtroStato === 'tutti'
+      ? gruppi[c]
+      : gruppi[c].filter(i => i.stato === filtroStato);
+    const count = immobiliFiltrati.length;
     html += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(c).replace(/'/g, "\\'") + '\')">';
     html += '<div class="condo-icon">🏢</div>';
     html += '<div class="condo-info">';
     html += '<div class="condo-title">' + escapeHtml(c) + '</div>';
-    html += '<div class="condo-sub">' + count + ' immobili</div>';
+    html += '<div class="condo-sub">' + count + ' immobili' + (filtroStato !== 'tutti' ? ' (' + filtroStato + ')' : '') + '</div>';
     html += '</div>';
     html += '<div class="condo-arrow">›</div>';
     html += '</div>';
@@ -644,11 +732,7 @@ function renderListaCondomini(cont) {
 
 function selezionaCondominio(condo) {
   condoSelezionato = condo;
-  renderListaImmobili();
-}
-
-function tornaAiCondomini() {
-  condoSelezionato = null;
+  vistaCondomini = false;
   renderListaImmobili();
 }
 
@@ -774,6 +858,7 @@ function salvaNuovoImmobile() {
   const condominioInput = normalizzaIndirizzo(condominioRaw);
 
   const adesso = new Date().toISOString();
+  const codiceInterno = prossimoCodiceInterno();
 
   if (tipoForm === 'censito') {
     const esistenti = DB.immobili.filter(i =>
@@ -807,6 +892,7 @@ function salvaNuovoImmobile() {
 
     const imm = {
       id: uid(),
+      codiceInterno: codiceInterno,
       stato: 'IMM',
       indirizzo: indirizzo,
       z: z,
@@ -855,6 +941,7 @@ function salvaNuovoImmobile() {
 
   const imm = {
     id: uid(),
+    codiceInterno: codiceInterno,
     stato: stato,
     indirizzo: indirizzo,
     z: null,
@@ -900,6 +987,11 @@ function apriScheda(id) {
   }
   html += '</div>';
 
+  // Codice interno cloud
+  if (imm.codiceInterno) {
+    html += '<div class="code-line">☁️ Codice interno: ' + formatCodice(imm.codiceInterno) + '</div>';
+  }
+
   html += '<div class="card">';
   if (imm.indirizzo) html += '<div class="info-row"><span class="label">Indirizzo</span><span class="value">' + escapeHtml(imm.indirizzo) + '</span></div>';
   if (imm.citofono) html += '<div class="info-row"><span class="label">Citofono</span><span class="value">' + escapeHtml(imm.citofono) + '</span></div>';
@@ -930,7 +1022,7 @@ function apriScheda(id) {
 
   html += '</div>';
 
-  // SEZIONE DETTAGLI (riorganizzata)
+  // DETTAGLI
   const det = imm.dettagli || {};
 
   const gruppoUnita = [
@@ -1008,7 +1100,7 @@ function apriScheda(id) {
     html += '</div>';
   }
 
-  // SEZIONE CONDOMINIO
+  // CONDOMINIO
   const condo = getCondominio(imm);
   const fratelli = immobiliStessoCondominio(imm);
   if (fratelli.length > 0) {
@@ -1335,7 +1427,7 @@ function apriModifica() {
 
   html += '</div>';
 
-  // DETTAGLI - GRUPPO 1: Unità immobiliare
+  // DETTAGLI
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Unità immobiliare</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(det.scala || '') + '"></div>';
@@ -1343,7 +1435,6 @@ function apriModifica() {
   html += '<div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(det.interno || '') + '"></div>';
   html += '</div>';
 
-  // GRUPPO 2: Superficie e locali
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Superficie e locali</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(det.mq || '') + '"></div>';
@@ -1352,7 +1443,6 @@ function apriModifica() {
   html += '<div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(det.bagni || '') + '"></div>';
   html += '</div>';
 
-  // GRUPPO 3: Dotazioni
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dotazioni</h2></div>';
   html += '<div class="form-group">';
   const dotazioni = [
@@ -1373,12 +1463,11 @@ function apriModifica() {
   }
   html += '</div>';
 
-  // GRUPPO 4: Dati energetici e tecnici
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Dati energetici e tecnici</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Classe energetica</label>';
   html += '<select class="form-select" id="d-classe">';
-  const classi = ['', 'A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const classi = ['', 'A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G', 'Da produrre', 'Esente'];
   for (const c of classi) {
     html += '<option value="' + c + '"' + (det.classeEnergetica === c ? ' selected' : '') + '>' + (c || '—') + '</option>';
   }
@@ -1393,7 +1482,6 @@ function apriModifica() {
   html += '<div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="d-anno" inputmode="numeric" value="' + escapeHtml(det.anno || '') + '"></div>';
   html += '</div>';
 
-  // GRUPPO 5: Stato
   html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Stato</h2></div>';
   html += '<div class="form-group">';
   html += '<div class="form-row"><label class="form-label">Stato conservativo</label>';
@@ -1405,7 +1493,6 @@ function apriModifica() {
   html += '</select></div>';
   html += '</div>';
 
-  // ALTRI IMMOBILI
   if (!isCensito) {
     html += '<div class="card" style="padding:16px 16px 12px;"><h2><span class="dot"></span>Altri immobili di proprietà</h2>';
     html += '<div id="altri-immobili-list">';
