@@ -71,9 +71,18 @@
   .search-bar { width: 100%; padding: 12px 16px; border: none; border-radius: 12px; background: var(--card); font-family: inherit; font-size: 15px; color: var(--testo); margin-bottom: 12px; outline: none; box-shadow: var(--ombra); }
   .search-bar::placeholder { color: var(--testo-sec); }
 
+  .filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--testo-sec);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 0 4px 8px;
+  }
+
   .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { background: var(--card); border: none; padding: 8px 14px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; box-shadow: var(--ombra); }
+  .chip { background: var(--card); border: none; padding: 8px 14px; border-radius: 20px; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; box-shadow: var(--ombra); transition: background 0.15s, color 0.15s; }
   .chip.active { background: var(--blu); color: white; }
 
   .active-filter-banner {
@@ -261,6 +270,7 @@
 
     <section id="view-immobili" class="view active">
       <input type="search" class="search-bar" id="search-immobili" placeholder="Cerca per indirizzo, nome, codice interno...">
+      <div class="filter-label">Filtra per</div>
       <div class="chips" id="chips-immobili">
         <button class="chip active" data-filtro="tutti">Tutti</button>
         <button class="chip" data-filtro="IMM">IMM</button>
@@ -402,7 +412,7 @@ const Storage = {
   },
   default() {
     return {
-      versione: 9,
+      versione: 10,
       nextSeq: 1,
       nextCodiceInterno: 1,
       immobili: [],
@@ -529,11 +539,11 @@ function titoloImmobile(imm) {
 }
 
 // =====================================================
-// IMMOBILI - FILTRI (multipli)
+// IMMOBILI - FILTRI MULTIPLI
 // =====================================================
-let filtroStato = 'tutti';     // 'tutti', 'IMM', 'PA', 'NT', 'INK', 'VND'
-let condoSelezionato = null;   // null o indirizzo condominio
-let vistaCondomini = false;    // true = mostra elenco condomini
+let statiSelezionati = [];     // array di stati: [], ['NT'], ['NT','INK'], ...
+let vistaCondomini = false;    // modalità elenco condomini
+let condoSelezionato = null;   // condominio specifico selezionato
 let queryRicerca = '';
 
 document.getElementById('search-immobili').addEventListener('input', (e) => {
@@ -544,22 +554,47 @@ document.getElementById('search-immobili').addEventListener('input', (e) => {
 document.querySelectorAll('#chips-immobili .chip').forEach(chip => {
   chip.addEventListener('click', () => {
     const f = chip.dataset.filtro;
-    if (f === 'COND') {
-      // Vai alla vista condomini (mantieni filtro stato)
-      vistaCondomini = true;
-      condoSelezionato = null;
-      document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-    } else {
-      // Filtro stato normale
+
+    if (f === 'tutti') {
+      statiSelezionati = [];
       vistaCondomini = false;
-      filtroStato = f;
-      document.querySelectorAll('#chips-immobili .chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
+      condoSelezionato = null;
+    } else if (f === 'COND') {
+      vistaCondomini = !vistaCondomini;
+      condoSelezionato = null;
+    } else {
+      // Toggle stato nell'array
+      const idx = statiSelezionati.indexOf(f);
+      if (idx >= 0) {
+        statiSelezionati.splice(idx, 1);
+      } else {
+        statiSelezionati.push(f);
+      }
     }
+
+    aggiornaChips();
     renderListaImmobili();
   });
 });
+
+function aggiornaChips() {
+  document.querySelectorAll('#chips-immobili .chip').forEach(c => {
+    const f = c.dataset.filtro;
+
+    if (f === 'tutti') {
+      c.classList.toggle('active', statiSelezionati.length === 0 && !vistaCondomini && !condoSelezionato);
+    } else if (f === 'COND') {
+      c.classList.toggle('active', vistaCondomini);
+    } else {
+      c.classList.toggle('active', statiSelezionati.includes(f));
+    }
+  });
+}
+
+function immobileHaStatoValido(imm) {
+  if (statiSelezionati.length === 0) return true;
+  return statiSelezionati.includes(imm.stato);
+}
 
 function immobileMatchRicerca(imm, q) {
   if (!q) return true;
@@ -590,21 +625,36 @@ function compareAttivitaDecrescente(a, b) {
 
 function renderBannerFiltroAttivo() {
   const cont = document.getElementById('filtro-attivo');
-  if (!condoSelezionato) { cont.innerHTML = ''; return; }
+  const parti = [];
+
+  if (condoSelezionato) parti.push('🏢 ' + condoSelezionato);
+  if (statiSelezionati.length > 0) parti.push(statiSelezionati.join(' + '));
+
+  if (parti.length === 0) {
+    cont.innerHTML = '';
+    return;
+  }
 
   cont.innerHTML =
     '<div class="active-filter-banner">' +
-    '<span>🏢 ' + escapeHtml(condoSelezionato) + (filtroStato !== 'tutti' ? ' · ' + filtroStato : '') + '</span>' +
-    '<button class="x" onclick="rimuoviFiltroCondominio()">✕</button>' +
+    '<span>' + escapeHtml(parti.join(' · ')) + '</span>' +
+    '<button class="x" onclick="rimuoviTuttiFiltri()">✕</button>' +
     '</div>';
+}
+
+function rimuoviTuttiFiltri() {
+  condoSelezionato = null;
+  // Manteniamo gli stati selezionati se non c'è condominio
+  if (!vistaCondomini) {
+    statiSelezionati = [];
+  }
+  aggiornaChips();
+  renderListaImmobili();
 }
 
 function rimuoviFiltroCondominio() {
   condoSelezionato = null;
-  vistaCondomini = false;
-  document.querySelectorAll('#chips-immobili .chip').forEach(c => {
-    c.classList.toggle('active', c.dataset.filtro === filtroStato);
-  });
+  aggiornaChips();
   renderListaImmobili();
 }
 
@@ -625,10 +675,8 @@ function renderListaImmobili() {
     lista = lista.filter(i => getCondominio(i) === condoSelezionato);
   }
 
-  // Filtro stato
-  if (filtroStato !== 'tutti') {
-    lista = lista.filter(i => i.stato === filtroStato);
-  }
+  // Filtro stati (multi)
+  lista = lista.filter(i => immobileHaStatoValido(i));
 
   // Ricerca
   if (queryRicerca) {
@@ -691,12 +739,10 @@ function renderListaCondomini(cont) {
     gruppi[c].push(imm);
   }
 
-  // Filtra in base a filtroStato (se attivo)
+  // Filtra condomini che hanno almeno un immobile con stato valido (multi)
   let condomini = Object.keys(gruppi).filter(c => {
-    const immobiliFiltrati = filtroStato === 'tutti'
-      ? gruppi[c]
-      : gruppi[c].filter(i => i.stato === filtroStato);
-    return immobiliFiltrati.length > 0;
+    const immobiliValidi = gruppi[c].filter(i => immobileHaStatoValido(i));
+    return immobiliValidi.length > 0;
   });
 
   if (queryRicerca) {
@@ -713,15 +759,14 @@ function renderListaCondomini(cont) {
 
   let html = '';
   for (const c of condomini) {
-    const immobiliFiltrati = filtroStato === 'tutti'
-      ? gruppi[c]
-      : gruppi[c].filter(i => i.stato === filtroStato);
-    const count = immobiliFiltrati.length;
+    const immobiliValidi = gruppi[c].filter(i => immobileHaStatoValido(i));
+    const count = immobiliValidi.length;
+    const statoLabel = statiSelezionati.length > 0 ? ' (' + statiSelezionati.join('+') + ')' : '';
     html += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(c).replace(/'/g, "\\'") + '\')">';
     html += '<div class="condo-icon">🏢</div>';
     html += '<div class="condo-info">';
     html += '<div class="condo-title">' + escapeHtml(c) + '</div>';
-    html += '<div class="condo-sub">' + count + ' immobili' + (filtroStato !== 'tutti' ? ' (' + filtroStato + ')' : '') + '</div>';
+    html += '<div class="condo-sub">' + count + ' immobili' + statoLabel + '</div>';
     html += '</div>';
     html += '<div class="condo-arrow">›</div>';
     html += '</div>';
@@ -733,6 +778,7 @@ function renderListaCondomini(cont) {
 function selezionaCondominio(condo) {
   condoSelezionato = condo;
   vistaCondomini = false;
+  aggiornaChips();
   renderListaImmobili();
 }
 
@@ -987,7 +1033,6 @@ function apriScheda(id) {
   }
   html += '</div>';
 
-  // Codice interno cloud
   if (imm.codiceInterno) {
     html += '<div class="code-line">☁️ Codice interno: ' + formatCodice(imm.codiceInterno) + '</div>';
   }
@@ -1951,6 +1996,7 @@ function cancellaTutto() {
 // =====================================================
 // AVVIO
 // =====================================================
+aggiornaChips();
 renderListaImmobili();
 aggiornaContatori();
 </script>
