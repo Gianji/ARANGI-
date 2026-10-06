@@ -2,11 +2,16 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ARANGIÒ">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#fafbfc">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23e0651a'/%3E%3Ctext x='90' y='132' font-family='-apple-system,system-ui,sans-serif' font-size='120' font-weight='800' fill='white' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ARANGI%C3%92%22%2C%22short_name%22%3A%22ARANGI%C3%92%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23fafbfc%22%2C%22theme_color%22%3A%22%23e0651a%22%7D">
 <title>ARANGIÒ</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -17,23 +22,29 @@
     --testo: #0f172a; --testo-sec: #64748b; --testo-ter: #94a3b8;
     --border: #eef1f5; --border-strong: #e2e8f0;
     --ombra: 0 1px 2px rgba(15,23,42,0.03);
-    --ombra-lift: 0 2px 6px rgba(15,23,42,0.06);
     --tabbar-h: 56px;
     --radius: 11px; --radius-sm: 8px;
     --imm: #94a3b8; --pa: #d97706; --nt: #2563eb; --ink: #059669; --vnd: #dc2626;
     --rr: #7c3aed; --prof: #0891b2;
+    --max-w: 640px;
   }
+  /* FIX: blocca autosizing del testo su iOS/Android */
+  html { height: 100%; overflow: hidden; -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; overflow: hidden; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--sfondo); color: var(--testo); font-size: 15px; -webkit-font-smoothing: antialiased; }
-
+  body {
+    height: 100%; overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    background: var(--sfondo); color: var(--testo); font-size: 15px;
+    -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+  }
+  /* FIX: su iOS usa dvh per evitare il salto con la barra dinamica */
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
   /* HEADER */
   .app-header { padding: 14px 18px 10px; padding-top: calc(14px + env(safe-area-inset-top)); flex-shrink: 0; background: var(--sfondo); }
   .app-header h1 { font-size: 22px; font-weight: 700; color: var(--blu); letter-spacing: -0.5px; display: flex; align-items: center; gap: 0; line-height: 1.1; }
   .app-header h1 span { color: var(--arancione); }
-  .app-header .sub { font-size: 11px; color: var(--testo-ter); margin-top: 2px; font-weight: 500; letter-spacing: 0.1px; }
+  .app-header .sub { font-size: 11px; color: var(--testo-ter); margin-top: 2px; font-weight: 500; }
 
   .app-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 14px calc(80px + env(safe-area-inset-bottom)); }
   .view { display: none; } .view.active { display: block; }
@@ -58,7 +69,7 @@
 
   /* TABBAR */
   .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: var(--tabbar-h); background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(10px); -webkit-backdrop-filter: saturate(180%) blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
-  .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit; font-size: 9.5px; font-weight: 500; cursor: pointer; transition: color 0.12s; position: relative; letter-spacing: 0.1px; }
+  .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit; font-size: 9.5px; font-weight: 500; cursor: pointer; transition: color 0.12s; position: relative; }
   .tabbar button svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .tabbar button.active { color: var(--blu); }
   .tabbar .badge-tab { position: absolute; top: 3px; right: 20%; background: var(--arancione); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; min-width: 15px; text-align: center; display: none; }
@@ -135,7 +146,7 @@
   .modal-overlay.open { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-sheet { background: var(--sfondo); width: 100%; max-width: 600px; max-height: 92vh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.18s ease-out; overflow: hidden; }
+  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.18s ease-out; overflow: hidden; }
   .modal-header { padding: 14px 18px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
   .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); letter-spacing: -0.3px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
   .modal-header h2 svg { flex-shrink: 0; }
@@ -183,7 +194,7 @@
   .immobili-list { display: flex; flex-direction: column; gap: 4px; margin-top: 3px; }
   .immobile-line { background: #f8fafc; border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12.5px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.1s; }
   .immobile-line:active { background: #f1f5f9; }
-  .immobile-line .txt { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+  .immobile-line .txt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
   .immobile-line .txt svg { flex-shrink: 0; width: 13px; height: 13px; opacity: 0.6; }
   .immobile-line .rm { background: none; border: none; color: #dc2626; font-size: 16px; cursor: pointer; padding: 0 3px; flex-shrink: 0; display: flex; align-items: center; }
   .immobile-line .rm svg { width: 14px; height: 14px; }
@@ -255,7 +266,7 @@
   /* FILTER DROPDOWN */
   .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; }
   .filter-dropdown-overlay.open { display: block; background: rgba(15,23,42,0.25); }
-  .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sfondo); border-radius: var(--radius); padding: 14px; min-width: 240px; max-width: 300px; box-shadow: 0 8px 32px rgba(15,23,42,0.18); }
+  .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sfondo); border-radius: var(--radius); padding: 14px; min-width: 240px; max-width: 90vw; box-shadow: 0 8px 32px rgba(15,23,42,0.18); }
   .filter-dropdown h3 { font-size: 11px; font-weight: 700; color: var(--testo-ter); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
   .filter-dropdown .opt { padding: 10px 11px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--testo); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
   .filter-dropdown .opt:active { background: #eef2f7; }
@@ -398,8 +409,53 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* SCROLL ANCHOR */
   #scroll-sentinel { height: 1px; }
+
+  /* =====================================================
+     RESPONSIVE DESKTOP / TABLET
+     ===================================================== */
+  @media (min-width: 768px) {
+    body { background: #eef1f5; }
+    .app {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      background: var(--sfondo);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(15,23,42,0.06);
+    }
+    .app-header { border-radius: 0; }
+    .tabbar {
+      max-width: var(--max-w);
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+    .fab { right: calc(50% - (var(--max-w) / 2) + 16px); }
+    .fab-menu { right: calc(50% - (var(--max-w) / 2) + 16px); }
+    .back-top { right: calc(50% - (var(--max-w) / 2) + 16px); }
+    .modal-sheet { max-width: var(--max-w); border-radius: 18px 18px 0 0; }
+    .modal-overlay { align-items: center; padding: 20px; }
+    .modal-sheet { border-radius: 18px; max-height: 88vh; max-height: 88dvh; }
+    .filter-dropdown { min-width: 320px; }
+    /* Hover states per desktop */
+    .item-card:hover, .condo-card:hover { background: #f8fafc; }
+    .btn-secondary:hover { background: #f8fafc; }
+    .chip:hover { background: #f8fafc; }
+    .chip.active:hover { background: var(--blu); }
+    .qa-btn:hover { background: #eef2f7; }
+    .action-btn:hover { background: #f8fafc; }
+    .immobile-line:hover { background: #f1f5f9; }
+    .tabbar button:hover { color: var(--blu); }
+    .agenda-giorno:hover { background: #eef2f7; }
+    .agenda-giorno.oggi:hover { background: #fdebd1; }
+    .tipo-app-btn:hover { background: #f8fafc; border-color: var(--blu); }
+  }
+  @media (min-width: 1024px) {
+    :root { --max-w: 720px; }
+    .app-content { padding-left: 20px; padding-right: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -525,7 +581,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.0</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.1</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
         <div class="info-row" style="display:block;padding:8px 0;"><div id="storage-bar"></div></div>
@@ -670,36 +726,27 @@ const Storage = {
     } catch (e) { return this.default(); }
   },
   save(data) {
-    try {
-      localStorage.setItem(DB_KEY, JSON.stringify(data));
-      return true;
-    } catch (e) {
+    try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; }
+    catch (e) {
       const quota = e && (e.name === 'QuotaExceededError' || e.code === 22 || e.number === -2147024882);
       if (quota) {
         try { localStorage.removeItem(GEOCODE_CACHE_KEY); } catch (_) {}
-        try {
-          localStorage.setItem(DB_KEY, JSON.stringify(data));
-          alert('⚠️ Memoria quasi piena!\n\nHo svuotato la cache geocodifiche per fare spazio e il salvataggio è riuscito.');
-          return true;
-        } catch (e2) {}
+        try { localStorage.setItem(DB_KEY, JSON.stringify(data)); alert('⚠️ Memoria quasi piena!\n\nHo svuotato la cache geocodifiche per fare spazio.'); return true; } catch (e2) {}
         try {
           const slim = JSON.parse(JSON.stringify(data));
           const soglia = Date.now() - 365*24*60*60*1000;
           for (const imm of (slim.immobili||[])) if (Array.isArray(imm.attivita)) imm.attivita = imm.attivita.filter(a => new Date(a.data||a.dataPrevista||0).getTime() > soglia);
           for (const p of (slim.persone||[])) if (Array.isArray(p.attivita)) p.attivita = p.attivita.filter(a => new Date(a.data||a.dataPrevista||0).getTime() > soglia);
           localStorage.setItem(DB_KEY, JSON.stringify(slim));
-          alert('⚠️ Memoria quasi piena!\n\nHo ripulito le attività più vecchie di 1 anno.\n\nFai subito un backup (Altro → Esporta).');
+          alert('⚠️ Memoria quasi piena!\n\nHo ripulito le attività più vecchie di 1 anno.');
           return true;
-        } catch (e3) {
-          alert('🚨 MEMORIA PIENA!\n\nIl browser non riesce più a salvare.\n\n1. Altro → Esporta backup\n2. Elimina dati vecchi\n3. Altro → Svuota cache geocodifiche');
-          return false;
-        }
+        } catch (e3) { alert('🚨 MEMORIA PIENA!\n\n1. Esporta backup\n2. Elimina dati\n3. Svuota cache geocodifiche'); return false; }
       }
       alert('Errore nel salvataggio: ' + (e && e.message ? e.message : e));
       return false;
     }
   },
-  default() { return { versione: 38, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
+  default() { return { versione: 39, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
 };
 
 let DB = Storage.load();
@@ -733,17 +780,17 @@ const STATI_RR = [
 ];
 
 const TIPI_APPUNTAMENTO = [
-  { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: 'clipboard', desc: 'Ribassi, rinnovi, contratto (solo INK)' },
-  { sigla: 'VAL', nome: 'Valutazione (acquisizione)', chi: 'vend', icona: 'righello', desc: 'Sopralluogo per valutazione (PA/NT)' },
-  { sigla: 'RIVAL', nome: 'Rivalutazione', chi: 'vend', icona: 'trendUp', desc: 'Esposizione valutazione (NT valutata)' },
-  { sigla: 'ACC PROP', nome: 'Accettazione proposta', chi: 'vend', icona: 'penna', desc: 'Venditore risponde alla proposta' },
-  { sigla: 'APP', nome: 'Appuntamento di visita', chi: 'visita', icona: 'occhio', desc: 'Visita (acquirente + NT/INK)' },
-  { sigla: 'CONS', nome: 'Consulenza Kiron', chi: 'acq', icona: 'valigetta', desc: 'Verifica mutuabilità (acquirenti)' },
-  { sigla: 'RIT PROP', nome: 'Ritiro proposta', chi: 'visita', icona: 'upload', desc: 'Proposta acquirente (NT/INK)' },
+  { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: 'clipboard', desc: 'Ribassi, rinnovi, contratto' },
+  { sigla: 'VAL', nome: 'Valutazione', chi: 'vend', icona: 'righello', desc: 'Sopralluogo per valutazione' },
+  { sigla: 'RIVAL', nome: 'Rivalutazione', chi: 'vend', icona: 'trendUp', desc: 'Esposizione valutazione' },
+  { sigla: 'ACC PROP', nome: 'Accettazione proposta', chi: 'vend', icona: 'penna', desc: 'Risposta alla proposta' },
+  { sigla: 'APP', nome: 'Visita', chi: 'visita', icona: 'occhio', desc: 'Visita immobile' },
+  { sigla: 'CONS', nome: 'Consulenza Kiron', chi: 'acq', icona: 'valigetta', desc: 'Verifica mutuabilità' },
+  { sigla: 'RIT PROP', nome: 'Ritiro proposta', chi: 'visita', icona: 'upload', desc: 'Proposta acquirente' },
   { sigla: 'NOT ACC PROP', nome: 'Notifica acc. proposta', chi: 'vend', icona: 'inbox', desc: 'Comunica accettazione' },
   { sigla: 'PRELIMINARE', nome: 'Preliminare', chi: 'entrambi', icona: 'file', desc: 'Firma preliminare' },
-  { sigla: 'ROGITO', nome: 'Rogito / Atto notarile', chi: 'entrambi', icona: 'landmark', desc: 'Atto notarile definitivo' },
-  { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: 'calendario', desc: 'Con immobile, persona o entrambi' },
+  { sigla: 'ROGITO', nome: 'Rogito', chi: 'entrambi', icona: 'landmark', desc: 'Atto notarile definitivo' },
+  { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: 'calendario', desc: 'Generico' },
   { sigla: 'SOPRALLUOGO', nome: 'Sopralluogo tecnico', chi: 'gen', icona: 'chiaveInglese', desc: 'Con professionista' },
   { sigla: 'PERIZIA', nome: 'Perizia', chi: 'gen', icona: 'grafico', desc: 'Con perito/geometra' }
 ];
@@ -948,16 +995,14 @@ function aggiornaInfoSistema() {
 function pulisciCacheGeocodifica() {
   const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
   if (cacheSize === 0) { alert('La cache è già vuota.'); return; }
-  if (!confirm('Svuotare la cache geocodifiche?\n\nOccupata: ' + (cacheSize / 1024).toFixed(1) + ' KB\n\nGli immobili già geocodificati NON verranno toccati.')) return;
+  if (!confirm('Svuotare la cache geocodifiche?\n\nOccupata: ' + (cacheSize / 1024).toFixed(1) + ' KB')) return;
   geocodeCache = {};
   salvaGeocodeCache();
   aggiornaInfoSistema();
   alert('✅ Cache svuotata');
 }
 
-// =====================================================
 // BACK TO TOP
-// =====================================================
 (function() {
   const content = document.getElementById('app-content');
   const btn = document.getElementById('back-top');
@@ -1079,10 +1124,7 @@ function renderItemCardImmobile(imm) {
   if (isCondo) h += '<div class="item-sub">' + iconaCondo(11) + ' ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
   if (ze.length > 0) h += '<div class="item-sub">' + ico('pin',11) + ' ' + escapeHtml(ze.join(' · ')) + '</div>';
   if (ultima) h += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 38)) + (ultima.testo.length > 38 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(ultima)) + '</span></div>';
-  // Quick actions solo se c'è telefono
-  if (tel) {
-    h += '<div class="qa-row" onclick="event.stopPropagation()"><button class="qa-btn" onclick="chiamaNumero(\'' + escapeHtml(tel) + '\')">' + ico('telefono',13) + ' Chiama</button><button class="qa-btn wa" onclick="apriWhatsApp(\'' + escapeHtml(tel) + '\')">' + ico('whatsapp',13) + ' WhatsApp</button></div>';
-  }
+  if (tel) h += '<div class="qa-row" onclick="event.stopPropagation()"><button class="qa-btn" onclick="chiamaNumero(\'' + escapeHtml(tel) + '\')">' + ico('telefono',13) + ' Chiama</button><button class="qa-btn wa" onclick="apriWhatsApp(\'' + escapeHtml(tel) + '\')">' + ico('whatsapp',13) + ' WhatsApp</button></div>';
   h += '</div>'; return h;
 }
 function renderListaCondomini(cont) {
@@ -1096,12 +1138,7 @@ function renderListaCondomini(cont) {
   for (const x of c) {
     const im = g[x] || []; const v = im.filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)); const det = (DB.condomini && DB.condomini[x]) || {};
     const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · ' + ico('pin',10) + ' ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili';
-    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">';
-    h += '<div class="condo-icon">' + iconaCondo(24) + '</div>';
-    h += '<div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div>';
-    h += '<button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',15) + '</button>';
-    h += '<div class="condo-arrow">' + ico('freccia',15) + '</div>';
-    h += '</div>';
+    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',15) + '</button><div class="condo-arrow">' + ico('freccia',15) + '</div></div>';
   }
   cont.innerHTML = h; aggiornaContatori();
 }
@@ -1115,7 +1152,7 @@ function selezionaCondominio(condo) {
 // SELEZIONE ZONE
 // =====================================================
 function apriSelezioneZone() {
-  let h = '<p style="font-size:12.5px;color:var(--testo-sec);padding:0 4px 10px;">Seleziona una zona per filtrare gli immobili.</p><div class="section-title">Zone</div><div class="zone-chips">';
+  let h = '<p style="font-size:12.5px;color:var(--testo-sec);padding:0 4px 10px;">Seleziona una zona per filtrare.</p><div class="section-title">Zone</div><div class="zone-chips">';
   for (const z of ZONE_BASE) { const a = zonaSelezionata === z; h += '<button type="button" class="zone-chip' + (a ? ' active' : '') + '" onclick="toggleZoneFiltro(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\')">' + escapeHtml(z) + '</button>'; }
   h += '</div><div class="section-title" style="margin-top:12px;">Speciali</div><div class="zone-chips">';
   for (const z of [ZONA_ZDF].concat(ZONE_SPECIALI)) { const a = zonaSelezionata === z; h += '<button type="button" class="zone-chip special' + (a ? ' active' : '') + '" onclick="toggleZoneFiltro(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\')">' + escapeHtml(z) + '</button>'; }
@@ -1135,13 +1172,13 @@ function htmlSelettoreZone(idPrefix) {
   let h = '<div class="section-title" style="padding-left:0;">Zone</div><div class="zone-chips">';
   for (const z of ZONE_BASE) { const a = st.base.includes(z); h += '<button type="button" class="zone-chip' + (a ? ' active' : '') + '" onclick="toggleZonaBase(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\', \'' + idPrefix + '\')">' + escapeHtml(z) + '</button>'; }
   h += '</div>';
-  if (hb) h += '<div class="zdf-notice">' + ico('pin',12) + ' Selezionata almeno una zona → ZONA ZdF applicata automaticamente</div>';
+  if (hb) h += '<div class="zdf-notice">' + ico('pin',12) + ' ZONA ZdF applicata automaticamente</div>';
   else { h += '<div class="section-title" style="padding-left:0;margin-top:10px;">Fuori zona ZdF</div><div class="zone-chips">'; for (const z of ZONE_SPECIALI) { const a = st.speciale === z; h += '<button type="button" class="zone-chip special' + (a ? ' active' : '') + '" onclick="toggleZonaSpeciale(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\', \'' + idPrefix + '\')">' + escapeHtml(z) + '</button>'; } h += '<button type="button" class="zone-chip special' + (st.speciale === null ? ' active' : '') + '" onclick="toggleZonaSpeciale(\'\', \'' + idPrefix + '\')">Niente</button></div>'; }
   h += '<div class="zone-summary">' + riepilogoZone(idPrefix) + '</div>'; return h;
 }
-function riepilogoZone(idPrefix) { const st = zoneTemp[idPrefix]; const f = []; if (st.base.length > 0) { f.push(...st.base); f.push(ZONA_ZDF); } else if (st.speciale) f.push(st.speciale); if (f.length === 0) return 'Nessuna zona selezionata'; return 'Zone: <strong>' + escapeHtml(f.join(' · ')) + '</strong>'; }
+function riepilogoZone(idPrefix) { const st = zoneTemp[idPrefix]; const f = []; if (st.base.length > 0) { f.push(...st.base); f.push(ZONA_ZDF); } else if (st.speciale) f.push(st.speciale); if (f.length === 0) return 'Nessuna zona'; return 'Zone: <strong>' + escapeHtml(f.join(' · ')) + '</strong>'; }
 function toggleZonaBase(z, p) { const st = zoneTemp[p]; const i = st.base.indexOf(z); if (i >= 0) st.base.splice(i, 1); else st.base.push(z); if (st.base.length > 0) st.speciale = null; refreshZoneContainer(p); }
-function toggleZonaSpeciale(z, p) { const st = zoneTemp[p]; if (st.base.length > 0) { alert('Hai già selezionato zone. ZONA ZdF è automatica.'); return; } st.speciale = (z === '' || st.speciale === z) ? null : z; refreshZoneContainer(p); }
+function toggleZonaSpeciale(z, p) { const st = zoneTemp[p]; if (st.base.length > 0) { alert('Hai già selezionato zone.'); return; } st.speciale = (z === '' || st.speciale === z) ? null : z; refreshZoneContainer(p); }
 function refreshZoneContainer(p) { const c = document.getElementById(p + '-zone-container'); if (c) c.innerHTML = htmlSelettoreZone(p); }
 function calcolaZoneFinali(p) { const st = zoneTemp[p]; if (st.base.length > 0) return st.base.concat([ZONA_ZDF]); if (st.speciale) return [st.speciale]; return []; }
 
@@ -1178,9 +1215,7 @@ function renderPersone() {
     else if (p.indirizzoUff) h += '<div class="item-sub">' + ico('casa',11) + ' ' + escapeHtml(p.indirizzoUff) + '</div>';
     h += '<div style="margin-top:3px;"><span class="tag">' + tag + '</span></div>';
     if (u) h += '<div class="item-meta"><span>' + escapeHtml(u.testo.slice(0, 38)) + (u.testo.length > 38 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(u)) + '</span></div>';
-    if (tel) {
-      h += '<div class="qa-row" onclick="event.stopPropagation()"><button class="qa-btn" onclick="chiamaNumero(\'' + escapeHtml(tel) + '\')">' + ico('telefono',13) + ' Chiama</button><button class="qa-btn wa" onclick="apriWhatsApp(\'' + escapeHtml(tel) + '\')">' + ico('whatsapp',13) + ' WhatsApp</button></div>';
-    }
+    if (tel) h += '<div class="qa-row" onclick="event.stopPropagation()"><button class="qa-btn" onclick="chiamaNumero(\'' + escapeHtml(tel) + '\')">' + ico('telefono',13) + ' Chiama</button><button class="qa-btn wa" onclick="apriWhatsApp(\'' + escapeHtml(tel) + '\')">' + ico('whatsapp',13) + ' WhatsApp</button></div>';
     h += '</div>';
   }
   c.innerHTML = h; aggiornaContatori();
@@ -1189,10 +1224,10 @@ function resetFiltroPersone() { if (pTabAttivo === 'acquirente') pStatoRRFiltro 
 function apriFormNuovaPersona() { if (pTabAttivo === 'acquirente') apriFormNuovoAcquirente(); else if (pTabAttivo === 'professionista') apriFormNuovoProfessionista(); }
 function apriFormNuovoAcquirente() {
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome *</label><input class="form-input" id="a-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="a-telefono" type="tel"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="a-email" type="email"></div></div>
-    <div class="card" style="padding:10px 14px 8px;"><h2><span class="dot"></span>Stato</h2></div>
+    <div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Stato</h2></div>
     <div class="form-group">
       <div class="form-row"><label class="form-label">Stato iniziale</label><select class="form-select" id="a-stato">${STATI_RR.slice(0, 4).map(s => '<option value="' + s.id + '">' + s.label + '</option>').join('')}</select></div>
-      <div class="form-row"><label class="form-label">Cliente mio o di un collega?</label><select class="form-select" id="a-collega-type"><option value="mio">Mio</option><option value="collega">Di un collega</option></select></div>
+      <div class="form-row"><label class="form-label">Cliente</label><select class="form-select" id="a-collega-type"><option value="mio">Mio</option><option value="collega">Di un collega</option></select></div>
       <div class="form-row" id="a-collega-nome-row" style="display:none;"><label class="form-label">Nome del collega</label><input class="form-input" id="a-collega-nome"></div>
     </div>
     <div class="form-group">
@@ -1200,8 +1235,8 @@ function apriFormNuovoAcquirente() {
       <div class="form-row"><label class="form-label">Tipo immobile (es. "3" = trilocale)</label><input class="form-input" id="a-tipo-imm"></div>
       <div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona"></div>
       <div class="form-row"><label class="form-label">Box</label><select class="form-select" id="a-box"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option><option value="Indifferente">Indifferente</option></select></div>
-      <div class="form-row"><label class="form-label">Mutuo / tempi / esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div>
-      <div class="form-row"><label class="form-label">Immobili interessati (separati da /)</label><input class="form-input" id="a-immobili"></div>
+      <div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div>
+      <div class="form-row"><label class="form-label">Immobili interessati (/ separati)</label><input class="form-input" id="a-immobili"></div>
     </div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoAcquirente()">Salva</button></div>`;
   apriModal('Nuovo acquirente', h);
@@ -1288,7 +1323,7 @@ function apriModificaPersona() { const p = DB.persone.find(x => x.id === persona
 function apriModificaAcquirente(p) {
   const ic = !!p.collega;
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="m-a-cognomeNome" value="${escapeHtml(p.cognomeNome || '')}"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="m-a-telefono" type="tel" value="${escapeHtml(p.telefono || '')}"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="m-a-email" value="${escapeHtml(p.email || '')}"></div><div class="form-row"><label class="form-label">Stato</label><select class="form-select" id="m-a-stato">${STATI_RR.map(s => '<option value="' + s.id + '"' + (p.statoRR === s.id ? ' selected' : '') + '>' + s.label + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cliente</label><select class="form-select" id="m-a-collega-type"><option value="mio"${!ic ? ' selected' : ''}>Mio</option><option value="collega"${ic ? ' selected' : ''}>Di un collega</option></select></div><div class="form-row" id="m-a-collega-nome-row" style="display:${ic ? 'block' : 'none'};"><label class="form-label">Nome collega</label><input class="form-input" id="m-a-collega-nome" value="${escapeHtml(p.collega || '')}"></div></div>
-    <div class="form-group"><div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="m-a-budget" value="${escapeHtml(p.budget || '')}"></div><div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="m-a-tipo-imm" value="${escapeHtml(p.tipoImmobile || '')}"></div><div class="form-row"><label class="form-label">Zona</label><input class="form-input" id="m-a-zona" value="${escapeHtml(p.zona || '')}"></div><div class="form-row"><label class="form-label">Box</label><select class="form-select" id="m-a-box"><option value=""${!p.box ? ' selected' : ''}>—</option><option value="Sì"${p.box === 'Sì' ? ' selected' : ''}>Sì</option><option value="No"${p.box === 'No' ? ' selected' : ''}>No</option><option value="Indifferente"${p.box === 'Indifferente' ? ' selected' : ''}>Indifferente</option></select></div><div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="m-a-esigenze">${escapeHtml(p.esigenze || '')}</textarea></div><div class="form-row"><label class="form-label">Immobili (separati da /)</label><input class="form-input" id="m-a-immobili" value="${escapeHtml((p.immobili || []).join(' / '))}"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-a-note">${escapeHtml(p.note || '')}</textarea></div></div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="m-a-budget" value="${escapeHtml(p.budget || '')}"></div><div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="m-a-tipo-imm" value="${escapeHtml(p.tipoImmobile || '')}"></div><div class="form-row"><label class="form-label">Zona</label><input class="form-input" id="m-a-zona" value="${escapeHtml(p.zona || '')}"></div><div class="form-row"><label class="form-label">Box</label><select class="form-select" id="m-a-box"><option value=""${!p.box ? ' selected' : ''}>—</option><option value="Sì"${p.box === 'Sì' ? ' selected' : ''}>Sì</option><option value="No"${p.box === 'No' ? ' selected' : ''}>No</option><option value="Indifferente"${p.box === 'Indifferente' ? ' selected' : ''}>Indifferente</option></select></div><div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="m-a-esigenze">${escapeHtml(p.esigenze || '')}</textarea></div><div class="form-row"><label class="form-label">Immobili (/ separati)</label><input class="form-input" id="m-a-immobili" value="${escapeHtml((p.immobili || []).join(' / '))}"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-a-note">${escapeHtml(p.note || '')}</textarea></div></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona('${p.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAcquirente('${p.id}')">Salva</button></div>`;
   apriModal('Modifica acquirente', h);
   const s = document.getElementById('m-a-collega-type'); s.addEventListener('change', () => { document.getElementById('m-a-collega-nome-row').style.display = s.value === 'collega' ? 'block' : 'none'; });
@@ -1333,7 +1368,7 @@ function salvaModificaProfessionista(id) {
 function apriCambiaStatoRR() {
   const p = DB.persone.find(x => x.id === personaAperta); if (!p || p.tipo !== 'acquirente') return;
   const sa = p.statoRR || 'attiva';
-  let h = '<div class="card" style="padding:10px 14px;"><div style="font-size:11px;color:var(--testo-ter);text-transform:uppercase;letter-spacing:0.4px;font-weight:600;">Stato attuale</div><div style="font-weight:600;font-size:14px;margin-top:2px;">' + getStatoRR(p).label + '</div></div><div class="card" style="padding:10px 4px 8px;"><h2 style="padding:0 10px;"><span class="dot"></span>Cambia in</h2>';
+  let h = '<div class="card" style="padding:10px 14px;"><div style="font-size:10.5px;color:var(--testo-ter);text-transform:uppercase;letter-spacing:0.4px;font-weight:600;">Stato attuale</div><div style="font-weight:600;font-size:14px;margin-top:2px;">' + getStatoRR(p).label + '</div></div><div class="card" style="padding:10px 4px 8px;"><h2 style="padding:0 10px;"><span class="dot"></span>Cambia in</h2>';
   for (const s of STATI_RR) { if (s.id === sa) continue; h += '<button class="btn btn-secondary" style="margin:0 10px 6px;width:calc(100% - 20px);" onclick="cambiaStatoRR(\'' + s.id + '\')">→ ' + s.label + '</button>'; }
   h += '</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Annulla</button></div>';
   apriModal('Cambia stato', h);
@@ -1514,11 +1549,9 @@ function apriGoogleCalendarApp(a) {
   const p = new URLSearchParams({ action: 'TEMPLATE', text: a.titolo, dates: f(a.dataInizio) + '/' + f(a.dataFine), details: a.note || '', location: a.luogo || '' });
   window.open('https://calendar.google.com/calendar/render?' + p.toString(), '_blank');
 }
-
 function apriNuovoAppuntamentoGlobale() { apriSelezioneTipoApp(null, null); }
 function apriNuovoAppuntamentoPersona(pid) { const p = DB.persone.find(x => x.id === pid); apriSelezioneTipoApp(null, p); }
 function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.id === iid); apriSelezioneTipoApp(i, null); }
-
 function tipiAppValidi(imm, per) {
   if (!imm && !per) return getTuttiTipiApp();
   return getTuttiTipiApp().filter(t => {
@@ -1800,7 +1833,7 @@ function salvaModificaAppuntamento(id) {
 }
 function rimuoviEsitoAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
-  if (!confirm('Riportare a "Programmato"?\n\nL\'esito verrà rimosso.')) return;
+  if (!confirm('Riportare a "Programmato"?')) return;
   a.esito = null; a.descrizioneEsito = ''; a.stato = 'programmato'; a.updatedAt = new Date().toISOString();
   Storage.save(DB); aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale();
   apriSchedaAppuntamento(a.id);
@@ -2295,7 +2328,7 @@ function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i =>
 // =====================================================
 // CONTATORI / BACKUP
 // =====================================================
-function aggiornaContatori() { const ep = document.getElementById('count-persone'); const ea = document.getElementById('count-acquirenti'); if (ep) ep.textContent = (DB.persone || []).length; if (ea) ea.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length; aggiornaInfoSistema(); }
+function aggiornaContatori() { aggiornaInfoSistema(); }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
 function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
 function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati?')) return; if (!confirm('Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
@@ -2319,9 +2352,15 @@ aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema
   const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
   const totMB = (dbSize + cacheSize) / (1024*1024);
   if (totMB > 4.5) {
-    setTimeout(() => alert('⚠️ ATTENZIONE!\n\nSpazio quasi esaurito (' + totMB.toFixed(2) + ' MB su ~5 MB).\n\nVai in "Altro" → Esporta backup + Svuota cache geocodifiche.'), 800);
+    setTimeout(() => alert('⚠️ Spazio quasi esaurito (' + totMB.toFixed(2) + ' MB su ~5 MB).\n\nVai in "Altro" → Esporta backup + Svuota cache.'), 800);
   }
 })();
+
+// PWA install prompt (Android)
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  window._deferredInstall = e;
+});
 </script>
 
 </body>
