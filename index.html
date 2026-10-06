@@ -21,7 +21,7 @@
   body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--sfondo); color: var(--testo); font-size: 16px; -webkit-font-smoothing: antialiased; }
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
   .app-header { padding: 18px 20px 14px; padding-top: calc(18px + env(safe-area-inset-top)); flex-shrink: 0; }
-  .app-header h1 { font-size: 26px; font-weight: 800; color: var(--blu); letter-spacing: -0.6px; }
+  .app-header h1 { font-size: 26px; font-weight: 800; color: var(--blu); letter-spacing: -0.6px; display: flex; align-items: center; gap: 0; }
   .app-header h1 span { color: var(--arancione); }
   .app-header .sub { font-size: 12px; color: var(--testo-sec); margin-top: 3px; font-weight: 500; }
   .app-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 16px calc(80px + env(safe-area-inset-bottom)); }
@@ -312,7 +312,6 @@
   .att-data.scaduta { color: #dc2626; }
   .att-testo { font-size: 14px; color: var(--testo); line-height: 1.35; word-break: break-word; }
 
-  .app-header h1 { display:flex; align-items:center; gap:8px; }
   .icona-inline { display:inline-flex; align-items:center; justify-content:center; vertical-align:middle; }
   .icona-inline svg { width: 14px; height: 14px; }
 </style>
@@ -324,7 +323,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
       <div style="flex:1;min-width:0;">
         <h1><span>ARAN</span>GIÒ</h1>
-        <div class="sub">Assistente agente immobiliare</div>
+        <div class="sub">Assistente Tecnorete</div>
       </div>
       <div id="header-prossimo-app" style="flex-shrink:0;text-align:right;max-width:42%;cursor:pointer;display:none;" onclick="apriProssimoAppuntamento()">
         <div style="font-size:9px;font-weight:800;color:var(--arancione);text-transform:uppercase;letter-spacing:0.5px;">Prossimo</div>
@@ -435,11 +434,13 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">1.4 (Modulo 12)</span></div>
-        <div class="info-row"><span class="label">Storage</span><span class="value">Locale</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">1.5 (Modulo 13)</span></div>
+        <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
+        <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
+        <div class="info-row" style="display:block;padding:8px 0;"><div id="storage-bar"></div></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
         <div class="info-row"><span class="label">Tipi personalizzati</span><span class="value" id="sistema-n-tipi">0</span></div>
-        <div class="info-row"><span class="label">Occupato</span><span class="value" id="storage-info">—</span></div>
+        <button class="btn btn-secondary" style="margin-top:12px;" onclick="pulisciCacheGeocodifica()" data-icon="cestino">Svuota cache geocodifiche</button>
       </div>
       <div class="card">
         <h2><span class="dot"></span>Zona pericolosa</h2>
@@ -551,6 +552,7 @@ function applicaIcone() {
 // STORAGE
 // =====================================================
 const DB_KEY = 'arangiò_db_v1';
+const GEOCODE_CACHE_KEY = 'arangiò_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
 const CREMONA_CENTER = [45.1333, 10.0167];
 
@@ -575,8 +577,37 @@ const Storage = {
       };
     } catch (e) { return this.default(); }
   },
-  save(data) { try { localStorage.setItem(DB_KEY, JSON.stringify(data)); return true; } catch (e) { alert('Errore nel salvataggio.'); return false; } },
-  default() { return { versione: 37, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
+  save(data) {
+    try {
+      localStorage.setItem(DB_KEY, JSON.stringify(data));
+      return true;
+    } catch (e) {
+      const quota = e && (e.name === 'QuotaExceededError' || e.code === 22 || e.number === -2147024882);
+      if (quota) {
+        try { localStorage.removeItem(GEOCODE_CACHE_KEY); } catch (_) {}
+        try {
+          localStorage.setItem(DB_KEY, JSON.stringify(data));
+          alert('⚠️ Memoria quasi piena!\n\nHo svuotato la cache geocodifiche per fare spazio e il salvataggio è riuscito.\n\nConsiglio: fai un backup (Altro → Esporta) e valuta di ridurre i dati.');
+          return true;
+        } catch (e2) {}
+        try {
+          const slim = JSON.parse(JSON.stringify(data));
+          const soglia = Date.now() - 365*24*60*60*1000;
+          for (const imm of (slim.immobili||[])) if (Array.isArray(imm.attivita)) imm.attivita = imm.attivita.filter(a => new Date(a.data||a.dataPrevista||0).getTime() > soglia);
+          for (const p of (slim.persone||[])) if (Array.isArray(p.attivita)) p.attivita = p.attivita.filter(a => new Date(a.data||a.dataPrevista||0).getTime() > soglia);
+          localStorage.setItem(DB_KEY, JSON.stringify(slim));
+          alert('⚠️ Memoria quasi piena!\n\nHo ripulito le attività più vecchie di 1 anno per fare spazio.\n\nConsiglio: fai subito un backup (Altro → Esporta).');
+          return true;
+        } catch (e3) {
+          alert('🚨 MEMORIA PIENA!\n\nIl browser non riesce più a salvare.\n\nAzioni immediate:\n1. Vai in "Altro" → Esporta backup\n2. Elimina immobili/persone vecchie\n3. Oppure apri "Altro" → Svuota cache geocodifiche');
+          return false;
+        }
+      }
+      alert('Errore nel salvataggio: ' + (e && e.message ? e.message : e));
+      return false;
+    }
+  },
+  default() { return { versione: 38, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
 };
 
 let DB = Storage.load();
@@ -683,7 +714,6 @@ function isTipoCustom(sigla) { return (DB.customTipiApp || []).some(t => t.sigla
 // =====================================================
 // GEOCODING
 // =====================================================
-const GEOCODE_CACHE_KEY = 'arangiò_geocode_cache_v3';
 let geocodeCache = {};
 try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
 function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
@@ -801,7 +831,35 @@ tabButtons.forEach(btn => {
   });
 });
 function aggiornaFabPersone() { document.getElementById('fab-menu').innerHTML = ''; }
-function aggiornaInfoSistema() { const el = document.getElementById('sistema-citta'); if (el) el.textContent = getCittaPrincipale(); const el2 = document.getElementById('sistema-n-tipi'); if (el2) el2.textContent = (DB.customTipiApp || []).length; }
+
+function aggiornaInfoSistema() {
+  const el = document.getElementById('sistema-citta'); if (el) el.textContent = getCittaPrincipale();
+  const el2 = document.getElementById('sistema-n-tipi'); if (el2) el2.textContent = (DB.customTipiApp || []).length;
+  const sInfo = document.getElementById('storage-info');
+  const sCache = document.getElementById('storage-cache');
+  const sBarra = document.getElementById('storage-bar');
+  const dbSize = (localStorage.getItem(DB_KEY) || '').length;
+  const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
+  const totMB = (dbSize + cacheSize) / (1024*1024);
+  const dbMB = dbSize / (1024*1024);
+  const cacheMB = cacheSize / (1024*1024);
+  if (sInfo) sInfo.textContent = dbMB.toFixed(2) + ' MB';
+  if (sCache) sCache.textContent = cacheMB.toFixed(2) + ' MB';
+  if (sBarra) {
+    const pct = Math.min(100, (totMB / 5) * 100);
+    let col = '#059669'; if (pct > 70) col = '#d97706'; if (pct > 90) col = '#dc2626';
+    sBarra.innerHTML = '<div style="font-size:11px;color:var(--testo-sec);margin-bottom:4px;">Spazio usato: <strong style="color:' + col + '">' + totMB.toFixed(2) + ' / ~5 MB</strong>' + (pct > 85 ? ' — ⚠️ quasi pieno!' : '') + '</div><div style="height:6px;background:#eef0f3;border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct.toFixed(1) + '%;background:' + col + ';transition:width 0.3s;"></div></div>';
+  }
+}
+function pulisciCacheGeocodifica() {
+  const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
+  if (cacheSize === 0) { alert('La cache è già vuota.'); return; }
+  if (!confirm('Svuotare la cache geocodifiche?\n\nOccupata: ' + (cacheSize / 1024).toFixed(1) + ' KB\n\nGli immobili già geocodificati NON verranno toccati (hanno lat/lng salvate). Verranno solo ricercati di nuovo da internet se cambi indirizzo.')) return;
+  geocodeCache = {};
+  salvaGeocodeCache();
+  aggiornaInfoSistema();
+  alert('✅ Cache svuotata');
+}
 
 // =====================================================
 // MODAL
@@ -1344,11 +1402,7 @@ function apriNuovoAppuntamentoGlobale() { apriSelezioneTipoApp(null, null); }
 function apriNuovoAppuntamentoPersona(pid) { const p = DB.persone.find(x => x.id === pid); apriSelezioneTipoApp(null, p); }
 function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.id === iid); apriSelezioneTipoApp(i, null); }
 
-// ---------------------------------------------
-// FILTRO TIPI APPUNTAMENTO
-// ---------------------------------------------
 function tipiAppValidi(imm, per) {
-  // Nessun contesto → mostra tutti i tipi
   if (!imm && !per) return getTuttiTipiApp();
   return getTuttiTipiApp().filter(t => {
     const s = t.sigla;
@@ -1373,7 +1427,6 @@ function tipiAppValidi(imm, per) {
   });
 }
 
-// Validazione entità per tipo (usata dal picker e da salvaAppuntamento)
 function immobileValidoPerTipo(tipoSigla, imm) {
   if (!imm) return false;
   const s = tipoSigla;
@@ -1444,7 +1497,6 @@ function selezionaTipoApp(sigla) {
     if (imm && per) { apriFormAppuntamento(imm, per, t); return; }
     if (!imm && !per) { apriPickerEntita('immobile', (i) => apriPickerEntita('persona', (p) => apriFormAppuntamento(i, p, t), ts), ts); return; }
     if (imm && !per) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t), ts); return; }
-    if (!per && imm) { apriPickerEntita('persona', (p) => apriFormAppuntamento(imm, p, t), ts); return; }
     if (!imm && per) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t), ts); return; }
   }
   apriFormAppuntamento(imm, per, t);
@@ -1527,7 +1579,6 @@ function salvaAppuntamento() {
   if (!t || !i || !f) { alert('Titolo, inizio e fine obbligatori'); return; }
   if (new Date(f) <= new Date(i)) { alert('Fine deve essere dopo inizio'); return; }
   const imm = window._appImm || null; const per = window._appPers || null; const tp = window._appTipo;
-  // Validazione finale: l'immobile/persona devono essere compatibili col tipo
   if (imm && !immobileValidoPerTipo(tp.sigla, imm)) { alert('Immobile non compatibile con il tipo ' + tp.sigla + '.\n\nScegli un altro immobile o cambia tipo.'); return; }
   if (per && !personaValidaPerTipo(tp.sigla, per)) { alert('Persona non compatibile con il tipo ' + tp.sigla + '.\n\nScegli un\'altra persona o cambia tipo.'); return; }
   const ad = new Date().toISOString();
@@ -1560,7 +1611,6 @@ function apriSchedaAppuntamento(id) {
   h += '</div>';
   if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">' + iconaCondo(14) + ' ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
   if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">' + ico('utente',14) + ' ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
-  // Cambio immobile filtrato per tipo
   h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (imm ? ico('aggiorna',16) + ' Cambia immobile' : iconaCondo(14) + ' Collega immobile') + '</button>';
   h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (per ? ico('aggiorna',16) + ' Cambia persona' : ico('utente',14) + ' Collega persona') + '</button>';
   h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">' + ico('calendario',18) + ' Aggiungi a Google Calendar</button>';
@@ -2035,7 +2085,7 @@ function salvaNuovoImmobile() {
   const dc = (!iv && DB.condomini && DB.condomini[co]) || {}; const zc = dc.zone || [];
   const z = iv ? calcolaZoneFinali('nuovo') : (zc.length > 0 ? zc.slice() : calcolaZoneFinali('nuovo'));
   let zz = null;
-  if (!iv) { if (tf === 'censito') { const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind); if (e.length > 0) { const zs = e.map(i => i.z || 1); if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo\nAnnulla = Riprendi esistente')) { const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0]; chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return; } zz = Math.max(...zs) + 1; } else zz = prossimoZPerCondominio(co); } else zz = prossimoZPerCondominio(co); }
+  if (!iv) { if (tf === 'censito') { const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind); if (e.length > 0) { const zs = e.map(i => i.z || 1); if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo(co\nAnnulla = Riprendi esistente')) { const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0]; chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return; } zz = Math.max(...zs) + 1; } else zz = prossimoZPerCondominio); } else zz = prossimoZPerCondominio(co); }
   const flagsTrattativa = { inTrattativa: false, propostaAccettata: false, propostaNotificata: false };
   let im;
   if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
@@ -2249,7 +2299,7 @@ async function centraMappaSuCittaPrincipale() { if (!map) return; if (!_coordsCi
 function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); if (l.length === 0) { centraMappaSuCittaPrincipale(); return; } const b = L.latLngBounds(l.map(i => [i.lat, i.lng])); map.fitBounds(b, { padding: [60, 60], maxZoom: 17 }); }
 
 // CONTATORI / BACKUP
-function aggiornaContatori() { const ep = document.getElementById('count-persone'); const ea = document.getElementById('count-acquirenti'); if (ep) ep.textContent = (DB.persone || []).length; if (ea) ea.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length; const info = document.getElementById('storage-info'); if (info) { const r = localStorage.getItem(DB_KEY) || ''; info.textContent = (r.length / 1024).toFixed(2) + ' KB'; } }
+function aggiornaContatori() { const ep = document.getElementById('count-persone'); const ea = document.getElementById('count-acquirenti'); if (ep) ep.textContent = (DB.persone || []).length; if (ea) ea.textContent = (DB.persone || []).filter(p => p.tipo === 'acquirente').length; aggiornaInfoSistema(); }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
 function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
 function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati?')) return; if (!confirm('Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
@@ -2267,6 +2317,16 @@ document.getElementById('btn-modal-close').innerHTML = ico('x',16);
 
 applicaIcone();
 aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema(); aggiornaFabPersone(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp();
+
+// Controllo preventivo spazio
+(function() {
+  const dbSize = (localStorage.getItem(DB_KEY) || '').length;
+  const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
+  const totMB = (dbSize + cacheSize) / (1024*1024);
+  if (totMB > 4.5) {
+    setTimeout(() => alert('⚠️ ATTENZIONE!\n\nSpazio quasi esaurito (' + totMB.toFixed(2) + ' MB su ~5 MB).\n\nRischio: i prossimi salvataggi potrebbero fallire.\n\nVai in "Altro" → Esporta backup + Svuota cache geocodifiche.'), 800);
+  }
+})();
 </script>
 
 </body>
