@@ -230,6 +230,30 @@
   .villa-toggle button.active { border-color: var(--blu); color: var(--blu); background: var(--blu-soft); font-weight: 600; }
   .villa-toggle button svg { width: 18px; height: 18px; }
 
+  .theme-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: 1.5px solid var(--border-strong);
+    background: var(--card);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--testo-sec);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.12s, color 0.12s, background 0.12s;
+  }
+  .theme-btn:active { background: var(--sfondo); }
+  .theme-btn.active {
+    border-color: var(--testo);
+    color: var(--testo);
+    font-weight: 600;
+  }
+
   .fab-menu { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 76px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; align-items: flex-end; z-index: 51; }
   .fab-menu button { background: white; border: 1px solid var(--border-strong); padding: 10px 14px; border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu); box-shadow: 0 2px 8px rgba(15,23,42,0.08); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: opacity 0.12s; }
   .fab-menu button svg { width: 15px; height: 15px; }
@@ -409,6 +433,7 @@
     .agenda-giorno:hover { background: #eef2f7; }
     .agenda-giorno.oggi:hover { background: #fdebd1; }
     .tipo-app-btn:hover { background: #f8fafc; border-color: var(--blu); }
+    .theme-btn:hover { background: var(--sfondo); }
   }
   @media (min-width: 1024px) {
     :root { --max-w: 720px; }
@@ -500,6 +525,9 @@
   :root[data-theme="dark"] .tag { background: #334155; color: var(--testo-sec); }
   :root[data-theme="dark"] .villa-toggle button { background: #1e293b; }
   :root[data-theme="dark"] .villa-toggle button.active { background: #1e3a5f; }
+  :root[data-theme="dark"] .theme-btn { background: #1e293b; }
+  :root[data-theme="dark"] .theme-btn:active { background: #334155; }
+  :root[data-theme="dark"] .theme-btn.active { border-color: var(--testo); color: var(--testo); }
   :root[data-theme="dark"] .zone-chip { background: #334155; color: var(--testo-sec); }
   :root[data-theme="dark"] .zone-chip.active { background: var(--blu); color: #0f172a; }
   :root[data-theme="dark"] .zone-chip.special.active { background: var(--arancione); color: #0f172a; }
@@ -627,9 +655,9 @@
         <h2><span class="dot"></span>Aspetto</h2>
         <p style="margin-bottom:10px;">Scegli il tema. "Auto" segue le impostazioni del telefono.</p>
         <div style="display:flex;gap:6px;">
-          <button type="button" id="th-auto" onclick="setTema('auto')" style="flex:1;padding:10px 8px;border:1.5px solid var(--border-strong);background:var(--card);border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--testo-sec);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.12s;"><span style="font-size:18px;line-height:1;">🌗</span>Auto</button>
-          <button type="button" id="th-light" onclick="setTema('light')" style="flex:1;padding:10px 8px;border:1.5px solid var(--border-strong);background:var(--card);border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--testo-sec);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.12s;"><span style="font-size:18px;line-height:1;">☀️</span>Chiaro</button>
-          <button type="button" id="th-dark" onclick="setTema('dark')" style="flex:1;padding:10px 8px;border:1.5px solid var(--border-strong);background:var(--card);border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--testo-sec);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.12s;"><span style="font-size:18px;line-height:1;">🌙</span>Notte</button>
+          <button type="button" id="th-auto" class="theme-btn" onclick="setTema('auto')" data-icon="contrasto">Auto</button>
+          <button type="button" id="th-light" class="theme-btn" onclick="setTema('light')" data-icon="sole">Chiaro</button>
+          <button type="button" id="th-dark" class="theme-btn" onclick="setTema('dark')" data-icon="luna">Notte</button>
         </div>
       </div>
       <div class="card">
@@ -735,6 +763,8 @@ const ICON_PATHS = {
   attenzione: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
   clessidra: '<path d="M6 2h12M6 22h12M6 2v3a6 6 0 0 0 6 6 6 6 0 0 0 6-6V2M6 22v-3a6 6 0 0 1 6-6 6 6 0 0 1 6 6v3"/>',
   sole: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  luna: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  contrasto: '<circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/>',
   x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   freccia: '<polyline points="9 18 15 12 9 6"/>',
   utente: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -752,7 +782,11 @@ function ico(name, size) {
 function applicaIcone() {
   document.querySelectorAll('[data-icon]').forEach(el => {
     const n = el.dataset.icon; if (!n) return;
-    const sz = el.classList.contains('map-btn') ? 18 : (el.classList.contains('back-top') ? 16 : (el.classList.contains('btn') ? 16 : 14));
+    const sz = el.classList.contains('theme-btn') ? 20
+      : el.classList.contains('map-btn') ? 18
+      : el.classList.contains('back-top') ? 16
+      : el.classList.contains('btn') ? 16
+      : 14;
     const prev = el.querySelector(':scope > .icona-inline');
     if (prev) prev.remove();
     el.insertAdjacentHTML('afterbegin', '<span class="icona-inline">' + ico(n, sz) + '</span>');
@@ -783,12 +817,7 @@ function updateThemeButtons() {
   const t = (() => { try { return localStorage.getItem('arangiò_theme') || 'auto'; } catch(e) { return 'auto'; } })();
   ['auto','light','dark'].forEach(x => {
     const b = document.getElementById('th-' + x);
-    if (!b) return;
-    const active = x === t;
-    b.style.borderColor = active ? 'var(--blu)' : 'var(--border-strong)';
-    b.style.background = active ? 'var(--blu-soft)' : 'var(--card)';
-    b.style.color = active ? 'var(--blu)' : 'var(--testo-sec)';
-    b.style.fontWeight = active ? '600' : '500';
+    if (b) b.classList.toggle('active', x === t);
   });
 }
 try {
