@@ -47,6 +47,7 @@
     --radius: 12px; --radius-sm: 9px; --radius-pill: 999px;
     --tabbar-h: 60px; --max-w: 640px;
     --imm: #94a3b8; --pa: #c2740c; --nt: #2563eb; --ink: #047857; --vnd: #b91c1c; --rr: #7c3aed; --prof: #0e7490;
+    --ora-h: 60px;
   }
   html { height: 100%; overflow: hidden; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -71,9 +72,9 @@
   .app-content {
     flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
     padding: 4px 18px calc(92px + env(safe-area-inset-bottom));
+    min-height: 0;
   }
   .app-content.attivita-active { padding: 4px 18px calc(70px + env(safe-area-inset-bottom)); }
-  /* AGENDA MODE: layout a tutta altezza tra header e navbar */
   .app-content.agenda-mode {
     display: flex !important; flex-direction: column;
     padding: 0 0 calc(var(--tabbar-h) + env(safe-area-inset-bottom)) 0 !important;
@@ -372,7 +373,6 @@
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
 
-  /* ATTIVITÀ */
   #view-attivita.active { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; overflow: hidden; }
   .att-col { flex: 1 1 0; min-height: 0; max-height: calc((100% - 16px) / 3); display: flex; flex-direction: column; overflow: hidden; }
   .att-col-main .att-subtabs { flex-shrink: 0; margin-bottom: 8px; }
@@ -429,19 +429,6 @@
   .planning-item.libera .pi-tipo { background: var(--arancione); }
   .planning-empty { text-align: center; padding: 18px 8px; color: var(--testo-ter); font-size: 12.5px; font-weight: 400; }
 
-  /* PLANNING PAGE - ripristinato */
-  .cal-back-float { position: fixed; top: calc(14px + env(safe-area-inset-top)); left: 16px; width: 38px; height: 38px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong); color: var(--blu); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 60; transition: background 0.15s ease, transform 0.15s ease; }
-  .cal-back-float:active { background: var(--hover-bg); transform: scale(0.94); }
-  .cal-back-float svg { width: 18px; height: 18px; }
-  .cal-zoom-header { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; gap: 8px; padding: 0 2px; }
-  .cal-zoom-label { font-size: 15px; font-weight: 700; color: var(--blu); flex: 1; text-align: center; letter-spacing: -0.02em; }
-  .cal-zoom-header .cal-nav-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
-  .cal-zoom-header .cal-nav-btn:active { background: var(--sfondo-2); }
-  .qa-pills { display: flex; gap: 6px; margin: 10px 0 14px; flex-wrap: wrap; }
-  .qa-pill { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 7px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; letter-spacing: -0.005em; transition: background 0.15s ease; }
-  .qa-pill:active { background: var(--hover-bg); }
-  .qa-pill svg { width: 13px; height: 13px; }
-
   .app-item-card { background: var(--card); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; transition: border-color 0.2s ease, background 0.15s ease; }
   .app-item-card:active { background: var(--hover-bg); }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
@@ -497,51 +484,114 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* ============ AGENDA iPHONE-STYLE (colori ARANJÒ) ============ */
-  #view-agenda.active { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; animation: none; }
-  #agenda-page-content { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  /* ============ AGENDA / PLANNING PAGE — STILE iPHONE ============ */
+  #view-agenda.active, #view-planning.active {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; animation: none;
+  }
+  #agenda-page-content, #planning-page-content {
+    flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden;
+  }
   .ag-view { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--sfondo); }
 
-  .ag-header { display: flex; align-items: center; gap: 8px; padding: 6px 14px; flex-shrink: 0; }
-  .ag-back-pill { display: inline-flex; align-items: center; gap: 2px; padding: 7px 14px 7px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--border-strong); font-family: inherit; font-size: 15px; font-weight: 600; color: var(--blu); cursor: pointer; transition: background 0.15s ease; }
-  .ag-back-pill:active { background: var(--hover-bg); }
-  .ag-back-pill svg { width: 18px; height: 18px; }
-  .ag-icons { display: flex; gap: 6px; margin-left: auto; }
-  .ag-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong); color: var(--blu); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
-  .ag-icon-btn:active { background: var(--hover-bg); }
-  .ag-icon-btn svg { width: 18px; height: 18px; }
+  /* Topbar: mese + frecce + "+" */
+  .ag-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px; flex-shrink: 0;
+  }
+  .ag-header .ag-nav-group {
+    display: flex; align-items: center; gap: 0;
+    flex: 1; justify-content: center;
+  }
+  .ag-header .ag-nav-btn {
+    background: transparent; border: none;
+    width: 40px; height: 40px; border-radius: 50%;
+    color: var(--blu); cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease;
+  }
+  .ag-header .ag-nav-btn:active { background: var(--hover-bg); }
+  .ag-header .ag-nav-btn svg { width: 22px; height: 22px; }
+  .ag-header .ag-month-lbl {
+    font-size: 22px; font-weight: 700; color: var(--arancione);
+    padding: 0 12px; letter-spacing: -0.02em; min-width: 90px; text-align: center;
+  }
+  .ag-header .ag-back-btn {
+    background: transparent; border: none;
+    width: 40px; height: 40px; border-radius: 50%;
+    color: var(--blu); cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s ease;
+  }
+  .ag-header .ag-back-btn:active { background: var(--hover-bg); }
+  .ag-header .ag-back-btn svg { width: 20px; height: 20px; }
+  .ag-header .ag-icon-btn {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: transparent; border: none;
+    color: var(--blu); cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s ease;
+  }
+  .ag-header .ag-icon-btn:active { background: var(--hover-bg); }
+  .ag-header .ag-icon-btn svg { width: 24px; height: 24px; }
 
-  .ag-weekstrip { display: flex; padding: 4px 6px 8px; gap: 0; flex-shrink: 0; border-bottom: 1px solid var(--border); }
-  .ag-ws-day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 2px; cursor: pointer; border-radius: 12px; transition: background 0.15s ease; }
+  /* Week strip */
+  .ag-weekstrip {
+    display: flex; padding: 2px 8px 8px; gap: 0;
+    flex-shrink: 0;
+    margin: 0 6px;
+  }
+  .ag-ws-day {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; padding: 4px 2px; cursor: pointer; border-radius: 12px;
+    transition: background 0.15s ease;
+  }
   .ag-ws-day:active { background: var(--hover-bg); }
-  .ag-ws-name { font-size: 10px; font-weight: 600; color: var(--testo-ter); letter-spacing: 0.04em; }
-  .ag-ws-num { font-size: 15px; font-weight: 500; color: var(--testo); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
+  .ag-ws-name { font-size: 11px; font-weight: 600; color: var(--testo-ter); letter-spacing: 0.04em; text-transform: none; }
+  .ag-ws-num {
+    font-size: 17px; font-weight: 500; color: var(--testo);
+    width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; letter-spacing: -0.02em;
+  }
   .ag-ws-day.today .ag-ws-num { background: var(--arancione); color: #fff; font-weight: 600; }
   .ag-ws-day.today .ag-ws-name { color: var(--arancione); }
-  .ag-ws-day.sel .ag-ws-num { background: var(--blu); color: #fff; }
-  .ag-ws-day.sel.today .ag-ws-num { background: var(--arancione); }
 
-  .ag-content { flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; position: relative; }
-  .ag-bottombar { display: flex; padding: 8px 14px; gap: 8px; flex-shrink: 0; align-items: center; border-top: 1px solid var(--border); background: var(--sfondo); }
-  .ag-pill { padding: 10px 20px; border-radius: 999px; background: var(--card); border: 1px solid var(--border-strong); font-family: inherit; font-size: 13px; font-weight: 600; color: var(--blu); cursor: pointer; transition: background 0.15s ease; }
+  /* Linea orizzontale sotto lo strip (non tocca i bordi) */
+  .ag-sep { height: 1px; background: var(--border-strong); margin: 0 16px; flex-shrink: 0; }
+
+  .ag-content {
+    flex: 1 1 0; min-height: 0;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    position: relative;
+  }
+  .ag-bottombar {
+    display: flex; padding: 8px 14px; gap: 8px;
+    flex-shrink: 0; align-items: center;
+  }
+  .ag-pill {
+    padding: 10px 20px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--border-strong);
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: var(--blu); cursor: pointer; transition: background 0.15s ease;
+  }
   .ag-pill:active { background: var(--hover-bg); }
-  .ag-view .ag-content > * { animation: agViewIn 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
-  @keyframes agViewIn { from { opacity: 0; transform: translateY(6px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .ag-view .ag-content > * { animation: agViewIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+  @keyframes agViewIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Anno */
+  /* ---------- Anno ---------- */
   .ag-year { padding: 4px 12px 40px; }
   .ag-year-month { margin-bottom: 22px; }
-  .ag-year-name { font-size: 17px; font-weight: 700; color: var(--testo); margin-bottom: 6px; padding-left: 4px; }
+  .ag-year-name { font-size: 17px; font-weight: 700; color: var(--blu); margin-bottom: 6px; padding-left: 4px; }
   .ag-year-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
   .ag-year-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 11px; cursor: pointer; border-radius: 50%; }
   .ag-year-cell.other { opacity: 0.22; }
   .ag-year-cell.today .ag-year-num { background: var(--arancione); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
   .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
-  /* Mese */
+  /* ---------- Mese ---------- */
   .ag-month { padding: 0 8px 40px; }
-  .ag-month-name { font-size: 28px; font-weight: 700; color: var(--blu); padding: 12px 12px 6px; letter-spacing: -0.03em; }
-  .ag-month-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 8px 0 4px; letter-spacing: 0.06em; }
+  .ag-month-name { font-size: 28px; font-weight: 700; color: var(--blu); padding: 4px 12px 8px; letter-spacing: -0.03em; }
+  .ag-month-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 8px 0 6px; letter-spacing: 0.06em; }
   .ag-month-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
   .ag-month-cell { aspect-ratio: 1; padding: 4px 2px 2px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; border-radius: 8px; transition: background 0.15s ease; }
   .ag-month-cell:active { background: var(--hover-bg); }
@@ -551,21 +601,68 @@
   .ag-month-bars { display: flex; gap: 2px; justify-content: center; width: 100%; padding: 0 4px; }
   .ag-month-bar { flex: 1; max-width: 8px; height: 4px; border-radius: 2px; }
 
-  /* Timeline */
-  .ag-timeline { display: flex; padding-bottom: 20px; }
-  .ag-hours-col { width: 46px; flex-shrink: 0; padding-top: 0; }
-  .ag-hour-label { height: 60px; font-size: 10px; font-weight: 500; color: var(--testo-ter); text-align: right; padding-right: 8px; position: relative; letter-spacing: 0.02em; }
-  .ag-hour-label::after { content: ''; position: absolute; right: 0; top: 0; left: 10px; height: 1px; background: var(--border); }
-  .ag-days { flex: 1; display: flex; position: relative; }
-  .ag-day-col { flex: 1; position: relative; border-left: 1px solid var(--border); }
-  .ag-day-col:first-child { border-left: 1px solid var(--border-strong); }
-  .ag-hour-line { height: 60px; border-bottom: 1px solid var(--border); }
-  .ag-event { position: absolute; left: 2px; right: 2px; border-radius: 6px; padding: 3px 5px; overflow: hidden; cursor: pointer; transition: opacity 0.15s ease; z-index: 2; }
+  /* ---------- Timeline ---------- */
+  .ag-timeline {
+    display: flex;
+    position: relative;
+    padding-bottom: 30px;
+    /* Righe orizzontali ogni 60px, dall'ora 0 fino alla 24 */
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--border-strong) 0px,
+      var(--border-strong) 1px,
+      transparent 1px,
+      transparent var(--ora-h)
+    );
+    background-position: 0 0;
+    background-repeat: repeat-y;
+    background-size: 100% var(--ora-h);
+  }
+  .ag-hours-col {
+    width: 52px; flex-shrink: 0;
+    background: var(--sfondo);
+    position: relative; z-index: 2;
+  }
+  .ag-hour-label {
+    height: var(--ora-h);
+    display: flex; align-items: flex-start; justify-content: flex-end;
+    padding: 4px 10px 0 0;
+    font-size: 11px; font-weight: 500;
+    color: var(--testo-ter); line-height: 1;
+    background: var(--sfondo);
+    letter-spacing: -0.005em;
+  }
+  .ag-days { flex: 1; display: flex; position: relative; z-index: 1; }
+  .ag-day-col { flex: 1; position: relative; min-width: 0; }
+  .ag-hour-line { height: var(--ora-h); border: 0; }
+
+  .ag-event {
+    position: absolute; left: 3px; right: 3px;
+    border-radius: 6px; padding: 4px 6px; overflow: hidden;
+    cursor: pointer; z-index: 3;
+    transition: opacity 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
   .ag-event:active { opacity: 0.75; }
-  .ag-event-title { font-size: 10px; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.2; letter-spacing: -0.01em; }
-  .ag-event-time { font-size: 9px; color: rgba(255,255,255,0.85); margin-top: 1px; line-height: 1.2; }
+  .ag-event-title {
+    font-size: 10.5px; font-weight: 700; color: #fff;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: 1.2; letter-spacing: -0.01em;
+  }
+  .ag-event-time { font-size: 9.5px; color: rgba(255,255,255,0.9); margin-top: 1px; line-height: 1.2; font-weight: 500; }
+
   .ag-now-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--arancione); z-index: 6; }
-  .ag-now-dot { position: absolute; left: -6px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--arancione); box-shadow: 0 0 0 2px var(--sfondo); }
+  .ag-now-dot { position: absolute; left: 48px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--arancione); box-shadow: 0 0 0 2px var(--sfondo); }
+
+  /* ---------- Planning (pulsanti ripristinati stile originale) ---------- */
+  .cal-zoom-header { display: flex; justify-content: space-between; align-items: center; margin: 0 0 6px; gap: 8px; padding: 0 2px; }
+  .cal-zoom-label { font-size: 15px; font-weight: 700; color: var(--blu); flex: 1; text-align: center; letter-spacing: -0.02em; }
+  .cal-nav-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
+  .cal-nav-btn:active { background: var(--sfondo-2); }
+  .qa-pills { display: flex; gap: 6px; margin: 10px 0 14px; flex-wrap: wrap; }
+  .qa-pill { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 7px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; letter-spacing: -0.005em; transition: background 0.15s ease; }
+  .qa-pill:active { background: var(--hover-bg); }
+  .qa-pill svg { width: 13px; height: 13px; }
 
   @media (min-width: 768px) {
     body { background: #f0f0f2; }
@@ -651,16 +748,19 @@
   :root[data-theme="dark"] .foto-item { background: var(--sfondo-2); }
   :root[data-theme="dark"] .planning-item { background: transparent; }
   :root[data-theme="dark"] .att-count { background: var(--sfondo-2); color: #8ab0d4; }
-  :root[data-theme="dark"] .ag-back-pill { background: var(--card); color: #8ab0d4; }
-  :root[data-theme="dark"] .ag-icon-btn { background: var(--card); color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-header .ag-nav-btn,
+  :root[data-theme="dark"] .ag-header .ag-back-btn,
+  :root[data-theme="dark"] .ag-header .ag-icon-btn { color: #8ab0d4; }
   :root[data-theme="dark"] .ag-month-name { color: #8ab0d4; }
   :root[data-theme="dark"] .ag-month-num,
   :root[data-theme="dark"] .ag-ws-num,
   :root[data-theme="dark"] .ag-year-name { color: #e8e8ea; }
-  :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
   :root[data-theme="dark"] .ag-month-cell.today .ag-month-num,
   :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num,
   :root[data-theme="dark"] .ag-year-cell.today .ag-year-num { color: #fff; }
+  :root[data-theme="dark"] .ag-hour-label { background: var(--sfondo); }
+  :root[data-theme="dark"] .ag-hours-col { background: var(--sfondo); }
+  :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -687,7 +787,7 @@
   :root[data-theme="dark"] .addr-click,
   :root[data-theme="dark"] .modal-header h2,
   :root[data-theme="dark"] .cal-zoom-label,
-  :root[data-theme="dark"] .cal-back-float { color: #8ab0d4; }
+  :root[data-theme="dark"] .cal-nav-btn { color: #8ab0d4; }
   :root[data-theme="dark"] .agenda-giorno.oggi .ag-num { color: #ffffff; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
@@ -782,9 +882,6 @@
     </section>
 
     <section id="view-planning" class="view">
-      <button class="cal-back-float" onclick="tornaAttivita()" aria-label="Indietro">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
       <div id="planning-page-content"></div>
     </section>
 
@@ -1279,13 +1376,14 @@ function mostraView(id) {
   appContent.classList.remove('agenda-mode');
   if (id === 'view-attivita') { appContent.style.overflow = 'hidden'; appContent.classList.add('attivita-active'); }
   else if (id === 'view-mappa') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
-  else if (id === 'view-agenda') { appContent.classList.add('agenda-mode'); }
+  else if (id === 'view-agenda' || id === 'view-planning') { appContent.classList.add('agenda-mode'); }
   const targetTab = (id === 'view-agenda' || id === 'view-planning') ? 'attivita' : id.replace('view-', '');
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === targetTab));
   const fab = document.getElementById('fab-immobili');
   const fabMenu = document.getElementById('fab-menu');
   if (id === 'view-mappa') { fab.style.display = 'none'; fabMenu.style.display = 'none'; fabMenuAperto = false; }
-  else if (id === 'view-attivita' || id === 'view-agenda' || id === 'view-planning') { fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false; }
+  else if (id === 'view-agenda' || id === 'view-planning') { fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false; }
+  else if (id === 'view-attivita') { fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false; }
   else { fab.style.display = 'none'; fabMenu.style.display = 'none'; }
 }
 
@@ -1425,9 +1523,6 @@ function titoloImmobile(imm) {
   const tipo = imm.stato; const nome = (imm.cognomeNome || '').toUpperCase(); const tel = imm.telefono ? ' ' + imm.telefono : ''; const ind = imm.indirizzo ? ' x ' + imm.indirizzo.toUpperCase() : ''; return tipo + ' - ' + nome + tel + ind;
 }
 
-// =====================================================
-// FILTRI IMMOBILI
-// =====================================================
 let statoSelezionato = null, zonaSelezionata = null, vistaCondomini = false, condoSelezionato = null, queryRicerca = '', mappaFiltroStato = null, condoListaEspansi = {};
 document.getElementById('search-immobili').addEventListener('input', (e) => { queryRicerca = e.target.value.toLowerCase().trim(); renderListaImmobili(); });
 document.querySelectorAll('#chips-immobili .chip').forEach(chip => { chip.addEventListener('click', () => { const f = chip.dataset.filtro; if (f === 'tutti') { statoSelezionato = null; zonaSelezionata = null; vistaCondomini = false; condoSelezionato = null; } else if (f === 'COND') { vistaCondomini = !vistaCondomini; condoSelezionato = null; } else if (f === 'ZONE') { apriSelezioneZone(); return; } else statoSelezionato = (statoSelezionato === f) ? null : f; aggiornaChips(); renderListaImmobili(); }); });
@@ -1535,9 +1630,6 @@ function toggleZonaSpeciale(z, p) { const st = zoneTemp[p]; if (st.base.length >
 function refreshZoneContainer(p) { const c = document.getElementById(p + '-zone-container'); if (c) c.innerHTML = htmlSelettoreZone(p); }
 function calcolaZoneFinali(p) { const st = zoneTemp[p]; if (st.base.length > 0) return st.base.concat([ZONA_ZDF]); if (st.speciale) return [st.speciale]; return []; }
 
-// =====================================================
-// PERSONE
-// =====================================================
 let pTabAttivo = 'acquirente', pStatoRRFiltro = null, pTipoProfFiltro = null, pQueryRicerca = '';
 document.querySelectorAll('#persone-tabs .chip').forEach(chip => { chip.addEventListener('click', () => { pTabAttivo = chip.dataset.ptab; pStatoRRFiltro = null; pTipoProfFiltro = null; pQueryRicerca = ''; document.getElementById('search-persone').value = ''; document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c === chip)); aggiornaFabPersone(); renderPersone(); }); });
 document.getElementById('search-persone').addEventListener('input', (e) => { pQueryRicerca = e.target.value.toLowerCase().trim(); renderPersone(); });
@@ -2152,8 +2244,8 @@ function collectItemsForDay(ymd) {
   const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === ymd && a.stato !== 'annullato');
   const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymd);
   const libs = (DB.pianificazioni || []).filter(p => p.data === ymd);
-  for (const a of apps) { const tp = getTipoApp(a.tipo); items.push({ tipo: a.tipo, testo: a.titolo, ora: pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()), colore: coloreDaClasse(getClasseChiApp(tp.chi)), id: a.id, kind: 'app' }); }
-  for (const a of atts) { items.push({ tipo: 'ATT', testo: a.testo, ora: a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore: CAL_COLORS.att, id: a.id, kind: 'att', entitaTipo: a.entitaTipo, entitaId: a.entitaId, entitaTitolo: a.entitaTitolo }); }
+  for (const a of apps) { const tp = getTipoApp(a.tipo); items.push({ tipo: a.tipo, testo: a.titolo, ora: pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()), colore: coloreDaClasse(getClasseChiApp(tp.chi)), id: a.id, kind: 'app', dataInizio: a.dataInizio, dataFine: a.dataFine }); }
+  for (const a of atts) { items.push({ tipo: 'ATT', testo: a.testo, ora: a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore: CAL_COLORS.att, id: a.id, kind: 'att', entitaTipo: a.entitaTipo, entitaId: a.entitaId, entitaTitolo: a.entitaTitolo, dataPrevista: a.dataPrevista }); }
   for (const p of libs) { items.push({ tipo: 'LIBERA', testo: p.testo, ora: p.ora || '--:--', colore: CAL_COLORS.libero, id: p.id, kind: 'lib' }); }
   items.sort((a, b) => { const ta = a.ora === '--:--' ? '99:99' : a.ora; const tb = b.ora === '--:--' ? '99:99' : b.ora; return ta.localeCompare(tb); });
   return items;
@@ -2187,7 +2279,7 @@ function aggiornaAgendaSettimanale() {
 }
 
 // =====================================================
-// PAGINA AGENDA — STILE iPHONE
+// PAGINA AGENDA — STILE iPHONE (colori ARANJÒ)
 // =====================================================
 let calMeseCorrente = new Date();
 let agendaPageState = 'month';
@@ -2249,28 +2341,48 @@ function renderAgendaPage() {
   else if (agendaPageState === 'month') inner = htmlCalendarioMonthIPhone();
   else if (agendaPageState === 'week') inner = htmlCalendarioWeekIPhone();
   else inner = htmlCalendarioDayIPhone();
-  const strip = (agendaPageState === 'week' || agendaPageState === 'day') ? weekStripHtml() : '';
-  cont.innerHTML = '<div class="ag-view">' + topbarHtml() + strip + '<div class="ag-content" id="ag-content-scroll">' + inner + '</div>' + bottomBarHtml() + '</div>';
+
+  let headerHtml = '';
+  if (agendaPageState === 'week' || agendaPageState === 'day') {
+    // Header: mese + frecce + "+"
+    const b = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+    const lbl = MESI_LUNGHI[b.getMonth()];
+    headerHtml = '<div class="ag-header">'
+      + '<button class="ag-back-btn" onclick="tornaAttivita()" aria-label="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      + '<div class="ag-nav-group">'
+      + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      + '<div class="ag-month-lbl">' + lbl + '</div>'
+      + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
+      + '</div>'
+      + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" aria-label="Nuovo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>'
+      + '</div>';
+  } else if (agendaPageState === 'month') {
+    headerHtml = '<div class="ag-header">'
+      + '<button class="ag-back-btn" onclick="tornaAttivita()" aria-label="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      + '<div class="ag-nav-group">'
+      + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      + '<div class="ag-month-lbl">' + MESI_LUNGHI[calMeseCorrente.getMonth()] + '</div>'
+      + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
+      + '</div>'
+      + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" aria-label="Nuovo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>'
+      + '</div>';
+  } else {
+    headerHtml = '<div class="ag-header">'
+      + '<button class="ag-back-btn" onclick="tornaAttivita()" aria-label="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      + '<div class="ag-nav-group">'
+      + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      + '<div class="ag-month-lbl">' + agendaYear + '</div>'
+      + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
+      + '</div>'
+      + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" aria-label="Nuovo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>'
+      + '</div>';
+  }
+
+  const strip = (agendaPageState === 'week' || agendaPageState === 'day') ? weekStripHtml() + '<div class="ag-sep"></div>' : '';
+
+  cont.innerHTML = '<div class="ag-view">' + headerHtml + strip + '<div class="ag-content" id="ag-content-scroll">' + inner + '</div>' + bottomBarHtml() + '</div>';
   setTimeout(scrollAgendaToNow, 60);
   setTimeout(scrollAgendaToNow, 300);
-}
-
-function topbarHtml() {
-  let label = '';
-  if (agendaPageState === 'year') label = String(agendaYear);
-  else if (agendaPageState === 'month') { const c = calMeseCorrente; label = MESI_LUNGHI[c.getMonth()]; }
-  else { const b = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date(); label = MESI_LUNGHI[b.getMonth()]; }
-  return '<div class="ag-header">'
-    + '<button class="ag-back-pill" onclick="tornaAttivita()" aria-label="Indietro">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
-    + escapeHtml(label)
-    + '</button>'
-    + '<div class="ag-icons">'
-    + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" title="Nuovo appuntamento" aria-label="Nuovo">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
-    + '</button>'
-    + '</div>'
-    + '</div>';
 }
 
 function weekStripHtml() {
@@ -2283,7 +2395,7 @@ function weekStripHtml() {
   for (let i = 0; i < 7; i++) {
     const d = new Date(start); d.setDate(start.getDate() + i);
     const ymd = ymdDaData(d);
-    const cls = 'ag-ws-day' + (ymd === today ? ' today' : '') + (ymd === selYmd ? ' sel' : '');
+    const cls = 'ag-ws-day' + (ymd === today ? ' today' : '');
     h += '<div class="' + cls + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
     h += '<div class="ag-ws-name">' + GIORNI_BREVI[i] + '</div>';
     h += '<div class="ag-ws-num">' + d.getDate() + '</div>';
@@ -2297,7 +2409,7 @@ function bottomBarHtml() {
   return '<div class="ag-bottombar">'
     + '<button class="ag-pill" onclick="vaiAOggi()">Oggi</button>'
     + '<div style="flex:1;"></div>'
-    + '<button class="ag-icon-btn" onclick="cycleAgendaView()" title="Cambia vista" aria-label="Vista">'
+    + '<button class="ag-icon-btn" onclick="cycleAgendaView()" title="Cambia vista" aria-label="Vista" style="background: var(--card); border: 1px solid var(--border-strong);">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>'
     + '</button>'
     + '</div>';
@@ -2392,8 +2504,8 @@ function htmlCalendarioWeekIPhone() {
       const [hh, mm] = it.ora.split(':').map(Number);
       const top = (hh * 60 + mm);
       let dur = 60;
-      if (it.kind === 'app') { const ap = DB.appuntamenti.find(a => a.id === it.id); if (ap) dur = Math.max(30, (new Date(ap.dataFine) - new Date(ap.dataInizio)) / 60000); }
-      h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + 'CC;border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
+      if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000);
+      h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + ';border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
       h += '<div class="ag-event-title">' + escapeHtml(it.tipo === 'ATT' ? 'ATT' : (it.tipo === 'LIBERA' ? 'LIB' : it.tipo)) + '</div>';
       h += '<div class="ag-event-time">' + it.ora + '</div>';
       h += '</div>';
@@ -2415,7 +2527,7 @@ function htmlCalendarioDayIPhone() {
   for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + ':00</div>';
   h += '</div>';
   h += '<div class="ag-days">';
-  h += '<div class="ag-day-col" style="border-left:none;">';
+  h += '<div class="ag-day-col">';
   for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-line"></div>';
   const items = collectItemsForDay(ymd);
   for (const it of items) {
@@ -2423,10 +2535,10 @@ function htmlCalendarioDayIPhone() {
     const [hh, mm] = it.ora.split(':').map(Number);
     const top = (hh * 60 + mm);
     let dur = 60;
-    if (it.kind === 'app') { const ap = DB.appuntamenti.find(a => a.id === it.id); if (ap) dur = Math.max(30, (new Date(ap.dataFine) - new Date(ap.dataInizio)) / 60000); }
-    h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + 'CC;border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
-    h += '<div class="ag-event-title">' + escapeHtml(it.tipo === 'ATT' ? 'ATTIVITÀ' : (it.tipo === 'LIBERA' ? 'LIBERA' : it.tipo)) + ' · ' + escapeHtml(it.testo.slice(0, 40)) + '</div>';
-    h += '<div class="ag-event-time">' + it.ora + '</div>';
+    if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000);
+    h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + ';border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
+    h += '<div class="ag-event-title">' + escapeHtml(it.tipo === 'ATT' ? 'ATTIVITÀ' : (it.tipo === 'LIBERA' ? 'LIBERA' : it.tipo)) + '</div>';
+    h += '<div class="ag-event-time">' + it.ora + ' · ' + escapeHtml(it.testo.slice(0, 32)) + '</div>';
     h += '</div>';
   }
   if (isToday) { const lineTop = now.getHours() * 60 + now.getMinutes(); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
@@ -2434,6 +2546,9 @@ function htmlCalendarioDayIPhone() {
   return h;
 }
 
+// =====================================================
+// PAGINA PLANNING (stile agenda, senza pills)
+// =====================================================
 let planningYmd = null;
 function currentPlanningYmd() { return planningYmd || ymdDaData(new Date()); }
 function cambiaGiornoPlanning(delta) { if (delta === 0) planningYmd = null; else { const cur = dataDaYmd(currentPlanningYmd()); cur.setDate(cur.getDate() + delta); planningYmd = ymdDaData(cur); } renderPlanning(); }
@@ -2529,20 +2644,38 @@ function renderPlanningPage() {
   const titolo = (oggi ? 'Oggi · ' : '') + GIORNI_LUNGHI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()];
   const p = getPlanningPerData(ymd);
   const tot = p.apps.length + p.att.length + p.lib.length;
-  let h = '';
-  h += '<div class="cal-zoom-header" style="margin-top:50px;">';
-  h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(-1)">‹</button>';
-  h += '<div class="cal-zoom-label">' + titolo + '</div>';
-  h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(1)">›</button>';
-  h += '</div>';
-  h += '<div class="qa-pills"><button class="qa-pill" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',13) + ' Libera</button><button class="qa-pill" onclick="apriNuovaAttivitaPianificata(\'' + ymd + '\')">' + ico('piu',13) + ' Attività</button><button class="qa-pill" onclick="cambiaGiornoPlanningPage(0)">' + ico('calendario',13) + ' Oggi</button></div>';
-  if (tot === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('calendario',32) + '</div>Niente in programma</div></div>';
+
+  // Header uguale ad agenda (no pills)
+  const headerHtml = '<div class="ag-header">'
+    + '<button class="ag-back-btn" onclick="tornaAttivita()" aria-label="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    + '<div class="ag-nav-group">'
+    + '<button class="ag-nav-btn" onclick="cambiaGiornoPlanningPage(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+    + '<div class="ag-month-lbl">' + MESI_LUNGHI[d.getMonth()] + '</div>'
+    + '<button class="ag-nav-btn" onclick="cambiaGiornoPlanningPage(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
+    + '</div>'
+    + '<button class="ag-icon-btn" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')" aria-label="Nuovo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>'
+    + '</div>';
+
+  // Day strip: mostra il giorno corrente in grande
+  const dayStrip = '<div class="ag-weekstrip" style="justify-content:center;padding:8px 8px 10px;">'
+    + '<div style="text-align:center;">'
+    + '<div style="font-size:11px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;letter-spacing:0.04em;">' + GIORNI_LUNGHI[d.getDay()] + '</div>'
+    + '<div style="font-size:26px;font-weight:700;color:var(--testo);letter-spacing:-0.02em;line-height:1.2;">' + d.getDate() + '</div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="ag-sep"></div>';
+
+  let bodyHtml = '';
+  if (tot === 0) bodyHtml = '<div class="planning-empty" style="padding:32px 16px;">Niente in programma.<br><span style="font-size:11.5px;color:var(--testo-ter);">Tocca + per aggiungere</span></div>';
   else {
-    if (p.apps.length > 0) { h += '<div class="section-title">Appuntamenti</div>'; for (const a of p.apps) h += renderItemAppuntamento(a); }
-    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Attività da fare</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
-    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Cose libere</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
+    bodyHtml += '<div style="padding:10px 14px;">';
+    if (p.apps.length > 0) { for (const a of p.apps) bodyHtml += renderItemAppuntamento(a); }
+    if (p.att.length > 0) { if (p.apps.length > 0) bodyHtml += '<div class="section-title" style="margin-top:14px;">Attività da fare</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; bodyHtml += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
+    if (p.lib.length > 0) { bodyHtml += '<div class="section-title" style="margin-top:14px;">Cose libere</div>'; for (const p2 of p.lib) { bodyHtml += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
+    bodyHtml += '</div>';
   }
-  cont.innerHTML = h;
+
+  cont.innerHTML = '<div class="ag-view">' + headerHtml + dayStrip + '<div class="ag-content">' + bodyHtml + '</div></div>';
 }
 
 let attTabFiltro = 'oggi', attQueryRicerca = '', attGruppiEspansi = {};
