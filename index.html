@@ -914,7 +914,7 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 42, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondominii: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 42, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -1015,7 +1015,7 @@ const PhotoDB = {
   }
 };
 
-const photoCache = {}; // id -> objectURL
+const photoCache = {};
 async function getPhotoURL(id) {
   if (photoCache[id]) return photoCache[id];
   try {
@@ -1074,7 +1074,6 @@ function apriFilePickerFoto(idImmobile, fromCamera) {
     if (files.length === 0) return;
     await aggiungiFotoAImmobile(idImmobile, files);
   });
-  // safety cleanup se l'utente annulla
   setTimeout(() => { if (document.body.contains(input)) cleanup(); }, 60000);
   input.click();
 }
@@ -1154,7 +1153,6 @@ async function scaricaFoto(pid) {
 
 async function eliminaFoto(pid) {
   if (!confirm('Eliminare questa foto?')) return;
-  // rimuovi da tutte le entità
   for (const im of DB.immobili) {
     if (im.foto && im.foto.includes(pid)) {
       im.foto = im.foto.filter(x => x !== pid);
@@ -1173,14 +1171,6 @@ async function eliminaFoto(pid) {
   chiudiModal();
   if (immobileAperto) apriScheda(immobileAperto);
   aggiornaInfoSistema();
-}
-
-async function cleanupFotoImmobile(im) {
-  if (!im || !im.foto || im.foto.length === 0) return;
-  for (const pid of im.foto) {
-    try { await PhotoDB.delete(pid); } catch(e) {}
-    revocaCacheFoto(pid);
-  }
 }
 
 async function requestPersistentStorage() {
@@ -1458,7 +1448,7 @@ async function aggiornaInfoSistema() {
       label = formatBytes(usageBytes) + ' / ' + formatBytes(quotaBytes);
     } else {
       const tot = dbSize + cacheSize + photoBytes;
-      const symbolic = 1024*1024*1024; // ~1 GB fallback
+      const symbolic = 1024*1024*1024;
       pct = Math.min(100, (tot / symbolic) * 100);
       label = formatBytes(tot) + ' / ~1 GB';
     }
@@ -2207,14 +2197,13 @@ function salvaAppuntamento() {
   const ds = '[' + formattaData(ap.dataInizio) + ']';
   if (!tp.libero) {
     if (imm && (tp.chi === 'vend' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let rp = per ? (' ' + per.cognomeNome + (per.telefonoCell || per.telefono ? ' ' + (per.telefonoCell || per.telefono) : '')) : ''; if (imm.attivita) imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + rp + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
-    if (per && (tp.chi === 'acq' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let ri = imm ? (' ' + ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || '')) : ''; if (per.attivita) per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + ri + ' fix il [' + formatDataSafe(ap.dataInizio) + ']', completata: true }); }
+    if (per && (tp.chi === 'acq' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let ri = imm ? (' ' + ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || '')) : ''; if (per.attivita) per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + ri + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
   }
   Storage.save(DB); chiudiModal();
   aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale();
   if (map) aggiornaMappa(); if (typeof renderListaImmobili === 'function') renderListaImmobili();
   setTimeout(() => { if (confirm('Aggiungere a Google Calendar?')) apriGoogleCalendarApp(ap); }, 250);
 }
-function formatDataSafe(iso) { return formattaData(iso); }
 function apriSchedaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
   const imm = a.immobileId ? DB.immobili.find(x => x.id === a.immobileId) : null;
@@ -2594,14 +2583,6 @@ function apriScheda(id) {
   if (ap2.length > 0) { h += '<div style="padding-top:9px;border-top:1px solid var(--border);margin-top:6px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:500;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push(ico('telefono',11) + ' ' + escapeHtml(p.telefono)); if (p.email) ip.push(ico('email',11) + ' ' + escapeHtml(p.email)); if (p.residenza) ip.push(ico('casa',11) + ' ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
   h += '</div>';
 
-  // FOTO
-  h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFoto + ')</h2>';
-  h += '<div id="foto-grid-' + im.id + '"><div class="foto-grid"><div class="foto-placeholder" style="aspect-ratio:1;border-radius:8px;"></div></div></div>';
-  h += '<div style="display:flex;gap:6px;margin-top:8px;">';
-  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button>';
-  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
-  h += '</div></div>';
-
   if (im.telefono) { h += '<div class="actions"><button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('telefono',19) + '</span>Chiama</button><button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('whatsapp',19) + '</span>WhatsApp</button></div>'; }
   h += '<div class="actions"><button class="action-btn" onclick="apriModifica()"><span class="icon">' + ico('modifica',19) + '</span>Modifica</button><button class="action-btn" onclick="apriCambiaStato()"><span class="icon">' + ico('aggiorna',19) + '</span>Stato</button><button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">' + ico('piu',19) + '</span>Attività</button></div>';
   h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoImmobile(\'' + im.id + '\')">' + ico('calendario',16) + ' Nuovo appuntamento</button>';
@@ -2610,6 +2591,15 @@ function apriScheda(id) {
   if (at.length === 0) h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessuna attività.</p>';
   else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
+
+  // FOTO — ora dopo le attività
+  h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFoto + ')</h2>';
+  h += '<div id="foto-grid-' + im.id + '"><div class="foto-grid"><div class="foto-placeholder" style="aspect-ratio:1;border-radius:8px;"></div></div></div>';
+  h += '<div style="display:flex;gap:6px;margin-top:8px;">';
+  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button>';
+  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
+  h += '</div></div>';
+
   if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(13) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + ico('pin',11) + ' ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">' + ico('modifica',14) + ' Modifica condominio</button>'; h += '</div>'; }
   if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:10.5px;color:#059669;font-weight:500;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
   const d = im.dettagli || {};
@@ -2625,7 +2615,6 @@ function apriScheda(id) {
   if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">' + ico('pacco',16) + ' Archivia</button>';
   h += '</div>';
   apriModal(t, h);
-  // async load foto griglia
   setTimeout(() => caricaFotoGriglia('foto-grid-' + im.id, im.foto), 30);
 }
 function apriModificaCoordinate() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const h = `<div class="form-group"><div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${i.lat || ''}" inputmode="decimal"></div><div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${i.lng || ''}" inputmode="decimal"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateManuali('${i.id}')">Salva</button></div>`; apriModal(ico('pin',18) + ' Coordinate', h); }
@@ -2733,7 +2722,7 @@ function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === im
 function salvaModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const tx = (document.getElementById('ma-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } const d = document.getElementById('ma-data').value; if (!d) { alert('Data'); return; } const df = a.tipo === 'da_fare' && !a.completata; a.testo = tx.trim(); if (df) a.dataPrevista = new Date(d).toISOString(); else a.data = new Date(d).toISOString(); a.updatedAt = new Date().toISOString(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function eliminaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!confirm('Eliminare?\n\n' + a.testo)) return; i.attivita = (i.attivita || []).filter(x => x.id !== idA); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function toggleValutazione() { const i = DB.immobili.find(x => x.id === immobileAperto); const c = i.sottotipo || ''; const v = c.toLowerCase().includes('valutata') && !c.toLowerCase().includes('non'); i.sottotipo = v ? 'NT non ancora valutata' : 'NT valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Stato notizia: ' + (v ? '→ non ancora valutata' : '→ valutata'), completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(i.id); }
-function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); const foto = (i.foto || []).slice(); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa(); // cleanup foto
+function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); const foto = (i.foto || []).slice(); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa();
   (async () => { for (const pid of foto) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } aggiornaInfoSistema(); })(); }
 function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Archiviato'); }
 function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
@@ -2793,7 +2782,6 @@ aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema
 updateThemeButtons();
 updateThemeColorMeta();
 
-// ricontrolla lo spazio dopo il primo render
 setTimeout(() => aggiornaInfoSistema(), 1500);
 </script>
 
