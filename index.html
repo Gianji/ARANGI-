@@ -205,6 +205,7 @@
   .foto-add { width: 100%; aspect-ratio: 1 / 1; border-radius: 8px; background: var(--card); border: 1.5px dashed var(--border-strong); color: var(--testo-ter); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: inherit; font-size: 10.5px; font-weight: 500; }
   .foto-add:active { background: var(--sfondo); }
   .foto-add svg { width: 20px; height: 20px; }
+  .foto-hint { font-size: 11px; color: var(--testo-ter); margin: 0 0 6px; }
 
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 8px; }
   .sottotipo-line .lbl { color: var(--testo-sec); }
@@ -704,7 +705,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.4</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.5</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Foto</span><span class="value" id="storage-foto">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
@@ -880,6 +881,9 @@ const Storage = {
       if (!raw) return this.default();
       const parsed = JSON.parse(raw);
       const def = this.default();
+      const condomini = parsed.condomini || {};
+      // Migrazione soft: assicura che ogni condominio abbia .foto array
+      for (const k in condomini) { if (!Array.isArray(condomini[k].foto)) condomini[k].foto = []; }
       return {
         versione: parsed.versione || def.versione,
         nextSeq: parsed.nextSeq || def.nextSeq,
@@ -888,7 +892,7 @@ const Storage = {
         persone: parsed.persone || [],
         attivita: parsed.attivita || [],
         appuntamenti: parsed.appuntamenti || [],
-        condomini: parsed.condomini || {},
+        condomini: condomini,
         coordinateCondomini: parsed.coordinateCondomini || {}
       };
     } catch (e) { return this.default(); }
@@ -914,14 +918,14 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 42, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 43, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
 if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
 
 // =====================================================
-// PHOTO STORAGE — IndexedDB (spazio fino a centinaia di MB / GB)
+// PHOTO STORAGE — IndexedDB
 // =====================================================
 const PhotoDB = {
   db: null,
@@ -949,8 +953,7 @@ const PhotoDB = {
     const db = await this.open();
     return new Promise((resolve, reject) => {
       const tx = db.transaction('foto', 'readwrite');
-      const st = tx.objectStore('foto');
-      st.put({ id, blob, meta: meta || {}, createdAt: Date.now() });
+      tx.objectStore('foto').put({ id, blob, meta: meta || {}, createdAt: Date.now() });
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     });
@@ -987,9 +990,8 @@ const PhotoDB = {
       const db = await this.open();
       return new Promise((resolve) => {
         const tx = db.transaction('foto', 'readonly');
-        const st = tx.objectStore('foto');
+        const cur = tx.objectStore('foto').openCursor();
         let tot = 0;
-        const cur = st.openCursor();
         cur.onsuccess = (e) => {
           const c = e.target.result;
           if (c) {
@@ -1001,17 +1003,6 @@ const PhotoDB = {
         cur.onerror = () => resolve(0);
       });
     } catch(e) { return 0; }
-  },
-  async clear() {
-    try {
-      const db = await this.open();
-      return new Promise((resolve) => {
-        const tx = db.transaction('foto', 'readwrite');
-        tx.objectStore('foto').clear();
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => resolve();
-      });
-    } catch(e) {}
   }
 };
 
@@ -1059,7 +1050,8 @@ async function processImage(file) {
   });
 }
 
-function apriFilePickerFoto(idImmobile, fromCamera) {
+// targetType: 'immobile' | 'condominio'
+function apriFilePickerFoto(targetType, targetId, fromCamera) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
@@ -1072,34 +1064,48 @@ function apriFilePickerFoto(idImmobile, fromCamera) {
     const files = Array.from(e.target.files || []);
     cleanup();
     if (files.length === 0) return;
-    await aggiungiFotoAImmobile(idImmobile, files);
+    await aggiungiFoto(targetType, targetId, files);
   });
   setTimeout(() => { if (document.body.contains(input)) cleanup(); }, 60000);
   input.click();
 }
 
-async function aggiungiFotoAImmobile(idImmobile, files) {
-  const im = DB.immobili.find(x => x.id === idImmobile);
-  if (!im) return;
-  im.foto = im.foto || [];
+async function aggiungiFoto(targetType, targetId, files) {
+  let target = null;
+  if (targetType === 'immobile') {
+    target = DB.immobili.find(x => x.id === targetId);
+  } else if (targetType === 'condominio') {
+    if (!DB.condomini) DB.condomini = {};
+    if (!DB.condomini[targetId]) DB.condomini[targetId] = { zone: [], foto: [] };
+    if (!Array.isArray(DB.condomini[targetId].foto)) DB.condomini[targetId].foto = [];
+    target = DB.condomini[targetId];
+  }
+  if (!target) return;
+  if (!Array.isArray(target.foto)) target.foto = [];
   let ok = 0, fail = 0;
   for (const f of files) {
     try {
       const blob = await processImage(f);
       const pid = 'ph_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
       await PhotoDB.save(pid, blob, { nome: f.name || '', mime: 'image/jpeg', size: blob.size });
-      im.foto.push(pid);
+      target.foto.push(pid);
       ok++;
     } catch (err) {
       console.warn('Foto fallita:', err);
       fail++;
     }
   }
-  im.updatedAt = new Date().toISOString();
+  if (targetType === 'immobile') target.updatedAt = new Date().toISOString();
   Storage.save(DB);
   if (fail > 0) alert(ok + ' foto aggiunte · ' + fail + ' errori');
-  if (immobileAperto === idImmobile) apriScheda(idImmobile);
-  else renderListaImmobili();
+  // Riapri il contesto giusto
+  if (targetType === 'immobile') {
+    if (immobileAperto === targetId) apriScheda(targetId);
+    else renderListaImmobili();
+  } else if (targetType === 'condominio') {
+    if (immobileAperto) apriScheda(immobileAperto);
+    else apriModificaCondominio(targetId);
+  }
   aggiornaInfoSistema();
 }
 
@@ -1127,14 +1133,28 @@ async function caricaFotoGriglia(containerId, photoIds) {
 async function apriFotoViewer(pid) {
   const url = await getPhotoURL(pid);
   if (!url) { alert('Foto non disponibile.'); return; }
-  let imId = null;
-  for (const im of DB.immobili) {
-    if ((im.foto || []).includes(pid)) { imId = im.id; break; }
+
+  // Trova dove tornare: prima cerca negli immobili, poi nei condomini, poi persone
+  let backType = null, backId = null;
+  for (const im of DB.immobili) { if ((im.foto || []).includes(pid)) { backType = 'immobile'; backId = im.id; break; } }
+  if (!backType) {
+    for (const co in (DB.condomini || {})) {
+      if (((DB.condomini[co] || {}).foto || []).includes(pid)) { backType = 'condominio'; backId = co; break; }
+    }
   }
+  if (!backType) {
+    for (const p of DB.persone) { if ((p.foto || []).includes(pid)) { backType = 'persona'; backId = p.id; break; } }
+  }
+
   let h = '<div style="text-align:center;background:#000;border-radius:8px;overflow:hidden;margin-bottom:10px;"><img src="' + url + '" style="max-width:100%;max-height:65vh;display:block;margin:0 auto;object-fit:contain;"></div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="scaricaFoto(\'' + pid + '\')">' + ico('download',16) + ' Scarica</button>';
   h += '<button class="btn btn-danger" onclick="eliminaFoto(\'' + pid + '\')">' + ico('cestino',16) + ' Elimina</button></div>';
-  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="' + (imId ? 'chiudiModal();setTimeout(function(){apriScheda(\\\'' + imId + '\\\')},100)' : 'chiudiModal()') + '">Chiudi</button></div>';
+
+  let backOnclick = 'chiudiModal()';
+  if (backType === 'immobile') backOnclick = 'chiudiModal();setTimeout(function(){apriScheda(\'' + backId + '\')},100)';
+  else if (backType === 'condominio') backOnclick = 'chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(backId).replace(/'/g, "\\'") + '\')},100)';
+  else if (backType === 'persona') backOnclick = 'chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + backId + '\')},100)';
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="' + backOnclick + '">Chiudi</button></div>';
   apriModal(ico('camera',18) + ' Foto', h);
 }
 
@@ -1154,16 +1174,14 @@ async function scaricaFoto(pid) {
 async function eliminaFoto(pid) {
   if (!confirm('Eliminare questa foto?')) return;
   for (const im of DB.immobili) {
-    if (im.foto && im.foto.includes(pid)) {
-      im.foto = im.foto.filter(x => x !== pid);
-      im.updatedAt = new Date().toISOString();
-    }
+    if (im.foto && im.foto.includes(pid)) { im.foto = im.foto.filter(x => x !== pid); im.updatedAt = new Date().toISOString(); }
+  }
+  for (const co in (DB.condomini || {})) {
+    const c = DB.condomini[co];
+    if (c && Array.isArray(c.foto) && c.foto.includes(pid)) c.foto = c.foto.filter(x => x !== pid);
   }
   for (const p of DB.persone) {
-    if (p.foto && p.foto.includes(pid)) {
-      p.foto = p.foto.filter(x => x !== pid);
-      p.updatedAt = new Date().toISOString();
-    }
+    if (p.foto && p.foto.includes(pid)) { p.foto = p.foto.filter(x => x !== pid); p.updatedAt = new Date().toISOString(); }
   }
   Storage.save(DB);
   try { await PhotoDB.delete(pid); } catch(e) {}
@@ -1247,7 +1265,19 @@ function normalizzaIndirizzo(ind) { return (ind || '').trim().toUpperCase().repl
 function getCondominio(imm) { if (imm.villa) return null; return imm.condominio || normalizzaIndirizzo(imm.indirizzo); }
 function immobiliStessoCondominio(imm) { const condo = getCondominio(imm); if (!condo) return []; return DB.immobili.filter(i => i.id !== imm.id && getCondominio(i) === condo); }
 function prossimoZPerCondominio(condominio) { if (!condominio) return null; const esist = DB.immobili.filter(i => !i.villa && getCondominio(i) === condominio); if (esist.length === 0) return 1; return Math.max(...esist.map(i => i.z || 1)) + 1; }
-function getDettagliCondominio(condo) { if (!DB.condomini) DB.condomini = {}; if (!DB.condomini[condo]) DB.condomini[condo] = { zone: [] }; return DB.condomini[condo]; }
+function getDettagliCondominio(condo) {
+  if (!DB.condomini) DB.condomini = {};
+  if (!DB.condomini[condo]) DB.condomini[condo] = { zone: [], foto: [] };
+  if (!Array.isArray(DB.condomini[condo].foto)) DB.condomini[condo].foto = [];
+  return DB.condomini[condo];
+}
+function getFotoCondominio(imm) {
+  if (!imm || imm.villa) return [];
+  const co = getCondominio(imm);
+  if (!co) return [];
+  const det = (DB.condomini && DB.condomini[co]) || {};
+  return Array.isArray(det.foto) ? det.foto : [];
+}
 function getZoneEffettive(imm) { if (imm.villa) return imm.zone || []; const condo = getCondominio(imm); if (!condo) return imm.zone || []; const det = (DB.condomini && DB.condomini[condo]) || {}; if (det.zone && det.zone.length > 0) return det.zone; return imm.zone || []; }
 function applicaEreditaCondominio(imm) { if (imm.villa) return imm; const condo = getCondominio(imm); if (!condo) return imm; const det = (DB.condomini && DB.condomini[condo]) || {}; if (det.zone && det.zone.length > 0) imm.zone = det.zone.slice(); return imm; }
 function getCittaPrincipale() { return DB.cittaPrincipale || CITTA_DEFAULT; }
@@ -1577,7 +1607,7 @@ function renderItemCardImmobile(imm) {
   const condo = getCondominio(imm); const f = immobiliStessoCondominio(imm); const isCondo = f.length > 0;
   const ze = getZoneEffettive(imm);
   const tel = imm.telefono;
-  const nFoto = (imm.foto || []).length;
+  const nFoto = (imm.foto || []).length + getFotoCondominio(imm).length;
   let h = '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')"><div class="item-row"><div class="item-title">' + escapeHtml(titolo) + '</div>';
   if (imm.villa) h += '<span style="font-size:10px;color:#059669;font-weight:600;">VILLA</span>';
   h += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span></div>';
@@ -1602,8 +1632,9 @@ function renderListaCondomini(cont) {
   let h = '';
   for (const x of c) {
     const im = g[x] || []; const v = im.filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)); const det = (DB.condomini && DB.condomini[x]) || {};
-    const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · ' + ico('pin',10) + ' ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili';
-    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',15) + '</button><div class="condo-arrow">' + ico('freccia',15) + '</div></div>';
+    const nFotoC = ((det.foto) || []).length;
+    const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · ' + ico('pin',10) + ' ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili'; const fc = nFotoC > 0 ? ' · ' + ico('camera',10) + ' ' + nFotoC : '';
+    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + fc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',15) + '</button><div class="condo-arrow">' + ico('freccia',15) + '</div></div>';
   }
   cont.innerHTML = h; aggiornaContatori();
 }
@@ -2541,7 +2572,19 @@ function salvaNuovoImmobile() {
   const dc = (!iv && DB.condomini && DB.condomini[co]) || {}; const zc = dc.zone || [];
   const z = iv ? calcolaZoneFinali('nuovo') : (zc.length > 0 ? zc.slice() : calcolaZoneFinali('nuovo'));
   let zz = null;
-  if (!iv) { if (tf === 'censito') { const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind); if (e.length > 0) { const zs = e.map(i => i.z || 1); if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo\nAnnulla = Riprendi esistente')) { const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0]; chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return; } zz = Math.max(...zs) + 1; } else zz = prossimoZPerCondominio(co); } else zz = prossimoZPerCondominio(co); }
+  if (!iv) {
+    // Solo per il dialog "esiste già un IMM?" — il calcolo dello z è SEMPRE globale per condominio
+    if (tf === 'censito') {
+      const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind);
+      if (e.length > 0) {
+        if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo\nAnnulla = Riprendi esistente')) {
+          const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0];
+          chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return;
+        }
+      }
+    }
+    zz = prossimoZPerCondominio(co);
+  }
   const flagsTrattativa = { inTrattativa: false, propostaAccettata: false, propostaNotificata: false };
   let im;
   if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
@@ -2563,7 +2606,9 @@ function apriScheda(id) {
   const zd = !im.villa && dc.zone && dc.zone.length > 0;
   const hd = !im.villa && (dc.annoCostruzione || dc.statoCondominio || dc.cappotto || dc.ascensoreCondominiale || (dc.amministratore && dc.amministratore.nome));
   const ap2 = im.altriProprietari || []; const hc = !!(im.lat && im.lng);
-  const nFoto = (im.foto || []).length;
+  const nFotoProprie = (im.foto || []).length;
+  const nFotoCondo = (!im.villa && co && Array.isArray(dc.foto)) ? dc.foto.length : 0;
+  const isInCondo = !im.villa && !!co;
   let h = '<div style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:5px;"><span class="badge badge-' + im.stato + '">' + im.stato + '</span>';
   if (im.villa) h += ' <span style="font-size:10.5px;color:#059669;font-weight:600;">' + ico('villa',10) + ' VILLA</span>';
   if (im.sottotipo) h += ' <span style="font-size:11.5px;color:var(--testo-sec);">' + escapeHtml(im.sottotipo) + '</span>';
@@ -2592,13 +2637,32 @@ function apriScheda(id) {
   else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
 
-  // FOTO — ora dopo le attività
-  h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFoto + ')</h2>';
-  h += '<div id="foto-grid-' + im.id + '"><div class="foto-grid"><div class="foto-placeholder" style="aspect-ratio:1;border-radius:8px;"></div></div></div>';
-  h += '<div style="display:flex;gap:6px;margin-top:8px;">';
-  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button>';
-  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
-  h += '</div></div>';
+  // ---- FOTO ----
+  if (isInCondo) {
+    // Sezione foto condominio (ereditate)
+    h += '<div class="card"><h2>' + iconaCondo(13) + ' Foto condominio (' + nFotoCondo + ')</h2>';
+    h += '<p class="foto-hint">Ereditate da tutti gli immobili di questo condominio (in aggiunta a quelle dell\'immobile).</p>';
+    h += '<div id="foto-condo-grid-' + im.id + '"></div>';
+    h += '<div style="display:flex;gap:6px;margin-top:8px;">';
+    h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', true)">' + ico('camera',14) + ' Scatta</button>';
+    h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', false)">' + ico('foto',14) + ' Galleria</button>';
+    h += '</div></div>';
+
+    // Sezione foto immobile (proprie)
+    h += '<div class="card"><h2>' + ico('camera',13) + ' Foto immobile (' + nFotoProprie + ')</h2>';
+    h += '<div id="foto-grid-' + im.id + '"></div>';
+    h += '<div style="display:flex;gap:6px;margin-top:8px;">';
+    h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button>';
+    h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
+    h += '</div></div>';
+  } else {
+    h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFotoProprie + ')</h2>';
+    h += '<div id="foto-grid-' + im.id + '"></div>';
+    h += '<div style="display:flex;gap:6px;margin-top:8px;">';
+    h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button>';
+    h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
+    h += '</div></div>';
+  }
 
   if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(13) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + ico('pin',11) + ' ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">' + ico('modifica',14) + ' Modifica condominio</button>'; h += '</div>'; }
   if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:10.5px;color:#059669;font-weight:500;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
@@ -2615,7 +2679,15 @@ function apriScheda(id) {
   if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">' + ico('pacco',16) + ' Archivia</button>';
   h += '</div>';
   apriModal(t, h);
-  setTimeout(() => caricaFotoGriglia('foto-grid-' + im.id, im.foto), 30);
+  // Carica le griglie foto
+  setTimeout(() => {
+    if (isInCondo) {
+      caricaFotoGriglia('foto-condo-grid-' + im.id, (Array.isArray(dc.foto) ? dc.foto : []));
+      caricaFotoGriglia('foto-grid-' + im.id, im.foto);
+    } else {
+      caricaFotoGriglia('foto-grid-' + im.id, im.foto);
+    }
+  }, 30);
 }
 function apriModificaCoordinate() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const h = `<div class="form-group"><div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${i.lat || ''}" inputmode="decimal"></div><div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${i.lng || ''}" inputmode="decimal"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateManuali('${i.id}')">Salva</button></div>`; apriModal(ico('pin',18) + ' Coordinate', h); }
 function salvaCoordinateManuali(id) { const i = DB.immobili.find(x => x.id === id); if (!i) return; const a = ((document.getElementById('coord-lat') || {}).value || '').trim(); const b = ((document.getElementById('coord-lng') || {}).value || '').trim(); if (!a || !b) { if (!a && !b) { i.lat = null; i.lng = null; i.geoPreciso = null; Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); return; } alert('Entrambe'); return; } const an = parseFloat(a.replace(',', '.')); const bn = parseFloat(b.replace(',', '.')); if (isNaN(an) || isNaN(bn)) { alert('Non valide'); return; } i.lat = an; i.lng = bn; i.geoPreciso = true; i.updatedAt = new Date().toISOString(); Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); }
@@ -2629,6 +2701,7 @@ async function autoGeocodeCondominio(co) { const r = await geocodificaIndirizzo(
 function apriModificaCondominio(co) {
   const d = getDettagliCondominio(co); const a = d.amministratore || {};
   const coord = (DB.coordinateCondomini && DB.coordinateCondomini[co]) || {};
+  const nFotoC = (d.foto || []).length;
   zoneTemp.condo = { base: [], speciale: null };
   if (d.zone && d.zone.length > 0) { const s = d.zone.filter(z => ZONA_ZDF === z || ZONE_SPECIALI.includes(z)); const b = d.zone.filter(z => ZONE_BASE.includes(z)); if (b.length > 0) zoneTemp.condo.base = b; else if (s.length === 1 && ZONE_SPECIALI.includes(s[0])) zoneTemp.condo.speciale = s[0]; }
   const h = `<div class="prefill-banner">${iconaCondo(13)} Condominio: ${escapeHtml(co)}</div>
@@ -2647,12 +2720,58 @@ function apriModificaCondominio(co) {
       <div class="form-row"><label class="form-label">Studio</label><input class="form-input" id="cd-amm-studio" value="${escapeHtml(a.studio || '')}"></div>
       <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="cd-note">${escapeHtml(d.note || '')}</textarea></div>
     </div>
+    <div class="card">
+      <h2>${ico('camera',13)} Foto condominio (${nFotoC})</h2>
+      <p class="foto-hint">Ereditate da tutti gli immobili di questo condominio (in aggiunta alle loro foto).</p>
+      <div id="foto-condo-modal-grid"></div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', true)">${ico('camera',14)} Scatta</button>
+        <button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', false)">${ico('foto',14)} Galleria</button>
+      </div>
+    </div>
     <button class="btn btn-danger" onclick="eliminaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('cestino',16)} Elimina condominio</button>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Salva</button></div>`;
   apriModal('Dettagli condominio', h);
+  setTimeout(() => caricaFotoGriglia('foto-condo-modal-grid', d.foto || []), 30);
 }
-function salvaCondominio(co) { if (!DB.condomini) DB.condomini = {}; const g = (id) => document.getElementById(id); const zc = calcolaZoneFinali('condo'); DB.condomini[co] = { annoCostruzione: ((g('cd-anno') || {}).value || '').trim(), statoCondominio: ((g('cd-stato') || {}).value || '').trim(), cappotto: ((g('cd-cappotto') || {}).value || '').trim(), ascensoreCondominiale: ((g('cd-ascensore') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('cd-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('cd-amm-tel') || {}).value || '', email: (g('cd-amm-email') || {}).value || '', studio: ((g('cd-amm-studio') || {}).value || '').trim() }, note: (g('cd-note') || {}).value || '' }; for (const i of DB.immobili) if (!i.villa && getCondominio(i) === co) { i.zone = zc.slice(); i.updatedAt = new Date().toISOString(); } Storage.save(DB); if (immobileAperto) apriScheda(immobileAperto); else chiudiModal(); }
-function eliminaCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); const m = i.length > 0 ? 'Contiene ' + i.length + ' immobili. Continuare?' : 'Eliminare?'; if (!confirm(m)) return; if (DB.condomini && DB.condomini[co]) delete DB.condomini[co]; if (DB.coordinateCondomini && DB.coordinateCondomini[co]) delete DB.coordinateCondomini[co]; Storage.save(DB); chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Eliminato'); }
+function salvaCondominio(co) {
+  if (!DB.condomini) DB.condomini = {};
+  const g = (id) => document.getElementById(id);
+  const zc = calcolaZoneFinali('condo');
+  const prevFoto = (DB.condomini[co] && Array.isArray(DB.condomini[co].foto)) ? DB.condomini[co].foto : [];
+  DB.condomini[co] = {
+    annoCostruzione: ((g('cd-anno') || {}).value || '').trim(),
+    statoCondominio: ((g('cd-stato') || {}).value || '').trim(),
+    cappotto: ((g('cd-cappotto') || {}).value || '').trim(),
+    ascensoreCondominiale: ((g('cd-ascensore') || {}).value || '').trim(),
+    zone: zc,
+    amministratore: {
+      nome: ((g('cd-amm-nome') || {}).value || '').trim().toUpperCase(),
+      telefono: (g('cd-amm-tel') || {}).value || '',
+      email: (g('cd-amm-email') || {}).value || '',
+      studio: ((g('cd-amm-studio') || {}).value || '').trim()
+    },
+    foto: prevFoto,
+    note: (g('cd-note') || {}).value || ''
+  };
+  for (const i of DB.immobili) if (!i.villa && getCondominio(i) === co) { i.zone = zc.slice(); i.updatedAt = new Date().toISOString(); }
+  Storage.save(DB);
+  if (immobileAperto) apriScheda(immobileAperto); else chiudiModal();
+}
+function eliminaCondominio(co) {
+  const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co);
+  const m = i.length > 0 ? 'Contiene ' + i.length + ' immobili. Continuare?' : 'Eliminare?';
+  if (!confirm(m)) return;
+  const fotoC = (DB.condomini && DB.condomini[co] && Array.isArray(DB.condomini[co].foto)) ? DB.condomini[co].foto.slice() : [];
+  if (DB.condomini && DB.condomini[co]) delete DB.condomini[co];
+  if (DB.coordinateCondomini && DB.coordinateCondomini[co]) delete DB.coordinateCondomini[co];
+  Storage.save(DB);
+  chiudiModal();
+  renderListaImmobili();
+  if (map) aggiornaMappa();
+  (async () => { for (const pid of fotoC) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } aggiornaInfoSistema(); })();
+  alert('Eliminato');
+}
 
 function apriModifica() {
   const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return;
@@ -2722,8 +2841,16 @@ function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === im
 function salvaModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const tx = (document.getElementById('ma-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } const d = document.getElementById('ma-data').value; if (!d) { alert('Data'); return; } const df = a.tipo === 'da_fare' && !a.completata; a.testo = tx.trim(); if (df) a.dataPrevista = new Date(d).toISOString(); else a.data = new Date(d).toISOString(); a.updatedAt = new Date().toISOString(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function eliminaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!confirm('Eliminare?\n\n' + a.testo)) return; i.attivita = (i.attivita || []).filter(x => x.id !== idA); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function toggleValutazione() { const i = DB.immobili.find(x => x.id === immobileAperto); const c = i.sottotipo || ''; const v = c.toLowerCase().includes('valutata') && !c.toLowerCase().includes('non'); i.sottotipo = v ? 'NT non ancora valutata' : 'NT valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Stato notizia: ' + (v ? '→ non ancora valutata' : '→ valutata'), completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(i.id); }
-function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); const foto = (i.foto || []).slice(); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa();
-  (async () => { for (const pid of foto) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } aggiornaInfoSistema(); })(); }
+function eliminaImmobile() {
+  const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return;
+  if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return;
+  const c = getCondominio(i);
+  const fotoProprie = (i.foto || []).slice(); // SOLO le foto proprie, non quelle del condominio
+  DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto);
+  if (c) rinumeraZCondominio(c);
+  Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa();
+  (async () => { for (const pid of fotoProprie) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } aggiornaInfoSistema(); })();
+}
 function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Archiviato'); }
 function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
 
@@ -2736,7 +2863,17 @@ function apriFormNuovoCondominio() {
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea</button></div>`;
   apriModal('Nuovo condominio', h);
 }
-function salvaNuovoCondominio() { const i = normalizzaIndirizzo((document.getElementById('nc-indirizzo') || {}).value); if (!i) { alert('Indirizzo'); return; } if (DB.condomini && DB.condomini[i]) { if (!confirm('Esiste. Sovrascrivere?')) return; } const g = (id) => document.getElementById(id); const zc = calcolaZoneFinali('condo'); if (!DB.condomini) DB.condomini = {}; DB.condomini[i] = { annoCostruzione: ((g('nc-anno') || {}).value || '').trim(), statoCondominio: ((g('nc-stato') || {}).value || '').trim(), cappotto: ((g('nc-cappotto') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('nc-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('nc-amm-tel') || {}).value || '' }, note: '' }; Storage.save(DB); chiudiModal(); alert('Creato: ' + i); vistaCondomini = true; aggiornaChips(); renderListaImmobili(); }
+function salvaNuovoCondominio() {
+  const i = normalizzaIndirizzo((document.getElementById('nc-indirizzo') || {}).value);
+  if (!i) { alert('Indirizzo'); return; }
+  if (DB.condomini && DB.condomini[i]) { if (!confirm('Esiste. Sovrascrivere?')) return; }
+  const g = (id) => document.getElementById(id);
+  const zc = calcolaZoneFinali('condo');
+  if (!DB.condomini) DB.condomini = {};
+  const prevFoto = (DB.condomini[i] && Array.isArray(DB.condomini[i].foto)) ? DB.condomini[i].foto : [];
+  DB.condomini[i] = { annoCostruzione: ((g('nc-anno') || {}).value || '').trim(), statoCondominio: ((g('nc-stato') || {}).value || '').trim(), cappotto: ((g('nc-cappotto') || {}).value || '').trim(), zone: zc, amministratore: { nome: ((g('nc-amm-nome') || {}).value || '').trim().toUpperCase(), telefono: (g('nc-amm-tel') || {}).value || '' }, foto: prevFoto, note: '' };
+  Storage.save(DB); chiudiModal(); alert('Creato: ' + i); vistaCondomini = true; aggiornaChips(); renderListaImmobili();
+}
 
 // =====================================================
 // MAPPA
@@ -2757,11 +2894,14 @@ function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i =>
 // =====================================================
 function aggiornaContatori() { aggiornaInfoSistema(); }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
-function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
-async function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati e TUTTE le foto?')) return; if (!confirm('Sicuro? Operazione irreversibile.')) return;
+function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; if (!DB.condomini) DB.condomini = {}; for (const k in DB.condomini) { if (!Array.isArray(DB.condomini[k].foto)) DB.condomini[k].foto = []; if (!Array.isArray(DB.condomini[k].zone)) DB.condomini[k].zone = []; } Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
+async function cancellaTutto() {
+  if (!confirm('Cancellare TUTTI i dati e TUTTE le foto?')) return;
+  if (!confirm('Sicuro? Operazione irreversibile.')) return;
   try { const keys = await PhotoDB.allKeys(); for (const k of keys) await PhotoDB.delete(k); } catch(e) {}
   for (const k in photoCache) { try { URL.revokeObjectURL(photoCache[k]); } catch(e) {} delete photoCache[k]; }
-  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
+  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato');
+}
 function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal(ico('ingranaggio',18) + ' Città', h); }
 function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('Città: ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
 
