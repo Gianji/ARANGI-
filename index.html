@@ -9,9 +9,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#fafbfc">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23e0651a'/%3E%3Ctext x='90' y='132' font-family='-apple-system,system-ui,sans-serif' font-size='120' font-weight='800' fill='white' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22ARANGI%C3%92%22%2C%22short_name%22%3A%22ARANGI%C3%92%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23fafbfc%22%2C%22theme_color%22%3A%22%23e0651a%22%7D">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="192x192" href="./android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./android-chrome-192x192.png">
+<link rel="manifest" href="./manifest.json">
 <title>ARANGIÒ</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -28,7 +29,6 @@
     --rr: #7c3aed; --prof: #0891b2;
     --max-w: 640px;
   }
-  /* FIX: blocca autosizing del testo su iOS/Android */
   html { height: 100%; overflow: hidden; -webkit-text-size-adjust: 100%; -moz-text-size-adjust: 100%; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
@@ -37,10 +37,8 @@
     background: var(--sfondo); color: var(--testo); font-size: 15px;
     -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
   }
-  /* FIX: su iOS usa dvh per evitare il salto con la barra dinamica */
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
-  /* HEADER */
   .app-header { padding: 14px 18px 10px; padding-top: calc(14px + env(safe-area-inset-top)); flex-shrink: 0; background: var(--sfondo); }
   .app-header h1 { font-size: 22px; font-weight: 700; color: var(--blu); letter-spacing: -0.5px; display: flex; align-items: center; gap: 0; line-height: 1.1; }
   .app-header h1 span { color: var(--arancione); }
@@ -49,7 +47,6 @@
   .app-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 14px calc(80px + env(safe-area-inset-bottom)); }
   .view { display: none; } .view.active { display: block; }
 
-  /* CARD */
   .card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); box-shadow: none; }
   .card h2 { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; letter-spacing: -0.1px; }
   .card h2 .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--arancione); }
@@ -58,7 +55,6 @@
   .empty .icon { font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
   .empty .icon svg { width: 32px; height: 32px; color: var(--testo-ter); }
 
-  /* BUTTONS */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px; border: 1px solid transparent; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.12s; margin-bottom: 6px; letter-spacing: -0.1px; }
   .btn:active { opacity: 0.7; }
   .btn-primary { background: var(--arancione); color: white; }
@@ -67,7 +63,6 @@
   .btn-danger { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }
   .btn svg { width: 16px; height: 16px; }
 
-  /* TABBAR */
   .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(10px); -webkit-backdrop-filter: saturate(180%) blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; }
   .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit; font-size: 9.5px; font-weight: 500; cursor: pointer; transition: color 0.12s; position: relative; }
   .tabbar button svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -75,13 +70,11 @@
   .tabbar .badge-tab { position: absolute; top: 3px; right: 20%; background: var(--arancione); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; min-width: 15px; text-align: center; display: none; }
   .tabbar .badge-tab.show { display: block; }
 
-  /* SEARCH */
   .search-sticky { position: sticky; top: -2px; z-index: 20; background: var(--sfondo); padding: 4px 0 6px; margin: 0 -2px; }
   .search-bar { width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--card); font-family: inherit; font-size: 14px; color: var(--testo); outline: none; transition: border-color 0.12s; }
   .search-bar:focus { border-color: var(--blu); }
   .search-bar::placeholder { color: var(--testo-ter); font-size: 13px; }
 
-  /* CHIPS */
   .filter-label { font-size: 10px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 2px 6px; }
   .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 2px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
@@ -95,19 +88,16 @@
   .chip-dropdown.active { background: var(--blu); color: white; border-color: var(--blu); }
   .chip-dropdown .caret { font-size: 9px; opacity: 0.6; }
 
-  /* ZONE CHIPS */
   .zone-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
   .zone-chip { background: #f5f7fa; border: 1px solid transparent; padding: 5px 10px; border-radius: 14px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; transition: all 0.12s; display: inline-flex; align-items: center; gap: 4px; }
   .zone-chip.active { background: var(--blu); color: white; }
   .zone-chip.special { font-size: 10.5px; }
   .zone-chip.special.active { background: var(--arancione); }
 
-  /* BANNER */
   .active-filter-banner { display: flex; align-items: center; justify-content: space-between; background: var(--blu-soft); border-radius: var(--radius-sm); padding: 8px 12px; margin-bottom: 8px; font-size: 12px; color: var(--blu); font-weight: 500; gap: 8px; }
   .active-filter-banner .x { background: rgba(26,58,92,0.08); border: none; width: 20px; height: 20px; border-radius: 10px; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .active-filter-banner .x svg { width: 11px; height: 11px; }
 
-  /* ITEM CARDS (liste) */
   .item-card { background: var(--card); border-radius: var(--radius); padding: 11px 13px; margin-bottom: 6px; border: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
   .item-card:active { background: #f8fafc; }
   .item-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
@@ -118,21 +108,18 @@
   .item-meta { font-size: 11px; color: var(--testo-ter); margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
-  /* QUICK ACTIONS inline */
   .qa-row { display: flex; gap: 6px; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
   .qa-btn { flex: 1; background: #f8fafc; border: none; padding: 7px 8px; border-radius: 8px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.1s; }
   .qa-btn:active { background: #eef2f7; }
   .qa-btn svg { width: 13px; height: 13px; }
   .qa-btn.wa { color: #059669; }
 
-  /* BADGES */
   .badge { display: inline-block; padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 600; color: white; letter-spacing: 0.2px; flex-shrink: 0; }
   .badge-IMM { background: var(--imm); } .badge-PA { background: var(--pa); } .badge-NT { background: var(--nt); } .badge-INK { background: var(--ink); } .badge-VND { background: var(--vnd); }
   .badge-RR-attiva { background: #7c3aed; } .badge-RR-in-attesa { background: #d97706; } .badge-RR-proposta { background: #059669; } .badge-RR-ha-comprato { background: #dc2626; } .badge-RR-non-attiva { background: #9ca3af; } .badge-RR-rogitato { background: #1e40af; }
   .badge-PROF { background: var(--prof); }
   .tag { display: inline-block; background: #f1f5f9; color: var(--testo-sec); padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.2px; margin-right: 3px; margin-top: 3px; }
 
-  /* FAB */
   .fab { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom)); width: 50px; height: 50px; border-radius: 25px; background: var(--arancione); color: white; border: none; font-size: 26px; font-weight: 300; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(224,101,26,0.35); cursor: pointer; z-index: 50; transition: transform 0.12s; }
   .fab:active { transform: scale(0.9); }
   .fab svg { width: 22px; height: 22px; stroke-width: 2.2; }
@@ -141,7 +128,6 @@
   .back-top.show { display: flex; }
   .back-top svg { width: 16px; height: 16px; transform: rotate(-90deg); }
 
-  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.35); z-index: 200; display: none; align-items: flex-end; justify-content: center; animation: fadeIn 0.15s; }
   .modal-overlay.open { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -154,7 +140,6 @@
   .modal-close svg { width: 14px; height: 14px; }
   .modal-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 14px 18px; padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
 
-  /* FORMS */
   .form-group { background: var(--card); border-radius: var(--radius); padding: 0 14px; margin-bottom: 8px; border: 1px solid var(--border); }
   .form-row { padding: 11px 0; border-bottom: 1px solid var(--border); }
   .form-row:last-child { border-bottom: none; }
@@ -166,7 +151,6 @@
   .btn-row { display: flex; gap: 8px; margin-top: 10px; }
   .btn-row .btn { margin-bottom: 0; flex: 1; }
 
-  /* TIMELINE */
   .timeline-item { padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--testo); line-height: 1.4; cursor: pointer; }
   .timeline-item:last-child { border-bottom: none; }
   .timeline-item:active { background: #f8fafc; margin: 0 -10px; padding-left: 10px; padding-right: 10px; border-radius: 6px; }
@@ -177,20 +161,17 @@
   .timeline-item.scaduta .data { color: #dc2626; }
   .timeline-item .chev { float: right; color: var(--testo-ter); font-size: 16px; line-height: 1; margin-left: 6px; }
 
-  /* ACTIONS */
   .actions { display: flex; gap: 6px; margin-bottom: 8px; }
   .action-btn { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 8px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: background 0.1s; }
   .action-btn:active { background: #f8fafc; }
   .action-btn .icon { display: flex; align-items: center; justify-content: center; height: 20px; }
   .action-btn .icon svg { width: 19px; height: 19px; }
 
-  /* INFO ROWS */
   .info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 12px; }
   .info-row .label { color: var(--testo-sec); flex-shrink: 0; font-weight: 400; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
   .info-row + .info-row { border-top: 1px solid var(--border); }
 
-  /* LISTS */
   .immobili-list { display: flex; flex-direction: column; gap: 4px; margin-top: 3px; }
   .immobile-line { background: #f8fafc; border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12.5px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.1s; }
   .immobile-line:active { background: #f1f5f9; }
@@ -202,13 +183,11 @@
   .add-btn svg { width: 14px; height: 14px; }
   .add-btn:active { opacity: 0.7; }
 
-  /* SOTTOTIPO */
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 8px; }
   .sottotipo-line .lbl { color: var(--testo-sec); }
   .sottotipo-line button { background: #f1f5f9; border: none; border-radius: 6px; padding: 5px 10px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .sottotipo-line button svg { width: 12px; height: 12px; }
 
-  /* CONDO */
   .condo-header { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 8px 11px; font-size: 11.5px; color: var(--blu); font-weight: 600; letter-spacing: 0.2px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
   .condo-card { background: var(--card); border-radius: var(--radius); padding: 12px 13px; margin-bottom: 6px; border: 1px solid var(--border); cursor: pointer; transition: background 0.1s; display: flex; align-items: center; gap: 10px; }
   .condo-card:active { background: #f8fafc; }
@@ -224,7 +203,6 @@
 
   .section-title { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 2px 6px; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
 
-  /* BANNERS */
   .prefill-banner { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 11.5px; color: var(--blu); font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
   .prefill-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
   .inherit-banner { background: #ecfdf5; border-radius: var(--radius-sm); padding: 10px 12px; font-size: 11.5px; color: #047857; font-weight: 500; margin-top: 6px; display: flex; align-items: flex-start; gap: 7px; line-height: 1.5; }
@@ -237,24 +215,20 @@
   .zdf-notice svg { width: 12px; height: 12px; flex-shrink: 0; }
   .zcode-badge { display: inline-block; background: var(--blu-soft); color: var(--blu); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
 
-  /* VILLA TOGGLE */
   .villa-toggle { display: flex; gap: 6px; margin-top: 3px; }
   .villa-toggle button { flex: 1; padding: 10px 8px; border: 1.5px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; transition: all 0.12s; text-align: center; line-height: 1.3; display: flex; flex-direction: column; align-items: center; gap: 5px; }
   .villa-toggle button.active { border-color: var(--blu); color: var(--blu); background: var(--blu-soft); font-weight: 600; }
   .villa-toggle button svg { width: 18px; height: 18px; }
 
-  /* FAB MENU */
   .fab-menu { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 76px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; align-items: flex-end; z-index: 51; }
   .fab-menu button { background: white; border: 1px solid var(--border-strong); padding: 10px 14px; border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu); box-shadow: 0 2px 8px rgba(15,23,42,0.08); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: opacity 0.12s; }
   .fab-menu button svg { width: 15px; height: 15px; }
   .fab-menu button:active { opacity: 0.7; }
 
-  /* PROP CARD */
   .prop-card { background: #f8fafc; border-radius: var(--radius-sm); padding: 9px 11px; margin-bottom: 5px; }
   .prop-card .prop-nome { font-size: 12.5px; font-weight: 600; color: var(--testo); margin-bottom: 3px; }
   .prop-card .prop-info { font-size: 11.5px; color: var(--testo-sec); line-height: 1.5; }
 
-  /* ADDRESS */
   .addr-check { color: #059669; font-weight: 700; font-size: 13px; flex-shrink: 0; display: inline-flex; align-items: center; }
   .addr-check svg { width: 13px; height: 13px; }
   .addr-click { color: var(--blu); font-weight: 500; cursor: pointer; }
@@ -263,7 +237,6 @@
   .addr-link:active { background: #f1f5f9; }
   .addr-tools { padding-top: 7px; border-top: 1px solid var(--border); margin-top: 7px; }
 
-  /* FILTER DROPDOWN */
   .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; }
   .filter-dropdown-overlay.open { display: block; background: rgba(15,23,42,0.25); }
   .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sfondo); border-radius: var(--radius); padding: 14px; min-width: 240px; max-width: 90vw; box-shadow: 0 8px 32px rgba(15,23,42,0.18); }
@@ -273,7 +246,6 @@
   .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
   .filter-dropdown .opt svg { width: 13px; height: 13px; color: var(--blu); }
 
-  /* MAP */
   #map-container { position: relative; width: 100%; height: calc(100vh - var(--tabbar-h) - env(safe-area-inset-bottom)); height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom)); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
   .map-overlay-top { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 500; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
@@ -314,7 +286,6 @@
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
 
-  /* ACTIVITY SUBTABS */
   .att-subtabs { display: flex; gap: 6px; margin-bottom: 10px; }
   .att-subtab { flex: 1; background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 8px 5px; text-align: center; cursor: pointer; transition: all 0.12s; font-family: inherit; }
   .att-subtab:active { transform: scale(0.98); }
@@ -325,7 +296,6 @@
   .att-subtab.prossime.active .num { color: var(--nt); }
   .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
-  /* AGENDA */
   .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 14px 10px; margin-top: 14px; border: 1px solid var(--border); }
   .agenda-sett h3 { font-size: 12px; font-weight: 700; color: var(--blu); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
   .agenda-sett h3 .nav-sett { display: flex; gap: 3px; }
@@ -344,17 +314,18 @@
   .agenda-giorno .ag-ev .ora { color: var(--testo-ter); font-weight: 600; font-size: 8.5px; display: block; }
   .agenda-giorno .ag-empty { color: #cbd5e1; font-size: 12px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; }
 
-  /* APP ITEMS */
   .app-item-card { background: var(--card); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; transition: background 0.1s; }
   .app-item-card:active { background: #f8fafc; }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
   .app-item-card.tipo-acq { border-left-color: var(--rr); }
   .app-item-card.tipo-entrambi { border-left-color: var(--vnd); }
+  .app-item-card.libero { border-left-color: var(--arancione); }
   .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; gap: 3px; background: var(--blu); color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.2px; margin-bottom: 4px; }
   .app-item-card .app-tipo-badge svg { width: 10px; height: 10px; }
   .app-item-card.tipo-vend .app-tipo-badge { background: var(--pa); }
   .app-item-card.tipo-acq .app-tipo-badge { background: var(--rr); }
   .app-item-card.tipo-entrambi .app-tipo-badge { background: var(--vnd); }
+  .app-item-card.libero .app-tipo-badge { background: var(--arancione); }
   .app-item-card .app-titolo { font-size: 13px; font-weight: 600; color: var(--testo); margin-bottom: 3px; line-height: 1.3; word-break: break-word; }
   .app-item-card .app-data { font-size: 11.5px; color: var(--testo-sec); display: flex; align-items: center; gap: 3px; }
   .app-item-card .app-data svg { width: 11px; height: 11px; opacity: 0.6; }
@@ -364,7 +335,6 @@
   .app-item-card .app-esito.ko { background: #fef2f2; color: #dc2626; }
   .app-item-card .app-esito.neutral { background: #f1f5f9; color: var(--testo-sec); }
 
-  /* TIPO APP GRID */
   .tipo-app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
   .tipo-app-btn { background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 10px 10px; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.12s; position: relative; }
   .tipo-app-btn:active { background: #f8fafc; }
@@ -374,11 +344,7 @@
   .tipo-app-btn.tipo-vend { border-left: 3px solid var(--pa); }
   .tipo-app-btn.tipo-acq { border-left: 3px solid var(--rr); }
   .tipo-app-btn.tipo-entrambi { border-left: 3px solid var(--vnd); }
-  .tipo-app-btn .custom-star { position: absolute; top: 5px; right: 6px; color: var(--arancione); }
-  .tipo-app-btn .custom-star svg { width: 12px; height: 12px; fill: var(--arancione); stroke: var(--arancione); }
-  .tipo-app-btn.custom { background: #fbfcfd; }
 
-  /* ATTIVITÀ LIST */
   .att-gruppo { background: var(--card); border-radius: var(--radius); margin-bottom: 6px; border: 1px solid var(--border); overflow: hidden; }
   .att-gruppo-header { display: flex; align-items: center; gap: 9px; padding: 11px 13px; cursor: pointer; }
   .att-gruppo-header:active { background: #f8fafc; }
@@ -411,27 +377,10 @@
 
   #scroll-sentinel { height: 1px; }
 
-  /* =====================================================
-     RESPONSIVE DESKTOP / TABLET
-     ===================================================== */
   @media (min-width: 768px) {
     body { background: #eef1f5; }
-    .app {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      background: var(--sfondo);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      box-shadow: 0 0 40px rgba(15,23,42,0.06);
-    }
-    .app-header { border-radius: 0; }
-    .tabbar {
-      max-width: var(--max-w);
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-    }
+    .app { max-width: var(--max-w); margin: 0 auto; background: var(--sfondo); border-left: 1px solid var(--border); border-right: 1px solid var(--border); box-shadow: 0 0 40px rgba(15,23,42,0.06); }
+    .tabbar { max-width: var(--max-w); left: 50%; transform: translateX(-50%); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
     .fab { right: calc(50% - (var(--max-w) / 2) + 16px); }
     .fab-menu { right: calc(50% - (var(--max-w) / 2) + 16px); }
     .back-top { right: calc(50% - (var(--max-w) / 2) + 16px); }
@@ -439,7 +388,6 @@
     .modal-overlay { align-items: center; padding: 20px; }
     .modal-sheet { border-radius: 18px; max-height: 88vh; max-height: 88dvh; }
     .filter-dropdown { min-width: 320px; }
-    /* Hover states per desktop */
     .item-card:hover, .condo-card:hover { background: #f8fafc; }
     .btn-secondary:hover { background: #f8fafc; }
     .chip:hover { background: #f8fafc; }
@@ -563,11 +511,6 @@
 
     <section id="view-altro" class="view">
       <div class="card">
-        <h2><span class="dot"></span>Appuntamenti personalizzati</h2>
-        <p style="margin-bottom:10px;">Gestisci i tuoi tipi di appuntamento personalizzati.</p>
-        <button class="btn btn-secondary" onclick="apriGestioneTipiApp()" data-icon="stella">Gestisci tipi appuntamento</button>
-      </div>
-      <div class="card">
         <h2><span class="dot"></span>Città principale</h2>
         <p style="margin-bottom:10px;">La città usata per geocodificare gli indirizzi.</p>
         <button class="btn btn-secondary" onclick="apriImpostazioniCitta()" data-icon="ingranaggio">Cambia città principale</button>
@@ -581,12 +524,11 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.1</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.2</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
         <div class="info-row" style="display:block;padding:8px 0;"><div id="storage-bar"></div></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
-        <div class="info-row"><span class="label">Tipi personalizzati</span><span class="value" id="sistema-n-tipi">0</span></div>
         <button class="btn btn-secondary" style="margin-top:10px;" onclick="pulisciCacheGeocodifica()" data-icon="cestino">Svuota cache geocodifiche</button>
       </div>
       <div class="card">
@@ -645,7 +587,6 @@ const ICON_PATHS = {
   inbox: '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
   file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
   landmark: '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
-  chiave: '<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"/>',
   chiaveInglese: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
   grafico: '<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
   check: '<polyline points="20 6 9 17 4 12"/>',
@@ -720,8 +661,7 @@ const Storage = {
         attivita: parsed.attivita || [],
         appuntamenti: parsed.appuntamenti || [],
         condomini: parsed.condomini || {},
-        coordinateCondomini: parsed.coordinateCondomini || {},
-        customTipiApp: parsed.customTipiApp || []
+        coordinateCondomini: parsed.coordinateCondomini || {}
       };
     } catch (e) { return this.default(); }
   },
@@ -746,11 +686,10 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 39, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {}, customTipiApp: [] }; }
+  default() { return { versione: 40, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
-if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = [];
 if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
 
 // =====================================================
@@ -779,6 +718,7 @@ const STATI_RR = [
   { id: 'rogitato', label: 'RR rogitato', tag: '#RR-rogitato' }
 ];
 
+// Tipi di appuntamento "logici" (con immobile/persona)
 const TIPI_APPUNTAMENTO = [
   { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: 'clipboard', desc: 'Ribassi, rinnovi, contratto' },
   { sigla: 'VAL', nome: 'Valutazione', chi: 'vend', icona: 'righello', desc: 'Sopralluogo per valutazione' },
@@ -790,10 +730,13 @@ const TIPI_APPUNTAMENTO = [
   { sigla: 'NOT ACC PROP', nome: 'Notifica acc. proposta', chi: 'vend', icona: 'inbox', desc: 'Comunica accettazione' },
   { sigla: 'PRELIMINARE', nome: 'Preliminare', chi: 'entrambi', icona: 'file', desc: 'Firma preliminare' },
   { sigla: 'ROGITO', nome: 'Rogito', chi: 'entrambi', icona: 'landmark', desc: 'Atto notarile definitivo' },
-  { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: 'calendario', desc: 'Generico' },
+  { sigla: 'APP GEN', nome: 'Appuntamento generico', chi: 'gen', icona: 'calendario', desc: 'Generico con immobile/persona' },
   { sigla: 'SOPRALLUOGO', nome: 'Sopralluogo tecnico', chi: 'gen', icona: 'chiaveInglese', desc: 'Con professionista' },
   { sigla: 'PERIZIA', nome: 'Perizia', chi: 'gen', icona: 'grafico', desc: 'Con perito/geometra' }
 ];
+
+// Tipo speciale: appuntamento libero (senza logica, solo titolo/data/luogo)
+const TIPO_LIBERO = { sigla: 'LIBERO', nome: 'Appuntamento libero', chi: 'solo', icona: 'calendario', desc: 'Riunione, personale, ecc.', libero: true };
 
 const ESITI_APPUNTAMENTO = [
   { id: 'piace', label: 'Visto e piace', icona: 'checkCerchio', tipo: 'ok' },
@@ -846,9 +789,11 @@ function acquirenteHaVistoNTINK(per) { if (!per || !per.immobili) return false; 
 // =====================================================
 // TIPI APPUNTAMENTO
 // =====================================================
-function getTuttiTipiApp() { return TIPI_APPUNTAMENTO.concat(DB.customTipiApp || []); }
-function getTipoApp(sigla) { const tutti = getTuttiTipiApp(); return tutti.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10]; }
-function isTipoCustom(sigla) { return (DB.customTipiApp || []).some(t => t.sigla === sigla); }
+function getTipoApp(sigla) {
+  if (sigla === TIPO_LIBERO.sigla) return TIPO_LIBERO;
+  return TIPI_APPUNTAMENTO.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10];
+}
+function isAppLibero(sigla) { return sigla === TIPO_LIBERO.sigla; }
 
 // =====================================================
 // GEOCODING
@@ -975,7 +920,6 @@ function aggiornaFabPersone() { document.getElementById('fab-menu').innerHTML = 
 
 function aggiornaInfoSistema() {
   const el = document.getElementById('sistema-citta'); if (el) el.textContent = getCittaPrincipale();
-  const el2 = document.getElementById('sistema-n-tipi'); if (el2) el2.textContent = (DB.customTipiApp || []).length;
   const sInfo = document.getElementById('storage-info');
   const sCache = document.getElementById('storage-cache');
   const sBarra = document.getElementById('storage-bar');
@@ -1002,7 +946,6 @@ function pulisciCacheGeocodifica() {
   alert('✅ Cache svuotata');
 }
 
-// BACK TO TOP
 (function() {
   const content = document.getElementById('app-content');
   const btn = document.getElementById('back-top');
@@ -1510,8 +1453,9 @@ function toggleImmobileAcquirente(pid, iid) {
 // =====================================================
 let settimanaCorrente = new Date();
 function formattaDataOraCompleta(iso) { const d = new Date(iso); const g = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const m = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic']; return g[d.getDay()] + ' ' + d.getDate() + ' ' + m[d.getMonth()] + ' · ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
-function getClasseChiApp(c) { if (c === 'vend') return 'tipo-vend'; if (c === 'acq') return 'tipo-acq'; if (c === 'entrambi') return 'tipo-entrambi'; if (c === 'visita') return 'tipo-entrambi'; return ''; }
+function getClasseChiApp(c) { if (c === 'vend') return 'tipo-vend'; if (c === 'acq') return 'tipo-acq'; if (c === 'entrambi') return 'tipo-entrambi'; if (c === 'visita') return 'tipo-entrambi'; if (c === 'solo') return 'libero'; return ''; }
 function costruisciTitoloApp(t, imm, per) {
+  if (t.libero) return '';
   const ni = imm ? ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || imm.indirizzo || '').toUpperCase() : '';
   const ti = imm && imm.telefono ? imm.telefono : '';
   const np = per ? (per.cognomeNome || '').toUpperCase() : '';
@@ -1539,8 +1483,12 @@ function renderItemAppuntamento(a) {
   let e = '';
   if (a.esito) { const x = ESITI_APPUNTAMENTO.find(y => y.id === a.esito); if (x) e = '<div class="app-esito ' + x.tipo + '">' + ico(x.icona,11) + ' ' + x.label + (a.descrizioneEsito ? ' · ' + escapeHtml(a.descrizioneEsito) : '') + '</div>'; }
   else if (a.stato === 'eseguito') e = '<div class="app-esito neutral">' + ico('check',11) + ' Eseguito</div>';
-  const icT = ico(t.icona || 'calendario', 10);
-  let h = '<div class="app-item-card ' + c + '" onclick="apriSchedaAppuntamento(\'' + a.id + '\')"><div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div><div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">' + ico('calendario',11) + ' ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
+  let h = '<div class="app-item-card ' + c + '" onclick="apriSchedaAppuntamento(\'' + a.id + '\')">';
+  if (!t.libero) {
+    const icT = ico(t.icona || 'calendario', 10);
+    h += '<div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div>';
+  }
+  h += '<div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">' + ico('calendario',11) + ' ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
   if (a.luogo) h += '<div class="app-data">' + ico('pin',11) + ' ' + escapeHtml(a.luogo) + '</div>';
   h += e + '</div>'; return h;
 }
@@ -1552,9 +1500,10 @@ function apriGoogleCalendarApp(a) {
 function apriNuovoAppuntamentoGlobale() { apriSelezioneTipoApp(null, null); }
 function apriNuovoAppuntamentoPersona(pid) { const p = DB.persone.find(x => x.id === pid); apriSelezioneTipoApp(null, p); }
 function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.id === iid); apriSelezioneTipoApp(i, null); }
+
 function tipiAppValidi(imm, per) {
-  if (!imm && !per) return getTuttiTipiApp();
-  return getTuttiTipiApp().filter(t => {
+  if (!imm && !per) return TIPI_APPUNTAMENTO.slice();
+  return TIPI_APPUNTAMENTO.filter(t => {
     const s = t.sigla;
     if (imm) {
       const tv = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non');
@@ -1605,21 +1554,16 @@ function apriSelezioneTipoApp(immPre, perPre) {
     h += '<div class="tipo-app-grid">';
     for (const t of tipi) {
       const c = getClasseChiApp(t.chi);
-      const isCustom = isTipoCustom(t.sigla);
-      h += '<button type="button" class="tipo-app-btn ' + c + (isCustom ? ' custom' : '') + '" onclick="selezionaTipoApp(\'' + t.sigla.replace(/'/g, "\\'") + '\')">';
-      if (isCustom) h += '<span class="custom-star">' + ico('stella',12) + '</span>';
+      h += '<button type="button" class="tipo-app-btn ' + c + '" onclick="selezionaTipoApp(\'' + t.sigla.replace(/'/g, "\\'") + '\')">';
       h += '<div class="sigla">' + ico(t.icona || 'calendario',14) + ' ' + escapeHtml(t.sigla) + '</div><div class="desc">' + escapeHtml(t.desc || t.nome) + '</div></button>';
     }
     h += '</div>';
   }
-  h += '<button class="btn btn-secondary" onclick="apriCreaTipoCustomDaSelezione()">' + ico('piu',16) + ' Aggiungi tipo personalizzato</button>';
+  // Appuntamento libero (sempre disponibile, senza contesto)
+  h += '<button class="btn btn-primary" onclick="apriAppuntamentoLibero()">' + ico('calendario',16) + ' Appuntamento libero</button>';
+  h += '<div style="font-size:11px;color:var(--testo-ter);text-align:center;padding:4px 0 10px;line-height:1.4;">Riunione, con persona, assente, evento aziendale…<br>Solo titolo, data/ora e luogo.</div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
   apriModal(ico('calendario',18) + ' Nuovo appuntamento', h);
-}
-function apriCreaTipoCustomDaSelezione() {
-  const immPre = window._appImmPre || null;
-  const perPre = window._appPersPre || null;
-  apriFormTipoCustom(null, () => { apriSelezioneTipoApp(immPre, perPre); });
 }
 function selezionaTipoApp(sigla) {
   const t = getTipoApp(sigla);
@@ -1643,6 +1587,9 @@ function selezionaTipoApp(sigla) {
     if (!imm && per) { apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, per, t), ts); return; }
   }
   apriFormAppuntamento(imm, per, t);
+}
+function apriAppuntamentoLibero() {
+  apriFormAppuntamento(null, null, TIPO_LIBERO);
 }
 function apriPickerEntita(te, cb, tipoSigla) {
   const t = te === 'immobile' ? 'Seleziona immobile' : 'Seleziona persona';
@@ -1682,23 +1629,31 @@ function selezionaEntitaPicker(t, id) {
 }
 function apriFormAppuntamento(imm, per, tipo) {
   window._appImm = imm; window._appPers = per; window._appTipo = tipo;
-  const t = costruisciTitoloApp(tipo, imm, per);
+  const isLibero = !!tipo.libero;
+  const t = isLibero ? '' : costruisciTitoloApp(tipo, imm, per);
   const ad = new Date();
   const iD = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ad.getHours(), 0);
   const fD = new Date(iD.getTime() + 60 * 60 * 1000);
   const lu = imm ? imm.indirizzo : (per && per.indirizzoUff ? per.indirizzoUff : '');
-  let h = '<div class="prefill-banner">' + ico(tipo.icona || 'calendario',14) + ' ' + escapeHtml((tipo.nome || tipo.sigla)) + '</div>';
-  if (imm) h += '<div class="card" style="padding:9px 12px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:3px;">Immobile</div><div style="font-size:13px;font-weight:600;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>';
-  if (per) h += '<div class="card" style="padding:9px 12px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:3px;">Persona</div><div style="font-size:13px;font-weight:600;">' + escapeHtml(titoloPersona(per)) + '</div></div>';
-  h += '<div class="form-group"><div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"></div>';
+  let h = '';
+  if (isLibero) {
+    h += '<div class="prefill-banner" style="background:var(--arancione-soft);color:#c2410c;">' + ico('calendario',14) + ' Appuntamento libero</div>';
+  } else {
+    h += '<div class="prefill-banner">' + ico(tipo.icona || 'calendario',14) + ' ' + escapeHtml((tipo.nome || tipo.sigla)) + '</div>';
+    if (imm) h += '<div class="card" style="padding:9px 12px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:3px;">Immobile</div><div style="font-size:13px;font-weight:600;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>';
+    if (per) h += '<div class="card" style="padding:9px 12px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:3px;">Persona</div><div style="font-size:13px;font-weight:600;">' + escapeHtml(titoloPersona(per)) + '</div></div>';
+  }
+  const titoloLabel = isLibero ? 'Titolo *' : 'Titolo';
+  const titoloPlaceholder = isLibero ? 'es. Riunione, Con Luca, Assente, Evento aziendale…' : '';
+  h += '<div class="form-group"><div class="form-row"><label class="form-label">' + titoloLabel + '</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"' + (titoloPlaceholder ? ' placeholder="' + titoloPlaceholder + '"' : '') + '></div>';
   h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="' + isoToLocalInput(iD.toISOString()) + '" onchange="syncFineAppuntamentoNew()"></div>';
   h += '<div class="form-row"><label class="form-label">Fine</label><input class="form-input" type="datetime-local" step="1" id="ap-fine" value="' + isoToLocalInput(fD.toISOString()) + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Luogo</label><input class="form-input" id="ap-luogo" value="' + escapeHtml(lu) + '"></div>';
+  h += '<div class="form-row"><label class="form-label">Luogo</label><input class="form-input" id="ap-luogo" value="' + escapeHtml(lu) + '"' + (isLibero ? ' placeholder="es. Ufficio, Bar centrale…"' : '') + '></div>';
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="ap-note"></textarea></div></div>';
   if (tipo.sigla === 'APP') { const hc = imm && imm.dettagli && imm.dettagli.chiavi === 'Sì'; h += '<div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Dettagli visita</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Chiavi?</label><select class="form-select" id="ap-chiavi"><option value="Sì"' + (hc ? ' selected' : '') + '>Sì</option><option value="No"' + (!hc ? ' selected' : '') + '>No</option></select></div><div class="form-row"><label class="form-label">Proprietario presente?</label><select class="form-select" id="ap-prop-presente"><option value="No">No</option><option value="Sì">Sì</option></select></div></div>'; }
   if (tipo.sigla === 'CONS') { h += '<div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Consulenza Kiron</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mutuabile?</label><select class="form-select" id="ap-mutuabile"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option></select></div><div class="form-row"><label class="form-label">Importo mutuo</label><input class="form-input" id="ap-importo"></div><div class="form-row"><label class="form-label">Percentuale</label><input class="form-input" id="ap-perc"></div></div>'; }
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaAppuntamento()">Salva</button></div>';
-  apriModal(ico('calendario',18) + ' Appuntamento', h);
+  apriModal(ico('calendario',18) + (isLibero ? ' Appuntamento libero' : ' Appuntamento'), h);
 }
 function syncFineAppuntamentoNew() { const i = document.getElementById('ap-inizio').value; if (!i) return; const d = new Date(i); d.setTime(d.getTime() + 60 * 60 * 1000); document.getElementById('ap-fine').value = isoToLocalInput(d.toISOString()); }
 function syncFineAppuntamento() { const i = document.getElementById('mapp-inizio').value; if (!i) return; const d = new Date(i); d.setTime(d.getTime() + 60 * 60 * 1000); document.getElementById('mapp-fine').value = isoToLocalInput(d.toISOString()); }
@@ -1710,16 +1665,20 @@ function salvaAppuntamento() {
   if (!t || !i || !f) { alert('Titolo, inizio e fine obbligatori'); return; }
   if (new Date(f) <= new Date(i)) { alert('Fine deve essere dopo inizio'); return; }
   const imm = window._appImm || null; const per = window._appPers || null; const tp = window._appTipo;
-  if (imm && !immobileValidoPerTipo(tp.sigla, imm)) { alert('Immobile non compatibile con il tipo ' + tp.sigla + '.'); return; }
-  if (per && !personaValidaPerTipo(tp.sigla, per)) { alert('Persona non compatibile con il tipo ' + tp.sigla + '.'); return; }
+  if (!tp.libero) {
+    if (imm && !immobileValidoPerTipo(tp.sigla, imm)) { alert('Immobile non compatibile con il tipo ' + tp.sigla + '.'); return; }
+    if (per && !personaValidaPerTipo(tp.sigla, per)) { alert('Persona non compatibile con il tipo ' + tp.sigla + '.'); return; }
+  }
   const ad = new Date().toISOString();
   const ap = { id: uid(), tipo: tp.sigla, tipoChi: tp.chi, titolo: t, dataInizio: new Date(i).toISOString(), dataFine: new Date(f).toISOString(), luogo: l, note: n, immobileId: imm ? imm.id : null, personaId: per ? per.id : null, esito: null, descrizioneEsito: '', stato: 'programmato', createdAt: ad, updatedAt: ad };
   if (tp.sigla === 'APP') { ap.extraChiavi = (g('ap-chiavi') || {}).value || ''; ap.extraPropPresente = (g('ap-prop-presente') || {}).value || ''; if (imm) { imm.dettagli = imm.dettagli || {}; if (ap.extraChiavi) imm.dettagli.chiavi = ap.extraChiavi; } }
   if (tp.sigla === 'CONS') { ap.extraMutuabile = (g('ap-mutuabile') || {}).value || ''; ap.extraImporto = (g('ap-importo') || {}).value || ''; ap.extraPerc = (g('ap-perc') || {}).value || ''; }
   DB.appuntamenti = DB.appuntamenti || []; DB.appuntamenti.push(ap);
   const ds = '[' + formattaData(ap.dataInizio) + ']';
-  if (imm && (tp.chi === 'vend' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let rp = per ? (' ' + per.cognomeNome + (per.telefonoCell || per.telefono ? ' ' + (per.telefonoCell || per.telefono) : '')) : ''; if (imm.attivita) imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + rp + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
-  if (per && (tp.chi === 'acq' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let ri = imm ? (' ' + ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || '')) : ''; if (per.attivita) per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + ri + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
+  if (!tp.libero) {
+    if (imm && (tp.chi === 'vend' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let rp = per ? (' ' + per.cognomeNome + (per.telefonoCell || per.telefono ? ' ' + (per.telefonoCell || per.telefono) : '')) : ''; if (imm.attivita) imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + rp + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
+    if (per && (tp.chi === 'acq' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let ri = imm ? (' ' + ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || '')) : ''; if (per.attivita) per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + ri + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
+  }
   Storage.save(DB); chiudiModal();
   aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale();
   if (map) aggiornaMappa(); if (typeof renderListaImmobili === 'function') renderListaImmobili();
@@ -1730,7 +1689,12 @@ function apriSchedaAppuntamento(id) {
   const imm = a.immobileId ? DB.immobili.find(x => x.id === a.immobileId) : null;
   const per = a.personaId ? DB.persone.find(x => x.id === a.personaId) : null;
   const t = getTipoApp(a.tipo);
-  let h = '<div style="margin-bottom:10px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;font-size:10.5px;font-weight:700;color:white;background:var(--blu);">' + ico(t.icona || 'calendario',11) + ' ' + escapeHtml(a.tipo) + '</span>' + (isTipoCustom(a.tipo) ? ' <span style="font-size:10.5px;color:var(--arancione);font-weight:600;margin-left:6px;">' + ico('stella',11) + ' custom</span>' : '') + '</div>';
+  let h = '';
+  if (!t.libero) {
+    h += '<div style="margin-bottom:10px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;font-size:10.5px;font-weight:700;color:white;background:var(--blu);">' + ico(t.icona || 'calendario',11) + ' ' + escapeHtml(a.tipo) + '</span></div>';
+  } else {
+    h += '<div style="margin-bottom:10px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:5px;font-size:10.5px;font-weight:700;color:white;background:var(--arancione);">' + ico('calendario',11) + ' Appuntamento libero</span></div>';
+  }
   h += '<div class="card">';
   h += '<div class="info-row"><span class="label">Quando</span><span class="value">' + formattaDataOraCompleta(a.dataInizio) + '</span></div>';
   if (a.luogo) h += '<div class="info-row"><span class="label">Luogo</span><span class="value">' + escapeHtml(a.luogo) + '</span></div>';
@@ -1741,13 +1705,15 @@ function apriSchedaAppuntamento(id) {
   h += '</div>';
   if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">' + iconaCondo(13) + ' ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
   if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">' + ico('utente',13) + ' ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
-  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (imm ? ico('aggiorna',15) + ' Cambia immobile' : iconaCondo(13) + ' Collega immobile') + '</button>';
-  h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (per ? ico('aggiorna',15) + ' Cambia persona' : ico('utente',13) + ' Collega persona') + '</button>';
+  if (!t.libero) {
+    h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (imm ? ico('aggiorna',15) + ' Cambia immobile' : iconaCondo(13) + ' Collega immobile') + '</button>';
+    h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (per ? ico('aggiorna',15) + ' Cambia persona' : ico('utente',13) + ' Collega persona') + '</button>';
+  }
   h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">' + ico('calendario',16) + ' Google Calendar</button>';
   h += '<button class="btn btn-secondary" onclick="apriModificaAppuntamento(\'' + a.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
   const adesso = new Date();
   const passato = new Date(a.dataFine) < adesso;
-  if (a.stato !== 'eseguito' && a.stato !== 'annullato' && passato) h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',16) + ' Chiudi con esito</button>';
+  if (a.stato !== 'eseguito' && a.stato !== 'annullato' && passato && !t.libero) h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',16) + ' Chiudi con esito</button>';
   h += '<button class="btn btn-secondary" onclick="eliminaAppuntamento(\'' + a.id + '\')">' + ico('cestino',16) + ' Elimina</button>';
   apriModal(ico(t.icona || 'calendario',18) + ' ' + a.titolo, h);
 }
@@ -1799,7 +1765,10 @@ function eliminaAppuntamento(id) {
 }
 function apriModificaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
-  let h = '<div class="prefill-banner">' + ico('calendario',14) + ' Modifica: ' + escapeHtml(a.tipo) + '</div>';
+  const isLibero = isAppLibero(a.tipo);
+  let h = '';
+  if (isLibero) h += '<div class="prefill-banner" style="background:var(--arancione-soft);color:#c2410c;">' + ico('calendario',14) + ' Appuntamento libero</div>';
+  else h += '<div class="prefill-banner">' + ico('calendario',14) + ' Modifica: ' + escapeHtml(a.tipo) + '</div>';
   h += '<div class="form-group">';
   h += '<div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="mapp-titolo" value="' + escapeHtml(a.titolo || '') + '"></div>';
   h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="mapp-inizio" value="' + isoToLocalInput(a.dataInizio) + '" onchange="syncFineAppuntamento()"></div>';
@@ -1840,81 +1809,6 @@ function rimuoviEsitoAppuntamento(id) {
 }
 
 // =====================================================
-// TIPI APPUNTAMENTO PERSONALIZZATI
-// =====================================================
-function apriGestioneTipiApp() {
-  const c = DB.customTipiApp || [];
-  let h = '<p style="font-size:12.5px;color:var(--testo-sec);padding:0 4px 10px;">Tipi di appuntamento personalizzati.</p>';
-  if (c.length === 0) h += '<div class="card"><div class="empty" style="padding:20px 0;"><div class="icon">' + ico('stella',28) + '</div>Nessun tipo personalizzato</div></div>';
-  else { h += '<div class="card" style="padding:6px 0;">'; for (const t of c) { h += '<div class="immobile-line" style="margin:3px 6px;" onclick="apriFormTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\', apriGestioneTipiApp)"><span class="txt">' + ico(t.icona || 'calendario',15) + ' <strong>' + escapeHtml(t.sigla) + '</strong> · ' + escapeHtml(t.nome) + '</span><span class="badge badge-' + (t.chi === 'vend' ? 'PA' : t.chi === 'acq' ? 'RR-attiva' : t.chi === 'entrambi' ? 'VND' : 'IMM') + '" style="font-size:9px;padding:2px 5px;">' + escapeHtml((t.chi || '').toUpperCase()) + '</span></div>'; } h += '</div>'; }
-  h += '<button class="btn btn-primary" onclick="apriFormTipoCustom(null, apriGestioneTipiApp)">' + ico('piu',16) + ' Aggiungi tipo personalizzato</button>';
-  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
-  apriModal(ico('stella',18) + ' Tipi appuntamento', h);
-}
-function apriFormTipoCustom(siglaEsistente, dopoSalva) {
-  const t = siglaEsistente ? (DB.customTipiApp || []).find(x => x.sigla === siglaEsistente) : null;
-  const isEdit = !!t;
-  window._customTipoDopoSalva = dopoSalva;
-  const iconeDisp = ['calendario','clipboard','righello','trendUp','penna','occhio','valigetta','upload','inbox','file','landmark','chiaveInglese','grafico','check','casa','telefono','whatsapp','email','stella','fuoco','target','ingranaggio','clessidra','utente','utenti','campanello','orologio'];
-  let h = '<div class="form-group">';
-  h += '<div class="form-row"><label class="form-label">Sigla breve (max 20)</label><input class="form-input" id="ct-sigla" maxlength="20" value="' + escapeHtml(t ? t.sigla : '') + '" placeholder="es. MEETING"></div>';
-  h += '<div class="form-row" style="position:relative;"><label class="form-label">Nome esteso</label><input class="form-input" id="ct-nome" value="' + escapeHtml(t ? t.nome : '') + '" placeholder="es. Meeting interno" autocomplete="off" oninput="autocompleteNomeCustom(this)"><div id="ct-autocomplete" style="position:absolute;top:100%;left:14px;right:14px;background:white;border-radius:8px;box-shadow:0 4px 16px rgba(15,23,42,0.12);z-index:100;display:none;max-height:180px;overflow-y:auto;border:1px solid var(--border);"></div></div>';
-  h += '<div class="form-row"><label class="form-label">Icona</label><div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:3px;">';
-  for (const icn of iconeDisp) { const sel = t && t.icona === icn; h += '<button type="button" class="zone-chip' + (sel ? ' active' : '') + '" style="padding:6px 8px;" onclick="setIconaCustom(\'' + icn + '\')" data-icon-custom="' + icn + '">' + ico(icn,16) + '</button>'; }
-  h += '</div><input type="hidden" id="ct-icona" value="' + escapeHtml(t ? (t.icona || 'calendario') : 'calendario') + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Descrizione breve</label><input class="form-input" id="ct-desc" value="' + escapeHtml(t ? (t.desc || '') : '') + '" placeholder="es. Riunione con colleghi"></div>';
-  h += '<div class="form-row"><label class="form-label">Chi partecipa?</label><select class="form-select" id="ct-chi">';
-  const opts = [['solo', 'Solo io'], ['vend', 'Solo venditore'], ['acq', 'Solo acquirente'], ['entrambi', 'Entrambi'], ['visita', 'Visita'], ['gen', 'Generico']];
-  for (const [v, l] of opts) h += '<option value="' + v + '"' + (t && t.chi === v ? ' selected' : '') + '>' + l + '</option>';
-  h += '</select></div></div>';
-  if (isEdit) h += '<button class="btn btn-danger" onclick="eliminaTipoCustom(\'' + escapeHtml(t.sigla).replace(/'/g, "\\'") + '\')">' + ico('cestino',16) + ' Elimina tipo</button>';
-  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal();if(window._customTipoDopoSalva)setTimeout(window._customTipoDopoSalva,100)">Annulla</button><button class="btn btn-primary" onclick="salvaTipoCustom(' + (isEdit ? "'" + escapeHtml(t.sigla).replace(/'/g, "\\'") + "'" : 'null') + ')">Salva</button></div>';
-  apriModal(isEdit ? ico('modifica',18) + ' Modifica tipo' : ico('stella',18) + ' Nuovo tipo', h);
-}
-function setIconaCustom(n) { document.getElementById('ct-icona').value = n; document.querySelectorAll('[data-icon-custom]').forEach(b => b.classList.toggle('active', b.dataset.iconCustom === n)); }
-function autocompleteNomeCustom(inp) {
-  const q = (inp.value || '').toLowerCase().trim();
-  const box = document.getElementById('ct-autocomplete'); if (!box) return;
-  if (!q || q.length < 2) { box.style.display = 'none'; return; }
-  const sugg = new Set();
-  for (const p of DB.persone) if (p.cognomeNome && p.cognomeNome.toLowerCase().includes(q)) sugg.add(p.cognomeNome);
-  for (const i of DB.immobili) { if (i.cognomeNome && i.cognomeNome.toLowerCase().includes(q)) sugg.add(i.cognomeNome); if (i.indirizzo && i.indirizzo.toLowerCase().includes(q)) sugg.add(i.indirizzo); }
-  const arr = Array.from(sugg).slice(0, 8);
-  if (arr.length === 0) { box.style.display = 'none'; return; }
-  box.innerHTML = arr.map(s => '<div style="padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--border);" onmousedown="event.preventDefault();scegliNomeCustom(\'' + escapeHtml(s).replace(/'/g, "\\'") + '\')">' + escapeHtml(s) + '</div>').join('');
-  box.style.display = 'block';
-}
-function scegliNomeCustom(s) { const el = document.getElementById('ct-nome'); if (el) el.value = s; const b = document.getElementById('ct-autocomplete'); if (b) b.style.display = 'none'; }
-function salvaTipoCustom(siglaOriginale) {
-  const g = (id) => document.getElementById(id);
-  const sigla = ((g('ct-sigla') || {}).value || '').trim().toUpperCase();
-  const nome = ((g('ct-nome') || {}).value || '').trim();
-  const icona = ((g('ct-icona') || {}).value || '').trim() || 'calendario';
-  const desc = ((g('ct-desc') || {}).value || '').trim();
-  const chi = (g('ct-chi') || {}).value || 'gen';
-  if (!sigla) { alert('Inserisci la sigla'); return; }
-  if (!nome) { alert('Inserisci il nome'); return; }
-  if (sigla.length > 20) { alert('Sigla troppo lunga (max 20)'); return; }
-  if (TIPI_APPUNTAMENTO.some(x => x.sigla === sigla)) { alert('Esiste già un tipo di default con questa sigla'); return; }
-  const altri = (DB.customTipiApp || []).filter(x => x.sigla !== siglaOriginale);
-  if (altri.some(x => x.sigla === sigla)) { alert('Esiste già un tipo personalizzato con questa sigla'); return; }
-  if (!DB.customTipiApp) DB.customTipiApp = [];
-  const nuovo = { sigla, nome, icona, desc: desc || nome, chi };
-  if (siglaOriginale) { const idx = DB.customTipiApp.findIndex(x => x.sigla === siglaOriginale); if (idx >= 0) DB.customTipiApp[idx] = nuovo; if (siglaOriginale !== sigla) { for (const a of (DB.appuntamenti || [])) if (a.tipo === siglaOriginale) a.tipo = sigla; } }
-  else { DB.customTipiApp.push(nuovo); }
-  Storage.save(DB); aggiornaInfoSistema(); chiudiModal();
-  const cb = window._customTipoDopoSalva; window._customTipoDopoSalva = null; if (cb) setTimeout(cb, 150);
-}
-function eliminaTipoCustom(sigla) {
-  const uso = (DB.appuntamenti || []).filter(a => a.tipo === sigla).length;
-  const msg = uso > 0 ? 'Usato in ' + uso + ' appuntamenti. Procedere?' : 'Eliminare questo tipo personalizzato?';
-  if (!confirm(msg)) return;
-  DB.customTipiApp = (DB.customTipiApp || []).filter(x => x.sigla !== sigla);
-  Storage.save(DB); aggiornaInfoSistema(); chiudiModal();
-  const cb = window._customTipoDopoSalva; window._customTipoDopoSalva = null; if (cb) setTimeout(cb, 150);
-}
-
-// =====================================================
 // AGENDA
 // =====================================================
 function cambiaSettimana(d) { if (d === 0) settimanaCorrente = new Date(); else settimanaCorrente = new Date(settimanaCorrente.getTime() + d * 7 * 24 * 60 * 60 * 1000); aggiornaAgendaSettimanale(); }
@@ -1935,7 +1829,7 @@ function aggiornaAgendaSettimanale() {
     const ag = (DB.appuntamenti || []).filter(a => { const x = new Date(a.dataInizio); return x >= gi2 && x <= gf && a.stato !== 'annullato'; }).sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
     h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriAppGiorno(\'' + gi2.toISOString() + '\')"><div class="ag-nome">' + gn[i] + '</div><div class="ag-num">' + gi2.getDate() + '</div>';
     if (ag.length === 0) h += '<div class="ag-empty">·</div>';
-    else { const mx = 6; for (let k = 0; k < Math.min(ag.length, mx); k++) { const a = ag[k]; const tp = getTipoApp(a.tipo); const cl = getClasseChiApp(tp.chi); const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); h += '<div class="ag-ev ' + cl + '"><span class="ora">' + or + '</span>' + escapeHtml(a.tipo) + '</div>'; } if (ag.length > mx) h += '<div style="font-size:9px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (ag.length - mx) + '</div>'; }
+    else { const mx = 6; for (let k = 0; k < Math.min(ag.length, mx); k++) { const a = ag[k]; const tp = getTipoApp(a.tipo); const cl = getClasseChiApp(tp.chi); const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); const lbl = tp.libero ? (a.titolo || 'Libero').slice(0, 14) : a.tipo; h += '<div class="ag-ev ' + cl + '"><span class="ora">' + or + '</span>' + escapeHtml(lbl) + '</div>'; } if (ag.length > mx) h += '<div style="font-size:9px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (ag.length - mx) + '</div>'; }
     h += '</div>';
   }
   g.innerHTML = h;
@@ -2330,7 +2224,7 @@ function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i =>
 // =====================================================
 function aggiornaContatori() { aggiornaInfoSistema(); }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
-function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!Array.isArray(DB.customTipiApp)) DB.customTipiApp = []; if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
+function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
 function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati?')) return; if (!confirm('Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
 function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal(ico('ingranaggio',18) + ' Città', h); }
 function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('Città: ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
@@ -2355,12 +2249,6 @@ aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema
     setTimeout(() => alert('⚠️ Spazio quasi esaurito (' + totMB.toFixed(2) + ' MB su ~5 MB).\n\nVai in "Altro" → Esporta backup + Svuota cache.'), 800);
   }
 })();
-
-// PWA install prompt (Android)
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  window._deferredInstall = e;
-});
 </script>
 
 </body>
