@@ -202,9 +202,6 @@
   .foto-item:active { opacity: 0.85; }
   .foto-placeholder { width: 100%; height: 100%; background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  .foto-add { width: 100%; aspect-ratio: 1 / 1; border-radius: 8px; background: var(--card); border: 1.5px dashed var(--border-strong); color: var(--testo-ter); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: inherit; font-size: 10.5px; font-weight: 500; }
-  .foto-add:active { background: var(--sfondo); }
-  .foto-add svg { width: 20px; height: 20px; }
   .foto-hint { font-size: 11px; color: var(--testo-ter); margin: 0 0 6px; }
 
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 8px; }
@@ -311,14 +308,20 @@
   .map-btn { width: 40px; height: 40px; border-radius: 20px; background: white; border: 1px solid var(--border-strong); box-shadow: 0 1px 4px rgba(15,23,42,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--blu); }
   .map-btn svg { width: 18px; height: 18px; }
   .map-btn:active { background: #f8fafc; }
+
+  /* PIN e PALLINI MAPPA */
   .pin-wrap { position: relative; width: 32px; height: 40px; cursor: pointer; }
-  .pin-body { position: absolute; bottom: 0; left: 50%; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; }
-  .pin-body .pin-label { transform: rotate(45deg); font-size: 9px; font-weight: 700; color: white; letter-spacing: 0.2px; }
-  .pin-IMM .pin-body { background: var(--imm); } .pin-PA .pin-body { background: var(--pa); } .pin-NT .pin-body { background: var(--nt); } .pin-INK .pin-body { background: var(--ink); } .pin-VND .pin-body { background: var(--vnd); }
-  .pin-villa .pin-body { background: #059669; border-radius: 50%; transform: translateX(-50%); }
-  .pin-villa .pin-body .pin-label { transform: none; font-size: 13px; }
-  .pin-condo .pin-body { background: var(--blu); width: 32px; height: 32px; border-width: 3px; }
-  .pin-condo .pin-body .pin-label { font-size: 13px; }
+  .pin-body { position: absolute; bottom: 0; left: 50%; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+  .pin-body .pin-label { transform: rotate(45deg); font-size: 10px; font-weight: 700; color: white; letter-spacing: -0.2px; line-height: 1; }
+  .pin-dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 9.5px; font-weight: 700; letter-spacing: 0.2px;
+    line-height: 1;
+  }
+
   .leaflet-popup-content-wrapper { border-radius: 10px; padding: 0; overflow: hidden; box-shadow: 0 3px 12px rgba(15,23,42,0.15); }
   .leaflet-popup-content { margin: 0; min-width: 190px; }
   .arangiò-popup { padding: 10px 12px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
@@ -456,9 +459,7 @@
     .foto-grid { grid-template-columns: repeat(5, 1fr); }
   }
 
-  /* ============================================
-     TEMA SCURO
-     ============================================ */
+  /* TEMA SCURO */
   :root[data-theme="dark"] {
     --blu: #1a3a5c;
     --arancione: #e0651a;
@@ -474,12 +475,10 @@
     --ombra: 0 1px 2px rgba(0,0,0,0.6);
     --imm: #3a3a3a;
   }
-
   :root[data-theme="dark"] body,
   :root[data-theme="dark"] .app { background: var(--sfondo); }
   :root[data-theme="dark"] .tabbar { background: rgba(10,10,10,0.95); }
   :root[data-theme="dark"] .modal-sheet { background: #0f0f0f; }
-
   :root[data-theme="dark"] .btn-secondary,
   :root[data-theme="dark"] .chip,
   :root[data-theme="dark"] .chip-dropdown { background: #1a1a1a; }
@@ -535,8 +534,6 @@
   :root[data-theme="dark"] .badge-IMM { background: #3a3a3a; color: white; }
   :root[data-theme="dark"] .foto-item { background: #1e1e1e; }
   :root[data-theme="dark"] .foto-placeholder { background: linear-gradient(90deg, #1e1e1e 0%, #2a2a2a 50%, #1e1e1e 100%); background-size: 200% 100%; }
-  :root[data-theme="dark"] .foto-add { background: #1a1a1a; }
-
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -567,14 +564,12 @@
     color: #7aa9d9;
   }
   :root[data-theme="dark"] .villa-toggle button.active { border-color: #7aa9d9; }
-
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
   :root[data-theme="dark"] .zone-chip.active { color: #ffffff; }
   :root[data-theme="dark"] .zone-chip.special.active { color: #ffffff; background: var(--arancione); }
   :root[data-theme="dark"] .map-chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip-dropdown.active { color: #ffffff; }
-
   :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
 </style>
 </head>
@@ -705,7 +700,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.5</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.6</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Foto</span><span class="value" id="storage-foto">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
@@ -882,7 +877,6 @@ const Storage = {
       const parsed = JSON.parse(raw);
       const def = this.default();
       const condomini = parsed.condomini || {};
-      // Migrazione soft: assicura che ogni condominio abbia .foto array
       for (const k in condomini) { if (!Array.isArray(condomini[k].foto)) condomini[k].foto = []; }
       return {
         versione: parsed.versione || def.versione,
@@ -918,7 +912,7 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 43, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 44, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -1050,7 +1044,6 @@ async function processImage(file) {
   });
 }
 
-// targetType: 'immobile' | 'condominio'
 function apriFilePickerFoto(targetType, targetId, fromCamera) {
   const input = document.createElement('input');
   input.type = 'file';
@@ -1098,7 +1091,6 @@ async function aggiungiFoto(targetType, targetId, files) {
   if (targetType === 'immobile') target.updatedAt = new Date().toISOString();
   Storage.save(DB);
   if (fail > 0) alert(ok + ' foto aggiunte · ' + fail + ' errori');
-  // Riapri il contesto giusto
   if (targetType === 'immobile') {
     if (immobileAperto === targetId) apriScheda(targetId);
     else renderListaImmobili();
@@ -1133,8 +1125,6 @@ async function caricaFotoGriglia(containerId, photoIds) {
 async function apriFotoViewer(pid) {
   const url = await getPhotoURL(pid);
   if (!url) { alert('Foto non disponibile.'); return; }
-
-  // Trova dove tornare: prima cerca negli immobili, poi nei condomini, poi persone
   let backType = null, backId = null;
   for (const im of DB.immobili) { if ((im.foto || []).includes(pid)) { backType = 'immobile'; backId = im.id; break; } }
   if (!backType) {
@@ -1145,11 +1135,9 @@ async function apriFotoViewer(pid) {
   if (!backType) {
     for (const p of DB.persone) { if ((p.foto || []).includes(pid)) { backType = 'persona'; backId = p.id; break; } }
   }
-
   let h = '<div style="text-align:center;background:#000;border-radius:8px;overflow:hidden;margin-bottom:10px;"><img src="' + url + '" style="max-width:100%;max-height:65vh;display:block;margin:0 auto;object-fit:contain;"></div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="scaricaFoto(\'' + pid + '\')">' + ico('download',16) + ' Scarica</button>';
   h += '<button class="btn btn-danger" onclick="eliminaFoto(\'' + pid + '\')">' + ico('cestino',16) + ' Elimina</button></div>';
-
   let backOnclick = 'chiudiModal()';
   if (backType === 'immobile') backOnclick = 'chiudiModal();setTimeout(function(){apriScheda(\'' + backId + '\')},100)';
   else if (backType === 'condominio') backOnclick = 'chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(backId).replace(/'/g, "\\'") + '\')},100)';
@@ -1249,6 +1237,11 @@ const ESITI_APPUNTAMENTO = [
   { id: 'prezzo', label: 'Non piace per prezzo', icona: 'moneta', tipo: 'ko' },
   { id: 'immobile', label: 'Non piace per immobile', icona: 'casa', tipo: 'ko' }
 ];
+
+// Mappa: priorità e colori per i pin mappa
+const STATO_PRIORITY = { 'PA': 1, 'NT': 2, 'INK': 3 };
+const STATO_COLORS = { 'PA': '#d97706', 'NT': '#2563eb', 'INK': '#059669', 'VND': '#dc2626' };
+const PIN_NEUTRAL_COLOR = '#1a3a5c';
 
 // =====================================================
 // UTILITY
@@ -1452,26 +1445,19 @@ async function aggiornaInfoSistema() {
   const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
   const dbMB = dbSize / (1024*1024);
   const cacheMB = cacheSize / (1024*1024);
-
   let photoBytes = 0, photoCount = 0;
   try {
     photoBytes = await PhotoDB.estimateSize();
     photoCount = (await PhotoDB.allKeys()).length;
   } catch(e) {}
-
   if (sInfo) sInfo.textContent = dbMB.toFixed(2) + ' MB';
   if (sCache) sCache.textContent = cacheMB.toFixed(2) + ' MB';
   if (sFoto) sFoto.textContent = formatBytes(photoBytes) + ' · ' + photoCount + ' foto';
-
   if (sBarra) {
     let pct = 0, label = '—';
     let quotaBytes = null, usageBytes = null;
     if (navigator.storage && navigator.storage.estimate) {
-      try {
-        const est = await navigator.storage.estimate();
-        quotaBytes = est.quota;
-        usageBytes = est.usage;
-      } catch(e) {}
+      try { const est = await navigator.storage.estimate(); quotaBytes = est.quota; usageBytes = est.usage; } catch(e) {}
     }
     if (quotaBytes && usageBytes != null) {
       pct = Math.min(100, (usageBytes / quotaBytes) * 100);
@@ -2573,7 +2559,6 @@ function salvaNuovoImmobile() {
   const z = iv ? calcolaZoneFinali('nuovo') : (zc.length > 0 ? zc.slice() : calcolaZoneFinali('nuovo'));
   let zz = null;
   if (!iv) {
-    // Solo per il dialog "esiste già un IMM?" — il calcolo dello z è SEMPRE globale per condominio
     if (tf === 'censito') {
       const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind);
       if (e.length > 0) {
@@ -2627,7 +2612,6 @@ function apriScheda(id) {
   if (im.stato === 'NT') { const iv = (im.sottotipo || '').toLowerCase().includes('valutata') && !(im.sottotipo || '').toLowerCase().includes('non'); h += '<div style="padding-top:9px;border-top:1px solid var(--border);margin-top:6px;"><div class="sottotipo-line"><span class="lbl">Stato notizia</span><button onclick="toggleValutazione()">' + (iv ? ico('check',12) + ' Valutata' : ico('clessidra',12) + ' Non valutata') + ' · cambia</button></div></div>'; }
   if (ap2.length > 0) { h += '<div style="padding-top:9px;border-top:1px solid var(--border);margin-top:6px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:500;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push(ico('telefono',11) + ' ' + escapeHtml(p.telefono)); if (p.email) ip.push(ico('email',11) + ' ' + escapeHtml(p.email)); if (p.residenza) ip.push(ico('casa',11) + ' ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
   h += '</div>';
-
   if (im.telefono) { h += '<div class="actions"><button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('telefono',19) + '</span>Chiama</button><button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('whatsapp',19) + '</span>WhatsApp</button></div>'; }
   h += '<div class="actions"><button class="action-btn" onclick="apriModifica()"><span class="icon">' + ico('modifica',19) + '</span>Modifica</button><button class="action-btn" onclick="apriCambiaStato()"><span class="icon">' + ico('aggiorna',19) + '</span>Stato</button><button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">' + ico('piu',19) + '</span>Attività</button></div>';
   h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoImmobile(\'' + im.id + '\')">' + ico('calendario',16) + ' Nuovo appuntamento</button>';
@@ -2636,10 +2620,8 @@ function apriScheda(id) {
   if (at.length === 0) h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessuna attività.</p>';
   else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
-
-  // ---- FOTO ----
+  // FOTO (dopo le attività)
   if (isInCondo) {
-    // Sezione foto condominio (ereditate)
     h += '<div class="card"><h2>' + iconaCondo(13) + ' Foto condominio (' + nFotoCondo + ')</h2>';
     h += '<p class="foto-hint">Ereditate da tutti gli immobili di questo condominio (in aggiunta a quelle dell\'immobile).</p>';
     h += '<div id="foto-condo-grid-' + im.id + '"></div>';
@@ -2647,8 +2629,6 @@ function apriScheda(id) {
     h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', true)">' + ico('camera',14) + ' Scatta</button>';
     h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', false)">' + ico('foto',14) + ' Galleria</button>';
     h += '</div></div>';
-
-    // Sezione foto immobile (proprie)
     h += '<div class="card"><h2>' + ico('camera',13) + ' Foto immobile (' + nFotoProprie + ')</h2>';
     h += '<div id="foto-grid-' + im.id + '"></div>';
     h += '<div style="display:flex;gap:6px;margin-top:8px;">';
@@ -2663,7 +2643,6 @@ function apriScheda(id) {
     h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
     h += '</div></div>';
   }
-
   if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(13) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + ico('pin',11) + ' ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">' + ico('modifica',14) + ' Modifica condominio</button>'; h += '</div>'; }
   if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:10.5px;color:#059669;font-weight:500;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
   const d = im.dettagli || {};
@@ -2679,7 +2658,6 @@ function apriScheda(id) {
   if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">' + ico('pacco',16) + ' Archivia</button>';
   h += '</div>';
   apriModal(t, h);
-  // Carica le griglie foto
   setTimeout(() => {
     if (isInCondo) {
       caricaFotoGriglia('foto-condo-grid-' + im.id, (Array.isArray(dc.foto) ? dc.foto : []));
@@ -2845,7 +2823,7 @@ function eliminaImmobile() {
   const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return;
   if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return;
   const c = getCondominio(i);
-  const fotoProprie = (i.foto || []).slice(); // SOLO le foto proprie, non quelle del condominio
+  const fotoProprie = (i.foto || []).slice();
   DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto);
   if (c) rinumeraZCondominio(c);
   Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa();
@@ -2876,16 +2854,97 @@ function salvaNuovoCondominio() {
 }
 
 // =====================================================
-// MAPPA
+// MAPPA — PIN INTELLIGENTI
 // =====================================================
 let map = null; let markersLayer = null; window._condoPopups = [];
+
+// Calcola che icona usare per un gruppo di immobili sullo stesso punto mappa
+// Ritorna: { tipo:'pin'|'dot', colore, label?, numero? }
+function calcolaInfoIcona(immobili) {
+  if (!immobili || immobili.length === 0) return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 0 };
+  if (immobili.length === 1) {
+    const im = immobili[0];
+    if (im.stato === 'IMM') return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 1 };
+    // PA/NT/INK/VND singolo → pallino
+    const col = STATO_COLORS[im.stato] || '#dc2626';
+    return { tipo: 'dot', colore: col, label: im.stato };
+  }
+  // Gruppo >= 2 → sempre pin
+  let statoMax = null, prioMax = 0;
+  for (const im of immobili) {
+    if (im.stato === 'VND' || im.stato === 'IMM') continue;
+    const p = STATO_PRIORITY[im.stato] || 0;
+    if (p > prioMax) { prioMax = p; statoMax = im.stato; }
+  }
+  const col = statoMax ? STATO_COLORS[statoMax] : PIN_NEUTRAL_COLOR;
+  return { tipo: 'pin', colore: col, numero: immobili.length };
+}
+
+function creaIconaMap(info) {
+  if (info.tipo === 'dot') {
+    const h = `<div class="pin-dot" style="background:${info.colore};">${escapeHtml(info.label)}</div>`;
+    return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -17] });
+  }
+  const h = `<div class="pin-wrap"><div class="pin-body" style="background:${info.colore};"><div class="pin-label">${info.numero}</div></div></div>`;
+  return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: [32, 40], iconAnchor: [16, 40], popupAnchor: [0, -40] });
+}
+
 function initMappa() { if (map) return; const c = _coordsCittaPrincipale || CREMONA_CENTER; map = L.map('map', { center: c, zoom: 14, zoomControl: true }); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map); markersLayer = L.layerGroup().addTo(map); aggiornaMappa(); }
-function creaPinIcona(i) { const s = i.stato; const v = !!i.villa; let c = 'pin-' + s; if (v) c = 'pin-villa'; const h = `<div class="pin-wrap ${c}"><div class="pin-body"><div class="pin-label">${v ? '' : s}</div></div></div>`; const sz = v ? [28, 28] : [32, 40]; const an = v ? [14, 14] : [16, 40]; return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: sz, iconAnchor: an, popupAnchor: [0, -40] }); }
-function creaPinCondominio(n) { const h = `<div class="pin-wrap pin-condo"><div class="pin-body"><div class="pin-label">${n}</div></div></div>`; return L.divIcon({ className: 'arangiò-pin', html: h, iconSize: [34, 44], iconAnchor: [17, 44], popupAnchor: [0, -44] }); }
 function apriPopupImmobile(id) { chiudiModal(); apriScheda(id); }
 function apriPopupCondominioByIndex(i) { const c = window._condoPopups[i]; if (c) apriPopupCondominio(c); }
 function apriPopupCondominio(co) { const i = DB.immobili.filter(x => !x.villa && getCondominio(x) === co); let h = '<div class="prefill-banner">' + iconaCondo(13) + ' ' + escapeHtml(co) + '</div>'; if (i.length === 0) h += '<div class="card"><div class="empty" style="padding:12px 0;"><div class="icon">' + iconaCondo(28) + '</div>Nessun immobile</div></div>'; else { h += '<div class="card"><h2><span class="dot"></span>Immobili (' + i.length + ')</h2><div class="immobili-list">'; for (const im of i) h += '<div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + escapeHtml(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; h += '</div></div>'; } h += '<button class="btn btn-secondary" onclick="chiudiModal();setTimeout(function(){apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')},100)">' + ico('modifica',16) + ' Modifica condominio</button>'; apriModal(iconaCondo(13) + ' ' + co, h); }
-function aggiornaMappa() { if (!map || !markersLayer) return; markersLayer.clearLayers(); window._condoPopups = []; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); const gc = {}; const vs = []; for (const im of l) { const c = getCondominio(im); if (!c) vs.push(im); else { if (!gc[c]) gc[c] = []; gc[c].push(im); } } let pt = 0; for (const c in gc) { const im = gc[c]; const p = im[0]; const cc = (DB.coordinateCondomini && DB.coordinateCondomini[c]) || null; const lat = cc ? cc.lat : p.lat; const lng = cc ? cc.lng : p.lng; if (im.length === 1) { const x = im[0]; const mk = L.marker([x.lat, x.lng], { icon: creaPinIcona(x) }); const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(x.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } else { window._condoPopups.push(c); const idx = window._condoPopups.length - 1; const mk = L.marker([lat, lng], { icon: creaPinCondominio(im.length) }); const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(12)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">${iconaCondo(13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } } for (const im of vs) { const mk = L.marker([im.lat, im.lng], { icon: creaPinIcona(im) }); const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(im.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; } const t = DB.immobili.length; const g = DB.immobili.filter(i => i.lat && i.lng).length; document.getElementById('map-count').textContent = pt; document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)'; }
+
+function aggiornaMappa() {
+  if (!map || !markersLayer) return;
+  markersLayer.clearLayers();
+  window._condoPopups = [];
+  let l = DB.immobili.filter(i => i.lat && i.lng);
+  if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato);
+  const gc = {}; const vs = [];
+  for (const im of l) {
+    const c = getCondominio(im);
+    if (!c) vs.push(im);
+    else { if (!gc[c]) gc[c] = []; gc[c].push(im); }
+  }
+  let pt = 0;
+  // Gruppi condominio
+  for (const c in gc) {
+    const im = gc[c];
+    const p = im[0];
+    const cc = (DB.coordinateCondomini && DB.coordinateCondomini[c]) || null;
+    const lat = cc ? cc.lat : p.lat;
+    const lng = cc ? cc.lng : p.lng;
+    const info = calcolaInfoIcona(im);
+    const mk = L.marker([lat, lng], { icon: creaIconaMap(info) });
+    if (im.length === 1) {
+      const x = im[0];
+      const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(x.citofono)}</div>` : '';
+      const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`;
+      mk.bindPopup(pp);
+    } else {
+      window._condoPopups.push(c);
+      const idx = window._condoPopups.length - 1;
+      const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(12)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">${iconaCondo(13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`;
+      mk.bindPopup(pp);
+    }
+    mk.addTo(markersLayer);
+    pt++;
+  }
+  // Singoli (ville)
+  for (const im of vs) {
+    const info = calcolaInfoIcona([im]);
+    const mk = L.marker([im.lat, im.lng], { icon: creaIconaMap(info) });
+    const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(im.citofono)}</div>` : '';
+    const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`;
+    mk.bindPopup(pp);
+    mk.addTo(markersLayer);
+    pt++;
+  }
+  const t = DB.immobili.length;
+  const g = DB.immobili.filter(i => i.lat && i.lng).length;
+  document.getElementById('map-count').textContent = pt;
+  document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)';
+}
 async function centraMappaSuCittaPrincipale() { if (!map) return; if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); map.setView(_coordsCittaPrincipale, 14); }
 function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); if (l.length === 0) { centraMappaSuCittaPrincipale(); return; } const b = L.latLngBounds(l.map(i => [i.lat, i.lng])); map.fitBounds(b, { padding: [60, 60], maxZoom: 17 }); }
 
