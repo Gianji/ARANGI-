@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="ARANJÒ">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#fafbfc">
+<meta name="theme-color" content="#fafafa">
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="192x192" href="./android-chrome-192x192.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./android-chrome-192x192.png">
@@ -39,71 +39,68 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   /* =====================================================
-     DESIGN TOKENS
+     DESIGN SYSTEM — Editoriale · Minimal · Elegante
      ===================================================== */
   :root {
-    /* Brand */
-    --blu: #1a3a5c;
-    --blu-deep: #12283f;
-    --blu-soft: #eef4fa;
-    --blu-soft-2: #e3ecf5;
-    --arancione: #ea580c;
-    --arancione-deep: #c2410c;
-    --arancione-soft: #fff4ec;
+    /* Palette: blu profondo, arancio bruciato, neutri raffinati */
+    --blu: #1f3a5f;
+    --blu-deep: #162a47;
+    --blu-soft: #f0f4f9;
 
-    /* Neutrals */
-    --sfondo: #f7f8fa;
-    --sfondo-2: #f1f3f7;
+    --arancione: #d9601a;
+    --arancione-deep: #b84d10;
+    --arancione-soft: #fdf5ee;
+
+    --sfondo: #fafafa;
+    --sfondo-2: #f5f5f7;
     --card: #ffffff;
-    --card-2: #fbfcfd;
-    --testo: #0f172a;
-    --testo-sec: #64748b;
-    --testo-ter: #94a3b8;
+    --card-2: #fcfcfd;
 
-    /* Borders & shadows */
-    --border: rgba(15, 23, 42, 0.06);
-    --border-strong: rgba(15, 23, 42, 0.10);
-    --hover-bg: rgba(15, 23, 42, 0.03);
-    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
-    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.03);
-    --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.10), 0 4px 12px rgba(15, 23, 42, 0.05);
-    --shadow-orange: 0 6px 16px rgba(234, 88, 12, 0.22);
-    --shadow-blue: 0 6px 16px rgba(26, 58, 92, 0.18);
+    --testo: #1a1a1a;
+    --testo-sec: #6b7280;
+    --testo-ter: #9ca3af;
 
-    /* Radii */
-    --radius: 16px;
-    --radius-sm: 12px;
-    --radius-xs: 10px;
+    --border: #f0f0f2;
+    --border-strong: #e5e5e8;
+
+    --hover-bg: #fafafa;
+
+    /* Radius contenuto, mai estremo */
+    --radius: 12px;
+    --radius-sm: 9px;
     --radius-pill: 999px;
 
+    /* Ombre minime — quasi invisibili, solo per profondità */
+    --shadow-xs: 0 1px 1px rgba(20, 20, 30, 0.02);
+    --shadow-sm: 0 1px 3px rgba(20, 20, 30, 0.04);
+
     /* Layout */
-    --tabbar-h: 62px;
+    --tabbar-h: 60px;
     --max-w: 640px;
 
-    /* State colors */
+    /* Stati */
     --imm: #94a3b8;
-    --pa: #d97706;
+    --pa: #c2740c;
     --nt: #2563eb;
-    --ink: #059669;
-    --vnd: #dc2626;
+    --ink: #047857;
+    --vnd: #b91c1c;
     --rr: #7c3aed;
-    --prof: #0891b2;
+    --prof: #0e7490;
   }
 
   html { height: 100%; overflow: hidden; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     height: 100%; overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
     background: var(--sfondo);
     color: var(--testo);
     font-size: 15px;
-    line-height: 1.45;
-    letter-spacing: -0.011em;
+    line-height: 1.5;
+    letter-spacing: -0.006em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background 0.25s ease, color 0.25s ease;
+    transition: background 0.3s ease, color 0.3s ease;
   }
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
@@ -111,17 +108,17 @@
      HEADER
      ===================================================== */
   .app-header {
-    padding: 16px 20px 12px;
-    padding-top: calc(16px + env(safe-area-inset-top));
+    padding: 18px 22px 14px;
+    padding-top: calc(18px + env(safe-area-inset-top));
     flex-shrink: 0;
     background: var(--sfondo);
   }
   .app-header h1 {
-    font-size: 24px;
-    font-weight: 800;
+    font-size: 22px;
+    font-weight: 700;
     color: var(--blu);
-    letter-spacing: -0.7px;
-    line-height: 1.05;
+    letter-spacing: -0.6px;
+    line-height: 1.1;
   }
   .app-header h1 span { color: var(--arancione); }
   .app-header .sub {
@@ -129,11 +126,12 @@
     color: var(--testo-ter);
     margin-top: 3px;
     font-weight: 500;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.005em;
   }
   #header-prossimo-app-txt {
     color: var(--blu) !important;
     font-weight: 600;
+    letter-spacing: -0.01em;
   }
 
   /* =====================================================
@@ -143,11 +141,11 @@
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 4px 16px calc(96px + env(safe-area-inset-bottom));
+    padding: 4px 18px calc(92px + env(safe-area-inset-bottom));
   }
   .view { display: none; }
-  .view.active { display: block; animation: fadeIn 0.22s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .view.active { display: block; animation: fadeIn 0.24s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   /* =====================================================
      CARD
@@ -155,38 +153,36 @@
   .card {
     background: var(--card);
     border-radius: var(--radius);
-    padding: 16px 18px;
+    padding: 18px 20px;
     margin-bottom: 10px;
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-xs);
-    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    transition: border-color 0.2s ease;
   }
   .card h2 {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--blu);
     margin-bottom: 12px;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     letter-spacing: -0.01em;
   }
   .card h2 .dot {
-    width: 5px; height: 5px;
+    width: 4px; height: 4px;
     border-radius: 50%;
     background: var(--arancione);
-    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
   }
-  .card p { font-size: 13.5px; color: var(--testo-sec); line-height: 1.55; }
+  .card p { font-size: 13.5px; color: var(--testo-sec); line-height: 1.6; }
   .empty {
     text-align: center;
-    padding: 44px 16px;
+    padding: 48px 16px;
     color: var(--testo-ter);
     font-size: 13px;
     font-weight: 500;
   }
-  .empty .icon svg { width: 36px; height: 36px; color: var(--testo-ter); opacity: 0.35; }
-  .empty .icon { margin-bottom: 8px; }
+  .empty .icon svg { width: 32px; height: 32px; color: var(--testo-ter); opacity: 0.35; }
+  .empty .icon { margin-bottom: 10px; }
 
   /* =====================================================
      BUTTONS
@@ -205,28 +201,27 @@
     font-family: inherit;
     letter-spacing: -0.005em;
     cursor: pointer;
-    transition: transform 0.12s ease, opacity 0.15s ease, background 0.18s ease, box-shadow 0.2s ease;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, opacity 0.15s ease;
     margin-bottom: 8px;
   }
-  .btn:active { transform: scale(0.975); }
+  .btn:active { opacity: 0.75; }
   .btn-primary {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
+    background: var(--arancione);
     color: white;
-    box-shadow: var(--shadow-orange);
   }
-  .btn-primary:active { box-shadow: 0 3px 8px rgba(234, 88, 12, 0.2); }
+  .btn-primary:active { background: var(--arancione-deep); }
   .btn-secondary {
     background: var(--card);
     color: var(--blu);
     border-color: var(--border-strong);
-    box-shadow: var(--shadow-xs);
   }
   .btn-secondary:active { background: var(--hover-bg); }
   .btn-danger {
-    background: #fef2f2;
-    color: #dc2626;
-    border-color: rgba(220, 38, 38, 0.12);
+    background: var(--card);
+    color: var(--vnd);
+    border-color: var(--border-strong);
   }
+  .btn-danger:active { background: #fef2f2; border-color: #fecaca; }
   .btn svg { width: 16px; height: 16px; }
 
   /* =====================================================
@@ -236,15 +231,15 @@
     position: fixed;
     bottom: 0; left: 0; right: 0;
     height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: saturate(180%) blur(24px);
-    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    background: rgba(250, 250, 250, 0.94);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
     border-top: 1px solid var(--border);
     display: flex;
     justify-content: space-around;
-    align-items: flex-start;
+    align-items: center;
     padding-bottom: env(safe-area-inset-bottom);
-    padding-top: 10px;
+    padding-top: 4px;
     z-index: 100;
   }
   .tabbar button {
@@ -253,7 +248,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 3px;
     flex: 1;
     height: 100%;
@@ -261,35 +256,35 @@
     font-family: inherit;
     font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.005em;
     cursor: pointer;
     position: relative;
     transition: color 0.2s ease;
   }
   .tabbar button svg {
-    width: 22px; height: 22px;
+    width: 21px; height: 21px;
     stroke: currentColor;
     fill: none;
     stroke-width: 1.7;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: transform 0.2s ease;
+    transition: stroke-width 0.2s ease;
   }
   .tabbar button.active { color: var(--blu); font-weight: 600; }
-  .tabbar button.active svg { transform: translateY(-1px) scale(1.02); }
+  .tabbar button.active svg { stroke-width: 2; }
   .tabbar .badge-tab {
     position: absolute;
-    top: 0; right: 22%;
+    top: 2px; right: 24%;
     background: var(--arancione);
     color: white;
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 600;
     padding: 1px 5px;
     border-radius: var(--radius-pill);
-    min-width: 16px;
+    min-width: 15px;
     text-align: center;
     display: none;
-    box-shadow: 0 1px 3px rgba(234, 88, 12, 0.35);
+    letter-spacing: 0;
   }
   .tabbar .badge-tab.show { display: block; }
 
@@ -315,26 +310,23 @@
     font-weight: 500;
     color: var(--testo);
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: var(--shadow-xs);
+    transition: border-color 0.2s ease;
+    letter-spacing: -0.005em;
   }
-  .search-bar:focus {
-    border-color: var(--blu);
-    box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.08);
-  }
-  .search-bar::placeholder { color: var(--testo-ter); font-size: 13.5px; font-weight: 400; }
+  .search-bar:focus { border-color: var(--blu); }
+  .search-bar::placeholder { color: var(--testo-ter); font-weight: 400; font-size: 13.5px; }
 
   .filter-label {
     font-size: 10.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo-ter);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 6px 2px 8px;
+    letter-spacing: 0.06em;
+    padding: 8px 2px 8px;
   }
   .chips {
     display: flex;
-    gap: 7px;
+    gap: 6px;
     overflow-x: auto;
     padding-bottom: 10px;
     scrollbar-width: none;
@@ -342,13 +334,13 @@
   }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
-    background: var(--card);
+    background: transparent;
     border: 1px solid var(--border-strong);
-    padding: 7px 14px;
+    padding: 6px 13px;
     border-radius: var(--radius-pill);
     font-family: inherit;
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo-sec);
     white-space: nowrap;
     cursor: pointer;
@@ -356,44 +348,40 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.18s ease;
-    box-shadow: var(--shadow-xs);
+    transition: all 0.2s ease;
     letter-spacing: -0.005em;
   }
   .chip.active {
     background: var(--blu);
     color: white;
     border-color: var(--blu);
-    box-shadow: var(--shadow-blue);
+    font-weight: 600;
   }
   .chip svg { width: 12px; height: 12px; }
-  .chip.sub { padding: 6px 13px; font-size: 12px; }
+  .chip.sub { padding: 6px 12px; font-size: 12px; }
   .chip.sub.active {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
+    background: var(--arancione);
     border-color: var(--arancione);
-    box-shadow: var(--shadow-orange);
   }
   .chip-dropdown {
-    background: var(--card);
+    background: transparent;
     border: 1px solid var(--border-strong);
-    padding: 7px 14px;
+    padding: 6px 13px;
     border-radius: var(--radius-pill);
     font-family: inherit;
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo-sec);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.18s ease;
-    box-shadow: var(--shadow-xs);
+    transition: all 0.2s ease;
   }
   .chip-dropdown.active {
     background: var(--blu);
     color: white;
     border-color: var(--blu);
-    box-shadow: var(--shadow-blue);
   }
 
   .zone-chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -404,7 +392,7 @@
     border-radius: var(--radius-pill);
     font-family: inherit;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo-sec);
     cursor: pointer;
     display: inline-flex;
@@ -413,16 +401,9 @@
     transition: all 0.18s ease;
     letter-spacing: -0.005em;
   }
-  .zone-chip.active {
-    background: var(--blu);
-    color: white;
-    box-shadow: var(--shadow-blue);
-  }
+  .zone-chip.active { background: var(--blu); color: white; }
   .zone-chip.special { font-size: 11px; padding: 5px 11px; }
-  .zone-chip.special.active {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
-    box-shadow: var(--shadow-orange);
-  }
+  .zone-chip.special.active { background: var(--arancione); }
 
   .active-filter-banner {
     display: flex;
@@ -434,12 +415,12 @@
     margin-bottom: 10px;
     font-size: 12.5px;
     color: var(--blu);
-    font-weight: 600;
+    font-weight: 500;
     gap: 8px;
     letter-spacing: -0.005em;
   }
   .active-filter-banner .x {
-    background: rgba(26, 58, 92, 0.08);
+    background: rgba(31, 58, 95, 0.06);
     border: none;
     width: 22px; height: 22px;
     border-radius: 50%;
@@ -451,7 +432,7 @@
     flex-shrink: 0;
     transition: background 0.15s ease;
   }
-  .active-filter-banner .x:active { background: rgba(26, 58, 92, 0.16); }
+  .active-filter-banner .x:active { background: rgba(31, 58, 95, 0.12); }
   .active-filter-banner .x svg { width: 11px; height: 11px; }
 
   /* =====================================================
@@ -464,18 +445,17 @@
     margin-bottom: 8px;
     border: 1px solid var(--border);
     cursor: pointer;
-    box-shadow: var(--shadow-xs);
-    transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, background 0.15s ease;
   }
-  .item-card:active { transform: scale(0.99); background: var(--hover-bg); }
-  .item-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+  .item-card:active { background: var(--hover-bg); border-color: var(--border-strong); }
+  .item-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
   .item-title {
     font-size: 14.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo);
     flex: 1;
     word-break: break-word;
-    line-height: 1.3;
+    line-height: 1.35;
     letter-spacing: -0.015em;
   }
   .item-sub {
@@ -488,9 +468,9 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-weight: 500;
+    font-weight: 400;
   }
-  .item-sub svg { flex-shrink: 0; width: 12px; height: 12px; opacity: 0.7; }
+  .item-sub svg { flex-shrink: 0; width: 12px; height: 12px; opacity: 0.6; }
   .item-meta {
     font-size: 11.5px;
     color: var(--testo-ter);
@@ -501,78 +481,77 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    font-weight: 500;
   }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
   .qa-row {
     display: flex;
-    gap: 7px;
+    gap: 8px;
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid var(--border);
   }
   .qa-btn {
     flex: 1;
-    background: var(--sfondo-2);
-    border: none;
-    padding: 9px 10px;
-    border-radius: var(--radius-xs);
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
     font-family: inherit;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--blu);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 5px;
-    transition: background 0.15s ease, transform 0.12s ease;
+    transition: background 0.15s ease;
     letter-spacing: -0.005em;
   }
-  .qa-btn:active { transform: scale(0.97); }
+  .qa-btn:active { background: var(--hover-bg); }
   .qa-btn svg { width: 13px; height: 13px; }
-  .qa-btn.wa { color: #059669; }
+  .qa-btn.wa { color: var(--ink); }
 
   /* =====================================================
      BADGES & TAGS
      ===================================================== */
   .badge {
     display: inline-block;
-    padding: 3px 9px;
+    padding: 2.5px 8px;
     border-radius: var(--radius-pill);
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 9.5px;
+    font-weight: 600;
     color: white;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
     flex-shrink: 0;
     text-transform: uppercase;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
   .badge-IMM { background: var(--imm); }
   .badge-PA { background: var(--pa); }
   .badge-NT { background: var(--nt); }
   .badge-INK { background: var(--ink); }
   .badge-VND { background: var(--vnd); }
-  .badge-RR-attiva { background: #7c3aed; }
-  .badge-RR-in-attesa { background: #d97706; }
-  .badge-RR-proposta { background: #059669; }
-  .badge-RR-ha-comprato { background: #dc2626; }
-  .badge-RR-non-attiva { background: #9ca3af; }
-  .badge-RR-rogitato { background: #1e40af; }
+  .badge-RR-attiva { background: var(--rr); }
+  .badge-RR-in-attesa { background: var(--pa); }
+  .badge-RR-proposta { background: var(--ink); }
+  .badge-RR-ha-comprato { background: var(--vnd); }
+  .badge-RR-non-attiva { background: var(--testo-ter); }
+  .badge-RR-rogitato { background: var(--blu-deep); }
   .badge-PROF { background: var(--prof); }
 
   .tag {
     display: inline-block;
-    background: var(--sfondo-2);
-    color: var(--testo-sec);
-    padding: 3px 9px;
+    background: transparent;
+    color: var(--testo-ter);
+    padding: 2px 8px;
     border-radius: var(--radius-pill);
-    font-size: 10.5px;
-    font-weight: 600;
+    border: 1px solid var(--border-strong);
+    font-size: 10px;
+    font-weight: 500;
     margin-right: 4px;
     margin-top: 4px;
-    letter-spacing: -0.005em;
+    letter-spacing: 0.005em;
   }
 
   /* =====================================================
@@ -580,30 +559,34 @@
      ===================================================== */
   .fab {
     position: fixed;
-    right: 20px;
-    bottom: calc(var(--tabbar-h) + 20px + env(safe-area-inset-bottom));
-    width: 54px; height: 54px;
+    right: 22px;
+    bottom: calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));
+    width: 52px; height: 52px;
     border-radius: 50%;
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
+    background: var(--arancione);
     color: white;
     border: none;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 300;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 20px rgba(234, 88, 12, 0.35), 0 2px 6px rgba(234, 88, 12, 0.2);
+    box-shadow: 0 4px 16px rgba(217, 96, 26, 0.28), 0 1px 3px rgba(217, 96, 26, 0.15);
     cursor: pointer;
     z-index: 50;
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
-  .fab:active { transform: scale(0.92); box-shadow: 0 3px 10px rgba(234, 88, 12, 0.3); }
-  .fab svg { width: 24px; height: 24px; stroke-width: 2.2; }
+  .fab:active {
+    transform: scale(0.94);
+    background: var(--arancione-deep);
+    box-shadow: 0 2px 8px rgba(217, 96, 26, 0.25);
+  }
+  .fab svg { width: 22px; height: 22px; stroke-width: 2.2; }
 
   .back-top {
     position: fixed;
-    right: 20px;
+    right: 22px;
     bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom));
     width: 40px; height: 40px;
     border-radius: 50%;
@@ -615,11 +598,10 @@
     justify-content: center;
     cursor: pointer;
     z-index: 49;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.15s ease, opacity 0.2s ease;
+    transition: background 0.15s ease;
   }
   .back-top.show { display: flex; }
-  .back-top:active { transform: scale(0.92); }
+  .back-top:active { background: var(--hover-bg); }
   .back-top svg { width: 16px; height: 16px; transform: rotate(-90deg); }
 
   /* =====================================================
@@ -628,52 +610,52 @@
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.42);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(20, 20, 30, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 200;
     display: none;
     align-items: flex-end;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.25s ease;
   }
   .modal-overlay.open { display: flex; opacity: 1; }
-  @keyframes slideUp { from { transform: translateY(8%); opacity: 0.5; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   .modal-sheet {
     background: var(--sfondo);
     width: 100%;
     max-width: var(--max-w);
     max-height: 92vh;
     max-height: 92dvh;
-    border-radius: 24px 24px 0 0;
+    border-radius: 18px 18px 0 0;
     display: flex;
     flex-direction: column;
-    animation: slideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
-    box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.14);
   }
   .modal-header {
-    padding: 18px 22px 14px;
+    padding: 20px 22px 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-shrink: 0;
     position: relative;
+    border-bottom: 1px solid var(--border);
   }
   .modal-header::before {
     content: '';
     position: absolute;
     top: 8px; left: 50%;
     transform: translateX(-50%);
-    width: 36px; height: 4px;
+    width: 32px; height: 4px;
     border-radius: 2px;
     background: var(--border-strong);
   }
   .modal-header h2 {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 17px;
+    font-weight: 700;
     color: var(--blu);
     flex: 1;
     overflow: hidden;
@@ -686,7 +668,7 @@
     margin-top: 6px;
   }
   .modal-close {
-    background: rgba(15, 23, 42, 0.06);
+    background: transparent;
     border: none;
     width: 30px; height: 30px;
     border-radius: 50%;
@@ -698,15 +680,15 @@
     justify-content: center;
     flex-shrink: 0;
     margin-top: 6px;
-    transition: background 0.15s ease, transform 0.15s ease;
+    transition: background 0.15s ease;
   }
-  .modal-close:active { transform: scale(0.9); }
+  .modal-close:active { background: var(--sfondo-2); }
   .modal-close svg { width: 14px; height: 14px; }
   .modal-body {
     flex: 1;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0 16px 24px;
+    padding: 16px 16px 24px;
     padding-bottom: calc(24px + env(safe-area-inset-bottom));
   }
 
@@ -716,19 +698,18 @@
   .form-group {
     background: var(--card);
     border-radius: var(--radius);
-    padding: 0 16px;
+    padding: 0 18px;
     margin-bottom: 10px;
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-xs);
   }
-  .form-row { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .form-row { padding: 13px 0; border-bottom: 1px solid var(--border); }
   .form-row:last-child { border-bottom: none; }
   .form-label {
     font-size: 10.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo-ter);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     margin-bottom: 5px;
     display: block;
   }
@@ -749,7 +730,7 @@
   .form-select {
     -webkit-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 2px center;
     padding-right: 22px;
@@ -765,15 +746,15 @@
     border-bottom: 1px solid var(--border);
     font-size: 13.5px;
     color: var(--testo);
-    line-height: 1.45;
+    line-height: 1.5;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 400;
   }
   .timeline-item:last-child { border-bottom: none; }
   .timeline-item .data {
     font-size: 11px;
     color: var(--testo-ter);
-    font-weight: 700;
+    font-weight: 500;
     display: block;
     margin-bottom: 3px;
     letter-spacing: 0.01em;
@@ -783,17 +764,17 @@
     background: var(--arancione-soft);
     margin: 4px -12px;
     padding: 11px 12px;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     border-bottom: none;
   }
   .timeline-item.scaduta {
     background: #fef2f2;
     margin: 4px -12px;
     padding: 11px 12px;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     border-bottom: none;
   }
-  .timeline-item.scaduta .data { color: #dc2626; }
+  .timeline-item.scaduta .data { color: var(--vnd); }
   .timeline-item .chev { float: right; color: var(--testo-ter); font-size: 16px; line-height: 1; margin-left: 6px; }
 
   /* =====================================================
@@ -807,21 +788,20 @@
     border-radius: var(--radius);
     padding: 13px 8px;
     font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11.5px;
+    font-weight: 500;
     color: var(--blu);
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5px;
-    box-shadow: var(--shadow-xs);
-    transition: background 0.15s ease, transform 0.12s ease;
+    transition: background 0.15s ease;
     letter-spacing: -0.005em;
   }
-  .action-btn:active { transform: scale(0.97); background: var(--hover-bg); }
+  .action-btn:active { background: var(--hover-bg); }
   .action-btn .icon { display: flex; align-items: center; justify-content: center; height: 20px; }
-  .action-btn .icon svg { width: 19px; height: 19px; }
+  .action-btn .icon svg { width: 18px; height: 18px; stroke-width: 1.6; }
 
   /* =====================================================
      INFO ROWS
@@ -829,23 +809,24 @@
   .info-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 7px 0;
     font-size: 13.5px;
     gap: 12px;
-    font-weight: 500;
+    font-weight: 400;
   }
-  .info-row .label { color: var(--testo-sec); flex-shrink: 0; font-weight: 500; }
-  .info-row .value { color: var(--testo); font-weight: 600; text-align: right; word-break: break-word; letter-spacing: -0.005em; }
+  .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
+  .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; letter-spacing: -0.005em; }
   .info-row + .info-row { border-top: 1px solid var(--border); }
 
   /* =====================================================
      IMMOBILI LIST
      ===================================================== */
-  .immobili-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .immobili-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
   .immobile-line {
-    background: var(--sfondo-2);
-    border-radius: var(--radius-xs);
-    padding: 11px 13px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
     font-size: 13px;
     color: var(--testo);
     display: flex;
@@ -853,10 +834,10 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    font-weight: 500;
-    transition: background 0.15s ease, transform 0.12s ease;
+    font-weight: 400;
+    transition: background 0.15s ease;
   }
-  .immobile-line:active { background: var(--border); transform: scale(0.99); }
+  .immobile-line:active { background: var(--hover-bg); }
   .immobile-line .txt {
     flex: 1;
     min-width: 0;
@@ -867,11 +848,11 @@
     align-items: center;
     gap: 6px;
   }
-  .immobile-line .txt svg { flex-shrink: 0; width: 13px; height: 13px; opacity: 0.6; }
+  .immobile-line .txt svg { flex-shrink: 0; width: 13px; height: 13px; opacity: 0.5; }
   .immobile-line .rm {
     background: none;
     border: none;
-    color: #dc2626;
+    color: var(--vnd);
     font-size: 16px;
     cursor: pointer;
     padding: 0 3px;
@@ -881,13 +862,13 @@
   }
   .immobile-line .rm svg { width: 14px; height: 14px; }
   .add-btn {
-    background: var(--blu-soft);
-    border: none;
+    background: transparent;
+    border: 1px dashed var(--border-strong);
     border-radius: var(--radius-sm);
-    padding: 11px 13px;
+    padding: 10px 12px;
     font-family: inherit;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--blu);
     cursor: pointer;
     width: 100%;
@@ -896,26 +877,25 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: background 0.15s ease, transform 0.12s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
     letter-spacing: -0.005em;
   }
-  .add-btn:active { transform: scale(0.98); background: var(--blu-soft-2); }
+  .add-btn:active { background: var(--hover-bg); border-color: var(--blu); }
   .add-btn svg { width: 14px; height: 14px; }
 
   /* =====================================================
      FOTO GRID
      ===================================================== */
-  .foto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .foto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
   .foto-item {
     aspect-ratio: 1 / 1;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     overflow: hidden;
     background: var(--sfondo-2);
     cursor: pointer;
-    transition: transform 0.15s ease;
-    box-shadow: var(--shadow-xs);
+    transition: opacity 0.15s ease;
   }
-  .foto-item:active { transform: scale(0.96); }
+  .foto-item:active { opacity: 0.75; }
   .foto-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .foto-placeholder {
     width: 100%; height: 100%;
@@ -924,44 +904,44 @@
     animation: shimmer 1.4s infinite;
   }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-  .foto-hint { font-size: 11.5px; color: var(--testo-ter); margin: 0 0 8px; font-weight: 500; }
+  .foto-hint { font-size: 11.5px; color: var(--testo-ter); margin: 0 0 8px; font-weight: 400; }
 
   /* =====================================================
      SOTTOTIPO / CONDO
      ===================================================== */
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-size: 13.5px; gap: 8px; }
-  .sottotipo-line .lbl { color: var(--testo-sec); font-weight: 500; }
+  .sottotipo-line .lbl { color: var(--testo-sec); font-weight: 400; }
   .sottotipo-line button {
-    background: var(--sfondo-2);
-    border: none;
+    background: transparent;
+    border: 1px solid var(--border-strong);
     border-radius: var(--radius-pill);
     padding: 6px 12px;
     font-family: inherit;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11.5px;
+    font-weight: 500;
     color: var(--blu);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: background 0.15s ease, transform 0.12s ease;
+    transition: background 0.15s ease;
     letter-spacing: -0.005em;
   }
-  .sottotipo-line button:active { transform: scale(0.96); }
+  .sottotipo-line button:active { background: var(--hover-bg); }
   .sottotipo-line button svg { width: 12px; height: 12px; }
 
   .condo-header {
     background: var(--blu-soft);
     border-radius: var(--radius-sm);
     padding: 10px 14px;
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--blu);
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 6px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
     text-transform: uppercase;
   }
   .condo-card {
@@ -974,15 +954,14 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: var(--shadow-xs);
-    transition: background 0.15s ease, transform 0.12s ease;
+    transition: border-color 0.2s ease, background 0.15s ease;
   }
-  .condo-card:active { transform: scale(0.99); background: var(--hover-bg); }
-  .condo-card .condo-icon { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.8; }
+  .condo-card:active { background: var(--hover-bg); border-color: var(--border-strong); }
+  .condo-card .condo-icon { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.65; }
   .condo-card .condo-info { flex: 1; overflow: hidden; }
   .condo-card .condo-title {
     font-size: 14.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo);
     margin-bottom: 3px;
     overflow: hidden;
@@ -990,7 +969,7 @@
     white-space: nowrap;
     letter-spacing: -0.01em;
   }
-  .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); font-weight: 500; }
+  .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); font-weight: 400; }
   .condo-card .condo-arrow svg { width: 15px; height: 15px; color: var(--testo-ter); }
   .condo-card .condo-edit {
     background: none;
@@ -998,7 +977,7 @@
     padding: 6px;
     cursor: pointer;
     flex-shrink: 0;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     color: var(--testo-ter);
     display: flex;
     align-items: center;
@@ -1011,11 +990,11 @@
      SECTION TITLES & BANNERS
      ===================================================== */
   .section-title {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10.5px;
+    font-weight: 600;
     color: var(--testo-ter);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     padding: 6px 2px 8px;
     display: flex;
     align-items: center;
@@ -1028,7 +1007,7 @@
     padding: 10px 14px;
     font-size: 12px;
     color: var(--blu);
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -1037,32 +1016,33 @@
   }
   .prefill-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
   .inherit-banner {
-    background: #ecfdf5;
+    background: #f0fdf4;
     border-radius: var(--radius-sm);
     padding: 12px 14px;
     font-size: 12px;
-    color: #047857;
-    font-weight: 600;
+    color: var(--ink);
+    font-weight: 500;
     margin-top: 8px;
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    line-height: 1.5;
+    line-height: 1.55;
   }
-  .inherit-banner .ico { flex-shrink: 0; color: #047857; }
+  .inherit-banner .ico { flex-shrink: 0; color: var(--ink); }
   .inherit-banner .ico svg { width: 15px; height: 15px; }
-  .inherit-banner strong { display: block; margin-bottom: 3px; font-size: 12.5px; font-weight: 700; }
+  .inherit-banner strong { display: block; margin-bottom: 3px; font-size: 12.5px; font-weight: 600; }
   .zone-summary {
-    background: var(--sfondo-2);
+    background: transparent;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 10px 14px;
     font-size: 12px;
     color: var(--testo-sec);
     margin-top: 6px;
-    line-height: 1.5;
-    font-weight: 500;
+    line-height: 1.55;
+    font-weight: 400;
   }
-  .zone-summary strong { color: var(--blu); font-weight: 700; }
+  .zone-summary strong { color: var(--blu); font-weight: 600; }
   .zdf-notice {
     background: var(--arancione-soft);
     border-radius: var(--radius-sm);
@@ -1073,33 +1053,34 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-weight: 600;
+    font-weight: 500;
   }
   .zdf-notice svg { width: 12px; height: 12px; flex-shrink: 0; }
   .zcode-badge {
     display: inline-block;
-    background: var(--blu-soft);
+    background: transparent;
     color: var(--blu);
-    padding: 3px 10px;
+    padding: 2px 10px;
     border-radius: var(--radius-pill);
-    font-size: 11.5px;
-    font-weight: 700;
+    border: 1px solid var(--border-strong);
+    font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.01em;
   }
 
   /* =====================================================
-     VILLA TOGGLE & THEME BTNS
+     VILLA TOGGLE & THEME
      ===================================================== */
   .villa-toggle { display: flex; gap: 8px; margin-top: 4px; }
   .villa-toggle button {
     flex: 1;
     padding: 12px 8px;
-    border: 1.5px solid var(--border-strong);
+    border: 1px solid var(--border-strong);
     background: var(--card);
     border-radius: var(--radius-sm);
     font-family: inherit;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo-sec);
     cursor: pointer;
     display: flex;
@@ -1113,19 +1094,19 @@
     border-color: var(--blu);
     color: var(--blu);
     background: var(--blu-soft);
-    font-weight: 700;
+    font-weight: 600;
   }
   .villa-toggle button svg { width: 18px; height: 18px; }
 
   .theme-btn {
     flex: 1;
     padding: 14px 8px;
-    border: 1.5px solid var(--border-strong);
+    border: 1px solid var(--border-strong);
     background: var(--card);
     border-radius: var(--radius-sm);
     font-family: inherit;
     font-size: 12.5px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo-sec);
     cursor: pointer;
     display: flex;
@@ -1133,22 +1114,23 @@
     align-items: center;
     gap: 7px;
     transition: all 0.18s ease;
+    letter-spacing: -0.005em;
   }
-  .theme-btn.active { border-color: var(--testo); color: var(--testo); font-weight: 700; }
+  .theme-btn.active { border-color: var(--testo); color: var(--testo); font-weight: 600; }
 
   /* =====================================================
      FAB MENU
      ===================================================== */
   .fab-menu {
     position: fixed;
-    right: 20px;
+    right: 22px;
     bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: flex-end;
     z-index: 51;
-    animation: slideUp 0.2s ease;
+    animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .fab-menu button {
     background: var(--card);
@@ -1157,43 +1139,44 @@
     border-radius: var(--radius-sm);
     font-family: inherit;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--blu);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 2px 12px rgba(20, 20, 30, 0.06);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
     letter-spacing: -0.005em;
-    transition: transform 0.12s ease;
+    transition: background 0.15s ease;
   }
-  .fab-menu button:active { transform: scale(0.96); }
+  .fab-menu button:active { background: var(--hover-bg); }
   .fab-menu button svg { width: 15px; height: 15px; }
 
   /* =====================================================
      PROP CARDS
      ===================================================== */
   .prop-card {
-    background: var(--sfondo-2);
+    background: transparent;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 11px 13px;
     margin-bottom: 6px;
   }
   .prop-card .prop-nome {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo);
     margin-bottom: 4px;
     letter-spacing: -0.01em;
   }
-  .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.55; font-weight: 500; }
+  .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.6; font-weight: 400; }
 
   /* =====================================================
      ADDRESS
      ===================================================== */
-  .addr-check { color: #059669; font-weight: 700; font-size: 13px; flex-shrink: 0; display: inline-flex; align-items: center; }
+  .addr-check { color: var(--ink); font-weight: 600; font-size: 13px; flex-shrink: 0; display: inline-flex; align-items: center; }
   .addr-check svg { width: 13px; height: 13px; }
-  .addr-click { color: var(--blu); font-weight: 600; cursor: pointer; }
+  .addr-click { color: var(--blu); font-weight: 500; cursor: pointer; }
   .addr-link { color: var(--testo-ter); cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; padding: 3px 4px; border-radius: 6px; }
   .addr-link svg { width: 13px; height: 13px; }
   .addr-tools { padding-top: 10px; border-top: 1px solid var(--border); margin-top: 10px; }
@@ -1206,38 +1189,38 @@
     inset: 0;
     z-index: 180;
     display: none;
-    background: rgba(15, 23, 42, 0.35);
+    background: rgba(20, 20, 30, 0.35);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    animation: fadeIn 0.18s ease;
+    animation: fadeIn 0.2s ease;
   }
   .filter-dropdown-overlay.open { display: block; }
   .filter-dropdown {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background: var(--sfondo);
+    background: var(--card);
     border-radius: var(--radius);
     padding: 16px;
     min-width: 260px;
     max-width: 90vw;
-    box-shadow: var(--shadow-lg);
-    animation: popIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 12px 48px rgba(20, 20, 30, 0.16);
+    animation: popIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  @keyframes popIn { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes popIn { from { opacity: 0; transform: translate(-50%, -48%) scale(0.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
   .filter-dropdown h3 {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10.5px;
+    font-weight: 600;
     color: var(--testo-ter);
     margin-bottom: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
   .filter-dropdown .opt {
-    padding: 12px 14px;
+    padding: 11px 12px;
     border-radius: var(--radius-sm);
     font-size: 13.5px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo);
     cursor: pointer;
     display: flex;
@@ -1246,7 +1229,8 @@
     transition: background 0.15s ease;
     letter-spacing: -0.005em;
   }
-  .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 700; }
+  .filter-dropdown .opt:active { background: var(--sfondo-2); }
+  .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
   .filter-dropdown .opt svg { width: 13px; height: 13px; color: var(--blu); }
 
   /* =====================================================
@@ -1272,25 +1256,25 @@
   .map-overlay-top > * { pointer-events: auto; }
   .map-chips {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     overflow-x: auto;
     padding: 8px 10px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
     scrollbar-width: none;
   }
   .map-chips::-webkit-scrollbar { display: none; }
   .map-chip {
-    background: var(--sfondo-2);
-    border: none;
-    padding: 6px 13px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    padding: 5px 12px;
     border-radius: var(--radius-pill);
     font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11.5px;
+    font-weight: 500;
     color: var(--testo-sec);
     white-space: nowrap;
     cursor: pointer;
@@ -1298,23 +1282,23 @@
     transition: all 0.18s ease;
     letter-spacing: -0.005em;
   }
-  .map-chip.active { background: var(--blu); color: white; box-shadow: var(--shadow-blue); font-weight: 700; }
+  .map-chip.active { background: var(--blu); color: white; border-color: var(--blu); font-weight: 600; }
   .map-status {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: var(--radius-sm);
-    padding: 8px 12px;
+    border: 1px solid var(--border);
+    padding: 9px 12px;
     font-size: 12px;
     color: var(--testo-sec);
-    box-shadow: var(--shadow-md);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    font-weight: 500;
+    font-weight: 400;
   }
-  .map-status .count { font-weight: 800; color: var(--blu); letter-spacing: -0.01em; }
+  .map-status .count { font-weight: 600; color: var(--blu); letter-spacing: -0.01em; }
   .map-status button {
     background: var(--blu);
     border: none;
@@ -1322,15 +1306,15 @@
     padding: 6px 12px;
     font-family: inherit;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 500;
     color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: transform 0.12s ease;
+    transition: background 0.15s ease;
   }
-  .map-status button:active { transform: scale(0.95); }
+  .map-status button:active { background: var(--blu-deep); }
   .map-status button svg { width: 12px; height: 12px; }
   .map-overlay-bottom {
     position: absolute;
@@ -1341,19 +1325,18 @@
     gap: 8px;
   }
   .map-btn {
-    width: 44px; height: 44px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     background: var(--card);
     border: 1px solid var(--border-strong);
-    box-shadow: var(--shadow-md);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--blu);
-    transition: transform 0.12s ease;
+    transition: background 0.15s ease;
   }
-  .map-btn:active { transform: scale(0.92); }
+  .map-btn:active { background: var(--hover-bg); }
   .map-btn svg { width: 18px; height: 18px; }
 
   .pin-wrap { position: relative; width: 32px; height: 40px; }
@@ -1363,33 +1346,33 @@
     width: 30px; height: 30px;
     border-radius: 50% 50% 50% 0;
     transform: translateX(-50%) rotate(-45deg);
-    border: 2.5px solid white;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .pin-body .pin-label { transform: rotate(45deg); font-size: 10px; font-weight: 800; color: white; line-height: 1; }
+  .pin-body .pin-label { transform: rotate(45deg); font-size: 10px; font-weight: 700; color: white; line-height: 1; }
   .pin-dot {
     width: 34px; height: 34px;
     border-radius: 50%;
-    border: 2.5px solid white;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 9.5px;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1;
   }
 
-  .leaflet-popup-content-wrapper { border-radius: 14px; padding: 0; overflow: hidden; box-shadow: var(--shadow-lg); }
+  .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 8px 32px rgba(20, 20, 30, 0.12); }
   .leaflet-popup-content { margin: 0; min-width: 200px; }
   .aranjò-popup { padding: 12px 14px; }
   .aranjò-popup .pop-titolo {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--blu);
     margin-bottom: 4px;
     line-height: 1.35;
@@ -1405,27 +1388,27 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    font-weight: 500;
+    font-weight: 400;
   }
   .aranjò-popup .pop-badge {
     display: inline-block;
-    padding: 3px 8px;
+    padding: 2px 8px;
     border-radius: var(--radius-pill);
     font-size: 9.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: white;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
   }
   .aranjò-popup .pop-btn {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
+    background: var(--arancione);
     color: white;
     border: none;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     padding: 9px 12px;
     font-family: inherit;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 500;
     cursor: pointer;
     width: 100%;
     margin-top: 5px;
@@ -1433,10 +1416,10 @@
     align-items: center;
     justify-content: center;
     gap: 5px;
-    transition: transform 0.12s ease;
+    transition: background 0.15s ease;
     letter-spacing: -0.005em;
   }
-  .aranjò-popup .pop-btn:active { transform: scale(0.97); }
+  .aranjò-popup .pop-btn:active { background: var(--arancione-deep); }
   .aranjò-popup .pop-btn svg { width: 13px; height: 13px; }
   .aranjò-popup .pop-btn.btn-nav { background: var(--blu); margin-top: 4px; }
   #map-container.map-hidden { visibility: hidden !important; pointer-events: none !important; }
@@ -1502,32 +1485,27 @@
     text-align: center;
     cursor: pointer;
     font-family: inherit;
-    box-shadow: var(--shadow-xs);
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease;
   }
   .att-subtab .num {
-    font-size: 22px;
-    font-weight: 800;
+    font-size: 20px;
+    font-weight: 700;
     line-height: 1;
     margin-bottom: 3px;
     color: var(--testo-sec);
     letter-spacing: -0.03em;
   }
   .att-subtab .lbl {
-    font-size: 9.5px;
-    font-weight: 700;
+    font-size: 9px;
+    font-weight: 600;
     text-transform: uppercase;
     color: var(--testo-ter);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
   .att-subtab.oggi.active .num { color: var(--arancione); }
-  .att-subtab.scadute.active .num { color: #dc2626; }
+  .att-subtab.scadute.active .num { color: var(--vnd); }
   .att-subtab.prossime.active .num { color: var(--nt); }
-  .att-subtab.active {
-    border-color: var(--blu);
-    background: var(--blu-soft);
-    box-shadow: 0 0 0 1px var(--blu), var(--shadow-sm);
-  }
+  .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
   /* =====================================================
      AGENDA WIDGET
@@ -1535,43 +1513,42 @@
   .agenda-sett {
     background: var(--card);
     border-radius: var(--radius);
-    padding: 14px 12px;
+    padding: 16px 12px;
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-xs);
   }
   .agenda-sett h3 {
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 11.5px;
+    font-weight: 600;
     color: var(--blu);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   .agenda-sett h3 .lbl-click { cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-  .agenda-sett h3 .nav-sett { display: flex; gap: 4px; }
+  .agenda-sett h3 .nav-sett { display: flex; gap: 3px; }
   .agenda-sett h3 .nav-sett button {
-    background: var(--sfondo-2);
+    background: transparent;
     border: none;
-    width: 28px; height: 28px;
-    border-radius: var(--radius-xs);
-    font-size: 15px;
+    width: 26px; height: 26px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
     color: var(--blu);
     cursor: pointer;
     font-family: inherit;
-    font-weight: 700;
-    transition: background 0.15s ease, transform 0.12s ease;
+    font-weight: 500;
+    transition: background 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .agenda-sett h3 .nav-sett button:active { background: var(--border); transform: scale(0.92); }
+  .agenda-sett h3 .nav-sett button:active { background: var(--sfondo-2); }
   .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
   .agenda-giorno {
     background: transparent;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     padding: 5px 3px;
     min-height: 62px;
     display: flex;
@@ -1581,27 +1558,23 @@
     cursor: pointer;
     transition: background 0.15s ease;
   }
-  .agenda-giorno:active { background: var(--hover-bg); }
-  .agenda-giorno.oggi .ag-num {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
-    color: white;
-    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
-  }
+  .agenda-giorno:active { background: var(--sfondo-2); }
+  .agenda-giorno.oggi .ag-num { background: var(--arancione); color: white; }
   .agenda-giorno .ag-nome {
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo-ter);
     text-transform: uppercase;
     text-align: center;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
   }
   .agenda-giorno.oggi .ag-nome { color: var(--arancione); }
   .agenda-giorno .ag-num {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--testo);
     text-align: center;
-    line-height: 30px;
+    line-height: 28px;
     width: 28px; height: 28px;
     border-radius: 50%;
     margin-bottom: 2px;
@@ -1609,11 +1582,11 @@
     align-items: center;
     justify-content: center;
     letter-spacing: -0.02em;
-    transition: all 0.2s ease;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   .agenda-giorno .ag-ev { display: none; }
-  .agenda-giorno .ag-dots { display: flex; gap: 2px; justify-content: center; margin-top: 2px; }
-  .agenda-giorno .ag-dot { width: 4.5px; height: 4.5px; border-radius: 50%; }
+  .agenda-giorno .ag-dots { display: flex; gap: 2.5px; justify-content: center; margin-top: 2px; }
+  .agenda-giorno .ag-dot { width: 4px; height: 4px; border-radius: 50%; }
   .agenda-giorno .ag-empty { color: var(--testo-ter); font-size: 10px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; opacity: 0.4; }
 
   /* =====================================================
@@ -1622,69 +1595,69 @@
   .planning-sett {
     background: var(--card);
     border-radius: var(--radius);
-    padding: 14px;
+    padding: 16px;
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-xs);
   }
   .planning-sett h3 {
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 11.5px;
+    font-weight: 600;
     color: var(--blu);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     margin-bottom: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .planning-sett h3 .nav-sett { display: flex; gap: 4px; }
+  .planning-sett h3 .nav-sett { display: flex; gap: 3px; }
   .planning-sett h3 .nav-sett button {
-    background: var(--sfondo-2);
+    background: transparent;
     border: none;
-    width: 28px; height: 28px;
-    border-radius: var(--radius-xs);
-    font-size: 15px;
+    width: 26px; height: 26px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
     color: var(--blu);
     cursor: pointer;
     font-family: inherit;
-    font-weight: 700;
-    transition: background 0.15s ease, transform 0.12s ease;
+    font-weight: 500;
+    transition: background 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .planning-sett h3 .nav-sett button:active { background: var(--border); transform: scale(0.92); }
-  .planning-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; }
+  .planning-sett h3 .nav-sett button:active { background: var(--sfondo-2); }
+  .planning-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
   .planning-item {
     display: flex;
-    gap: 9px;
+    gap: 10px;
     padding: 9px 11px;
-    background: var(--sfondo-2);
-    border-radius: var(--radius-xs);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     font-size: 12.5px;
     cursor: pointer;
     align-items: flex-start;
     border-left: 3px solid var(--blu);
-    font-weight: 500;
-    transition: transform 0.12s ease;
+    font-weight: 400;
+    transition: background 0.15s ease;
   }
-  .planning-item:active { transform: scale(0.99); }
+  .planning-item:active { background: var(--hover-bg); }
   .planning-item.appuntamento { border-left-color: var(--pa); }
   .planning-item.attivita { border-left-color: var(--nt); }
   .planning-item.libera { border-left-color: var(--arancione); }
   .planning-item.fatta { opacity: 0.5; }
   .planning-item .pi-ora {
     font-size: 10.5px;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--testo-sec);
     flex-shrink: 0;
-    min-width: 40px;
-    letter-spacing: -0.01em;
+    min-width: 38px;
+    letter-spacing: -0.005em;
   }
-  .planning-item .pi-testo { flex: 1; min-width: 0; word-break: break-word; line-height: 1.4; font-weight: 500; }
+  .planning-item .pi-testo { flex: 1; min-width: 0; word-break: break-word; line-height: 1.4; }
   .planning-item .pi-tipo {
     font-size: 8.5px;
-    font-weight: 800;
+    font-weight: 600;
     padding: 2px 6px;
     border-radius: var(--radius-pill);
     background: var(--blu);
@@ -1698,10 +1671,10 @@
   .planning-item.libera .pi-tipo { background: var(--arancione); }
   .planning-empty {
     text-align: center;
-    padding: 20px 8px;
+    padding: 22px 8px;
     color: var(--testo-ter);
     font-size: 12.5px;
-    font-weight: 500;
+    font-weight: 400;
   }
 
   /* =====================================================
@@ -1713,7 +1686,7 @@
     border: 1px solid var(--border-strong);
     width: 38px; height: 38px;
     border-radius: var(--radius-sm);
-    font-size: 20px;
+    font-size: 18px;
     color: var(--blu);
     cursor: pointer;
     display: flex;
@@ -1721,14 +1694,13 @@
     justify-content: center;
     flex-shrink: 0;
     font-family: inherit;
-    font-weight: 600;
-    box-shadow: var(--shadow-xs);
-    transition: transform 0.12s ease, background 0.15s ease;
+    font-weight: 400;
+    transition: background 0.15s ease;
   }
-  .page-back:active { transform: scale(0.92); background: var(--hover-bg); }
+  .page-back:active { background: var(--hover-bg); }
   .page-title {
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--blu);
     flex: 1;
     letter-spacing: -0.025em;
@@ -1738,21 +1710,21 @@
     border: none;
     color: var(--blu);
     font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
     padding: 4px 0;
     margin-bottom: 12px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.005em;
   }
   .page-day-title {
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--blu);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     letter-spacing: -0.025em;
   }
 
@@ -1765,8 +1737,8 @@
     padding: 0 2px;
   }
   .cal-header h2 {
-    font-size: 19px;
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 700;
     color: var(--blu);
     margin: 0;
     flex: 1;
@@ -1774,7 +1746,7 @@
     letter-spacing: -0.025em;
   }
   .cal-header .cal-nav-btn {
-    background: var(--sfondo-2);
+    background: transparent;
     border: none;
     width: 36px; height: 36px;
     border-radius: var(--radius-sm);
@@ -1782,17 +1754,17 @@
     color: var(--blu);
     cursor: pointer;
     font-family: inherit;
-    font-weight: 600;
+    font-weight: 400;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.12s ease, background 0.15s ease;
+    transition: background 0.15s ease;
   }
-  .cal-header .cal-nav-btn:active { background: var(--border); transform: scale(0.92); }
+  .cal-header .cal-nav-btn:active { background: var(--sfondo-2); }
 
   /* =====================================================
-     CALENDARIO IPHONE STYLE
+     CALENDARIO IPHONE
      ===================================================== */
   .cal-griglia {
     display: grid;
@@ -1801,13 +1773,13 @@
     padding: 4px 0 8px;
   }
   .cal-giorno-h {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10.5px;
+    font-weight: 600;
     color: var(--testo-ter);
     text-transform: uppercase;
     text-align: center;
     padding: 8px 0 12px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
   }
   .cal-cella {
     background: transparent;
@@ -1827,7 +1799,7 @@
   .cal-cella.fuori-mese { opacity: 0.22; }
   .cal-cella .cal-num {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--testo);
     width: 32px; height: 32px;
     display: flex;
@@ -1837,14 +1809,13 @@
     margin: 0;
     padding: 0;
     line-height: 1;
-    transition: all 0.2s ease;
+    transition: background 0.15s ease, color 0.15s ease;
     letter-spacing: -0.02em;
   }
   .cal-cella.oggi .cal-num {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
+    background: var(--arancione);
     color: white;
-    font-weight: 800;
-    box-shadow: 0 3px 10px rgba(234, 88, 12, 0.35);
+    font-weight: 600;
   }
   .cal-cella .cal-dots {
     display: flex;
@@ -1870,12 +1841,11 @@
     padding: 12px 14px;
     margin-bottom: 8px;
     border: 1px solid var(--border);
-    border-left: 4px solid var(--blu);
+    border-left: 3px solid var(--blu);
     cursor: pointer;
-    box-shadow: var(--shadow-xs);
-    transition: transform 0.12s ease, background 0.15s ease;
+    transition: border-color 0.2s ease, background 0.15s ease;
   }
-  .app-item-card:active { transform: scale(0.99); background: var(--hover-bg); }
+  .app-item-card:active { background: var(--hover-bg); }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
   .app-item-card.tipo-acq { border-left-color: var(--rr); }
   .app-item-card.tipo-entrambi { border-left-color: var(--vnd); }
@@ -1884,24 +1854,19 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: var(--blu);
-    color: white;
-    font-size: 9.5px;
-    font-weight: 800;
-    padding: 3px 8px;
-    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--testo-sec);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 0;
     margin-bottom: 6px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
   }
-  .app-item-card .app-tipo-badge svg { width: 10px; height: 10px; }
-  .app-item-card.tipo-vend .app-tipo-badge { background: var(--pa); }
-  .app-item-card.tipo-acq .app-tipo-badge { background: var(--rr); }
-  .app-item-card.tipo-entrambi .app-tipo-badge { background: var(--vnd); }
-  .app-item-card.libero .app-tipo-badge { background: var(--arancione); }
+  .app-item-card .app-tipo-badge svg { width: 11px; height: 11px; }
   .app-item-card .app-titolo {
     font-size: 13.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo);
     margin-bottom: 5px;
     line-height: 1.35;
@@ -1914,21 +1879,21 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    font-weight: 500;
+    font-weight: 400;
   }
-  .app-item-card .app-data svg { width: 11px; height: 11px; opacity: 0.6; }
+  .app-item-card .app-data svg { width: 11px; height: 11px; opacity: 0.5; }
   .app-item-card .app-esito {
     font-size: 11px;
     margin-top: 8px;
-    padding: 4px 9px;
+    padding: 3px 9px;
     border-radius: var(--radius-pill);
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-weight: 700;
+    font-weight: 500;
   }
-  .app-item-card .app-esito.ok { background: #ecfdf5; color: #047857; }
-  .app-item-card .app-esito.ko { background: #fef2f2; color: #dc2626; }
+  .app-item-card .app-esito.ok { background: #f0fdf4; color: var(--ink); }
+  .app-item-card .app-esito.ko { background: #fef2f2; color: var(--vnd); }
   .app-item-card .app-esito.neutral { background: var(--sfondo-2); color: var(--testo-sec); }
 
   .tipo-app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
@@ -1940,13 +1905,12 @@
     cursor: pointer;
     text-align: left;
     font-family: inherit;
-    box-shadow: var(--shadow-xs);
-    transition: transform 0.12s ease, background 0.15s ease;
+    transition: border-color 0.2s ease, background 0.15s ease;
   }
-  .tipo-app-btn:active { transform: scale(0.98); background: var(--hover-bg); }
+  .tipo-app-btn:active { background: var(--hover-bg); border-color: var(--border-strong); }
   .tipo-app-btn .sigla {
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--blu);
     margin-bottom: 3px;
     display: flex;
@@ -1955,10 +1919,10 @@
     letter-spacing: -0.01em;
   }
   .tipo-app-btn .sigla svg { width: 15px; height: 15px; }
-  .tipo-app-btn .desc { font-size: 10.5px; color: var(--testo-ter); line-height: 1.4; font-weight: 500; }
-  .tipo-app-btn.tipo-vend { border-left: 4px solid var(--pa); }
-  .tipo-app-btn.tipo-acq { border-left: 4px solid var(--rr); }
-  .tipo-app-btn.tipo-entrambi { border-left: 4px solid var(--vnd); }
+  .tipo-app-btn .desc { font-size: 10.5px; color: var(--testo-ter); line-height: 1.4; font-weight: 400; }
+  .tipo-app-btn.tipo-vend { border-left: 3px solid var(--pa); }
+  .tipo-app-btn.tipo-acq { border-left: 3px solid var(--rr); }
+  .tipo-app-btn.tipo-entrambi { border-left: 3px solid var(--vnd); }
 
   /* =====================================================
      ATTIVITÀ GRUPPI
@@ -1969,16 +1933,16 @@
     margin-bottom: 8px;
     border: 1px solid var(--border);
     overflow: hidden;
-    box-shadow: var(--shadow-xs);
+    transition: border-color 0.2s ease;
   }
   .att-gruppo-header { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; transition: background 0.15s ease; }
   .att-gruppo-header:active { background: var(--hover-bg); }
-  .att-icona-ent { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.85; }
-  .att-icona-ent svg { width: 19px; height: 19px; }
+  .att-icona-ent { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.7; }
+  .att-icona-ent svg { width: 18px; height: 18px; stroke-width: 1.6; }
   .att-info { flex: 1; min-width: 0; }
   .att-titolo {
     font-size: 13.5px;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--testo);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1993,17 +1957,15 @@
     align-items: center;
     gap: 6px;
     flex-wrap: wrap;
-    font-weight: 500;
+    font-weight: 400;
   }
   .att-count {
-    background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%);
-    color: white;
+    background: var(--sfondo-2);
+    color: var(--blu);
     font-size: 11px;
-    font-weight: 800;
+    font-weight: 600;
     padding: 2px 9px;
     border-radius: var(--radius-pill);
-    box-shadow: 0 2px 5px rgba(234, 88, 12, 0.25);
-    letter-spacing: 0;
   }
   .att-arrow svg { width: 15px; height: 15px; color: var(--testo-ter); transition: transform 0.2s ease; }
   .att-gruppo.espanso .att-arrow { transform: rotate(90deg); }
@@ -2011,28 +1973,28 @@
   .att-gruppo.espanso .att-gruppo-body { display: block; }
   .att-item { display: flex; gap: 10px; padding: 11px 14px; cursor: pointer; align-items: flex-start; transition: background 0.15s ease; }
   .att-item:active { background: var(--hover-bg); }
-  .att-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-  .att-dot.fatta { background: #059669; }
-  .att-dot.oggi { background: var(--arancione); box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15); }
-  .att-dot.scaduta { background: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15); }
-  .att-dot.prossima { background: #2563eb; }
+  .att-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .att-dot.fatta { background: var(--ink); }
+  .att-dot.oggi { background: var(--arancione); }
+  .att-dot.scaduta { background: var(--vnd); }
+  .att-dot.prossima { background: var(--nt); }
   .att-body { flex: 1; min-width: 0; }
   .att-data {
     font-size: 10.5px;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--testo-ter);
     text-transform: uppercase;
     margin-bottom: 3px;
     letter-spacing: 0.05em;
   }
   .att-data.oggi { color: var(--arancione); }
-  .att-data.scaduta { color: #dc2626; }
+  .att-data.scaduta { color: var(--vnd); }
   .att-testo {
     font-size: 13.5px;
     color: var(--testo);
     line-height: 1.4;
     word-break: break-word;
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: -0.005em;
   }
 
@@ -2043,14 +2005,13 @@
      RESPONSIVE
      ===================================================== */
   @media (min-width: 768px) {
-    body { background: #eceff3; }
+    body { background: #f0f0f2; }
     .app {
       max-width: var(--max-w);
       margin: 0 auto;
       background: var(--sfondo);
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
-      box-shadow: 0 0 60px rgba(15, 23, 42, 0.06);
     }
     .tabbar {
       max-width: var(--max-w);
@@ -2059,23 +2020,24 @@
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
     }
-    .fab { right: calc(50% - (var(--max-w) / 2) + 20px); }
-    .fab-menu { right: calc(50% - (var(--max-w) / 2) + 20px); }
-    .back-top { right: calc(50% - (var(--max-w) / 2) + 20px); }
+    .fab { right: calc(50% - (var(--max-w) / 2) + 22px); }
+    .fab-menu { right: calc(50% - (var(--max-w) / 2) + 22px); }
+    .back-top { right: calc(50% - (var(--max-w) / 2) + 22px); }
     .modal-overlay { align-items: center; padding: 24px; }
-    .modal-sheet { border-radius: 24px; max-height: 88dvh; }
+    .modal-sheet { border-radius: 18px; max-height: 88dvh; border: 1px solid var(--border); }
     .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover,
     .tipo-app-btn:hover, .planning-item:hover, .att-item:hover, .timeline-item:hover,
-    .action-btn:hover, .btn-secondary:hover, .chip:hover, .condo-card:hover {
+    .action-btn:hover, .btn-secondary:hover, .chip:hover {
       background: var(--hover-bg);
+      border-color: var(--border-strong);
     }
     .chip.active:hover { background: var(--blu); }
-    .chip.sub.active:hover { background: var(--arancione); }
-    .cal-cella:hover .cal-num { background: var(--hover-bg); }
-    .cal-cella.oggi:hover .cal-num { background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%); }
+    .chip.sub.active:hover { background: var(--arancione-deep); }
+    .cal-cella:hover .cal-num { background: var(--sfondo-2); }
+    .cal-cella.oggi:hover .cal-num { background: var(--arancione-deep); }
     .foto-grid { grid-template-columns: repeat(4, 1fr); }
     .app-content { padding-left: 22px; padding-right: 22px; }
-    .app-header { padding-left: 24px; padding-right: 24px; }
+    .app-header { padding-left: 26px; padding-right: 26px; }
   }
   @media (min-width: 1024px) {
     :root { --max-w: 760px; }
@@ -2092,86 +2054,83 @@
      DARK MODE
      ===================================================== */
   :root[data-theme="dark"] {
-    --blu: #4a7ba7;
-    --blu-deep: #3a6186;
-    --blu-soft: #16232f;
-    --blu-soft-2: #1b2a38;
-    --arancione: #f97316;
-    --arancione-deep: #ea580c;
-    --arancione-soft: #2a1a0f;
+    --blu: #8ab0d4;
+    --blu-deep: #6f95bb;
+    --blu-soft: #1a2533;
 
-    --sfondo: #0a0a0b;
-    --sfondo-2: #161618;
-    --card: #1a1a1c;
-    --card-2: #1e1e20;
-    --testo: #f4f4f5;
-    --testo-sec: #a1a1aa;
-    --testo-ter: #71717a;
+    --arancione: #ec6f2a;
+    --arancione-deep: #d9601a;
+    --arancione-soft: #2a1a10;
 
-    --border: rgba(255, 255, 255, 0.06);
-    --border-strong: rgba(255, 255, 255, 0.10);
-    --hover-bg: rgba(255, 255, 255, 0.04);
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
-    --shadow-orange: 0 6px 20px rgba(249, 115, 22, 0.28);
-    --shadow-blue: 0 6px 16px rgba(74, 123, 167, 0.22);
+    --sfondo: #0f0f11;
+    --sfondo-2: #1a1a1d;
+    --card: #17171a;
+    --card-2: #1c1c20;
+
+    --testo: #e8e8ea;
+    --testo-sec: #9a9aa0;
+    --testo-ter: #6a6a72;
+
+    --border: #232327;
+    --border-strong: #2e2e33;
+
+    --hover-bg: #1c1c20;
+
+    --imm: #52525b;
+    --pa: #d97706;
+    --nt: #3b82f6;
+    --ink: #10b981;
+    --vnd: #ef4444;
+    --rr: #a78bfa;
+    --prof: #06b6d4;
   }
   :root[data-theme="dark"] body, :root[data-theme="dark"] .app { background: var(--sfondo); }
-  :root[data-theme="dark"] .tabbar { background: rgba(10, 10, 11, 0.82); }
-  :root[data-theme="dark"] .modal-sheet { background: #0f0f10; }
-  :root[data-theme="dark"] .btn-secondary,
-  :root[data-theme="dark"] .chip,
-  :root[data-theme="dark"] .chip-dropdown { background: var(--card); }
+  :root[data-theme="dark"] .tabbar { background: rgba(15, 15, 17, 0.9); }
+  :root[data-theme="dark"] .modal-sheet { background: var(--sfondo); }
+  :root[data-theme="dark"] .btn-secondary, :root[data-theme="dark"] .chip, :root[data-theme="dark"] .chip-dropdown { background: transparent; }
   :root[data-theme="dark"] .search-bar { background: var(--card); color: var(--testo); }
-  :root[data-theme="dark"] .btn-danger { background: #2a1010; color: #fca5a5; border-color: #5a1e1e; }
-  :root[data-theme="dark"] .modal-close { background: rgba(255, 255, 255, 0.08); color: var(--testo); }
-  :root[data-theme="dark"] .qa-btn { background: var(--sfondo-2); }
+  :root[data-theme="dark"] .btn-danger { background: transparent; color: #fca5a5; border-color: #5a1e1e; }
+  :root[data-theme="dark"] .modal-close { color: var(--testo); }
+  :root[data-theme="dark"] .qa-btn { background: transparent; color: #8ab0d4; }
   :root[data-theme="dark"] .qa-btn.wa { color: #6ee7b7; }
   :root[data-theme="dark"] .action-btn { background: var(--card); }
-  :root[data-theme="dark"] .immobile-line { background: var(--sfondo-2); }
+  :root[data-theme="dark"] .immobile-line { background: transparent; }
   :root[data-theme="dark"] .agenda-giorno { background: transparent; }
   :root[data-theme="dark"] .att-subtab { background: var(--card); }
   :root[data-theme="dark"] .att-subtab.active { background: var(--blu-soft); }
-  :root[data-theme="dark"] .filter-dropdown { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .filter-dropdown .opt.selected { background: var(--blu-soft); color: #7dd3fc; }
-  :root[data-theme="dark"] .map-chips,
-  :root[data-theme="dark"] .map-status { background: rgba(15, 15, 17, 0.9); color: var(--testo-sec); }
-  :root[data-theme="dark"] .map-chip { background: var(--sfondo-2); color: var(--testo-sec); }
-  :root[data-theme="dark"] .leaflet-popup-content-wrapper,
-  :root[data-theme="dark"] .leaflet-popup-tip { background: var(--card); color: var(--testo); }
+  :root[data-theme="dark"] .filter-dropdown { background: var(--card); }
+  :root[data-theme="dark"] .filter-dropdown .opt.selected { background: var(--blu-soft); color: #8ab0d4; }
+  :root[data-theme="dark"] .map-chips, :root[data-theme="dark"] .map-status { background: rgba(23, 23, 26, 0.94); color: var(--testo-sec); }
+  :root[data-theme="dark"] .map-chip { background: transparent; color: var(--testo-sec); }
+  :root[data-theme="dark"] .leaflet-popup-content-wrapper, :root[data-theme="dark"] .leaflet-popup-tip { background: var(--card); color: var(--testo); }
   :root[data-theme="dark"] .back-top { background: var(--card); }
-  :root[data-theme="dark"] .fab-menu button { background: var(--card); color: #7dd3fc; }
-  :root[data-theme="dark"] .active-filter-banner { background: var(--blu-soft); color: #7dd3fc; }
-  :root[data-theme="dark"] .active-filter-banner .x { background: rgba(125, 211, 252, 0.15); color: #7dd3fc; }
-  :root[data-theme="dark"] .prefill-banner { background: var(--blu-soft); color: #7dd3fc; }
+  :root[data-theme="dark"] .fab-menu button { background: var(--card); color: #8ab0d4; border-color: var(--border-strong); }
+  :root[data-theme="dark"] .active-filter-banner { background: var(--blu-soft); color: #8ab0d4; }
+  :root[data-theme="dark"] .active-filter-banner .x { background: rgba(138, 176, 212, 0.12); color: #8ab0d4; }
+  :root[data-theme="dark"] .prefill-banner { background: var(--blu-soft); color: #8ab0d4; }
   :root[data-theme="dark"] .inherit-banner { background: #0d1f17; color: #6ee7b7; }
   :root[data-theme="dark"] .inherit-banner .ico { color: #6ee7b7; }
-  :root[data-theme="dark"] .zdf-notice { background: #251610; color: #fdba74; }
-  :root[data-theme="dark"] .zcode-badge { background: var(--blu-soft); color: #7dd3fc; }
-  :root[data-theme="dark"] .timeline-item.da-fare { background: #251610; }
+  :root[data-theme="dark"] .zdf-notice { background: var(--arancione-soft); color: #fdba74; }
+  :root[data-theme="dark"] .zcode-badge { background: transparent; color: #8ab0d4; }
+  :root[data-theme="dark"] .timeline-item.da-fare { background: #251a10; }
   :root[data-theme="dark"] .timeline-item.scaduta { background: #2a1010; }
-  :root[data-theme="dark"] .tag { background: var(--sfondo-2); color: var(--testo-sec); }
+  :root[data-theme="dark"] .tag { background: transparent; color: var(--testo-sec); }
   :root[data-theme="dark"] .villa-toggle button { background: var(--card); }
   :root[data-theme="dark"] .villa-toggle button.active { background: var(--blu-soft); }
   :root[data-theme="dark"] .theme-btn { background: var(--card); }
   :root[data-theme="dark"] .theme-btn.active { border-color: var(--testo); color: var(--testo); }
   :root[data-theme="dark"] .zone-chip { background: var(--sfondo-2); color: var(--testo-sec); }
-  :root[data-theme="dark"] .prop-card { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .zone-summary { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .sottotipo-line button { background: var(--sfondo-2); }
+  :root[data-theme="dark"] .prop-card { background: transparent; }
+  :root[data-theme="dark"] .zone-summary { background: transparent; }
+  :root[data-theme="dark"] .sottotipo-line button { background: transparent; }
   :root[data-theme="dark"] .condo-header { background: var(--blu-soft); }
-  :root[data-theme="dark"] .add-btn { background: var(--blu-soft); }
+  :root[data-theme="dark"] .add-btn { background: transparent; }
   :root[data-theme="dark"] .app-esito.ok { background: #0d1f17; color: #6ee7b7; }
   :root[data-theme="dark"] .app-esito.ko { background: #2a1010; color: #fca5a5; }
   :root[data-theme="dark"] .app-esito.neutral { background: var(--sfondo-2); color: var(--testo-sec); }
   :root[data-theme="dark"] .foto-item { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .planning-item { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .cal-header .cal-nav-btn,
-  :root[data-theme="dark"] .agenda-sett h3 .nav-sett button,
-  :root[data-theme="dark"] .planning-sett h3 .nav-sett button { background: var(--sfondo-2); color: #7dd3fc; }
-  :root[data-theme="dark"] .page-back { background: var(--card); color: #7dd3fc; }
+  :root[data-theme="dark"] .planning-item { background: transparent; }
+  :root[data-theme="dark"] .att-count { background: var(--sfondo-2); color: #8ab0d4; }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -2201,16 +2160,15 @@
   :root[data-theme="dark"] .modal-header h2,
   :root[data-theme="dark"] .page-title,
   :root[data-theme="dark"] .page-back-inline,
-  :root[data-theme="dark"] .page-day-title { color: #7dd3fc; }
+  :root[data-theme="dark"] .page-day-title { color: #8ab0d4; }
   :root[data-theme="dark"] .cal-cella.oggi .cal-num { color: #ffffff; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
-  :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%); border-color: var(--arancione); }
-  :root[data-theme="dark"] .zone-chip.active { color: #ffffff; background: var(--blu); }
-  :root[data-theme="dark"] .zone-chip.special.active { color: #ffffff; background: linear-gradient(180deg, var(--arancione) 0%, var(--arancione-deep) 100%); }
+  :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
+  :root[data-theme="dark"] .zone-chip.active { color: #ffffff; background: var(--blu-deep); }
+  :root[data-theme="dark"] .zone-chip.special.active { color: #ffffff; background: var(--arancione); }
   :root[data-theme="dark"] .map-chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip-dropdown.active { color: #ffffff; }
-  :root[data-theme="dark"] .badge-IMM { background: #3a3a3c; }
-  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.75); }
+  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.88) contrast(0.92) saturate(0.7); }
 </style>
 </head>
 <body>
@@ -2223,8 +2181,8 @@
         <div class="sub">Assistente Tecnorete</div>
       </div>
       <div id="header-prossimo-app" style="flex-shrink:0;text-align:right;max-width:44%;cursor:pointer;display:none;" onclick="apriProssimoAppuntamento()">
-        <div style="font-size:9px;font-weight:800;color:var(--arancione);text-transform:uppercase;letter-spacing:0.08em;">Prossimo</div>
-        <div id="header-prossimo-app-txt" style="font-size:10.5px;font-weight:600;color:var(--blu);line-height:1.25;margin-top:2px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;"></div>
+        <div style="font-size:9px;font-weight:600;color:var(--arancione);text-transform:uppercase;letter-spacing:0.06em;">Prossimo</div>
+        <div id="header-prossimo-app-txt" style="font-size:10.5px;font-weight:600;color:var(--blu);line-height:1.3;margin-top:2px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;"></div>
       </div>
     </div>
   </header>
@@ -2480,7 +2438,7 @@ function ico(name, size) {
 function applicaIcone() {
   document.querySelectorAll('[data-icon]').forEach(el => {
     const n = el.dataset.icon; if (!n) return;
-    const sz = el.classList.contains('theme-btn') ? 22 : el.classList.contains('map-btn') ? 18 : el.classList.contains('back-top') ? 16 : el.classList.contains('btn') ? 16 : 14;
+    const sz = el.classList.contains('theme-btn') ? 20 : el.classList.contains('map-btn') ? 18 : el.classList.contains('back-top') ? 16 : el.classList.contains('btn') ? 16 : 14;
     const prev = el.querySelector(':scope > .icona-inline'); if (prev) prev.remove();
     el.insertAdjacentHTML('afterbegin', '<span class="icona-inline">' + ico(n, sz) + '</span>');
   });
@@ -2493,7 +2451,7 @@ function getTemaPreferito() { try { return localStorage.getItem('aranjò_theme')
 function risolviTema(t) { if (t === 'dark') return 'dark'; if (t === 'light') return 'light'; return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
 function setTema(t) { try { localStorage.setItem('aranjò_theme', t); } catch(e) {} applyTema(t); }
 function applyTema(t) { document.documentElement.setAttribute('data-theme', risolviTema(t)); updateThemeColorMeta(); updateThemeButtons(); }
-function updateThemeColorMeta() { const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', document.documentElement.getAttribute('data-theme') === 'dark' ? '#0a0a0b' : '#f7f8fa'); }
+function updateThemeColorMeta() { const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', document.documentElement.getAttribute('data-theme') === 'dark' ? '#0f0f11' : '#fafafa'); }
 function updateThemeButtons() { const t = getTemaPreferito(); ['auto','light','dark'].forEach(x => { const b = document.getElementById('th-' + x); if (b) b.classList.toggle('active', x === t); }); }
 try { const mq = window.matchMedia('(prefers-color-scheme: dark)'); const onChange = () => { if (getTemaPreferito() === 'auto') applyTema('auto'); }; if (mq.addEventListener) mq.addEventListener('change', onChange); } catch(e) {}
 
@@ -2625,7 +2583,7 @@ async function apriFotoViewer(pid) {
   let backType = null, backId = null;
   for (const im of DB.immobili) if ((im.foto || []).includes(pid)) { backType = 'immobile'; backId = im.id; break; }
   if (!backType) for (const co in (DB.condomini || {})) if (((DB.condomini[co] || {}).foto || []).includes(pid)) { backType = 'condominio'; backId = co; break; }
-  let h = '<div style="text-align:center;background:#000;border-radius:12px;overflow:hidden;margin-bottom:12px;"><img src="' + url + '" style="max-width:100%;max-height:65vh;display:block;margin:0 auto;object-fit:contain;"></div>';
+  let h = '<div style="text-align:center;background:#000;border-radius:8px;overflow:hidden;margin-bottom:10px;"><img src="' + url + '" style="max-width:100%;max-height:65vh;display:block;margin:0 auto;object-fit:contain;"></div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="scaricaFoto(\'' + pid + '\')">' + ico('download',16) + ' Scarica</button><button class="btn btn-danger" onclick="eliminaFoto(\'' + pid + '\')">' + ico('cestino',16) + ' Elimina</button></div>';
   let backOnclick = 'chiudiModal()';
   if (backType === 'immobile') backOnclick = 'chiudiModal();setTimeout(function(){apriScheda(\'' + backId + '\')},100)';
@@ -2684,17 +2642,17 @@ const ESITI_APPUNTAMENTO = [
   { id: 'immobile', label: 'Non piace per immobile', icona: 'casa', tipo: 'ko' }
 ];
 const STATO_PRIORITY = { 'PA': 1, 'NT': 2, 'INK': 3 };
-const STATO_COLORS = { 'PA': '#d97706', 'NT': '#2563eb', 'INK': '#059669', 'VND': '#dc2626' };
-const PIN_NEUTRAL_COLOR = '#1a3a5c';
+const STATO_COLORS = { 'PA': '#c2740c', 'NT': '#2563eb', 'INK': '#047857', 'VND': '#b91c1c' };
+const PIN_NEUTRAL_COLOR = '#1f3a5f';
 
 const CAL_COLORS = {
-  vend:     '#d97706',
+  vend:     '#c2740c',
   acq:      '#7c3aed',
-  entrambi: '#dc2626',
-  visita:   '#dc2626',
-  libero:   '#ea580c',
+  entrambi: '#b91c1c',
+  visita:   '#b91c1c',
+  libero:   '#d9601a',
   att:      '#2563eb',
-  solo:     '#ea580c'
+  solo:     '#d9601a'
 };
 function coloreDaClasse(cl) {
   if (cl === 'tipo-vend') return CAL_COLORS.vend;
@@ -2702,7 +2660,7 @@ function coloreDaClasse(cl) {
   if (cl === 'tipo-entrambi') return CAL_COLORS.entrambi;
   if (cl === 'libero') return CAL_COLORS.libero;
   if (cl === 'att') return CAL_COLORS.att;
-  return '#1a3a5c';
+  return '#1f3a5f';
 }
 
 // =====================================================
@@ -2748,7 +2706,6 @@ function acquirenteHaVistoNTINK(per) { if (!per || !per.immobili) return false; 
 function getTipoApp(sigla) { if (sigla === TIPO_LIBERO.sigla) return TIPO_LIBERO; return TIPI_APPUNTAMENTO.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10]; }
 function isAppLibero(sigla) { return sigla === TIPO_LIBERO.sigla; }
 
-// Geocoding
 let geocodeCache = {};
 try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
 function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
@@ -2872,8 +2829,8 @@ async function aggiornaInfoSistema() {
     let pct = 0, label = '—';
     if (navigator.storage && navigator.storage.estimate) { try { const est = await navigator.storage.estimate(); if (est.quota && est.usage != null) { pct = Math.min(100, (est.usage / est.quota) * 100); label = formatBytes(est.usage) + ' / ' + formatBytes(est.quota); } } catch(e) {} }
     if (!label || label === '—') { const tot = dbSize + cacheSize + photoBytes; pct = Math.min(100, (tot / (1024*1024*1024)) * 100); label = formatBytes(tot) + ' / ~1 GB'; }
-    let col = '#059669'; if (pct > 70) col = '#d97706'; if (pct > 90) col = '#dc2626';
-    sBarra.innerHTML = '<div style="font-size:10.5px;color:var(--testo-sec);margin-bottom:4px;font-weight:600;">Spazio: <strong style="color:' + col + '">' + label + '</strong></div><div style="height:5px;background:var(--sfondo-2);border-radius:3px;overflow:hidden;"><div style="height:100%;width:' + pct.toFixed(2) + '%;background:' + col + ';transition:width 0.4s ease;"></div></div>';
+    let col = '#047857'; if (pct > 70) col = '#c2740c'; if (pct > 90) col = '#b91c1c';
+    sBarra.innerHTML = '<div style="font-size:10.5px;color:var(--testo-sec);margin-bottom:4px;">Spazio: <strong style="color:' + col + '">' + label + '</strong></div><div style="height:4px;background:var(--sfondo-2);border-radius:2px;overflow:hidden;"><div style="height:100%;width:' + pct.toFixed(2) + '%;background:' + col + ';transition:width 0.4s ease;"></div></div>';
   }
 }
 function pulisciCacheGeocodifica() { const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length; if (cacheSize === 0) { alert('La cache è già vuota.'); return; } if (!confirm('Svuotare la cache geocodifiche?')) return; geocodeCache = {}; salvaGeocodeCache(); aggiornaInfoSistema(); alert('✅ Cache svuotata'); }
@@ -3010,7 +2967,7 @@ function renderListaImmobili() {
   el.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
   let html = '';
   for (const e of el) {
-    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s ease;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div style="margin-left:10px;margin-bottom:8px;border-left:2px solid var(--border-strong);padding-left:8px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
+    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(22) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s ease;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div style="margin-left:10px;margin-bottom:8px;border-left:1px solid var(--border-strong);padding-left:10px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
     else html += renderItemCardImmobile(e.imm);
   }
   cont.innerHTML = html; aggiornaContatori();
@@ -3023,12 +2980,12 @@ function renderItemCardImmobile(imm) {
   const ze = getZoneEffettive(imm); const tel = imm.telefono;
   const nFoto = (imm.foto || []).length + getFotoCondominio(imm).length;
   let h = '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')"><div class="item-row"><div class="item-title">' + escapeHtml(titolo) + '</div>';
-  if (imm.villa) h += '<span style="font-size:10px;color:#059669;font-weight:700;letter-spacing:0.04em;">VILLA</span>';
+  if (imm.villa) h += '<span style="font-size:10px;color:var(--ink);font-weight:600;letter-spacing:0.03em;">VILLA</span>';
   h += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span></div>';
   if (imm.stato === 'IMM' && imm.citofono) h += '<div class="item-sub">' + iconaCampanello() + ' ' + escapeHtml(imm.citofono) + '</div>';
   if (tel && imm.stato !== 'IMM') h += '<div class="item-sub">' + ico('telefono',11) + ' ' + escapeHtml(tel) + '</div>';
   if (imm.sottotipo) h += '<div class="item-sub">' + escapeHtml(imm.sottotipo) + '</div>';
-  if (imm.inTrattativa) h += '<div class="item-sub" style="color:#d97706;font-weight:700;">' + ico('fuoco',11) + ' Trattativa' + (imm.propostaNotificata ? ' · notificata' : (imm.propostaAccettata ? ' · accettata' : '')) + '</div>';
+  if (imm.inTrattativa) h += '<div class="item-sub" style="color:var(--pa);font-weight:600;">' + ico('fuoco',11) + ' Trattativa' + (imm.propostaNotificata ? ' · notificata' : (imm.propostaAccettata ? ' · accettata' : '')) + '</div>';
   if (isCondo) h += '<div class="item-sub">' + iconaCondo(11) + ' ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
   if (ze.length > 0) h += '<div class="item-sub">' + ico('pin',11) + ' ' + escapeHtml(ze.join(' · ')) + '</div>';
   if (nFoto > 0) h += '<div class="item-sub">' + ico('camera',11) + ' ' + nFoto + ' foto</div>';
@@ -3048,7 +3005,7 @@ function renderListaCondomini(cont) {
     const im = g[x] || []; const v = im.filter(i => immobileHaStatoValido(i) && immobileHaZonaValida(i)); const det = (DB.condomini && DB.condomini[x]) || {};
     const nFotoC = ((det.foto) || []).length;
     const sl = statoSelezionato ? ' (' + statoSelezionato + ')' : ''; const zc = det.zone && det.zone.length > 0 ? ' · ' + ico('pin',10) + ' ' + det.zone.join(' · ') : ''; const cl = v.length === 0 ? 'Nessun immobile' : v.length + ' immobili'; const fc = nFotoC > 0 ? ' · ' + ico('camera',10) + ' ' + nFotoC : '';
-    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + fc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',15) + '</button><div class="condo-arrow">' + ico('freccia',15) + '</div></div>';
+    h += '<div class="condo-card" onclick="selezionaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(22) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(x) + '</div><div class="condo-sub">' + cl + sl + zc + fc + (det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '') + '</div></div><button class="condo-edit" onclick="event.stopPropagation();apriModificaCondominio(\'' + escapeHtml(x).replace(/'/g, "\\'") + '\')">' + ico('modifica',15) + '</button><div class="condo-arrow">' + ico('freccia',15) + '</div></div>';
   }
   cont.innerHTML = h; aggiornaContatori();
 }
@@ -3058,7 +3015,7 @@ function selezionaCondominio(condo) { const im = DB.immobili.filter(i => !i.vill
 // SELEZIONE ZONE + SELETTORE ZONE
 // =====================================================
 function apriSelezioneZone() {
-  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;font-weight:500;">Seleziona una zona per filtrare.</p><div class="section-title">Zone</div><div class="zone-chips">';
+  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona una zona per filtrare.</p><div class="section-title">Zone</div><div class="zone-chips">';
   for (const z of ZONE_BASE) { const a = zonaSelezionata === z; h += '<button type="button" class="zone-chip' + (a ? ' active' : '') + '" onclick="toggleZoneFiltro(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\')">' + escapeHtml(z) + '</button>'; }
   h += '</div><div class="section-title" style="margin-top:14px;">Speciali</div><div class="zone-chips">';
   for (const z of [ZONA_ZDF].concat(ZONE_SPECIALI)) { const a = zonaSelezionata === z; h += '<button type="button" class="zone-chip special' + (a ? ' active' : '') + '" onclick="toggleZoneFiltro(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\')">' + escapeHtml(z) + '</button>'; }
@@ -3128,7 +3085,7 @@ function apriFormNuovaPersona() { if (pTabAttivo === 'acquirente') apriFormNuovo
 
 function apriFormNuovoAcquirente() {
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome *</label><input class="form-input" id="a-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="a-telefono" type="tel"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="a-email" type="email"></div></div>
-    <div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Stato</h2></div>
+    <div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Stato</h2></div>
     <div class="form-group"><div class="form-row"><label class="form-label">Stato iniziale</label><select class="form-select" id="a-stato">${STATI_RR.slice(0, 4).map(s => '<option value="' + s.id + '">' + s.label + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cliente</label><select class="form-select" id="a-collega-type"><option value="mio">Mio</option><option value="collega">Di un collega</option></select></div><div class="form-row" id="a-collega-nome-row" style="display:none;"><label class="form-label">Nome del collega</label><input class="form-input" id="a-collega-nome"></div></div>
     <div class="form-group"><div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="a-budget"></div><div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="a-tipo-imm"></div><div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona"></div><div class="form-row"><label class="form-label">Box</label><select class="form-select" id="a-box"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option><option value="Indifferente">Indifferente</option></select></div><div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div><div class="form-row"><label class="form-label">Immobili interessati (/ separati)</label><input class="form-input" id="a-immobili"></div></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoAcquirente()">Salva</button></div>`;
@@ -3199,7 +3156,7 @@ function apriSchedaPersona(id) {
   h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoPersona(\'' + p.id + '\')">' + ico('calendario',16) + ' Nuovo appuntamento</button>';
   h += '<div class="card"><h2><span class="dot"></span>Attività (' + att.length + ')</h2>';
   if (att.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività.</p>';
-  else { for (const a of att) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivitaPersona(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:700;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
+  else { for (const a of att) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivitaPersona(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? 'var(--vnd)' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
   h += '<div class="btn-row" style="margin-top:14px;"><button class="btn btn-danger" onclick="eliminaPersona()">' + ico('cestino',16) + ' Elimina</button></div>';
   apriModal(t, h);
@@ -3253,7 +3210,7 @@ function salvaModificaProfessionista(id) {
 function apriCambiaStatoRR() {
   const p = DB.persone.find(x => x.id === personaAperta); if (!p || p.tipo !== 'acquirente') return;
   const sa = p.statoRR || 'attiva';
-  let h = '<div class="card" style="padding:14px 16px;"><div style="font-size:10.5px;color:var(--testo-ter);text-transform:uppercase;font-weight:700;letter-spacing:0.08em;">Stato attuale</div><div style="font-weight:800;font-size:15px;margin-top:4px;letter-spacing:-0.01em;">' + getStatoRR(p).label + '</div></div><div class="card" style="padding:12px 6px 10px;"><h2 style="padding:0 10px;"><span class="dot"></span>Cambia in</h2>';
+  let h = '<div class="card" style="padding:14px 18px;"><div style="font-size:10.5px;color:var(--testo-ter);text-transform:uppercase;font-weight:600;letter-spacing:0.06em;">Stato attuale</div><div style="font-weight:600;font-size:15px;margin-top:4px;letter-spacing:-0.01em;">' + getStatoRR(p).label + '</div></div><div class="card" style="padding:14px 8px 10px;"><h2 style="padding:0 10px;"><span class="dot"></span>Cambia in</h2>';
   for (const s of STATI_RR) { if (s.id === sa) continue; h += '<button class="btn btn-secondary" style="margin:0 10px 8px;width:calc(100% - 20px);" onclick="cambiaStatoRR(\'' + s.id + '\')">→ ' + s.label + '</button>'; }
   h += '</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Annulla</button></div>';
   apriModal('Cambia stato', h);
@@ -3289,7 +3246,7 @@ function salvaAttivitaPersona() {
 function apriAzioniAttivitaPersona(idA) {
   const p = DB.persone.find(x => x.id === personaAperta); const a = (p.attivita || []).find(x => x.id === idA); if (!a) return;
   const df = a.tipo === 'da_fare' && !a.completata;
-  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.08em;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14.5px;font-weight:500;letter-spacing:-0.005em;">' + escapeHtml(a.testo) + '</div></div>';
+  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(a.testo) + '</div></div>';
   if (df) h += '<button class="btn btn-primary" onclick="segnaComeFattaPersona(\'' + idA + '\')">' + ico('check',16) + ' Segna come fatta</button>';
   h += '<button class="btn btn-secondary" onclick="apriModificaAttivitaPersona(\'' + idA + '\')">' + ico('modifica',16) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivitaPersona(\'' + idA + '\')">' + ico('cestino',16) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
   apriModal('Attività', h);
@@ -3350,7 +3307,7 @@ function apriMatchNTINKPerAcquirente(pid) {
   const match = trovaMatchNTINK(p);
   const tutti = DB.immobili.filter(i => (i.stato === 'NT' || i.stato === 'INK') && !match.some(m => m.imm.id === i.id));
   const sel = (p.immobili || []);
-  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;font-weight:500;">Seleziona i NT/INK da associare.</p>';
+  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona i NT/INK da associare.</p>';
   if (match.length > 0) { h += '<div class="section-title">' + ico('check',11) + ' Consigliati</div><div class="card" style="padding:8px 0;">'; for (const m of match) { const isSel = sel.includes(titoloImmobile(m.imm)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + m.imm.id + '\')"><span class="txt">' + (isSel ? ico('check',13) : '') + ' ' + escapeHtml(titoloImmobile(m.imm)) + '</span><span class="badge badge-' + m.imm.stato + '">' + m.imm.stato + '</span></div>'; } h += '</div>'; }
   if (tutti.length > 0) { h += '<div class="section-title">Altri</div><div class="card" style="padding:8px 0;">'; for (const i of tutti) { const isSel = sel.includes(titoloImmobile(i)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="toggleImmobileAcquirente(\'' + pid + '\',\'' + i.id + '\')"><span class="txt">' + (isSel ? ico('check',13) : '') + ' ' + escapeHtml(titoloImmobile(i)) + '</span><span class="badge badge-' + i.stato + '">' + i.stato + '</span></div>'; } h += '</div>'; }
   if (match.length === 0 && tutti.length === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('lente',28) + '</div>Nessun NT/INK disponibile</div></div>';
@@ -3403,7 +3360,7 @@ function renderItemAppuntamento(a) {
   if (a.esito) { const x = ESITI_APPUNTAMENTO.find(y => y.id === a.esito); if (x) e = '<div class="app-esito ' + x.tipo + '">' + ico(x.icona,11) + ' ' + x.label + (a.descrizioneEsito ? ' · ' + escapeHtml(a.descrizioneEsito) : '') + '</div>'; }
   else if (a.stato === 'eseguito') e = '<div class="app-esito neutral">' + ico('check',11) + ' Eseguito</div>';
   let h = '<div class="app-item-card ' + c + '" onclick="apriSchedaAppuntamento(\'' + a.id + '\')">';
-  if (!t.libero) { const icT = ico(t.icona || 'calendario', 10); h += '<div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div>'; }
+  if (!t.libero) { const icT = ico(t.icona || 'calendario', 11); h += '<div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div>'; }
   h += '<div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">' + ico('calendario',11) + ' ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
   if (a.luogo) h += '<div class="app-data">' + ico('pin',11) + ' ' + escapeHtml(a.luogo) + '</div>';
   h += e + '</div>'; return h;
@@ -3452,7 +3409,7 @@ function personaValidaPerTipo(tipoSigla, per) { if (!per) return false; const s 
 function apriSelezioneTipoApp(immPre, perPre) {
   window._appImmPre = immPre; window._appPersPre = perPre;
   const tipi = tipiAppValidi(immPre, perPre);
-  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;font-weight:500;">Seleziona il tipo di appuntamento.</p>';
+  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona il tipo di appuntamento.</p>';
   if (tipi.length === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('attenzione',28) + '</div>Nessun tipo valido.</div></div>';
   else { h += '<div class="tipo-app-grid">'; for (const t of tipi) { const c = getClasseChiApp(t.chi); h += '<button type="button" class="tipo-app-btn ' + c + '" onclick="selezionaTipoApp(\'' + t.sigla.replace(/'/g, "\\'") + '\')"><div class="sigla">' + ico(t.icona || 'calendario',14) + ' ' + escapeHtml(t.sigla) + '</div><div class="desc">' + escapeHtml(t.desc || t.nome) + '</div></button>'; } h += '</div>'; }
   h += '<button class="btn btn-primary" onclick="apriAppuntamentoLibero()">' + ico('calendario',16) + ' Appuntamento libero</button>';
@@ -3487,7 +3444,7 @@ function cercaEntitaPicker(te, q, cb, tipoSigla) {
   r = r.slice(0, 40);
   if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:16px 0;"><div class="icon">' + ico('lente',28) + '</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : (x.badge === 'RR' ? ico('utente',13) : ico('valigetta',13)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:3px 7px;">' + x.badge + '</span></div>'; }
+  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : (x.badge === 'RR' ? ico('utente',13) : ico('valigetta',13)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPicker(t, id) { const cb = window._pickerCallback; if (!cb) return; if (t === 'immobile') { const i = DB.immobili.find(x => x.id === id); chiudiModal(); setTimeout(() => cb(i), 120); } else { const p = DB.persone.find(x => x.id === id); chiudiModal(); setTimeout(() => cb(p), 120); } }
@@ -3501,7 +3458,7 @@ function apriFormAppuntamento(imm, per, tipo) {
   const lu = imm ? imm.indirizzo : (per && per.indirizzoUff ? per.indirizzoUff : '');
   let h = '';
   if (isLibero) h += '<div class="prefill-banner" style="background:var(--arancione-soft);color:var(--arancione-deep);">' + ico('calendario',14) + ' Appuntamento libero</div>';
-  else { h += '<div class="prefill-banner">' + ico(tipo.icona || 'calendario',14) + ' ' + escapeHtml((tipo.nome || tipo.sigla)) + '</div>'; if (imm) h += '<div class="card" style="padding:11px 14px;"><div style="font-size:10px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;margin-bottom:4px;letter-spacing:0.08em;">Immobile</div><div style="font-size:13.5px;font-weight:700;letter-spacing:-0.01em;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>'; if (per) h += '<div class="card" style="padding:11px 14px;"><div style="font-size:10px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;margin-bottom:4px;letter-spacing:0.08em;">Persona</div><div style="font-size:13.5px;font-weight:700;letter-spacing:-0.01em;">' + escapeHtml(titoloPersona(per)) + '</div></div>'; }
+  else { h += '<div class="prefill-banner">' + ico(tipo.icona || 'calendario',14) + ' ' + escapeHtml((tipo.nome || tipo.sigla)) + '</div>'; if (imm) h += '<div class="card" style="padding:11px 14px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:4px;letter-spacing:0.06em;">Immobile</div><div style="font-size:13.5px;font-weight:600;letter-spacing:-0.01em;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>'; if (per) h += '<div class="card" style="padding:11px 14px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:4px;letter-spacing:0.06em;">Persona</div><div style="font-size:13.5px;font-weight:600;letter-spacing:-0.01em;">' + escapeHtml(titoloPersona(per)) + '</div></div>'; }
   h += '<div class="form-group"><div class="form-row"><label class="form-label">' + (isLibero ? 'Titolo *' : 'Titolo') + '</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="' + isoToLocalInput(iD.toISOString()) + '" onchange="syncFineAppuntamentoNew()"></div>';
   h += '<div class="form-row"><label class="form-label">Fine</label><input class="form-input" type="datetime-local" step="1" id="ap-fine" value="' + isoToLocalInput(fD.toISOString()) + '"></div>';
@@ -3545,8 +3502,8 @@ function apriSchedaAppuntamento(id) {
   const per = a.personaId ? DB.persone.find(x => x.id === a.personaId) : null;
   const t = getTipoApp(a.tipo);
   let h = '';
-  if (!t.libero) h += '<div style="margin-bottom:12px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:10.5px;font-weight:800;color:white;background:var(--blu);letter-spacing:0.04em;text-transform:uppercase;">' + ico(t.icona || 'calendario',11) + ' ' + escapeHtml(a.tipo) + '</span></div>';
-  else h += '<div style="margin-bottom:12px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:10.5px;font-weight:800;color:white;background:var(--arancione);letter-spacing:0.04em;text-transform:uppercase;">' + ico('calendario',11) + ' Appuntamento libero</span></div>';
+  if (!t.libero) h += '<div style="margin-bottom:12px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;color:var(--blu);background:var(--blu-soft);letter-spacing:0.04em;text-transform:uppercase;">' + ico(t.icona || 'calendario',11) + ' ' + escapeHtml(a.tipo) + '</span></div>';
+  else h += '<div style="margin-bottom:12px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;color:var(--arancione-deep);background:var(--arancione-soft);letter-spacing:0.04em;text-transform:uppercase;">' + ico('calendario',11) + ' Appuntamento libero</span></div>';
   h += '<div class="card">';
   h += '<div class="info-row"><span class="label">Quando</span><span class="value">' + formattaDataOraCompleta(a.dataInizio) + '</span></div>';
   if (a.luogo) h += '<div class="info-row"><span class="label">Luogo</span><span class="value">' + escapeHtml(a.luogo) + '</span></div>';
@@ -3567,7 +3524,7 @@ function apriSchedaAppuntamento(id) {
 }
 function apriChiusuraAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return; window._appChius = id;
-  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;font-weight:500;">Come è andato?</p><div class="tipo-app-grid" style="grid-template-columns:1fr;">';
+  let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Come è andato?</p><div class="tipo-app-grid" style="grid-template-columns:1fr;">';
   for (const e of ESITI_APPUNTAMENTO) h += '<button type="button" class="tipo-app-btn" onclick="selezionaEsitoApp(\'' + e.id + '\')"><div class="sigla">' + ico(e.icona,15) + ' ' + e.label + '</div></button>';
   h += '</div><div class="form-group"><div class="form-row"><label class="form-label">Descrizione (opzionale)</label><textarea class="form-textarea" id="ch-desc"></textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
   apriModal('Esito appuntamento', h);
@@ -3662,7 +3619,7 @@ function aggiornaAgendaSettimanale() {
       h += '<div class="ag-dots">';
       for (const c of dots.slice(0, 3)) h += '<span class="ag-dot" style="background:' + c + '"></span>';
       h += '</div>';
-      if (dots.length > 3) h += '<div style="font-size:8px;color:var(--testo-ter);text-align:center;font-weight:700;">+' + (dots.length - 3) + '</div>';
+      if (dots.length > 3) h += '<div style="font-size:8px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (dots.length - 3) + '</div>';
     }
     h += '</div>';
   }
@@ -3742,11 +3699,11 @@ function htmlDettaglioGiornoAgenda(ymd) {
   }
   if (atts.length > 0) {
     h += '<div class="section-title" style="margin-top:16px;">Attività da fare (' + atts.length + ')</div>';
-    for (const a of atts) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:12px 14px;border-left:4px solid var(--nt);box-shadow:var(--shadow-xs);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11.5px;color:var(--testo-ter);margin-top:4px;font-weight:500;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; }
+    for (const a of atts) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; }
   }
   if (libs.length > 0) {
     h += '<div class="section-title" style="margin-top:16px;">Cose libere (' + libs.length + ')</div>';
-    for (const p2 of libs) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:12px 14px;border-left:4px solid var(--arancione);box-shadow:var(--shadow-xs);" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:var(--arancione);">' + (p2.ora || '--:--') + ' · LIBERA</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; }
+    for (const p2 of libs) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:var(--arancione);">' + (p2.ora || '--:--') + ' · LIBERA</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; }
   }
   h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-secondary" onclick="apriPlanningPage(\'' + ymd + '\')">Apri planning →</button></div>';
   return h;
@@ -3778,7 +3735,7 @@ function renderPlanning() {
   const p = getPlanningPerData(ymd);
   const totale = p.apps.length + p.att.length + p.lib.length;
   let h = '';
-  if (totale === 0) h = '<div class="planning-empty">Niente in programma.<br><span style="font-size:11.5px;color:var(--testo-ter);opacity:0.7;font-weight:500;">Tocca qui per aggiungere</span></div>';
+  if (totale === 0) h = '<div class="planning-empty">Niente in programma.<br><span style="font-size:11.5px;color:var(--testo-ter);">Tocca qui per aggiungere</span></div>';
   else {
     h += '<div class="planning-list">';
     for (const a of p.apps) { const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); h += '<div class="planning-item appuntamento" onclick="event.stopPropagation();apriSchedaAppuntamento(\'' + a.id + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.titolo) + '</div><span class="pi-tipo">' + escapeHtml(a.tipo) + '</span></div>'; }
@@ -3811,7 +3768,7 @@ function salvaPianificazioneLibera() {
 function apriAzioniPianificazione(id) {
   const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return;
   const d = dataDaYmd(p.data); const gN = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const mN = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.08em;">Libera · ' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14.5px;font-weight:500;letter-spacing:-0.005em;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
+  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">Libera · ' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
   if (!p.completata) h += '<button class="btn btn-primary" onclick="completaPianificazione(\'' + p.id + '\')">' + ico('check',16) + ' Segna come fatta</button>';
   else h += '<button class="btn btn-secondary" onclick="riapriPianificazione(\'' + p.id + '\')">' + ico('aggiorna',16) + ' Riporta da fare</button>';
   h += '<button class="btn btn-secondary" onclick="modificaPianificazione(\'' + p.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
@@ -3870,8 +3827,8 @@ function renderPlanningPage() {
   if (tot === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('calendario',32) + '</div>Niente in programma</div></div>';
   else {
     if (p.apps.length > 0) { h += '<div class="section-title">Appuntamenti (' + p.apps.length + ')</div>'; for (const a of p.apps) h += renderItemAppuntamento(a); }
-    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Attività da fare (' + p.att.length + ')</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:12px 14px;border-left:4px solid var(--nt);box-shadow:var(--shadow-xs);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11.5px;color:var(--testo-ter);margin-top:4px;font-weight:500;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
-    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Cose libere (' + p.lib.length + ')</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;padding:12px 14px;border-left:4px solid var(--arancione);box-shadow:var(--shadow-xs);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? '#059669' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
+    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Attività da fare (' + p.att.length + ')</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
+    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Cose libere (' + p.lib.length + ')</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
   }
   h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-primary" onclick="apriNuovaAttivitaPianificata(\'' + ymd + '\')">' + ico('piu',16) + ' Attività</button></div>';
   cont.innerHTML = h;
@@ -3943,7 +3900,7 @@ function renderAttivitaItem(a) {
 function toggleAttGruppo(k) { attGruppiEspansi[k] = !attGruppiEspansi[k]; renderAttivita(); }
 function apriAzioniAttivitaGlobale(idA, t, id) { if (t === 'immobile') { immobileAperto = id; apriAzioniAttivita(idA); } else { personaAperta = id; apriAzioniAttivitaPersona(idA); } }
 function apriNuovaAttivitaGlobale() {
-  const h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;font-weight:500;">Cerca l\'immobile o la persona.</p><input type="search" class="search-bar" id="ng-search" placeholder="Cognome, indirizzo, telefono..." style="margin-bottom:10px;"><div id="ng-risultati"></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
+  const h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Cerca l\'immobile o la persona.</p><input type="search" class="search-bar" id="ng-search" placeholder="Cognome, indirizzo, telefono..." style="margin-bottom:10px;"><div id="ng-risultati"></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
   apriModal(ico('piu',18) + ' Nuova attività', h);
   setTimeout(() => { const i = document.getElementById('ng-search'); if (i) { i.focus(); i.addEventListener('input', (e) => cercaPerNuovaAttivita(e.target.value)); } cercaPerNuovaAttivita(''); }, 100);
 }
@@ -3955,7 +3912,7 @@ function cercaPerNuovaAttivita(q) {
   const ms = r.slice(0, 40);
   if (ms.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:16px 0;"><div class="icon">' + ico('lente',28) + '</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : (x.badge === 'RR' ? ico('utente',13) : ico('valigetta',13)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:3px 7px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
+  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : (x.badge === 'RR' ? ico('utente',13) : ico('valigetta',13)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
@@ -3970,11 +3927,11 @@ function apriFormNuovo() {
   zoneTemp.nuovo = { base: [], speciale: null };
   window._villaNuovo = false; window._proprietariTemp = []; window._showPropForm = false; window._propEditingIndex = -1;
   const h = `${bh}<div class="form-group"><div class="form-row"><label class="form-label">Tipo immobile</label><select class="form-select" id="f-tipo" onchange="aggiornaFormNuovo()"><option value="censito">Immobile censito</option><option value="pa">Possibile Acquisizione (PA)</option><option value="nt">Notizia (NT)</option><option value="ink">Incarico (INK)</option></select></div></div>
-    <div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Tipo struttura</h2></div>
-    <div class="form-group" style="padding:12px 16px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)">${iconaCondo(18)}In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)">${ico('villa',18)}Villa / Singolo</button></div></div>
+    <div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Tipo struttura</h2></div>
+    <div class="form-group" style="padding:14px 18px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)">${iconaCondo(18)}In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)">${ico('villa',18)}Villa / Singolo</button></div></div>
     <div id="campi-dinamici"></div>
-    <div id="f-zone-block"><div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:12px 16px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div></div>
-    <div class="form-group" style="padding:12px 16px;"><label style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;color:var(--blu);cursor:pointer;"><input type="checkbox" id="f-chiedi-attivita" checked style="width:18px;height:18px;accent-color:var(--arancione);">Aggiungi subito un'attività</label></div>
+    <div id="f-zone-block"><div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 18px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div></div>
+    <div class="form-group" style="padding:14px 18px;"><label style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:500;color:var(--blu);cursor:pointer;"><input type="checkbox" id="f-chiedi-attivita" checked style="width:16px;height:16px;accent-color:var(--arancione);">Aggiungi subito un'attività</label></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>`;
   apriModal(tf, h); aggiornaFormNuovo();
   if (dc) aggiornaBloccoZoneDaCondominio(condoSelezionato, 'nuovo');
@@ -3991,7 +3948,7 @@ function aggiornaFormNuovo() {
     else if (t === 'ink') st = '<div class="form-row"><label class="form-label">Tipo incarico</label><select class="form-select" id="f-sottotipo"><option value="">—</option><option value="INK gestione">INK gestione</option><option value="INK esclusiva">INK esclusiva</option></select></div>';
     let ch = ''; if (!iv) ch = '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-condominio" value="' + pc + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>';
     c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="f-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="f-telefono" type="tel"></div><div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="${escapeHtml(pl)}" value="${pi}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div><div class="form-row"><label class="form-label">Residenza (opzionale)</label><input class="form-input" id="f-residenza"></div>${ch}${st}</div>
-    <div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Altri proprietari</h2></div><div class="form-group" style="padding:12px 16px;"><div id="prop-list-container">${htmlPropList()}</div></div>`;
+    <div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Altri proprietari</h2></div><div class="form-group" style="padding:14px 18px;"><div id="prop-list-container">${htmlPropList()}</div></div>`;
   }
 }
 function htmlPropList() {
@@ -4030,8 +3987,8 @@ function aggiornaBloccoZoneDaCondominio(c, p) {
   if (window._villaNuovo) return;
   const co = normalizzaIndirizzo(c); const b = document.getElementById('f-zone-block'); if (!b) return;
   const det = (DB.condomini && DB.condomini[co]) || {}; const zc = det.zone || [];
-  if (zc.length > 0) { let h = '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div><div class="inherit-banner"><span class="ico">' + iconaCondo(16) + '</span><div><strong>Dettagli da: ' + escapeHtml(co) + '</strong>' + ico('pin',11) + ' Zona: ' + escapeHtml(zc.join(' · ')); if (det.annoCostruzione) h += '<br>Anno: ' + escapeHtml(det.annoCostruzione); if (det.amministratore && det.amministratore.nome) h += '<br>Amministratore: ' + escapeHtml(det.amministratore.nome); h += '</div></div>'; b.innerHTML = h; zoneTemp[p].base = []; zoneTemp[p].speciale = null; zoneTemp[p].eredita = true; }
-  else { if (!document.getElementById(p + '-zone-container')) b.innerHTML = '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:12px 16px;"><div id="' + p + '-zone-container">' + htmlSelettoreZone(p) + '</div></div>'; zoneTemp[p].eredita = false; }
+  if (zc.length > 0) { let h = '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Ereditarietà condominio</h2></div><div class="inherit-banner"><span class="ico">' + iconaCondo(16) + '</span><div><strong>Dettagli da: ' + escapeHtml(co) + '</strong>' + ico('pin',11) + ' Zona: ' + escapeHtml(zc.join(' · ')); if (det.annoCostruzione) h += '<br>Anno: ' + escapeHtml(det.annoCostruzione); if (det.amministratore && det.amministratore.nome) h += '<br>Amministratore: ' + escapeHtml(det.amministratore.nome); h += '</div></div>'; b.innerHTML = h; zoneTemp[p].base = []; zoneTemp[p].speciale = null; zoneTemp[p].eredita = true; }
+  else { if (!document.getElementById(p + '-zone-container')) b.innerHTML = '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 18px;"><div id="' + p + '-zone-container">' + htmlSelettoreZone(p) + '</div></div>'; zoneTemp[p].eredita = false; }
 }
 function salvaNuovoImmobile() {
   const tf = document.getElementById('f-tipo').value;
@@ -4071,11 +4028,11 @@ function apriScheda(id) {
   const nFotoCondo = (!im.villa && co && Array.isArray(dc.foto)) ? dc.foto.length : 0;
   const isInCondo = !im.villa && !!co;
   let h = '<div style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px;"><span class="badge badge-' + im.stato + '">' + im.stato + '</span>';
-  if (im.villa) h += ' <span style="font-size:10.5px;color:#059669;font-weight:700;letter-spacing:0.04em;display:inline-flex;align-items:center;gap:4px;">' + ico('villa',10) + ' VILLA</span>';
-  if (im.sottotipo) h += ' <span style="font-size:12px;color:var(--testo-sec);font-weight:600;">' + escapeHtml(im.sottotipo) + '</span>';
-  if (im.inTrattativa) h += ' <span class="badge" style="background:#d97706;">' + ico('fuoco',10) + ' TRATTATIVA</span>';
-  if (im.propostaAccettata) h += ' <span class="badge" style="background:#059669;">PROP. ACC.</span>';
-  if (im.propostaNotificata) h += ' <span class="badge" style="background:#1e40af;">PROP. NOT.</span>';
+  if (im.villa) h += ' <span style="font-size:10.5px;color:var(--ink);font-weight:600;letter-spacing:0.03em;display:inline-flex;align-items:center;gap:4px;">' + ico('villa',10) + ' VILLA</span>';
+  if (im.sottotipo) h += ' <span style="font-size:12px;color:var(--testo-sec);font-weight:500;">' + escapeHtml(im.sottotipo) + '</span>';
+  if (im.inTrattativa) h += ' <span class="badge" style="background:var(--pa);">' + ico('fuoco',10) + ' TRATTATIVA</span>';
+  if (im.propostaAccettata) h += ' <span class="badge" style="background:var(--ink);">PROP. ACC.</span>';
+  if (im.propostaNotificata) h += ' <span class="badge" style="background:var(--blu-deep);">PROP. NOT.</span>';
   h += '</div>';
   if (im.z) h += '<div style="margin-bottom:10px;"><span class="zcode-badge">z' + im.z + '</span></div>';
   h += '<div class="card">';
@@ -4086,7 +4043,7 @@ function apriScheda(id) {
   if (im.residenza) h += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(im.residenza) + '</span></div>';
   if (im.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(im.note) + '</span></div>';
   if (im.stato === 'NT') { const iv = (im.sottotipo || '').toLowerCase().includes('valutata') && !(im.sottotipo || '').toLowerCase().includes('non'); h += '<div style="padding-top:10px;border-top:1px solid var(--border);margin-top:8px;"><div class="sottotipo-line"><span class="lbl">Stato notizia</span><button onclick="toggleValutazione()">' + (iv ? ico('check',12) + ' Valutata' : ico('clessidra',12) + ' Non valutata') + ' · cambia</button></div></div>'; }
-  if (ap2.length > 0) { h += '<div style="padding-top:10px;border-top:1px solid var(--border);margin-top:8px;"><div style="font-size:10.5px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;margin-bottom:8px;letter-spacing:0.08em;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:600;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push(ico('telefono',11) + ' ' + escapeHtml(p.telefono)); if (p.email) ip.push(ico('email',11) + ' ' + escapeHtml(p.email)); if (p.residenza) ip.push(ico('casa',11) + ' ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
+  if (ap2.length > 0) { h += '<div style="padding-top:10px;border-top:1px solid var(--border);margin-top:8px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:8px;letter-spacing:0.05em;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:500;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push(ico('telefono',11) + ' ' + escapeHtml(p.telefono)); if (p.email) ip.push(ico('email',11) + ' ' + escapeHtml(p.email)); if (p.residenza) ip.push(ico('casa',11) + ' ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
   h += '</div>';
   if (im.telefono) h += '<div class="actions"><button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('telefono',19) + '</span>Chiama</button><button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('whatsapp',19) + '</span>WhatsApp</button></div>';
   h += '<div class="actions"><button class="action-btn" onclick="apriModifica()"><span class="icon">' + ico('modifica',19) + '</span>Modifica</button><button class="action-btn" onclick="apriCambiaStato()"><span class="icon">' + ico('aggiorna',19) + '</span>Stato</button><button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">' + ico('piu',19) + '</span>Attività</button></div>';
@@ -4094,12 +4051,12 @@ function apriScheda(id) {
   if (ap.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Appuntamenti (' + ap.length + ')</h2>'; for (const a of ap) h += renderItemAppuntamento(a); h += '</div>'; }
   h += '<div class="card"><h2><span class="dot"></span>Attività (' + at.length + ')</h2>';
   if (at.length === 0) h += '<p style="font-size:13px;color:var(--testo-sec);">Nessuna attività.</p>';
-  else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:700;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
+  else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? 'var(--vnd)' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
   if (isInCondo) { h += '<div class="card"><h2>' + iconaCondo(13) + ' Foto condominio (' + nFotoCondo + ')</h2><p class="foto-hint">Ereditate da tutti gli immobili di questo condominio.</p><div id="foto-condo-grid-' + im.id + '"></div><div style="display:flex;gap:8px;margin-top:10px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>'; h += '<div class="card"><h2>' + ico('camera',13) + ' Foto immobile (' + nFotoProprie + ')</h2><div id="foto-grid-' + im.id + '"></div><div style="display:flex;gap:8px;margin-top:10px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>'; }
   else { h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFotoProprie + ')</h2><div id="foto-grid-' + im.id + '"></div><div style="display:flex;gap:8px;margin-top:10px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>'; }
   if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(13) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + ico('pin',11) + ' ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:13px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:10px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">' + ico('modifica',14) + ' Modifica condominio</button>'; h += '</div>'; }
-  if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:10.5px;color:#059669;font-weight:600;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
+  if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:10.5px;color:var(--ink);font-weight:500;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
   const d = im.dettagli || {};
   const gu = [['Scala', d.scala], ['Piano', d.piano], ['Interno', d.interno]].filter(([_, v]) => v && v !== '');
   const gs = [['Mq', d.mq], ['Vani', d.vani], ['Locali', d.camere], ['Bagni', d.bagni]].filter(([_, v]) => v && v !== '');
@@ -4107,7 +4064,7 @@ function apriScheda(id) {
   const ge = [['Classe energetica', d.classeEnergetica], ['Riscaldamento', d.riscaldamento]].filter(([_, v]) => v && v !== '');
   const gst = [['Stato conservativo', d.statoConservativo]].filter(([_, v]) => v && v !== '');
   if (gu.length + gs.length + gd.length + ge.length + gst.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Dettagli unità</h2>'; if (gu.length) { h += '<div class="section-title">Unità</div>'; for (const [k, v] of gu) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gs.length) { h += '<div class="section-title">Superficie</div>'; for (const [k, v] of gs) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gd.length) { h += '<div class="section-title">Dotazioni</div>'; for (const [k, v] of gd) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (ge.length) { h += '<div class="section-title">Energetico</div>'; for (const [k, v] of ge) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } if (gst.length) { h += '<div class="section-title">Stato</div>'; for (const [k, v] of gst) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; } h += '</div>'; }
-  if (fr.length > 0) { h += '<div class="card"><div class="condo-header">' + iconaCondo(13) + ' CONDOMINIO · ' + escapeHtml(co) + '</div><div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;font-weight:500;">' + (fr.length + 1) + ' immobili</div><div class="immobili-list">'; for (const f of fr) h += '<div class="immobile-line" onclick="apriScheda(\'' + f.id + '\')"><span class="txt">' + escapeHtml(titoloImmobile(f)) + '</span><span class="badge badge-' + f.stato + '" style="font-size:9px;padding:3px 7px;">' + f.stato + '</span></div>'; h += '</div></div>'; }
+  if (fr.length > 0) { h += '<div class="card"><div class="condo-header">' + iconaCondo(13) + ' CONDOMINIO · ' + escapeHtml(co) + '</div><div style="font-size:12px;color:var(--testo-sec);margin-bottom:10px;">' + (fr.length + 1) + ' immobili</div><div class="immobili-list">'; for (const f of fr) h += '<div class="immobile-line" onclick="apriScheda(\'' + f.id + '\')"><span class="txt">' + escapeHtml(titoloImmobile(f)) + '</span><span class="badge badge-' + f.stato + '" style="font-size:9px;padding:2px 6px;">' + f.stato + '</span></div>'; h += '</div></div>'; }
   h += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + im.id + '\')">' + ico('file',16) + ' Duplica immobile</button>';
   h += '<div class="btn-row" style="margin-top:14px;"><button class="btn btn-secondary" onclick="eliminaImmobile()">' + ico('cestino',16) + ' Elimina</button>';
   if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">' + ico('pacco',16) + ' Archivia</button>';
@@ -4129,7 +4086,7 @@ function apriModificaCondominio(co) {
   const h = `<div class="prefill-banner">${iconaCondo(13)} Condominio: ${escapeHtml(co)}</div>
     <button class="btn btn-secondary" onclick="apriCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('pin',16)} Coordinate ${coord.lat ? ico('check',13) : ''}</button>
     <div class="form-group"><div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" value="${escapeHtml(d.annoCostruzione || '')}"></div><div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (d.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="cd-cappotto">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (d.cappotto === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="cd-ascensore">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (d.ascensoreCondominiale === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div></div>
-    <div class="form-group" style="padding:12px 16px;"><div id="condo-zone-container">${htmlSelettoreZone('condo')}</div></div>
+    <div class="form-group" style="padding:14px 18px;"><div id="condo-zone-container">${htmlSelettoreZone('condo')}</div></div>
     <div class="form-group"><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="cd-amm-nome" value="${escapeHtml(a.nome || '')}"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="cd-amm-tel" type="tel" value="${escapeHtml(a.telefono || '')}"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="cd-amm-email" value="${escapeHtml(a.email || '')}"></div><div class="form-row"><label class="form-label">Studio</label><input class="form-input" id="cd-amm-studio" value="${escapeHtml(a.studio || '')}"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="cd-note">${escapeHtml(d.note || '')}</textarea></div></div>
     <div class="card"><h2>${ico('camera',13)} Foto condominio (${nFotoC})</h2><p class="foto-hint">Ereditate da tutti gli immobili di questo condominio.</p><div id="foto-condo-modal-grid"></div><div style="display:flex;gap:8px;margin-top:10px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', true)">${ico('camera',14)} Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', false)">${ico('foto',14)} Galleria</button></div></div>
     <button class="btn btn-danger" onclick="eliminaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('cestino',16)} Elimina condominio</button>
@@ -4172,20 +4129,20 @@ function apriModifica() {
   if (!i.villa) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="m-condominio" value="' + escapeHtml(i.condominio || '') + '"></div>';
   if (!ic) { h += '<div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="m-cognomeNome" value="' + escapeHtml(i.cognomeNome || '') + '"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="m-telefono" type="tel" value="' + escapeHtml(i.telefono || '') + '"></div><div class="form-row"><label class="form-label">Residenza</label><input class="form-input" id="m-residenza" value="' + escapeHtml(i.residenza || '') + '"></div>'; if (i.stato === 'NT') { const iv = (i.sottotipo || '').toLowerCase().includes('valutata') && !(i.sottotipo || '').toLowerCase().includes('non'); h += '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="m-sottotipo"><option value="NT non ancora valutata"' + (!iv ? ' selected' : '') + '>NT non ancora valutata</option><option value="NT valutata"' + (iv ? ' selected' : '') + '>NT valutata</option></select></div>'; } if (i.stato === 'INK') { const ie = (i.sottotipo || '').toLowerCase().includes('esclusiva'); h += '<div class="form-row"><label class="form-label">Tipo incarico</label><select class="form-select" id="m-sottotipo"><option value="">—</option><option value="INK gestione"' + (!ie && i.sottotipo ? ' selected' : '') + '>INK gestione</option><option value="INK esclusiva"' + (ie ? ' selected' : '') + '>INK esclusiva</option></select></div>'; } }
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="m-note">' + escapeHtml(i.note || '') + '</textarea></div></div>';
-  if (!ic && !i.villa) h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Altri proprietari</h2></div><div class="form-group" style="padding:12px 16px;"><div id="prop-list-container">' + htmlPropList() + '</div></div>';
+  if (!ic && !i.villa) h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Altri proprietari</h2></div><div class="form-group" style="padding:14px 18px;"><div id="prop-list-container">' + htmlPropList() + '</div></div>';
   if (zd) h += '<div class="inherit-banner"><span class="ico">' + iconaCondo(16) + '</span><div><strong>Zona del condominio</strong>' + escapeHtml(zc.join(' · ')) + '</div></div>';
-  else h += '<div class="form-group" style="padding:12px 16px;"><div id="modifica-zone-container">' + htmlSelettoreZone('modifica') + '</div></div>';
-  h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Unità immobiliare</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(d.scala || '') + '"></div><div class="form-row"><label class="form-label">Piano</label><input class="form-input" id="d-piano" value="' + escapeHtml(d.piano || '') + '"></div><div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(d.interno || '') + '"></div></div>';
-  h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Superficie</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(d.mq || '') + '"></div><div class="form-row"><label class="form-label">Vani</label><input class="form-input" id="d-vani" inputmode="numeric" value="' + escapeHtml(d.vani || '') + '"></div><div class="form-row"><label class="form-label">Locali</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(d.camere || '') + '"></div><div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(d.bagni || '') + '"></div></div>';
-  h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Dotazioni</h2></div><div class="form-group">';
+  else h += '<div class="form-group" style="padding:14px 18px;"><div id="modifica-zone-container">' + htmlSelettoreZone('modifica') + '</div></div>';
+  h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Unità immobiliare</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Scala</label><input class="form-input" id="d-scala" value="' + escapeHtml(d.scala || '') + '"></div><div class="form-row"><label class="form-label">Piano</label><input class="form-input" id="d-piano" value="' + escapeHtml(d.piano || '') + '"></div><div class="form-row"><label class="form-label">Interno</label><input class="form-input" id="d-interno" value="' + escapeHtml(d.interno || '') + '"></div></div>';
+  h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Superficie</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mq</label><input class="form-input" id="d-mq" inputmode="numeric" value="' + escapeHtml(d.mq || '') + '"></div><div class="form-row"><label class="form-label">Vani</label><input class="form-input" id="d-vani" inputmode="numeric" value="' + escapeHtml(d.vani || '') + '"></div><div class="form-row"><label class="form-label">Locali</label><input class="form-input" id="d-camere" inputmode="numeric" value="' + escapeHtml(d.camere || '') + '"></div><div class="form-row"><label class="form-label">Bagni</label><input class="form-input" id="d-bagni" inputmode="numeric" value="' + escapeHtml(d.bagni || '') + '"></div></div>';
+  h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Dotazioni</h2></div><div class="form-group">';
   for (const [k, l] of [['ascensore', 'Ascensore'], ['balcone', 'Balcone'], ['terrazzo', 'Terrazzo'], ['giardino', 'Giardino'], ['box', 'Box'], ['cantina', 'Cantina'], ['chiavi', 'Chiavi disponibili']]) { h += '<div class="form-row"><label class="form-label">' + l + '</label><select class="form-select" id="d-' + k + '">'; for (const v of ['', 'Sì', 'No']) h += '<option value="' + v + '"' + (d[k] === v ? ' selected' : '') + '>' + (v || '—') + '</option>'; h += '</select></div>'; }
   h += '</div>';
-  h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Dati energetici</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Classe energetica</label><select class="form-select" id="d-classe">';
+  h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Dati energetici</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Classe energetica</label><select class="form-select" id="d-classe">';
   for (const c of ['', 'A4', 'A3', 'A2', 'A1', 'B', 'C', 'D', 'E', 'F', 'G', 'Da produrre', 'Esente']) h += '<option value="' + c + '"' + (d.classeEnergetica === c ? ' selected' : '') + '>' + (c || '—') + '</option>';
   h += '</select></div><div class="form-row"><label class="form-label">Riscaldamento</label><select class="form-select" id="d-riscaldamento">';
   for (const r of ['', 'Autonomo', 'Centralizzato', 'Assente']) h += '<option value="' + r + '"' + (d.riscaldamento === r ? ' selected' : '') + '>' + (r || '—') + '</option>';
   h += '</select></div></div>';
-  h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Stato</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Stato conservativo</label><select class="form-select" id="d-statoConservativo">';
+  h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Stato</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Stato conservativo</label><select class="form-select" id="d-statoConservativo">';
   for (const s of ['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare']) h += '<option value="' + s + '"' + (d.statoConservativo === s ? ' selected' : '') + '>' + (s || '—') + '</option>';
   h += '</select></div></div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaModifica()">Salva</button></div>';
@@ -4208,7 +4165,7 @@ function salvaModifica() {
   if (vi !== i.indirizzo) { i.lat = null; i.lng = null; i.geoPreciso = null; avviaGeocodificaBackground(i); }
   i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id);
 }
-function apriCambiaStato() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const o = ['IMM', 'PA', 'NT', 'INK', 'VND']; const x = o.indexOf(i.stato); let h = '<div class="card" style="padding:14px 16px;"><div style="font-size:10.5px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;letter-spacing:0.08em;">Stato attuale</div><div style="font-weight:800;font-size:15px;margin-top:4px;letter-spacing:-0.01em;">' + i.stato + '</div></div><div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Upgrade</h2>'; if (x < o.length - 1) h += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + o[x + 1] + '\')">→ ' + o[x + 1] + '</button>'; else h += '<p style="font-size:13px;color:var(--testo-sec);">Stato massimo.</p>'; h += '</div><div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Degrade</h2>'; if (x > 0) h += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + o[x - 1] + '\')">→ ' + o[x - 1] + '</button>'; else h += '<p style="font-size:13px;color:var(--testo-sec);">Stato minimo.</p>'; h += '</div>'; if (i.stato !== 'VND') h += '<div class="card" style="padding:12px 16px 8px;"><h2><span class="dot"></span>Vendi</h2><button class="btn btn-primary" onclick="cambiaStato(\'VND\')">→ VND</button></div>'; h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Annulla</button></div>'; apriModal('Cambia stato', h); }
+function apriCambiaStato() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const o = ['IMM', 'PA', 'NT', 'INK', 'VND']; const x = o.indexOf(i.stato); let h = '<div class="card" style="padding:14px 18px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;letter-spacing:0.06em;">Stato attuale</div><div style="font-weight:600;font-size:15px;margin-top:4px;letter-spacing:-0.01em;">' + i.stato + '</div></div><div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Upgrade</h2>'; if (x < o.length - 1) h += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + o[x + 1] + '\')">→ ' + o[x + 1] + '</button>'; else h += '<p style="font-size:13px;color:var(--testo-sec);">Stato massimo.</p>'; h += '</div><div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Degrade</h2>'; if (x > 0) h += '<button class="btn btn-secondary" onclick="cambiaStato(\'' + o[x - 1] + '\')">→ ' + o[x - 1] + '</button>'; else h += '<p style="font-size:13px;color:var(--testo-sec);">Stato minimo.</p>'; h += '</div>'; if (i.stato !== 'VND') h += '<div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Vendi</h2><button class="btn btn-primary" onclick="cambiaStato(\'VND\')">→ VND</button></div>'; h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Annulla</button></div>'; apriModal('Cambia stato', h); }
 function cambiaStato(ns) { const i = DB.immobili.find(x => x.id === immobileAperto); const v = i.stato; if (v === 'IMM' && ns !== 'IMM' && !i.cognomeNome) { const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome</label><input class="form-input" id="cs-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="cs-telefono" type="tel"></div><div class="form-row"><label class="form-label">Residenza</label><input class="form-input" id="cs-residenza"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriCambiaStato()">Annulla</button><button class="btn btn-primary" onclick="confermaCambioStato('${ns}')">Conferma</button></div>`; apriModal('Passaggio', h); return; } eseguiCambioStato(i, v, ns); }
 function confermaCambioStato(ns) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = document.getElementById('cs-cognomeNome'); if (a) i.cognomeNome = a.value.trim().toUpperCase(); const b = document.getElementById('cs-telefono'); if (b) i.telefono = b.value || ''; const c = document.getElementById('cs-residenza'); if (c) i.residenza = (c.value || '').trim().toUpperCase(); eseguiCambioStato(i, i.stato, ns); }
 function eseguiCambioStato(i, v, ns) { i.stato = ns; if (ns === 'IMM') { i.cognomeNome = ''; i.telefono = ''; i.residenza = ''; i.altriImmobili = []; i.altriProprietari = []; } if (ns === 'NT' && !i.sottotipo) i.sottotipo = 'NT non ancora valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Cambio stato: ' + v + ' → ' + ns, completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
@@ -4218,7 +4175,7 @@ function apriNuovaAttivita() {
 }
 function aggiornaFormAttivita() { const t = document.getElementById('a-tipo').value; const c = document.getElementById('a-campi'); if (t === 'fatta') c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora</label><input class="form-input" type="datetime-local" step="1" id="a-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; else c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data prevista</label><input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${window._planningYmd ? (window._planningYmd + 'T09:00:00') : adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; }
 function salvaAttivita() { const i = DB.immobili.find(x => x.id === immobileAperto); const t = document.getElementById('a-tipo').value; const tx = (document.getElementById('a-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } i.attivita = i.attivita || []; const s = prossimoSeq(); if (t === 'fatta') { const d = document.getElementById('a-data').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); } else { const d = document.getElementById('a-dataPrevista').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); } i.updatedAt = new Date().toISOString(); window._planningYmd = null; Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
-function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:700;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.08em;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14.5px;font-weight:500;letter-spacing:-0.005em;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">' + ico('check',16) + ' Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">' + ico('modifica',16) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">' + ico('cestino',16) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
+function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">' + ico('check',16) + ' Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">' + ico('modifica',16) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">' + ico('cestino',16) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
 function segnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora esecuzione</label><input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="sf-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idA}')">Conferma</button></div>`; apriModal('Segna come fatta', h); }
 function confermaSegnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const d = document.getElementById('sf-data').value; const tx = (document.getElementById('sf-testo') || {}).value || a.testo; if (!d) { alert('Data'); return; } a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date(d).toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.testo = tx.trim(); a.updatedAt = new Date().toISOString(); a.seq = prossimoSeq(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const df = a.tipo === 'da_fare' && !a.completata; const dv = isoToLocalInput(df ? (a.dataPrevista || a.data) : a.data); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="datetime-local" step="1" id="ma-data" value="${dv}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ma-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAttivita('${idA}')">Salva</button></div>`; apriModal(ico('modifica',16) + ' Modifica', h); }
@@ -4232,7 +4189,7 @@ function apriFormNuovoCondominio() {
   zoneTemp.condo = { base: [], speciale: null };
   const nc = getNomeCittaPrincipale();
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-indirizzo" placeholder="VIA ROMA 1, ${escapeHtml(nc)}"></div><div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="nc-anno"></div><div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="nc-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="nc-cappotto">${['', 'Sì', 'No'].map(s => '<option value="' + s + '">' + (s || '—') + '</option>').join('')}</select></div></div>
-    <div class="form-group" style="padding:12px 16px;"><div id="condo-zone-container">${htmlSelettoreZone('condo')}</div></div>
+    <div class="form-group" style="padding:14px 18px;"><div id="condo-zone-container">${htmlSelettoreZone('condo')}</div></div>
     <div class="form-group"><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="nc-amm-nome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="nc-amm-tel" type="tel"></div></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea</button></div>`;
   apriModal('Nuovo condominio', h);
@@ -4255,7 +4212,7 @@ function salvaNuovoCondominio() {
 let map = null; let markersLayer = null; window._condoPopups = [];
 function calcolaInfoIcona(immobili) {
   if (!immobili || immobili.length === 0) return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 0 };
-  if (immobili.length === 1) { const im = immobili[0]; if (im.stato === 'IMM') return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 1 }; return { tipo: 'dot', colore: STATO_COLORS[im.stato] || '#dc2626', label: im.stato }; }
+  if (immobili.length === 1) { const im = immobili[0]; if (im.stato === 'IMM') return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 1 }; return { tipo: 'dot', colore: STATO_COLORS[im.stato] || '#b91c1c', label: im.stato }; }
   let statoMax = null, prioMax = 0;
   for (const im of immobili) { if (im.stato === 'VND' || im.stato === 'IMM') continue; const p = STATO_PRIORITY[im.stato] || 0; if (p > prioMax) { prioMax = p; statoMax = im.stato; } }
   const col = statoMax ? STATO_COLORS[statoMax] : PIN_NEUTRAL_COLOR;
