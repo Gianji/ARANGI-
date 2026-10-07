@@ -38,47 +38,27 @@
 </script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-  /* =====================================================
-     DESIGN SYSTEM — Editoriale · Minimal · Elegante
-     ===================================================== */
   :root {
-    /* Palette: blu profondo, arancio bruciato, neutri raffinati */
     --blu: #1f3a5f;
     --blu-deep: #162a47;
     --blu-soft: #f0f4f9;
-
     --arancione: #d9601a;
     --arancione-deep: #b84d10;
     --arancione-soft: #fdf5ee;
-
     --sfondo: #fafafa;
     --sfondo-2: #f5f5f7;
     --card: #ffffff;
-    --card-2: #fcfcfd;
-
     --testo: #1a1a1a;
     --testo-sec: #6b7280;
     --testo-ter: #9ca3af;
-
     --border: #f0f0f2;
     --border-strong: #e5e5e8;
-
     --hover-bg: #fafafa;
-
-    /* Radius contenuto, mai estremo */
     --radius: 12px;
     --radius-sm: 9px;
     --radius-pill: 999px;
-
-    /* Ombre minime — quasi invisibili, solo per profondità */
-    --shadow-xs: 0 1px 1px rgba(20, 20, 30, 0.02);
-    --shadow-sm: 0 1px 3px rgba(20, 20, 30, 0.04);
-
-    /* Layout */
     --tabbar-h: 60px;
     --max-w: 640px;
-
-    /* Stati */
     --imm: #94a3b8;
     --pa: #c2740c;
     --nt: #2563eb;
@@ -87,445 +67,168 @@
     --rr: #7c3aed;
     --prof: #0e7490;
   }
-
   html { height: 100%; overflow: hidden; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     height: 100%; overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
-    background: var(--sfondo);
-    color: var(--testo);
-    font-size: 15px;
-    line-height: 1.5;
-    letter-spacing: -0.006em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    background: var(--sfondo); color: var(--testo); font-size: 15px; line-height: 1.5;
+    letter-spacing: -0.006em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     transition: background 0.3s ease, color 0.3s ease;
   }
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
-  /* =====================================================
-     HEADER
-     ===================================================== */
   .app-header {
-    padding: 18px 22px 14px;
-    padding-top: calc(18px + env(safe-area-inset-top));
-    flex-shrink: 0;
-    background: var(--sfondo);
+    padding: 18px 22px 14px; padding-top: calc(18px + env(safe-area-inset-top));
+    flex-shrink: 0; background: var(--sfondo);
   }
-  .app-header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--blu);
-    letter-spacing: -0.6px;
-    line-height: 1.1;
-  }
+  .app-header h1 { font-size: 22px; font-weight: 700; color: var(--blu); letter-spacing: -0.6px; line-height: 1.1; }
   .app-header h1 span { color: var(--arancione); }
-  .app-header .sub {
-    font-size: 11.5px;
-    color: var(--testo-ter);
-    margin-top: 3px;
-    font-weight: 500;
-    letter-spacing: 0.005em;
-  }
-  #header-prossimo-app-txt {
-    color: var(--blu) !important;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
+  .app-header .sub { font-size: 11.5px; color: var(--testo-ter); margin-top: 3px; font-weight: 500; }
+  #header-prossimo-app-txt { color: var(--blu) !important; font-weight: 600; letter-spacing: -0.01em; }
 
-  /* =====================================================
-     CONTENT
-     ===================================================== */
   .app-content {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
     padding: 4px 18px calc(92px + env(safe-area-inset-bottom));
   }
+  .app-content.attivita-active { padding: 4px 18px calc(70px + env(safe-area-inset-bottom)); }
   .view { display: none; }
   .view.active { display: block; animation: fadeIn 0.24s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* =====================================================
-     CARD
-     ===================================================== */
   .card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 18px 20px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border);
+    background: var(--card); border-radius: var(--radius); padding: 18px 20px;
+    margin-bottom: 10px; border: 1px solid var(--border);
     transition: border-color 0.2s ease;
   }
-  .card h2 {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blu);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    letter-spacing: -0.01em;
-  }
-  .card h2 .dot {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: var(--arancione);
-  }
+  .card h2 { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em; }
+  .card h2 .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--arancione); }
   .card p { font-size: 13.5px; color: var(--testo-sec); line-height: 1.6; }
-  .empty {
-    text-align: center;
-    padding: 48px 16px;
-    color: var(--testo-ter);
-    font-size: 13px;
-    font-weight: 500;
-  }
+  .empty { text-align: center; padding: 48px 16px; color: var(--testo-ter); font-size: 13px; font-weight: 500; }
   .empty .icon svg { width: 32px; height: 32px; color: var(--testo-ter); opacity: 0.35; }
   .empty .icon { margin-bottom: 10px; }
 
-  /* =====================================================
-     BUTTONS
-     ===================================================== */
   .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    width: 100%;
-    padding: 13px 16px;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 600;
-    font-family: inherit;
-    letter-spacing: -0.005em;
-    cursor: pointer;
-    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, opacity 0.15s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%; padding: 13px 16px; border: 1px solid transparent; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 600; font-family: inherit; letter-spacing: -0.005em;
+    cursor: pointer; transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, opacity 0.15s ease;
     margin-bottom: 8px;
   }
   .btn:active { opacity: 0.75; }
-  .btn-primary {
-    background: var(--arancione);
-    color: white;
-  }
+  .btn-primary { background: var(--arancione); color: white; }
   .btn-primary:active { background: var(--arancione-deep); }
-  .btn-secondary {
-    background: var(--card);
-    color: var(--blu);
-    border-color: var(--border-strong);
-  }
+  .btn-secondary { background: var(--card); color: var(--blu); border-color: var(--border-strong); }
   .btn-secondary:active { background: var(--hover-bg); }
-  .btn-danger {
-    background: var(--card);
-    color: var(--vnd);
-    border-color: var(--border-strong);
-  }
+  .btn-danger { background: var(--card); color: var(--vnd); border-color: var(--border-strong); }
   .btn-danger:active { background: #fef2f2; border-color: #fecaca; }
   .btn svg { width: 16px; height: 16px; }
 
-  /* =====================================================
-     TABBAR
-     ===================================================== */
   .tabbar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
+    position: fixed; bottom: 0; left: 0; right: 0;
     height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
     background: rgba(250, 250, 250, 0.94);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
     border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-top: 4px;
-    z-index: 100;
+    display: flex; justify-content: space-around; align-items: center;
+    padding-bottom: env(safe-area-inset-bottom); padding-top: 4px; z-index: 100;
   }
   .tabbar button {
-    background: none;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    flex: 1;
-    height: 100%;
-    color: var(--testo-ter);
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.005em;
-    cursor: pointer;
-    position: relative;
+    background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.005em; cursor: pointer; position: relative;
     transition: color 0.2s ease;
   }
-  .tabbar button svg {
-    width: 21px; height: 21px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 1.7;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: stroke-width 0.2s ease;
-  }
+  .tabbar button svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: stroke-width 0.2s ease; }
   .tabbar button.active { color: var(--blu); font-weight: 600; }
   .tabbar button.active svg { stroke-width: 2; }
   .tabbar .badge-tab {
-    position: absolute;
-    top: 2px; right: 24%;
-    background: var(--arancione);
-    color: white;
-    font-size: 9px;
-    font-weight: 600;
-    padding: 1px 5px;
-    border-radius: var(--radius-pill);
-    min-width: 15px;
-    text-align: center;
-    display: none;
-    letter-spacing: 0;
+    position: absolute; top: 2px; right: 24%; background: var(--arancione); color: white;
+    font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: var(--radius-pill);
+    min-width: 15px; text-align: center; display: none; letter-spacing: 0;
   }
   .tabbar .badge-tab.show { display: block; }
 
-  /* =====================================================
-     SEARCH & CHIPS
-     ===================================================== */
-  .search-sticky {
-    position: sticky;
-    top: -2px;
-    z-index: 20;
-    background: var(--sfondo);
-    padding: 6px 0 8px;
-    margin: 0 -2px;
-  }
+  .search-sticky { position: sticky; top: -2px; z-index: 20; background: var(--sfondo); padding: 6px 0 8px; margin: 0 -2px; }
   .search-bar {
-    width: 100%;
-    padding: 11px 16px;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    background: var(--card);
-    font-family: inherit;
-    font-size: 14.5px;
-    font-weight: 500;
-    color: var(--testo);
-    outline: none;
-    transition: border-color 0.2s ease;
-    letter-spacing: -0.005em;
+    width: 100%; padding: 11px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--card); font-family: inherit; font-size: 14.5px; font-weight: 500;
+    color: var(--testo); outline: none; transition: border-color 0.2s ease; letter-spacing: -0.005em;
   }
   .search-bar:focus { border-color: var(--blu); }
   .search-bar::placeholder { color: var(--testo-ter); font-weight: 400; font-size: 13.5px; }
 
-  .filter-label {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 8px 2px 8px;
-  }
-  .chips {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
+  .filter-label { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 2px 8px; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .chips::-webkit-scrollbar { display: none; }
   .chip {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    padding: 6px 13px;
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--testo-sec);
-    white-space: nowrap;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.2s ease;
-    letter-spacing: -0.005em;
+    background: transparent; border: 1px solid var(--border-strong); padding: 6px 13px; border-radius: var(--radius-pill);
+    font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); white-space: nowrap;
+    cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
+    transition: all 0.2s ease; letter-spacing: -0.005em;
   }
-  .chip.active {
-    background: var(--blu);
-    color: white;
-    border-color: var(--blu);
-    font-weight: 600;
-  }
+  .chip.active { background: var(--blu); color: white; border-color: var(--blu); font-weight: 600; }
   .chip svg { width: 12px; height: 12px; }
   .chip.sub { padding: 6px 12px; font-size: 12px; }
-  .chip.sub.active {
-    background: var(--arancione);
-    border-color: var(--arancione);
-  }
+  .chip.sub.active { background: var(--arancione); border-color: var(--arancione); }
   .chip-dropdown {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    padding: 6px 13px;
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--testo-sec);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.2s ease;
+    background: transparent; border: 1px solid var(--border-strong); padding: 6px 13px; border-radius: var(--radius-pill);
+    font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;
   }
-  .chip-dropdown.active {
-    background: var(--blu);
-    color: white;
-    border-color: var(--blu);
-  }
+  .chip-dropdown.active { background: var(--blu); color: white; border-color: var(--blu); }
 
   .zone-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .zone-chip {
-    background: var(--sfondo-2);
-    border: 1px solid transparent;
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--testo-sec);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: all 0.18s ease;
-    letter-spacing: -0.005em;
+    background: var(--sfondo-2); border: 1px solid transparent; padding: 6px 12px; border-radius: var(--radius-pill);
+    font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 4px; transition: all 0.18s ease; letter-spacing: -0.005em;
   }
   .zone-chip.active { background: var(--blu); color: white; }
   .zone-chip.special { font-size: 11px; padding: 5px 11px; }
   .zone-chip.special.active { background: var(--arancione); }
 
   .active-filter-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--blu-soft);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    margin-bottom: 10px;
-    font-size: 12.5px;
-    color: var(--blu);
-    font-weight: 500;
-    gap: 8px;
-    letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: space-between; background: var(--blu-soft);
+    border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 10px;
+    font-size: 12.5px; color: var(--blu); font-weight: 500; gap: 8px; letter-spacing: -0.005em;
   }
   .active-filter-banner .x {
-    background: rgba(31, 58, 95, 0.06);
-    border: none;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    color: var(--blu);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s ease;
+    background: rgba(31, 58, 95, 0.06); border: none; width: 22px; height: 22px; border-radius: 50%;
+    color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s ease;
   }
   .active-filter-banner .x:active { background: rgba(31, 58, 95, 0.12); }
   .active-filter-banner .x svg { width: 11px; height: 11px; }
 
-  /* =====================================================
-     ITEM CARDS
-     ===================================================== */
   .item-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    cursor: pointer;
+    background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px;
+    border: 1px solid var(--border); cursor: pointer;
     transition: border-color 0.2s ease, background 0.15s ease;
   }
   .item-card:active { background: var(--hover-bg); border-color: var(--border-strong); }
   .item-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
-  .item-title {
-    font-size: 14.5px;
-    font-weight: 600;
-    color: var(--testo);
-    flex: 1;
-    word-break: break-word;
-    line-height: 1.35;
-    letter-spacing: -0.015em;
-  }
-  .item-sub {
-    font-size: 12.5px;
-    color: var(--testo-sec);
-    margin-bottom: 3px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 400;
-  }
+  .item-title { font-size: 14.5px; font-weight: 600; color: var(--testo); flex: 1; word-break: break-word; line-height: 1.35; letter-spacing: -0.015em; }
+  .item-sub { font-size: 12.5px; color: var(--testo-sec); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 6px; font-weight: 400; }
   .item-sub svg { flex-shrink: 0; width: 12px; height: 12px; opacity: 0.6; }
-  .item-meta {
-    font-size: 11.5px;
-    color: var(--testo-ter);
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
+  .item-meta { font-size: 11.5px; color: var(--testo-ter); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
-  .qa-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
+  .qa-row { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
   .qa-btn {
-    flex: 1;
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    padding: 8px 10px;
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--blu);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: background 0.15s ease;
-    letter-spacing: -0.005em;
+    flex: 1; background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: background 0.15s ease; letter-spacing: -0.005em;
   }
   .qa-btn:active { background: var(--hover-bg); }
   .qa-btn svg { width: 13px; height: 13px; }
   .qa-btn.wa { color: var(--ink); }
 
-  /* =====================================================
-     BADGES & TAGS
-     ===================================================== */
   .badge {
-    display: inline-block;
-    padding: 2.5px 8px;
-    border-radius: var(--radius-pill);
-    font-size: 9.5px;
-    font-weight: 600;
-    color: white;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
-    text-transform: uppercase;
+    display: inline-block; padding: 2.5px 8px; border-radius: var(--radius-pill);
+    font-size: 9.5px; font-weight: 600; color: white; letter-spacing: 0.04em;
+    flex-shrink: 0; text-transform: uppercase;
   }
   .badge-IMM { background: var(--imm); }
   .badge-PA { background: var(--pa); }
@@ -541,639 +244,178 @@
   .badge-PROF { background: var(--prof); }
 
   .tag {
-    display: inline-block;
-    background: transparent;
-    color: var(--testo-ter);
-    padding: 2px 8px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-strong);
-    font-size: 10px;
-    font-weight: 500;
-    margin-right: 4px;
-    margin-top: 4px;
-    letter-spacing: 0.005em;
+    display: inline-block; background: transparent; color: var(--testo-ter); padding: 2px 8px;
+    border-radius: var(--radius-pill); border: 1px solid var(--border-strong);
+    font-size: 10px; font-weight: 500; margin-right: 4px; margin-top: 4px; letter-spacing: 0.005em;
   }
 
-  /* =====================================================
-     FAB
-     ===================================================== */
   .fab {
-    position: fixed;
-    right: 22px;
-    bottom: calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: var(--arancione);
-    color: white;
-    border: none;
-    font-size: 26px;
-    font-weight: 300;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed; right: 22px; bottom: calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));
+    width: 52px; height: 52px; border-radius: 50%; background: var(--arancione); color: white;
+    border: none; font-size: 26px; font-weight: 300; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
     box-shadow: 0 4px 16px rgba(217, 96, 26, 0.28), 0 1px 3px rgba(217, 96, 26, 0.15);
-    cursor: pointer;
-    z-index: 50;
+    cursor: pointer; z-index: 50;
     transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
   }
-  .fab:active {
-    transform: scale(0.94);
-    background: var(--arancione-deep);
-    box-shadow: 0 2px 8px rgba(217, 96, 26, 0.25);
-  }
+  .fab:active { transform: scale(0.94); background: var(--arancione-deep); box-shadow: 0 2px 8px rgba(217, 96, 26, 0.25); }
   .fab svg { width: 22px; height: 22px; stroke-width: 2.2; }
 
   .back-top {
-    position: fixed;
-    right: 22px;
-    bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom));
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--border-strong);
-    color: var(--blu);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 49;
+    position: fixed; right: 22px; bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom));
+    width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong);
+    color: var(--blu); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 49;
     transition: background 0.15s ease;
   }
   .back-top.show { display: flex; }
   .back-top:active { background: var(--hover-bg); }
   .back-top svg { width: 16px; height: 16px; transform: rotate(-90deg); }
 
-  /* =====================================================
-     MODAL
-     ===================================================== */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 20, 30, 0.35);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 200;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    position: fixed; inset: 0; background: rgba(20, 20, 30, 0.35);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    z-index: 200; display: none; align-items: flex-end; justify-content: center;
+    opacity: 0; transition: opacity 0.25s ease;
   }
   .modal-overlay.open { display: flex; opacity: 1; }
   @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   .modal-sheet {
-    background: var(--sfondo);
-    width: 100%;
-    max-width: var(--max-w);
-    max-height: 92vh;
-    max-height: 92dvh;
-    border-radius: 18px 18px 0 0;
-    display: flex;
-    flex-direction: column;
-    animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow: hidden;
+    background: var(--sfondo); width: 100%; max-width: var(--max-w);
+    max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0;
+    display: flex; flex-direction: column; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
   }
   .modal-header {
-    padding: 20px 22px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-shrink: 0;
-    position: relative;
-    border-bottom: 1px solid var(--border);
+    padding: 20px 22px 14px; display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--border);
   }
-  .modal-header::before {
-    content: '';
-    position: absolute;
-    top: 8px; left: 50%;
-    transform: translateX(-50%);
-    width: 32px; height: 4px;
-    border-radius: 2px;
-    background: var(--border-strong);
-  }
-  .modal-header h2 {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--blu);
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    letter-spacing: -0.02em;
-    margin-top: 6px;
-  }
-  .modal-close {
-    background: transparent;
-    border: none;
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    font-size: 16px;
-    color: var(--testo-sec);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 6px;
-    transition: background 0.15s ease;
-  }
+  .modal-header::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 32px; height: 4px; border-radius: 2px; background: var(--border-strong); }
+  .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; margin-top: 6px; }
+  .modal-close { background: transparent; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; color: var(--testo-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 6px; transition: background 0.15s ease; }
   .modal-close:active { background: var(--sfondo-2); }
   .modal-close svg { width: 14px; height: 14px; }
-  .modal-body {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 16px 16px 24px;
-    padding-bottom: calc(24px + env(safe-area-inset-bottom));
-  }
+  .modal-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px 16px 24px; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 
-  /* =====================================================
-     FORMS
-     ===================================================== */
-  .form-group {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 0 18px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border);
-  }
+  .form-group { background: var(--card); border-radius: var(--radius); padding: 0 18px; margin-bottom: 10px; border: 1px solid var(--border); }
   .form-row { padding: 13px 0; border-bottom: 1px solid var(--border); }
   .form-row:last-child { border-bottom: none; }
-  .form-label {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 5px;
-    display: block;
-  }
-  .form-input, .form-select, .form-textarea {
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 14.5px;
-    font-weight: 500;
-    color: var(--testo);
-    outline: none;
-    padding: 0;
-    letter-spacing: -0.005em;
-  }
+  .form-label { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; display: block; }
+  .form-input, .form-select, .form-textarea { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14.5px; font-weight: 500; color: var(--testo); outline: none; padding: 0; letter-spacing: -0.005em; }
   .form-input::placeholder { color: var(--testo-ter); font-weight: 400; }
   .form-textarea { resize: vertical; min-height: 56px; line-height: 1.5; }
   .form-select {
-    -webkit-appearance: none;
-    appearance: none;
+    -webkit-appearance: none; appearance: none;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 2px center;
-    padding-right: 22px;
+    background-repeat: no-repeat; background-position: right 2px center; padding-right: 22px;
   }
   .btn-row { display: flex; gap: 8px; margin-top: 12px; }
   .btn-row .btn { margin-bottom: 0; flex: 1; }
 
-  /* =====================================================
-     TIMELINE
-     ===================================================== */
-  .timeline-item {
-    padding: 11px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13.5px;
-    color: var(--testo);
-    line-height: 1.5;
-    cursor: pointer;
-    font-weight: 400;
-  }
+  .timeline-item { padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; color: var(--testo); line-height: 1.5; cursor: pointer; font-weight: 400; }
   .timeline-item:last-child { border-bottom: none; }
-  .timeline-item .data {
-    font-size: 11px;
-    color: var(--testo-ter);
-    font-weight: 500;
-    display: block;
-    margin-bottom: 3px;
-    letter-spacing: 0.01em;
-  }
+  .timeline-item .data { font-size: 11px; color: var(--testo-ter); font-weight: 500; display: block; margin-bottom: 3px; letter-spacing: 0.01em; }
   .timeline-item.da-fare .data { color: var(--arancione); }
-  .timeline-item.da-fare {
-    background: var(--arancione-soft);
-    margin: 4px -12px;
-    padding: 11px 12px;
-    border-radius: var(--radius-sm);
-    border-bottom: none;
-  }
-  .timeline-item.scaduta {
-    background: #fef2f2;
-    margin: 4px -12px;
-    padding: 11px 12px;
-    border-radius: var(--radius-sm);
-    border-bottom: none;
-  }
+  .timeline-item.da-fare { background: var(--arancione-soft); margin: 4px -12px; padding: 11px 12px; border-radius: var(--radius-sm); border-bottom: none; }
+  .timeline-item.scaduta { background: #fef2f2; margin: 4px -12px; padding: 11px 12px; border-radius: var(--radius-sm); border-bottom: none; }
   .timeline-item.scaduta .data { color: var(--vnd); }
   .timeline-item .chev { float: right; color: var(--testo-ter); font-size: 16px; line-height: 1; margin-left: 6px; }
 
-  /* =====================================================
-     ACTIONS
-     ===================================================== */
   .actions { display: flex; gap: 8px; margin-bottom: 10px; }
   .action-btn {
-    flex: 1;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 13px 8px;
-    font-family: inherit;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--blu);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    transition: background 0.15s ease;
-    letter-spacing: -0.005em;
+    flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 13px 8px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--blu);
+    cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    transition: background 0.15s ease; letter-spacing: -0.005em;
   }
   .action-btn:active { background: var(--hover-bg); }
   .action-btn .icon { display: flex; align-items: center; justify-content: center; height: 20px; }
   .action-btn .icon svg { width: 18px; height: 18px; stroke-width: 1.6; }
 
-  /* =====================================================
-     INFO ROWS
-     ===================================================== */
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 7px 0;
-    font-size: 13.5px;
-    gap: 12px;
-    font-weight: 400;
-  }
+  .info-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 13.5px; gap: 12px; font-weight: 400; }
   .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; letter-spacing: -0.005em; }
   .info-row + .info-row { border-top: 1px solid var(--border); }
 
-  /* =====================================================
-     IMMOBILI LIST
-     ===================================================== */
   .immobili-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
   .immobile-line {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    font-size: 13px;
-    color: var(--testo);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    font-weight: 400;
-    transition: background 0.15s ease;
+    background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px;
+    font-size: 13px; color: var(--testo); display: flex; justify-content: space-between; align-items: center;
+    gap: 8px; cursor: pointer; font-weight: 400; transition: background 0.15s ease;
   }
   .immobile-line:active { background: var(--hover-bg); }
-  .immobile-line .txt {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .immobile-line .txt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
   .immobile-line .txt svg { flex-shrink: 0; width: 13px; height: 13px; opacity: 0.5; }
-  .immobile-line .rm {
-    background: none;
-    border: none;
-    color: var(--vnd);
-    font-size: 16px;
-    cursor: pointer;
-    padding: 0 3px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-  }
+  .immobile-line .rm { background: none; border: none; color: var(--vnd); font-size: 16px; cursor: pointer; padding: 0 3px; flex-shrink: 0; display: flex; align-items: center; }
   .immobile-line .rm svg { width: 14px; height: 14px; }
   .add-btn {
-    background: transparent;
-    border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--blu);
-    cursor: pointer;
-    width: 100%;
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: background 0.15s ease, border-color 0.15s ease;
-    letter-spacing: -0.005em;
+    background: transparent; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm);
+    padding: 10px 12px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu);
+    cursor: pointer; width: 100%; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background 0.15s ease, border-color 0.15s ease; letter-spacing: -0.005em;
   }
   .add-btn:active { background: var(--hover-bg); border-color: var(--blu); }
   .add-btn svg { width: 14px; height: 14px; }
 
-  /* =====================================================
-     FOTO GRID
-     ===================================================== */
   .foto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
-  .foto-item {
-    aspect-ratio: 1 / 1;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    background: var(--sfondo-2);
-    cursor: pointer;
-    transition: opacity 0.15s ease;
-  }
+  .foto-item { aspect-ratio: 1 / 1; border-radius: var(--radius-sm); overflow: hidden; background: var(--sfondo-2); cursor: pointer; transition: opacity 0.15s ease; }
   .foto-item:active { opacity: 0.75; }
   .foto-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .foto-placeholder {
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, var(--sfondo-2) 0%, var(--border) 50%, var(--sfondo-2) 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-  }
+  .foto-placeholder { width: 100%; height: 100%; background: linear-gradient(90deg, var(--sfondo-2) 0%, var(--border) 50%, var(--sfondo-2) 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   .foto-hint { font-size: 11.5px; color: var(--testo-ter); margin: 0 0 8px; font-weight: 400; }
 
-  /* =====================================================
-     SOTTOTIPO / CONDO
-     ===================================================== */
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-size: 13.5px; gap: 8px; }
   .sottotipo-line .lbl { color: var(--testo-sec); font-weight: 400; }
-  .sottotipo-line button {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-pill);
-    padding: 6px 12px;
-    font-family: inherit;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--blu);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: background 0.15s ease;
-    letter-spacing: -0.005em;
-  }
+  .sottotipo-line button { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 6px 12px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--blu); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
   .sottotipo-line button:active { background: var(--hover-bg); }
   .sottotipo-line button svg { width: 12px; height: 12px; }
 
-  .condo-header {
-    background: var(--blu-soft);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 11.5px;
-    color: var(--blu);
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
+  .condo-header { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 11.5px; color: var(--blu); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
   .condo-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border);
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
     transition: border-color 0.2s ease, background 0.15s ease;
   }
   .condo-card:active { background: var(--hover-bg); border-color: var(--border-strong); }
   .condo-card .condo-icon { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.65; }
   .condo-card .condo-info { flex: 1; overflow: hidden; }
-  .condo-card .condo-title {
-    font-size: 14.5px;
-    font-weight: 600;
-    color: var(--testo);
-    margin-bottom: 3px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    letter-spacing: -0.01em;
-  }
+  .condo-card .condo-title { font-size: 14.5px; font-weight: 600; color: var(--testo); margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.01em; }
   .condo-card .condo-sub { font-size: 12px; color: var(--testo-sec); font-weight: 400; }
   .condo-card .condo-arrow svg { width: 15px; height: 15px; color: var(--testo-ter); }
-  .condo-card .condo-edit {
-    background: none;
-    border: none;
-    padding: 6px;
-    cursor: pointer;
-    flex-shrink: 0;
-    border-radius: var(--radius-sm);
-    color: var(--testo-ter);
-    display: flex;
-    align-items: center;
-    transition: background 0.15s ease;
-  }
+  .condo-card .condo-edit { background: none; border: none; padding: 6px; cursor: pointer; flex-shrink: 0; border-radius: var(--radius-sm); color: var(--testo-ter); display: flex; align-items: center; transition: background 0.15s ease; }
   .condo-card .condo-edit:active { background: var(--hover-bg); }
   .condo-card .condo-edit svg { width: 15px; height: 15px; }
 
-  /* =====================================================
-     SECTION TITLES & BANNERS
-     ===================================================== */
-  .section-title {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 6px 2px 8px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+  .section-title { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.06em; padding: 6px 2px 8px; display: flex; align-items: center; gap: 5px; }
 
-  .prefill-banner {
-    background: var(--blu-soft);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--blu);
-    font-weight: 500;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    letter-spacing: -0.005em;
-  }
+  .prefill-banner { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: var(--blu); font-weight: 500; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; letter-spacing: -0.005em; }
   .prefill-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
-  .inherit-banner {
-    background: #f0fdf4;
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    font-size: 12px;
-    color: var(--ink);
-    font-weight: 500;
-    margin-top: 8px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    line-height: 1.55;
-  }
+  .inherit-banner { background: #f0fdf4; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 12px; color: var(--ink); font-weight: 500; margin-top: 8px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.55; }
   .inherit-banner .ico { flex-shrink: 0; color: var(--ink); }
   .inherit-banner .ico svg { width: 15px; height: 15px; }
   .inherit-banner strong { display: block; margin-bottom: 3px; font-size: 12.5px; font-weight: 600; }
-  .zone-summary {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--testo-sec);
-    margin-top: 6px;
-    line-height: 1.55;
-    font-weight: 400;
-  }
+  .zone-summary { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: var(--testo-sec); margin-top: 6px; line-height: 1.55; font-weight: 400; }
   .zone-summary strong { color: var(--blu); font-weight: 600; }
-  .zdf-notice {
-    background: var(--arancione-soft);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 12px;
-    color: var(--arancione-deep);
-    margin-top: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-  }
+  .zdf-notice { background: var(--arancione-soft); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: var(--arancione-deep); margin-top: 8px; display: flex; align-items: center; gap: 6px; font-weight: 500; }
   .zdf-notice svg { width: 12px; height: 12px; flex-shrink: 0; }
-  .zcode-badge {
-    display: inline-block;
-    background: transparent;
-    color: var(--blu);
-    padding: 2px 10px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-strong);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
+  .zcode-badge { display: inline-block; background: transparent; color: var(--blu); padding: 2px 10px; border-radius: var(--radius-pill); border: 1px solid var(--border-strong); font-size: 11px; font-weight: 600; letter-spacing: 0.01em; }
 
-  /* =====================================================
-     VILLA TOGGLE & THEME
-     ===================================================== */
   .villa-toggle { display: flex; gap: 8px; margin-top: 4px; }
-  .villa-toggle button {
-    flex: 1;
-    padding: 12px 8px;
-    border: 1px solid var(--border-strong);
-    background: var(--card);
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--testo-sec);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.18s ease;
-    letter-spacing: -0.005em;
-  }
-  .villa-toggle button.active {
-    border-color: var(--blu);
-    color: var(--blu);
-    background: var(--blu-soft);
-    font-weight: 600;
-  }
+  .villa-toggle button { flex: 1; padding: 12px 8px; border: 1px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: all 0.18s ease; letter-spacing: -0.005em; }
+  .villa-toggle button.active { border-color: var(--blu); color: var(--blu); background: var(--blu-soft); font-weight: 600; }
   .villa-toggle button svg { width: 18px; height: 18px; }
 
-  .theme-btn {
-    flex: 1;
-    padding: 14px 8px;
-    border: 1px solid var(--border-strong);
-    background: var(--card);
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--testo-sec);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 7px;
-    transition: all 0.18s ease;
-    letter-spacing: -0.005em;
-  }
+  .theme-btn { flex: 1; padding: 14px 8px; border: 1px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 7px; transition: all 0.18s ease; letter-spacing: -0.005em; }
   .theme-btn.active { border-color: var(--testo); color: var(--testo); font-weight: 600; }
 
-  /* =====================================================
-     FAB MENU
-     ===================================================== */
-  .fab-menu {
-    position: fixed;
-    right: 22px;
-    bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom));
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-end;
-    z-index: 51;
-    animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .fab-menu button {
-    background: var(--card);
-    border: 1px solid var(--border-strong);
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--blu);
-    box-shadow: 0 2px 12px rgba(20, 20, 30, 0.06);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    letter-spacing: -0.005em;
-    transition: background 0.15s ease;
-  }
+  .fab-menu { position: fixed; right: 22px; bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; align-items: flex-end; z-index: 51; animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+  .fab-menu button { background: var(--card); border: 1px solid var(--border-strong); padding: 12px 16px; border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu); box-shadow: 0 2px 12px rgba(20, 20, 30, 0.06); cursor: pointer; display: flex; align-items: center; gap: 8px; letter-spacing: -0.005em; transition: background 0.15s ease; }
   .fab-menu button:active { background: var(--hover-bg); }
   .fab-menu button svg { width: 15px; height: 15px; }
 
-  /* =====================================================
-     PROP CARDS
-     ===================================================== */
-  .prop-card {
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 11px 13px;
-    margin-bottom: 6px;
-  }
-  .prop-card .prop-nome {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--testo);
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
-  }
+  .prop-card { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 13px; margin-bottom: 6px; }
+  .prop-card .prop-nome { font-size: 13px; font-weight: 600; color: var(--testo); margin-bottom: 4px; letter-spacing: -0.01em; }
   .prop-card .prop-info { font-size: 12px; color: var(--testo-sec); line-height: 1.6; font-weight: 400; }
 
-  /* =====================================================
-     ADDRESS
-     ===================================================== */
   .addr-check { color: var(--ink); font-weight: 600; font-size: 13px; flex-shrink: 0; display: inline-flex; align-items: center; }
   .addr-check svg { width: 13px; height: 13px; }
   .addr-click { color: var(--blu); font-weight: 500; cursor: pointer; }
@@ -1181,244 +423,46 @@
   .addr-link svg { width: 13px; height: 13px; }
   .addr-tools { padding-top: 10px; border-top: 1px solid var(--border); margin-top: 10px; }
 
-  /* =====================================================
-     FILTER DROPDOWN
-     ===================================================== */
-  .filter-dropdown-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 180;
-    display: none;
-    background: rgba(20, 20, 30, 0.35);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s ease;
-  }
+  .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; background: rgba(20, 20, 30, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: fadeIn 0.2s ease; }
   .filter-dropdown-overlay.open { display: block; }
-  .filter-dropdown {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 16px;
-    min-width: 260px;
-    max-width: 90vw;
-    box-shadow: 0 12px 48px rgba(20, 20, 30, 0.16);
-    animation: popIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-  }
+  .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); border-radius: var(--radius); padding: 16px; min-width: 260px; max-width: 90vw; box-shadow: 0 12px 48px rgba(20, 20, 30, 0.16); animation: popIn 0.24s cubic-bezier(0.16, 1, 0.3, 1); }
   @keyframes popIn { from { opacity: 0; transform: translate(-50%, -48%) scale(0.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-  .filter-dropdown h3 {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .filter-dropdown .opt {
-    padding: 11px 12px;
-    border-radius: var(--radius-sm);
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--testo);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background 0.15s ease;
-    letter-spacing: -0.005em;
-  }
+  .filter-dropdown h3 { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .filter-dropdown .opt { padding: 11px 12px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 500; color: var(--testo); cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.15s ease; letter-spacing: -0.005em; }
   .filter-dropdown .opt:active { background: var(--sfondo-2); }
   .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
   .filter-dropdown .opt svg { width: 13px; height: 13px; color: var(--blu); }
 
-  /* =====================================================
-     MAPPA
-     ===================================================== */
-  #map-container {
-    position: relative;
-    width: 100%;
-    height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom));
-    overflow: hidden;
-    background: #e5e7eb;
-  }
+  #map-container { position: relative; width: 100%; height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom)); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
-  .map-overlay-top {
-    position: absolute;
-    top: 12px; left: 12px; right: 12px;
-    z-index: 500;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    pointer-events: none;
-  }
+  .map-overlay-top { position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
   .map-overlay-top > * { pointer-events: auto; }
-  .map-chips {
-    display: flex;
-    gap: 5px;
-    overflow-x: auto;
-    padding: 8px 10px;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    scrollbar-width: none;
-  }
+  .map-chips { display: flex; gap: 5px; overflow-x: auto; padding: 8px 10px; background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-sm); border: 1px solid var(--border); scrollbar-width: none; }
   .map-chips::-webkit-scrollbar { display: none; }
-  .map-chip {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    padding: 5px 12px;
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--testo-sec);
-    white-space: nowrap;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.18s ease;
-    letter-spacing: -0.005em;
-  }
+  .map-chip { background: transparent; border: 1px solid var(--border-strong); padding: 5px 12px; border-radius: var(--radius-pill); font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; transition: all 0.18s ease; letter-spacing: -0.005em; }
   .map-chip.active { background: var(--blu); color: white; border-color: var(--blu); font-weight: 600; }
-  .map-status {
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    padding: 9px 12px;
-    font-size: 12px;
-    color: var(--testo-sec);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    font-weight: 400;
-  }
+  .map-status { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 9px 12px; font-size: 12px; color: var(--testo-sec); display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 400; }
   .map-status .count { font-weight: 600; color: var(--blu); letter-spacing: -0.01em; }
-  .map-status button {
-    background: var(--blu);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 6px 12px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 500;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: background 0.15s ease;
-  }
+  .map-status button { background: var(--blu); border: none; border-radius: var(--radius-pill); padding: 6px 12px; font-family: inherit; font-size: 11px; font-weight: 500; color: white; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.15s ease; }
   .map-status button:active { background: var(--blu-deep); }
   .map-status button svg { width: 12px; height: 12px; }
-  .map-overlay-bottom {
-    position: absolute;
-    bottom: 84px; right: 12px;
-    z-index: 500;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .map-btn {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    background: var(--card);
-    border: 1px solid var(--border-strong);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--blu);
-    transition: background 0.15s ease;
-  }
+  .map-overlay-bottom { position: absolute; bottom: 84px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; }
+  .map-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--blu); transition: background 0.15s ease; }
   .map-btn:active { background: var(--hover-bg); }
   .map-btn svg { width: 18px; height: 18px; }
 
   .pin-wrap { position: relative; width: 32px; height: 40px; }
-  .pin-body {
-    position: absolute;
-    bottom: 0; left: 50%;
-    width: 30px; height: 30px;
-    border-radius: 50% 50% 50% 0;
-    transform: translateX(-50%) rotate(-45deg);
-    border: 2px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .pin-body { position: absolute; bottom: 0; left: 50%; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); display: flex; align-items: center; justify-content: center; }
   .pin-body .pin-label { transform: rotate(45deg); font-size: 10px; font-weight: 700; color: white; line-height: 1; }
-  .pin-dot {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 9.5px;
-    font-weight: 700;
-    line-height: 1;
-  }
+  .pin-dot { width: 34px; height: 34px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 9.5px; font-weight: 700; line-height: 1; }
 
   .leaflet-popup-content-wrapper { border-radius: 12px; padding: 0; overflow: hidden; box-shadow: 0 8px 32px rgba(20, 20, 30, 0.12); }
   .leaflet-popup-content { margin: 0; min-width: 200px; }
   .aranjò-popup { padding: 12px 14px; }
-  .aranjò-popup .pop-titolo {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blu);
-    margin-bottom: 4px;
-    line-height: 1.35;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    letter-spacing: -0.01em;
-  }
-  .aranjò-popup .pop-sub {
-    font-size: 11.5px;
-    color: var(--testo-sec);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: 400;
-  }
-  .aranjò-popup .pop-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: var(--radius-pill);
-    font-size: 9.5px;
-    font-weight: 600;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .aranjò-popup .pop-btn {
-    background: var(--arancione);
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 9px 12px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: background 0.15s ease;
-    letter-spacing: -0.005em;
-  }
+  .aranjò-popup .pop-titolo { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 4px; line-height: 1.35; display: flex; align-items: center; gap: 5px; letter-spacing: -0.01em; }
+  .aranjò-popup .pop-sub { font-size: 11.5px; color: var(--testo-sec); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; font-weight: 400; }
+  .aranjò-popup .pop-badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-pill); font-size: 9.5px; font-weight: 600; color: white; text-transform: uppercase; letter-spacing: 0.04em; }
+  .aranjò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: var(--radius-sm); padding: 9px 12px; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; width: 100%; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
   .aranjò-popup .pop-btn:active { background: var(--arancione-deep); }
   .aranjò-popup .pop-btn svg { width: 13px; height: 13px; }
   .aranjò-popup .pop-btn.btn-nav { background: var(--blu); margin-top: 4px; }
@@ -1427,551 +471,198 @@
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
 
-  /* =====================================================
-     ATTIVITÀ — 3 BLOCCHI
-     ===================================================== */
+  /* ATTIVITÀ — 3 blocchi uguali */
   #view-attivita.active {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    height: 100%;
-    min-height: 0;
-    padding-bottom: 4px;
-    overflow: hidden;
+    display: flex; flex-direction: column; gap: 8px;
+    height: 100%; min-height: 0; overflow: hidden;
   }
   .att-col {
-    flex: 1 1 0;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    flex: 1 1 0; min-height: 0; max-height: calc((100% - 16px) / 3);
+    display: flex; flex-direction: column; overflow: hidden;
   }
-  .att-col-main { flex: 1 1 0; }
-  .att-col-main .att-subtabs { flex-shrink: 0; margin-bottom: 10px; }
-  .att-scroll {
-    flex: 1 1 0;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
+  .att-col-main .att-subtabs { flex-shrink: 0; margin-bottom: 8px; }
+  .att-scroll { flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
   .att-col-side > .agenda-sett,
-  .att-col-side > .planning-sett {
-    flex: 1 1 0;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .agenda-sett > h3,
-  .planning-sett > h3 { flex-shrink: 0; cursor: pointer; user-select: none; -webkit-user-select: none; }
-  .agenda-sett > .agenda-grid,
-  .planning-sett > #planning-contenuto {
-    flex: 1 1 0;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
+  .att-col-side > .planning-sett { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .agenda-sett > h3, .planning-sett > h3 { flex-shrink: 0; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .agenda-sett > .agenda-grid, .planning-sett > #planning-contenuto { flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
   #planning-contenuto { cursor: pointer; }
 
   .att-subtabs { display: flex; gap: 8px; flex-shrink: 0; }
-  .att-subtab {
-    flex: 1;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 6px;
-    text-align: center;
-    cursor: pointer;
-    font-family: inherit;
-    transition: border-color 0.2s ease, background 0.2s ease;
-  }
-  .att-subtab .num {
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 3px;
-    color: var(--testo-sec);
-    letter-spacing: -0.03em;
-  }
-  .att-subtab .lbl {
-    font-size: 9px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: var(--testo-ter);
-    letter-spacing: 0.06em;
-  }
+  .att-subtab { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 6px; text-align: center; cursor: pointer; font-family: inherit; transition: border-color 0.2s ease, background 0.2s ease; }
+  .att-subtab .num { font-size: 20px; font-weight: 700; line-height: 1; margin-bottom: 3px; color: var(--testo-sec); letter-spacing: -0.03em; }
+  .att-subtab .lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--testo-ter); letter-spacing: 0.06em; }
   .att-subtab.oggi.active .num { color: var(--arancione); }
   .att-subtab.scadute.active .num { color: var(--vnd); }
   .att-subtab.prossime.active .num { color: var(--nt); }
   .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
-  /* =====================================================
-     AGENDA WIDGET
-     ===================================================== */
-  .agenda-sett {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 16px 12px;
-    border: 1px solid var(--border);
-  }
-  .agenda-sett h3 {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--blu);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  /* AGENDA SETTIMANALE WIDGET - nuovo formato "- TYPE -" */
+  .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 14px 10px; border: 1px solid var(--border); }
+  .agenda-sett h3 { font-size: 11.5px; font-weight: 600; color: var(--blu); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .agenda-sett h3 .lbl-click { cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
   .agenda-sett h3 .nav-sett { display: flex; gap: 3px; }
-  .agenda-sett h3 .nav-sett button {
-    background: transparent;
-    border: none;
-    width: 26px; height: 26px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    color: var(--blu);
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 500;
-    transition: background 0.15s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .agenda-sett h3 .nav-sett button { background: transparent; border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); font-size: 14px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 500; transition: background 0.15s ease; display: flex; align-items: center; justify-content: center; }
   .agenda-sett h3 .nav-sett button:active { background: var(--sfondo-2); }
-  .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .agenda-giorno {
-    background: transparent;
-    border-radius: var(--radius-sm);
-    padding: 5px 3px;
-    min-height: 62px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    cursor: pointer;
-    transition: background 0.15s ease;
-  }
+  .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .agenda-giorno { background: transparent; border-radius: var(--radius-sm); padding: 3px 1px; min-height: 62px; display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; transition: background 0.15s ease; overflow: hidden; }
   .agenda-giorno:active { background: var(--sfondo-2); }
-  .agenda-giorno.oggi .ag-num { background: var(--arancione); color: white; }
-  .agenda-giorno .ag-nome {
-    font-size: 9px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    text-transform: uppercase;
-    text-align: center;
-    letter-spacing: 0.05em;
-  }
+  .agenda-giorno .ag-nome { font-size: 8px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; letter-spacing: 0.04em; }
   .agenda-giorno.oggi .ag-nome { color: var(--arancione); }
-  .agenda-giorno .ag-num {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--testo);
-    text-align: center;
-    line-height: 28px;
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    margin-bottom: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: -0.02em;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-  .agenda-giorno .ag-ev { display: none; }
-  .agenda-giorno .ag-dots { display: flex; gap: 2.5px; justify-content: center; margin-top: 2px; }
-  .agenda-giorno .ag-dot { width: 4px; height: 4px; border-radius: 50%; }
-  .agenda-giorno .ag-empty { color: var(--testo-ter); font-size: 10px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; opacity: 0.4; }
+  .agenda-giorno .ag-num { font-size: 12px; font-weight: 500; color: var(--testo); text-align: center; line-height: 22px; width: 22px; height: 22px; border-radius: 50%; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; letter-spacing: -0.02em; transition: background 0.15s ease, color 0.15s ease; }
+  .agenda-giorno.oggi .ag-num { background: var(--arancione); color: white; font-weight: 600; }
+  .agenda-giorno .ag-ev-row { width: 100%; text-align: center; margin-bottom: 1px; padding: 0 1px; }
+  .agenda-giorno .ag-ev-label { font-size: 7.5px; font-weight: 600; color: var(--testo); line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.01em; }
+  .agenda-giorno .ag-ev-label .dash { font-weight: 700; }
+  .agenda-giorno .ag-ev-ora { font-size: 7px; color: var(--testo-ter); font-weight: 500; line-height: 1; letter-spacing: 0.02em; }
+  .agenda-giorno .ag-empty { color: var(--testo-ter); font-size: 9px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; opacity: 0.35; }
 
-  /* =====================================================
-     PLANNING WIDGET
-     ===================================================== */
-  .planning-sett {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 16px;
-    border: 1px solid var(--border);
-  }
-  .planning-sett h3 {
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--blu);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .planning-sett { background: var(--card); border-radius: var(--radius); padding: 14px; border: 1px solid var(--border); }
+  .planning-sett h3 { font-size: 11.5px; font-weight: 600; color: var(--blu); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .planning-sett h3 .nav-sett { display: flex; gap: 3px; }
-  .planning-sett h3 .nav-sett button {
-    background: transparent;
-    border: none;
-    width: 26px; height: 26px;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    color: var(--blu);
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 500;
-    transition: background 0.15s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .planning-sett h3 .nav-sett button { background: transparent; border: none; width: 24px; height: 24px; border-radius: var(--radius-sm); font-size: 14px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 500; transition: background 0.15s ease; display: flex; align-items: center; justify-content: center; }
   .planning-sett h3 .nav-sett button:active { background: var(--sfondo-2); }
   .planning-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
-  .planning-item {
-    display: flex;
-    gap: 10px;
-    padding: 9px 11px;
-    background: transparent;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 12.5px;
-    cursor: pointer;
-    align-items: flex-start;
-    border-left: 3px solid var(--blu);
-    font-weight: 400;
-    transition: background 0.15s ease;
-  }
+  .planning-item { display: flex; gap: 10px; padding: 8px 10px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; align-items: flex-start; border-left: 3px solid var(--blu); font-weight: 400; transition: background 0.15s ease; }
   .planning-item:active { background: var(--hover-bg); }
   .planning-item.appuntamento { border-left-color: var(--pa); }
   .planning-item.attivita { border-left-color: var(--nt); }
   .planning-item.libera { border-left-color: var(--arancione); }
   .planning-item.fatta { opacity: 0.5; }
-  .planning-item .pi-ora {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-sec);
-    flex-shrink: 0;
-    min-width: 38px;
-    letter-spacing: -0.005em;
-  }
-  .planning-item .pi-testo { flex: 1; min-width: 0; word-break: break-word; line-height: 1.4; }
-  .planning-item .pi-tipo {
-    font-size: 8.5px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: var(--radius-pill);
-    background: var(--blu);
-    color: white;
-    flex-shrink: 0;
-    align-self: flex-start;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+  .planning-item .pi-ora { font-size: 10.5px; font-weight: 600; color: var(--testo-sec); flex-shrink: 0; min-width: 36px; letter-spacing: -0.005em; }
+  .planning-item .pi-testo { flex: 1; min-width: 0; word-break: break-word; line-height: 1.35; }
+  .planning-item .pi-tipo { font-size: 8.5px; font-weight: 600; padding: 2px 6px; border-radius: var(--radius-pill); background: var(--blu); color: white; flex-shrink: 0; align-self: flex-start; letter-spacing: 0.04em; text-transform: uppercase; }
   .planning-item.attivita .pi-tipo { background: var(--nt); }
   .planning-item.libera .pi-tipo { background: var(--arancione); }
-  .planning-empty {
-    text-align: center;
-    padding: 22px 8px;
-    color: var(--testo-ter);
-    font-size: 12.5px;
-    font-weight: 400;
-  }
+  .planning-empty { text-align: center; padding: 18px 8px; color: var(--testo-ter); font-size: 12.5px; font-weight: 400; }
 
-  /* =====================================================
-     PAGES
-     ===================================================== */
-  .page-topbar { display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; }
-  .page-back {
+  /* PAGINE AGENDA / PLANNING */
+  .cal-back-float {
+    position: fixed;
+    top: calc(14px + env(safe-area-inset-top));
+    left: 16px;
+    width: 38px; height: 38px;
+    border-radius: 50%;
     background: var(--card);
     border: 1px solid var(--border-strong);
-    width: 38px; height: 38px;
-    border-radius: var(--radius-sm);
-    font-size: 18px;
     color: var(--blu);
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-family: inherit;
-    font-weight: 400;
-    transition: background 0.15s ease;
+    z-index: 60;
+    transition: background 0.15s ease, transform 0.15s ease;
   }
-  .page-back:active { background: var(--hover-bg); }
-  .page-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--blu);
-    flex: 1;
-    letter-spacing: -0.025em;
-  }
-  .page-back-inline {
-    background: none;
-    border: none;
-    color: var(--blu);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 4px 0;
-    margin-bottom: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    letter-spacing: -0.005em;
-  }
-  .page-day-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--blu);
-    margin-bottom: 16px;
-    letter-spacing: -0.025em;
-  }
+  .cal-back-float:active { background: var(--hover-bg); transform: scale(0.94); }
+  .cal-back-float svg { width: 18px; height: 18px; }
 
-  .cal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-    gap: 8px;
-    padding: 0 2px;
-  }
-  .cal-header h2 {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--blu);
-    margin: 0;
-    flex: 1;
-    text-align: center;
-    letter-spacing: -0.025em;
-  }
-  .cal-header .cal-nav-btn {
-    background: transparent;
-    border: none;
-    width: 36px; height: 36px;
-    border-radius: var(--radius-sm);
-    font-size: 20px;
-    color: var(--blu);
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 400;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s ease;
-  }
+  .page-topbar { display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; }
+  .page-back { background: var(--card); border: 1px solid var(--border-strong); width: 38px; height: 38px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: inherit; font-weight: 400; transition: background 0.15s ease; }
+  .page-back:active { background: var(--hover-bg); }
+  .page-title { font-size: 18px; font-weight: 700; color: var(--blu); flex: 1; letter-spacing: -0.025em; }
+  .page-back-inline { background: none; border: none; color: var(--blu); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 0; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 4px; letter-spacing: -0.005em; }
+  .page-day-title { font-size: 20px; font-weight: 700; color: var(--blu); margin-bottom: 16px; letter-spacing: -0.025em; }
+
+  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; padding: 0 2px; }
+  .cal-header h2 { font-size: 18px; font-weight: 700; color: var(--blu); margin: 0; flex: 1; text-align: center; letter-spacing: -0.025em; }
+  .cal-header .cal-nav-btn { background: transparent; border: none; width: 36px; height: 36px; border-radius: var(--radius-sm); font-size: 20px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
   .cal-header .cal-nav-btn:active { background: var(--sfondo-2); }
 
-  /* =====================================================
-     CALENDARIO IPHONE
-     ===================================================== */
-  .cal-griglia {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0;
-    padding: 4px 0 8px;
-  }
-  .cal-giorno-h {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    text-transform: uppercase;
-    text-align: center;
-    padding: 8px 0 12px;
-    letter-spacing: 0.06em;
-  }
-  .cal-cella {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 4px 2px;
-    min-height: 60px;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    cursor: pointer;
-    position: relative;
-    transition: opacity 0.15s;
-  }
+  /* Vista zoom header (week/3day) */
+  .cal-zoom-header { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; gap: 8px; padding: 0 2px; }
+  .cal-zoom-label { font-size: 15px; font-weight: 700; color: var(--blu); flex: 1; text-align: center; letter-spacing: -0.02em; }
+  .cal-zoom-header .cal-nav-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
+  .cal-zoom-header .cal-nav-btn:active { background: var(--sfondo-2); }
+
+  /* GRIGLIA MESE */
+  .cal-griglia { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; padding: 4px 0 8px; }
+  .cal-giorno-h { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; padding: 8px 0 12px; letter-spacing: 0.06em; }
+  .cal-cella { background: transparent; border: none; border-radius: 0; padding: 4px 2px; min-height: 60px; height: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; position: relative; transition: opacity 0.15s; }
   .cal-cella.fuori-mese { opacity: 0.22; }
-  .cal-cella .cal-num {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--testo);
-    width: 32px; height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    margin: 0;
-    padding: 0;
-    line-height: 1;
-    transition: background 0.15s ease, color 0.15s ease;
-    letter-spacing: -0.02em;
-  }
-  .cal-cella.oggi .cal-num {
-    background: var(--arancione);
-    color: white;
-    font-weight: 600;
-  }
-  .cal-cella .cal-dots {
-    display: flex;
-    gap: 3px;
-    height: 8px;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2px;
-  }
-  .cal-cella .cal-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    display: inline-block;
-  }
+  .cal-cella .cal-num { font-size: 15px; font-weight: 500; color: var(--testo); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0; padding: 0; line-height: 1; transition: background 0.15s ease, color 0.15s ease; letter-spacing: -0.02em; }
+  .cal-cella.oggi .cal-num { background: var(--arancione); color: white; font-weight: 600; }
+  .cal-cella .cal-dots { display: flex; gap: 3px; height: 8px; align-items: center; justify-content: center; margin-top: 2px; }
+  .cal-cella .cal-dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
   .cal-cella .cal-ev, .cal-cella .cal-more { display: none; }
 
-  /* =====================================================
-     APPUNTAMENTI CARDS
-     ===================================================== */
-  .app-item-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--blu);
-    cursor: pointer;
-    transition: border-color 0.2s ease, background 0.15s ease;
-  }
+  /* GRIGLIA SETTIMANA (7 giorni, più dettagli) */
+  .cal-week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-week-day { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 4px; min-height: 110px; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; gap: 2px; transition: background 0.15s ease; }
+  .cal-week-day:active { background: var(--hover-bg); }
+  .cal-week-day.oggi { background: var(--arancione-soft); border-color: rgba(217, 96, 26, 0.25); }
+  .cal-week-dayname { font-size: 9px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; letter-spacing: 0.05em; }
+  .cal-week-day.oggi .cal-week-dayname { color: var(--arancione); }
+  .cal-week-daynum { font-size: 14px; font-weight: 600; color: var(--testo); text-align: center; letter-spacing: -0.02em; margin-bottom: 3px; }
+  .cal-week-day.oggi .cal-week-daynum { color: var(--arancione); }
+  .cal-week-item { font-size: 8.5px; font-weight: 500; color: var(--testo); line-height: 1.15; padding: 2px 3px; border-radius: 3px; background: var(--sfondo-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
+  .cal-week-item .wi-dash { font-weight: 700; }
+  .cal-week-item .wi-ora { font-size: 7.5px; color: var(--testo-ter); font-weight: 500; margin-left: auto; }
+  .cal-week-more { font-size: 8.5px; font-weight: 600; color: var(--testo-ter); text-align: center; margin-top: 1px; }
+
+  /* GRIGLIA 3 GIORNI */
+  .cal-3d-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .cal-3d-day { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px; min-height: 220px; cursor: pointer; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; transition: background 0.15s ease; }
+  .cal-3d-day:active { background: var(--hover-bg); }
+  .cal-3d-day.oggi { background: var(--arancione-soft); border-color: rgba(217, 96, 26, 0.25); }
+  .cal-3d-dayname { font-size: 9.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; letter-spacing: 0.05em; }
+  .cal-3d-day.oggi .cal-3d-dayname { color: var(--arancione); }
+  .cal-3d-daynum { font-size: 20px; font-weight: 700; color: var(--testo); text-align: center; letter-spacing: -0.03em; margin-bottom: 6px; }
+  .cal-3d-day.oggi .cal-3d-daynum { color: var(--arancione); }
+  .cal-3d-item { display: flex; align-items: flex-start; gap: 4px; font-size: 10px; line-height: 1.25; padding: 4px 5px; background: var(--sfondo-2); border-radius: 4px; overflow: hidden; }
+  .cal-3d-item .wi-dash { font-weight: 700; flex-shrink: 0; }
+  .cal-3d-item .wi-body { flex: 1; min-width: 0; }
+  .cal-3d-item .wi-tipo { font-weight: 600; color: var(--testo); font-size: 9.5px; }
+  .cal-3d-item .wi-testo { color: var(--testo-sec); font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cal-3d-item .wi-ora { font-size: 8.5px; color: var(--testo-ter); font-weight: 500; flex-shrink: 0; }
+  .cal-3d-empty { font-size: 10px; color: var(--testo-ter); text-align: center; padding: 12px 4px; opacity: 0.5; }
+
+  /* Vista giorno (dettaglio) */
+  .cal-day-full { padding: 0 0 20px; }
+
+  /* Quick action pills (compact buttons) */
+  .qa-pills { display: flex; gap: 6px; margin: 10px 0 14px; flex-wrap: wrap; }
+  .qa-pill { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 7px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; letter-spacing: -0.005em; transition: background 0.15s ease; }
+  .qa-pill:active { background: var(--hover-bg); }
+  .qa-pill svg { width: 13px; height: 13px; }
+
+  .app-item-card { background: var(--card); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; transition: border-color 0.2s ease, background 0.15s ease; }
   .app-item-card:active { background: var(--hover-bg); }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
   .app-item-card.tipo-acq { border-left-color: var(--rr); }
   .app-item-card.tipo-entrambi { border-left-color: var(--vnd); }
   .app-item-card.libero { border-left-color: var(--arancione); }
-  .app-item-card .app-tipo-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: transparent;
-    color: var(--testo-sec);
-    font-size: 10px;
-    font-weight: 600;
-    padding: 0;
-    margin-bottom: 6px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
+  .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; gap: 4px; background: transparent; color: var(--testo-sec); font-size: 10px; font-weight: 600; padding: 0; margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
   .app-item-card .app-tipo-badge svg { width: 11px; height: 11px; }
-  .app-item-card .app-titolo {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--testo);
-    margin-bottom: 5px;
-    line-height: 1.35;
-    word-break: break-word;
-    letter-spacing: -0.01em;
-  }
-  .app-item-card .app-data {
-    font-size: 12px;
-    color: var(--testo-sec);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 400;
-  }
+  .app-item-card .app-titolo { font-size: 13.5px; font-weight: 600; color: var(--testo); margin-bottom: 5px; line-height: 1.35; word-break: break-word; letter-spacing: -0.01em; }
+  .app-item-card .app-data { font-size: 12px; color: var(--testo-sec); display: flex; align-items: center; gap: 4px; font-weight: 400; }
   .app-item-card .app-data svg { width: 11px; height: 11px; opacity: 0.5; }
-  .app-item-card .app-esito {
-    font-size: 11px;
-    margin-top: 8px;
-    padding: 3px 9px;
-    border-radius: var(--radius-pill);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 500;
-  }
+  .app-item-card .app-esito { font-size: 11px; margin-top: 8px; padding: 3px 9px; border-radius: var(--radius-pill); display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
   .app-item-card .app-esito.ok { background: #f0fdf4; color: var(--ink); }
   .app-item-card .app-esito.ko { background: #fef2f2; color: var(--vnd); }
   .app-item-card .app-esito.neutral { background: var(--sfondo-2); color: var(--testo-sec); }
 
   .tipo-app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-  .tipo-app-btn {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    cursor: pointer;
-    text-align: left;
-    font-family: inherit;
-    transition: border-color 0.2s ease, background 0.15s ease;
-  }
+  .tipo-app-btn { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; cursor: pointer; text-align: left; font-family: inherit; transition: border-color 0.2s ease, background 0.15s ease; }
   .tipo-app-btn:active { background: var(--hover-bg); border-color: var(--border-strong); }
-  .tipo-app-btn .sigla {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blu);
-    margin-bottom: 3px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    letter-spacing: -0.01em;
-  }
+  .tipo-app-btn .sigla { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 3px; display: flex; align-items: center; gap: 6px; letter-spacing: -0.01em; }
   .tipo-app-btn .sigla svg { width: 15px; height: 15px; }
   .tipo-app-btn .desc { font-size: 10.5px; color: var(--testo-ter); line-height: 1.4; font-weight: 400; }
   .tipo-app-btn.tipo-vend { border-left: 3px solid var(--pa); }
   .tipo-app-btn.tipo-acq { border-left: 3px solid var(--rr); }
   .tipo-app-btn.tipo-entrambi { border-left: 3px solid var(--vnd); }
 
-  /* =====================================================
-     ATTIVITÀ GRUPPI
-     ===================================================== */
-  .att-gruppo {
-    background: var(--card);
-    border-radius: var(--radius);
-    margin-bottom: 8px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    transition: border-color 0.2s ease;
-  }
-  .att-gruppo-header { display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; transition: background 0.15s ease; }
+  .att-gruppo { background: var(--card); border-radius: var(--radius); margin-bottom: 8px; border: 1px solid var(--border); overflow: hidden; transition: border-color 0.2s ease; }
+  .att-gruppo-header { display: flex; align-items: center; gap: 10px; padding: 11px 13px; cursor: pointer; transition: background 0.15s ease; }
   .att-gruppo-header:active { background: var(--hover-bg); }
   .att-icona-ent { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.7; }
   .att-icona-ent svg { width: 18px; height: 18px; stroke-width: 1.6; }
   .att-info { flex: 1; min-width: 0; }
-  .att-titolo {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--testo);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    letter-spacing: -0.01em;
-  }
-  .att-meta {
-    font-size: 11px;
-    color: var(--testo-ter);
-    margin-top: 3px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    font-weight: 400;
-  }
-  .att-count {
-    background: var(--sfondo-2);
-    color: var(--blu);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 9px;
-    border-radius: var(--radius-pill);
-  }
+  .att-titolo { font-size: 13px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.01em; }
+  .att-meta { font-size: 10.5px; color: var(--testo-ter); margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-weight: 400; }
+  .att-count { background: var(--sfondo-2); color: var(--blu); font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: var(--radius-pill); }
   .att-arrow svg { width: 15px; height: 15px; color: var(--testo-ter); transition: transform 0.2s ease; }
   .att-gruppo.espanso .att-arrow { transform: rotate(90deg); }
   .att-gruppo-body { display: none; border-top: 1px solid var(--border); padding: 4px 0; }
   .att-gruppo.espanso .att-gruppo-body { display: block; }
-  .att-item { display: flex; gap: 10px; padding: 11px 14px; cursor: pointer; align-items: flex-start; transition: background 0.15s ease; }
+  .att-item { display: flex; gap: 10px; padding: 10px 13px; cursor: pointer; align-items: flex-start; transition: background 0.15s ease; }
   .att-item:active { background: var(--hover-bg); }
   .att-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
   .att-dot.fatta { background: var(--ink); }
@@ -1979,57 +670,28 @@
   .att-dot.scaduta { background: var(--vnd); }
   .att-dot.prossima { background: var(--nt); }
   .att-body { flex: 1; min-width: 0; }
-  .att-data {
-    font-size: 10.5px;
-    font-weight: 600;
-    color: var(--testo-ter);
-    text-transform: uppercase;
-    margin-bottom: 3px;
-    letter-spacing: 0.05em;
-  }
+  .att-data { font-size: 10px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; margin-bottom: 3px; letter-spacing: 0.05em; }
   .att-data.oggi { color: var(--arancione); }
   .att-data.scaduta { color: var(--vnd); }
-  .att-testo {
-    font-size: 13.5px;
-    color: var(--testo);
-    line-height: 1.4;
-    word-break: break-word;
-    font-weight: 400;
-    letter-spacing: -0.005em;
-  }
+  .att-testo { font-size: 13px; color: var(--testo); line-height: 1.4; word-break: break-word; font-weight: 400; letter-spacing: -0.005em; }
 
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* =====================================================
-     RESPONSIVE
-     ===================================================== */
   @media (min-width: 768px) {
     body { background: #f0f0f2; }
-    .app {
-      max-width: var(--max-w);
-      margin: 0 auto;
-      background: var(--sfondo);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-    }
-    .tabbar {
-      max-width: var(--max-w);
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-    }
+    .app { max-width: var(--max-w); margin: 0 auto; background: var(--sfondo); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+    .tabbar { max-width: var(--max-w); left: 50%; transform: translateX(-50%); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
     .fab { right: calc(50% - (var(--max-w) / 2) + 22px); }
     .fab-menu { right: calc(50% - (var(--max-w) / 2) + 22px); }
     .back-top { right: calc(50% - (var(--max-w) / 2) + 22px); }
+    .cal-back-float { left: calc(50% - (var(--max-w) / 2) + 16px); }
     .modal-overlay { align-items: center; padding: 24px; }
     .modal-sheet { border-radius: 18px; max-height: 88dvh; border: 1px solid var(--border); }
     .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover,
     .tipo-app-btn:hover, .planning-item:hover, .att-item:hover, .timeline-item:hover,
     .action-btn:hover, .btn-secondary:hover, .chip:hover {
-      background: var(--hover-bg);
-      border-color: var(--border-strong);
+      background: var(--hover-bg); border-color: var(--border-strong);
     }
     .chip.active:hover { background: var(--blu); }
     .chip.sub.active:hover { background: var(--arancione-deep); }
@@ -2050,32 +712,23 @@
     .foto-grid { grid-template-columns: repeat(6, 1fr); }
   }
 
-  /* =====================================================
-     DARK MODE
-     ===================================================== */
+  /* DARK MODE */
   :root[data-theme="dark"] {
     --blu: #8ab0d4;
     --blu-deep: #6f95bb;
     --blu-soft: #1a2533;
-
     --arancione: #ec6f2a;
     --arancione-deep: #d9601a;
     --arancione-soft: #2a1a10;
-
     --sfondo: #0f0f11;
     --sfondo-2: #1a1a1d;
     --card: #17171a;
-    --card-2: #1c1c20;
-
     --testo: #e8e8ea;
     --testo-sec: #9a9aa0;
     --testo-ter: #6a6a72;
-
     --border: #232327;
     --border-strong: #2e2e33;
-
     --hover-bg: #1c1c20;
-
     --imm: #52525b;
     --pa: #d97706;
     --nt: #3b82f6;
@@ -2131,6 +784,10 @@
   :root[data-theme="dark"] .foto-item { background: var(--sfondo-2); }
   :root[data-theme="dark"] .planning-item { background: transparent; }
   :root[data-theme="dark"] .att-count { background: var(--sfondo-2); color: #8ab0d4; }
+  :root[data-theme="dark"] .cal-week-item { background: var(--sfondo-2); }
+  :root[data-theme="dark"] .cal-3d-item { background: var(--sfondo-2); }
+  :root[data-theme="dark"] .cal-week-day.oggi { background: var(--arancione-soft); }
+  :root[data-theme="dark"] .cal-3d-day.oggi { background: var(--arancione-soft); }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -2160,7 +817,9 @@
   :root[data-theme="dark"] .modal-header h2,
   :root[data-theme="dark"] .page-title,
   :root[data-theme="dark"] .page-back-inline,
-  :root[data-theme="dark"] .page-day-title { color: #8ab0d4; }
+  :root[data-theme="dark"] .page-day-title,
+  :root[data-theme="dark"] .cal-zoom-label,
+  :root[data-theme="dark"] .cal-back-float { color: #8ab0d4; }
   :root[data-theme="dark"] .cal-cella.oggi .cal-num { color: #ffffff; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
@@ -2264,20 +923,16 @@
     </section>
 
     <section id="view-agenda" class="view">
-      <div class="page-topbar">
-        <button class="page-back" onclick="tornaAttivita()">‹</button>
-        <div class="page-title" id="agenda-page-title">Agenda</div>
-        <div style="width:38px;"></div>
-      </div>
+      <button class="cal-back-float" onclick="agendaBack()" aria-label="Indietro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <div id="agenda-page-content"></div>
     </section>
 
     <section id="view-planning" class="view">
-      <div class="page-topbar">
-        <button class="page-back" onclick="tornaAttivita()">‹</button>
-        <div class="page-title" id="planning-page-title">Planning</div>
-        <div style="width:38px;"></div>
-      </div>
+      <button class="cal-back-float" onclick="tornaAttivita()" aria-label="Indietro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <div id="planning-page-content"></div>
     </section>
 
@@ -2329,7 +984,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.8</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.9</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Foto</span><span class="value" id="storage-foto">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
@@ -2494,7 +1149,7 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 46, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], pianificazioni: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 47, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], pianificazioni: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -2612,8 +1267,14 @@ const ZONE_BASE = ['CASTELLO', 'GHINAGLIA', 'PIAZZA RISORGIMENTO', 'VIA DANTE', 
 const ZONA_ZDF = 'ZONA ZdF';
 const ZONE_SPECIALI = ['ZONA Libera', 'ZONA ZdF altrui'];
 const TIPI_PROFESSIONISTA = [
-  { id: 'notaio', label: 'Notaio', tag: '#notaio' }, { id: 'geom', label: 'Geometra', tag: '#geom' }, { id: 'arch', label: 'Architetto', tag: '#arch' },
-  { id: 'avv', label: 'Avvocato', tag: '#avv' }, { id: 'comm', label: 'Commercialista', tag: '#comm' }, { id: 'ente', label: 'Ente/Comune/Catasto', tag: '#ente' }, { id: 'altro', label: 'Altro', tag: '#altro' }
+  { id: 'notaio', label: 'Notaio', tag: '#notaio', abbr: 'NOT.' },
+  { id: 'geom', label: 'Geometra', tag: '#geom', abbr: 'GEOM.' },
+  { id: 'arch', label: 'Architetto', tag: '#arch', abbr: 'ARCH.' },
+  { id: 'ing', label: 'Ingegnere', tag: '#ing', abbr: 'ING.' },
+  { id: 'avv', label: 'Avvocato', tag: '#avv', abbr: 'AVV.' },
+  { id: 'comm', label: 'Commercialista', tag: '#comm', abbr: 'DOTT.' },
+  { id: 'ente', label: 'Ente/Comune/Catasto', tag: '#ente', abbr: 'ENTE' },
+  { id: 'altro', label: 'Altro', tag: '#altro', abbr: '' }
 ];
 const STATI_RR = [
   { id: 'attiva', label: 'RR attiva', tag: '#RR-attiva' }, { id: 'in-attesa', label: 'RR in attesa', tag: '#RR-in-attesa' },
@@ -2694,18 +1355,23 @@ function normalizzaTipoImmobile(s) { if (!s) return ''; const t = String(s).trim
 function formatBytes(b) { if (!b || b < 1024) return (b || 0) + ' B'; if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB'; if (b < 1024*1024*1024) return (b/(1024*1024)).toFixed(2) + ' MB'; return (b/(1024*1024*1024)).toFixed(2) + ' GB'; }
 
 // =====================================================
-// PERSONE / APPUNTAMENTI / GEOCODING
+// PERSONE / APPUNTAMENTI
 // =====================================================
 function titoloAcquirente(p) { const nome = (p.cognomeNome || '').toUpperCase(); const tel = p.telefono ? ' ' + p.telefono : ''; const coll = p.collega ? ' (' + p.collega.toUpperCase() + ')' : ''; const immobili = (p.immobili || []).length > 0 ? ' x ' + p.immobili.join(' / ') : ''; return 'RR - ' + nome + tel + coll + immobili; }
-function titoloProfessionista(p) { return 'PROF - ' + (p.cognomeNome || '').toUpperCase(); }
+function titoloProfessionista(p) {
+  const t = TIPI_PROFESSIONISTA.find(x => x.id === p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length - 1];
+  const abbr = (t && t.abbr) ? (t.abbr + ' ') : '';
+  return abbr + (p.cognomeNome || '').toUpperCase();
+}
 function titoloPersona(p) { if (p.tipo === 'acquirente') return titoloAcquirente(p); if (p.tipo === 'professionista') return titoloProfessionista(p); return p.cognomeNome || ''; }
 function getStatoRR(p) { if (p.tipo !== 'acquirente') return null; const s = STATI_RR.find(s => s.id === p.statoRR); return s || STATI_RR[0]; }
-function getTagPersona(p) { if (p.tipo === 'acquirente') { const s = getStatoRR(p); return s ? s.tag : '#RR-attiva'; } if (p.tipo === 'professionista') { const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf) || TIPI_PROFESSIONISTA[6]; return t.tag; } return ''; }
+function getTagPersona(p) { if (p.tipo === 'acquirente') { const s = getStatoRR(p); return s ? s.tag : '#RR-attiva'; } if (p.tipo === 'professionista') { const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length - 1]; return t.tag; } return ''; }
 function getLabelTipoPersona(p) { if (p.tipo === 'acquirente') return 'Acquirente'; if (p.tipo === 'professionista') { const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf); return t ? t.label : 'Professionista'; } return ''; }
 function acquirenteHaVistoNTINK(per) { if (!per || !per.immobili) return false; return per.immobili.some(l => /^(NT|INK)\s*-/.test(l)); }
 function getTipoApp(sigla) { if (sigla === TIPO_LIBERO.sigla) return TIPO_LIBERO; return TIPI_APPUNTAMENTO.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10]; }
 function isAppLibero(sigla) { return sigla === TIPO_LIBERO.sigla; }
 
+// Geocoding
 let geocodeCache = {};
 try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
 function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
@@ -2758,30 +1424,37 @@ async function riGeocodificaImmobile(id) {
 // =====================================================
 const tabButtons = document.querySelectorAll('.tabbar button');
 const views = document.querySelectorAll('.view');
+function setAppContentMode(tab) {
+  const appContent = document.getElementById('app-content');
+  document.querySelector('.app-header').style.display = '';
+  appContent.style.padding = '';
+  appContent.style.overflow = '';
+  appContent.classList.remove('attivita-active');
+  if (tab === 'mappa') {
+    document.querySelector('.app-header').style.display = 'none';
+    appContent.style.padding = '0';
+    appContent.style.overflow = 'hidden';
+  } else if (tab === 'attivita') {
+    appContent.style.overflow = 'hidden';
+    appContent.classList.add('attivita-active');
+  }
+}
 tabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     const tab = btn.dataset.tab;
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
     const appContent = document.getElementById('app-content');
-    document.querySelector('.app-header').style.display = '';
-    appContent.style.padding = '';
-    appContent.style.overflow = '';
     appContent.scrollTop = 0;
     document.getElementById('back-top').classList.remove('show');
+    setAppContentMode(tab);
     const fab = document.getElementById('fab-immobili');
     const fabMenu = document.getElementById('fab-menu');
     if (tab === 'mappa') {
-      document.querySelector('.app-header').style.display = 'none';
-      appContent.style.padding = '0';
-      appContent.style.overflow = 'hidden';
       fab.style.display = 'none';
       fabMenu.style.display = 'none';
       setTimeout(async () => { if (!map) initMappa(); else map.invalidateSize(); if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); aggiornaMappa(); }, 100);
     } else {
-      if (tab === 'attivita') {
-        appContent.style.overflow = 'hidden';
-      }
       if (tab === 'immobili' || tab === 'persone' || tab === 'attivita') fab.style.display = 'flex'; else fab.style.display = 'none';
       fabMenu.style.display = 'none'; fabMenuAperto = false;
       if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">' + ico('casa',15) + ' Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">' + iconaCondo(15) + ' Nuovo condominio</button>';
@@ -2800,9 +1473,9 @@ function mostraView(id) {
   document.querySelector('.app-header').style.display = id === 'view-mappa' ? 'none' : '';
   appContent.scrollTop = 0;
   document.getElementById('back-top').classList.remove('show');
-  if (id === 'view-attivita') appContent.style.overflow = 'hidden';
+  appContent.style.padding = ''; appContent.style.overflow = ''; appContent.classList.remove('attivita-active');
+  if (id === 'view-attivita') { appContent.style.overflow = 'hidden'; appContent.classList.add('attivita-active'); }
   else if (id === 'view-mappa') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
-  else { appContent.style.overflow = ''; appContent.style.padding = ''; }
   const targetTab = (id === 'view-agenda' || id === 'view-planning') ? 'attivita' : id.replace('view-', '');
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === targetTab));
   const fab = document.getElementById('fab-immobili');
@@ -2896,10 +1569,7 @@ function eseguiBack() {
   if (fdd && fdd.classList.contains('open')) { chiudiFilterDD(); return; }
   if (fabMenuAperto) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; return; }
   const va = document.getElementById('view-agenda');
-  if (va && va.classList.contains('active')) {
-    if (agendaPageState === 'day') { tornaCalendarioAgenda(); return; }
-    tornaAttivita(); return;
-  }
+  if (va && va.classList.contains('active')) { agendaBack(); return; }
   const vp = document.getElementById('view-planning');
   if (vp && vp.classList.contains('active')) { tornaAttivita(); return; }
   const at = document.querySelector('.tabbar button.active');
@@ -2908,6 +1578,37 @@ function eseguiBack() {
     if (homeBtn) homeBtn.click();
   }
 }
+
+// =====================================================
+// PINCH-ZOOM per il calendario agenda
+// =====================================================
+(function setupPinchZoom() {
+  let startDist = 0, ratio = 1, active = false;
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 2) return;
+    const va = document.getElementById('view-agenda');
+    if (!va || !va.classList.contains('active')) return;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    startDist = Math.hypot(dx, dy);
+    ratio = 1; active = true;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!active || e.touches.length !== 2) return;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.hypot(dx, dy);
+    ratio = dist / startDist;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (!active) return;
+    if (e.touches.length >= 2) return;
+    if (ratio > 1.25) { zoomAgendaIn(); }
+    else if (ratio < 0.75) { zoomAgendaOut(); }
+    active = false; startDist = 0; ratio = 1;
+  }, { passive: true });
+  document.addEventListener('touchcancel', () => { active = false; startDist = 0; ratio = 1; });
+})();
 
 // =====================================================
 // NAV ESTERNA
@@ -3067,7 +1768,6 @@ function renderPersone() {
     const tel = p.telefonoCell || p.telefono;
     h += '<div class="item-card" onclick="apriSchedaPersona(\'' + p.id + '\')"><div class="item-row"><div class="item-title">' + escapeHtml(t) + '</div>';
     if (p.tipo === 'acquirente') { const s = getStatoRR(p); h += '<span class="badge badge-RR-' + s.id + '">' + s.id.replace('-', ' ').toUpperCase() + '</span>'; }
-    else if (p.tipo === 'professionista') h += '<span class="badge badge-PROF">PROF</span>';
     h += '</div>';
     if (lt) h += '<div class="item-sub">' + escapeHtml(lt) + '</div>';
     if (tel) h += '<div class="item-sub">' + ico('telefono',11) + ' ' + escapeHtml(tel) + '</div>';
@@ -3132,7 +1832,6 @@ function apriSchedaPersona(id) {
   const tag = getTagPersona(p); const lt = getLabelTipoPersona(p);
   let h = '<div style="margin-bottom:12px;">';
   if (p.tipo === 'acquirente') { const s = getStatoRR(p); h += '<span class="badge badge-RR-' + s.id + '">' + s.label + '</span>'; }
-  else if (p.tipo === 'professionista') h += '<span class="badge badge-PROF">PROFESSIONISTA</span>';
   h += '</div><div class="card">';
   if (p.cognomeNome) h += '<div class="info-row"><span class="label">Nome</span><span class="value">' + escapeHtml(p.cognomeNome) + '</span></div>';
   if (lt) h += '<div class="info-row"><span class="label">Tipo</span><span class="value">' + escapeHtml(lt) + '</span></div>';
@@ -3440,11 +2139,11 @@ function cercaEntitaPicker(te, q, cb, tipoSigla) {
   const ts = tipoSigla;
   const qq = (q || '').toLowerCase().trim(); let r = [];
   if (te === 'immobile') { for (const imm of DB.immobili) { if (ts && !immobileValidoPerTipo(ts, imm)) continue; const t = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), badge: imm.stato, villa: !!imm.villa }); } }
-  else { for (const p of DB.persone) { if (ts && !personaValidaPerTipo(ts, p)) continue; const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) { let b = p.tipo === 'acquirente' ? 'RR' : 'PROF'; r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: b }); } } }
+  else { for (const p of DB.persone) { if (ts && !personaValidaPerTipo(ts, p)) continue; const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) { let b = p.tipo === 'acquirente' ? 'RR' : null; r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: b }); } } }
   r = r.slice(0, 40);
   if (r.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:16px 0;"><div class="icon">' + ico('lente',28) + '</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : (x.badge === 'RR' ? ico('utente',13) : ico('valigetta',13)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span><span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span></div>'; }
+  for (const x of r) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : ico('utente',13); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPicker(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>' + (x.badge ? '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + x.badge + '</span>' : '') + '</div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPicker(t, id) { const cb = window._pickerCallback; if (!cb) return; if (t === 'immobile') { const i = DB.immobili.find(x => x.id === id); chiudiModal(); setTimeout(() => cb(i), 120); } else { const p = DB.persone.find(x => x.id === id); chiudiModal(); setTimeout(() => cb(p), 120); } }
@@ -3591,7 +2290,38 @@ function salvaModificaAppuntamento(id) {
 }
 
 // =====================================================
-// AGENDA SETTIMANALE
+// HELPERS CALENDARIO
+// =====================================================
+const GIORNI_BREVI = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+const MESI_BREVI = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+const MESI_LUNGHI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const GIORNI_LUNGHI = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+
+function collectItemsForDay(ymd) {
+  const items = [];
+  const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === ymd && a.stato !== 'annullato');
+  const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymd);
+  const libs = (DB.pianificazioni || []).filter(p => p.data === ymd);
+  for (const a of apps) {
+    const tp = getTipoApp(a.tipo);
+    items.push({ tipo: a.tipo, testo: a.titolo, ora: pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()), colore: coloreDaClasse(getClasseChiApp(tp.chi)), id: a.id, kind: 'app' });
+  }
+  for (const a of atts) {
+    items.push({ tipo: 'ATT', testo: a.testo, ora: a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore: CAL_COLORS.att, id: a.id, kind: 'att', entitaTipo: a.entitaTipo, entitaId: a.entitaId });
+  }
+  for (const p of libs) {
+    items.push({ tipo: 'LIBERA', testo: p.testo, ora: p.ora || '--:--', colore: CAL_COLORS.libero, id: p.id, kind: 'lib' });
+  }
+  items.sort((a, b) => {
+    const ta = a.ora === '--:--' ? '99:99' : a.ora;
+    const tb = b.ora === '--:--' ? '99:99' : b.ora;
+    return ta.localeCompare(tb);
+  });
+  return items;
+}
+
+// =====================================================
+// AGENDA SETTIMANALE WIDGET (nuovo formato)
 // =====================================================
 function cambiaSettimana(d) { if (d === 0) settimanaCorrente = new Date(); else settimanaCorrente = new Date(settimanaCorrente.getTime() + d * 7 * 24 * 60 * 60 * 1000); aggiornaAgendaSettimanale(); }
 function aggiornaAgendaSettimanale() {
@@ -3599,27 +2329,25 @@ function aggiornaAgendaSettimanale() {
   const b = new Date(settimanaCorrente); const gi = b.getDay(); const df = gi === 0 ? -6 : 1 - gi;
   const l = new Date(b); l.setDate(b.getDate() + df); l.setHours(0, 0, 0, 0);
   t.innerHTML = 'Agenda settimanale ›';
-  const gn = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
   const o = new Date(); o.setHours(0, 0, 0, 0);
   let h = '';
   for (let i = 0; i < 7; i++) {
     const gi2 = new Date(l); gi2.setDate(l.getDate() + i);
-    const gf = new Date(gi2); gf.setHours(23, 59, 59, 999);
+    const ymd = ymdDaData(gi2);
     const io = gi2.getTime() === o.getTime();
-    const ag = (DB.appuntamenti || []).filter(a => { const x = new Date(a.dataInizio); return x >= gi2 && x <= gf && a.stato !== 'annullato'; }).sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
-    const libs = (DB.pianificazioni || []).filter(p => p.data === ymdDaData(gi2) && !p.completata);
-    const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymdDaData(gi2));
-    const dots = [];
-    for (const a of ag) { const tp = getTipoApp(a.tipo); dots.push(coloreDaClasse(getClasseChiApp(tp.chi))); }
-    for (const a of atts) dots.push(CAL_COLORS.att);
-    for (const p of libs) dots.push(CAL_COLORS.libero);
-    h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + ymdDaData(gi2) + '\')"><div class="ag-nome">' + gn[i] + '</div><div class="ag-num">' + gi2.getDate() + '</div>';
-    if (dots.length === 0) h += '<div class="ag-empty">·</div>';
-    else {
-      h += '<div class="ag-dots">';
-      for (const c of dots.slice(0, 3)) h += '<span class="ag-dot" style="background:' + c + '"></span>';
-      h += '</div>';
-      if (dots.length > 3) h += '<div style="font-size:8px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (dots.length - 3) + '</div>';
+    const items = collectItemsForDay(ymd);
+    h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + ymd + '\')">';
+    h += '<div class="ag-nome">' + GIORNI_BREVI[i] + '</div>';
+    h += '<div class="ag-num">' + gi2.getDate() + '</div>';
+    if (items.length === 0) {
+      h += '<div class="ag-empty">·</div>';
+    } else {
+      const max = 2;
+      for (let k = 0; k < Math.min(items.length, max); k++) {
+        const it = items[k];
+        h += '<div class="ag-ev-row"><div class="ag-ev-label"><span class="dash" style="color:' + it.colore + '">-</span> ' + escapeHtml(it.tipo) + ' <span class="dash" style="color:' + it.colore + '">-</span></div><div class="ag-ev-ora">' + (it.ora === '--:--' ? '·' : it.ora) + '</div></div>';
+      }
+      if (items.length > max) h += '<div style="font-size:7px;color:var(--testo-ter);text-align:center;font-weight:600;letter-spacing:0.02em;">+' + (items.length - max) + '</div>';
     }
     h += '</div>';
   }
@@ -3627,31 +2355,64 @@ function aggiornaAgendaSettimanale() {
 }
 
 // =====================================================
-// PAGINA AGENDA
+// PAGINA AGENDA — MULTI-VIEW con pinch-zoom
 // =====================================================
 let calMeseCorrente = new Date();
-let agendaPageState = 'month';
+let agendaPageState = 'month'; // 'month' | 'week' | '3day' | 'day'
 let agendaPageDayYmd = null;
-function apriAgendaPage() { agendaPageState = 'month'; calMeseCorrente = new Date(); mostraView('view-agenda'); renderAgendaPage(); }
+
+function apriAgendaPage() {
+  agendaPageState = 'month'; calMeseCorrente = new Date();
+  agendaPageDayYmd = ymdDaData(new Date());
+  mostraView('view-agenda'); renderAgendaPage();
+}
 function tornaAttivita() { mostraView('view-attivita'); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); }
+function agendaBack() {
+  if (agendaPageState === 'day') { agendaPageState = '3day'; renderAgendaPage(); return; }
+  if (agendaPageState === '3day') { agendaPageState = 'week'; renderAgendaPage(); return; }
+  if (agendaPageState === 'week') { agendaPageState = 'month'; renderAgendaPage(); return; }
+  tornaAttivita();
+}
 function cambiaMeseAgenda(delta) { if (delta === 0) calMeseCorrente = new Date(); else { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; } renderAgendaPage(); }
 function clickGiornoAgenda(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; renderAgendaPage(); }
-function tornaCalendarioAgenda() { agendaPageState = 'month'; renderAgendaPage(); }
+function zoomAgendaIn() {
+  if (agendaPageState === 'month') { if (!agendaPageDayYmd) agendaPageDayYmd = ymdDaData(new Date()); agendaPageState = 'week'; }
+  else if (agendaPageState === 'week') { agendaPageState = '3day'; }
+  else if (agendaPageState === '3day') { agendaPageState = 'day'; }
+  renderAgendaPage();
+}
+function zoomAgendaOut() {
+  if (agendaPageState === 'day') { agendaPageState = '3day'; }
+  else if (agendaPageState === '3day') { agendaPageState = 'week'; }
+  else if (agendaPageState === 'week') { agendaPageState = 'month'; }
+  renderAgendaPage();
+}
+function shiftAgendaPeriod(delta) {
+  if (agendaPageState === 'month') { cambiaMeseAgenda(delta); return; }
+  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+  if (agendaPageState === 'week') { base.setDate(base.getDate() + delta * 7); }
+  else if (agendaPageState === '3day') { base.setDate(base.getDate() + delta * 3); }
+  else { base.setDate(base.getDate() + delta); }
+  agendaPageDayYmd = ymdDaData(base);
+  renderAgendaPage();
+}
 function apriPlanningGiorno(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; mostraView('view-agenda'); renderAgendaPage(); }
 
 function renderAgendaPage() {
   const cont = document.getElementById('agenda-page-content'); if (!cont) return;
-  if (agendaPageState === 'month') { document.getElementById('agenda-page-title').textContent = 'Agenda'; cont.innerHTML = htmlCalendarioMese(); }
-  else { document.getElementById('agenda-page-title').textContent = 'Dettaglio giorno'; cont.innerHTML = htmlDettaglioGiornoAgenda(agendaPageDayYmd); }
+  if (agendaPageState === 'month') cont.innerHTML = htmlCalendarioMese();
+  else if (agendaPageState === 'week') cont.innerHTML = htmlCalendarioWeek();
+  else if (agendaPageState === '3day') cont.innerHTML = htmlCalendario3Day();
+  else cont.innerHTML = htmlDettaglioGiornoAgenda(agendaPageDayYmd);
 }
+
 function htmlCalendarioMese() {
   const c = calMeseCorrente;
-  const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
   const gN = ['L','M','M','G','V','S','D'];
-  let h = '<div class="cal-header">';
-  h += '<button class="cal-nav-btn" onclick="cambiaMeseAgenda(-1)">‹</button>';
-  h += '<h2>' + mN[c.getMonth()] + ' ' + c.getFullYear() + '</h2>';
-  h += '<button class="cal-nav-btn" onclick="cambiaMeseAgenda(1)">›</button>';
+  let h = '<div class="cal-header" style="margin-top:50px;">';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
+  h += '<h2>' + MESI_LUNGHI[c.getMonth()] + ' ' + c.getFullYear() + '</h2>';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
   h += '</div>';
   h += '<div class="cal-griglia">';
   for (const d of gN) h += '<div class="cal-giorno-h">' + d + '</div>';
@@ -3664,53 +2425,119 @@ function htmlCalendarioMese() {
     const dYmd = ymdDaData(d);
     const outOfMonth = d.getMonth() !== c.getMonth();
     const isToday = dYmd === todayYmd;
-    const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === dYmd && a.stato !== 'annullato');
-    const libs = (DB.pianificazioni || []).filter(p => p.data === dYmd && !p.completata);
-    const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === dYmd);
-    const dots = [];
-    for (const a of apps) { const tp = getTipoApp(a.tipo); dots.push(coloreDaClasse(getClasseChiApp(tp.chi))); }
-    for (const a of atts) dots.push(CAL_COLORS.att);
-    for (const p of libs) dots.push(CAL_COLORS.libero);
+    const items = collectItemsForDay(dYmd);
     h += '<div class="cal-cella' + (outOfMonth ? ' fuori-mese' : '') + (isToday ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + dYmd + '\')">';
     h += '<div class="cal-num">' + d.getDate() + '</div>';
     h += '<div class="cal-dots">';
-    for (const col of dots.slice(0, 3)) h += '<span class="cal-dot" style="background:' + col + '"></span>';
+    for (const it of items.slice(0, 3)) h += '<span class="cal-dot" style="background:' + it.colore + '"></span>';
     h += '</div>';
+    h += '</div>';
+  }
+  h += '</div>';
+  h += '<div style="text-align:center;font-size:10.5px;color:var(--testo-ter);margin-top:14px;letter-spacing:0.03em;">Pinch per cambiare vista · Settimana · 3 giorni · Giorno</div>';
+  return h;
+}
+
+function htmlCalendarioWeek() {
+  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+  const dow = base.getDay(); const diff = dow === 0 ? -6 : 1 - dow;
+  const start = new Date(base); start.setDate(base.getDate() + diff); start.setHours(0,0,0,0);
+  const end = new Date(start); end.setDate(start.getDate() + 6);
+  const todayYmd = ymdDaData(new Date());
+  let h = '<div class="cal-zoom-header" style="margin-top:50px;">';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
+  h += '<div class="cal-zoom-label">' + start.getDate() + ' ' + MESI_BREVI[start.getMonth()] + ' – ' + end.getDate() + ' ' + MESI_BREVI[end.getMonth()] + '</div>';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
+  h += '</div>';
+  h += '<div class="cal-week-grid">';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const ymd = ymdDaData(d);
+    const io = ymd === todayYmd;
+    const items = collectItemsForDay(ymd);
+    h += '<div class="cal-week-day' + (io ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+    h += '<div class="cal-week-dayname">' + GIORNI_BREVI[i] + '</div>';
+    h += '<div class="cal-week-daynum">' + d.getDate() + '</div>';
+    for (const it of items.slice(0, 4)) {
+      h += '<div class="cal-week-item"><span class="wi-dash" style="color:' + it.colore + '">-</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(it.tipo) + '</span><span class="wi-ora">' + (it.ora === '--:--' ? '' : it.ora) + '</span></div>';
+    }
+    if (items.length > 4) h += '<div class="cal-week-more">+' + (items.length - 4) + '</div>';
     h += '</div>';
   }
   h += '</div>';
   return h;
 }
+
+function htmlCalendario3Day() {
+  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+  const todayYmd = ymdDaData(new Date());
+  let h = '<div class="cal-zoom-header" style="margin-top:50px;">';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
+  const dEnd = new Date(base); dEnd.setDate(base.getDate() + 2);
+  h += '<div class="cal-zoom-label">' + base.getDate() + ' – ' + dEnd.getDate() + ' ' + MESI_BREVI[dEnd.getMonth()] + '</div>';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
+  h += '</div>';
+  h += '<div class="cal-3d-grid">';
+  for (let i = 0; i < 3; i++) {
+    const d = new Date(base); d.setDate(base.getDate() + i);
+    const ymd = ymdDaData(d);
+    const io = ymd === todayYmd;
+    const items = collectItemsForDay(ymd);
+    const dowIdx = (d.getDay() + 6) % 7;
+    h += '<div class="cal-3d-day' + (io ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+    h += '<div class="cal-3d-dayname">' + GIORNI_BREVI[dowIdx] + '</div>';
+    h += '<div class="cal-3d-daynum">' + d.getDate() + '</div>';
+    if (items.length === 0) h += '<div class="cal-3d-empty">—</div>';
+    else for (const it of items) {
+      h += '<div class="cal-3d-item">';
+      h += '<span class="wi-dash" style="color:' + it.colore + '">-</span>';
+      h += '<div class="wi-body"><div class="wi-tipo">' + escapeHtml(it.tipo) + '</div><div class="wi-testo">' + escapeHtml(it.testo) + '</div></div>';
+      h += '<span class="wi-ora">' + (it.ora === '--:--' ? '' : it.ora) + '</span>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
 function htmlDettaglioGiornoAgenda(ymd) {
   const d = dataDaYmd(ymd);
-  const gN = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato']; const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === ymd && a.stato !== 'annullato').sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
-  const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymd).sort(compareAttivitaCrescente);
-  const libs = (DB.pianificazioni || []).filter(p => p.data === ymd && !p.completata).sort((a, b) => (a.ora || '99:99').localeCompare(b.ora || '99:99'));
-  let h = '<button class="page-back-inline" onclick="tornaCalendarioAgenda()">‹ Torna al calendario</button>';
-  h += '<div class="page-day-title">' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + '</div>';
-  h += '<div class="section-title">Appuntamenti in agenda</div>';
-  if (apps.length === 0) {
-    h += '<div class="card"><div class="empty" style="padding:22px 16px;"><div class="icon">' + ico('calendario',28) + '</div>Nessun appuntamento fissato per questa giornata</div></div>';
-    h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoGlobale()">' + ico('calendario',16) + ' Fissa appuntamento</button>';
-  } else {
-    for (const a of apps) h += renderItemAppuntamento(a);
-    h += '<button class="btn btn-secondary" onclick="apriNuovoAppuntamentoGlobale()">' + ico('piu',16) + ' Aggiungi appuntamento</button>';
+  const items = collectItemsForDay(ymd);
+  const apps = items.filter(i => i.kind === 'app');
+  const atts = items.filter(i => i.kind === 'att');
+  const libs = items.filter(i => i.kind === 'lib');
+  let h = '<div class="cal-day-full" style="margin-top:50px;">';
+  h += '<div class="cal-zoom-header">';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
+  h += '<div class="cal-zoom-label">' + GIORNI_LUNGHI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()] + '</div>';
+  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
+  h += '</div>';
+  h += '<div class="qa-pills"><button class="qa-pill" onclick="apriNuovoAppuntamentoGlobale()">' + ico('calendario',13) + ' Appuntamento</button><button class="qa-pill" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',13) + ' Libera</button></div>';
+  if (items.length === 0) {
+    h += '<div class="card"><div class="empty" style="padding:32px 16px;"><div class="icon">' + ico('calendario',28) + '</div>Niente in programma per questo giorno</div></div>';
+    h += '</div>';
+    return h;
   }
+  if (apps.length > 0) { for (const a of apps) h += renderItemAppuntamento(DB.appuntamenti.find(x => x.id === a.id)); }
   if (atts.length > 0) {
-    h += '<div class="section-title" style="margin-top:16px;">Attività da fare (' + atts.length + ')</div>';
-    for (const a of atts) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; }
+    h += '<div class="section-title" style="margin-top:14px;">Attività</div>';
+    for (const a of atts) {
+      h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + (a.ora === '--:--' ? '' : a.ora + ' · ') + 'DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div></div></div>';
+    }
   }
   if (libs.length > 0) {
-    h += '<div class="section-title" style="margin-top:16px;">Cose libere (' + libs.length + ')</div>';
-    for (const p2 of libs) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:var(--arancione);">' + (p2.ora || '--:--') + ' · LIBERA</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; }
+    h += '<div class="section-title" style="margin-top:14px;">Cose libere</div>';
+    for (const p2 of libs) {
+      h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:var(--arancione);">' + (p2.ora === '--:--' ? '' : p2.ora + ' · ') + 'LIBERA</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>';
+    }
   }
-  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-secondary" onclick="apriPlanningPage(\'' + ymd + '\')">Apri planning →</button></div>';
+  h += '</div>';
   return h;
 }
 
 // =====================================================
-// PLANNING GIORNATA
+// PLANNING GIORNATA WIDGET
 // =====================================================
 let planningYmd = null;
 function currentPlanningYmd() { return planningYmd || ymdDaData(new Date()); }
@@ -3730,8 +2557,7 @@ function renderPlanning() {
   const ymd = currentPlanningYmd(); const d = dataDaYmd(ymd);
   const oggi = ymdDaData(new Date()) === ymd;
   const titoloEl = document.getElementById('planning-titolo');
-  const gN = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const mN = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-  if (titoloEl) titoloEl.textContent = (oggi ? 'Oggi · ' : '') + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()];
+  if (titoloEl) titoloEl.textContent = (oggi ? 'Oggi · ' : '') + GIORNI_BREVI[(d.getDay() + 6) % 7] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()];
   const p = getPlanningPerData(ymd);
   const totale = p.apps.length + p.att.length + p.lib.length;
   let h = '';
@@ -3767,8 +2593,8 @@ function salvaPianificazioneLibera() {
 }
 function apriAzioniPianificazione(id) {
   const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return;
-  const d = dataDaYmd(p.data); const gN = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const mN = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">Libera · ' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
+  const d = dataDaYmd(p.data);
+  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">Libera · ' + GIORNI_BREVI[(d.getDay()+6)%7] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
   if (!p.completata) h += '<button class="btn btn-primary" onclick="completaPianificazione(\'' + p.id + '\')">' + ico('check',16) + ' Segna come fatta</button>';
   else h += '<button class="btn btn-secondary" onclick="riapriPianificazione(\'' + p.id + '\')">' + ico('aggiorna',16) + ' Riporta da fare</button>';
   h += '<button class="btn btn-secondary" onclick="modificaPianificazione(\'' + p.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
@@ -3799,7 +2625,7 @@ function eliminaPianificazione(id) {
 }
 
 // =====================================================
-// PAGINA PLANNING
+// PAGINA PLANNING (senza data duplicata, meno bottoni)
 // =====================================================
 let planningPageYmd = null;
 function apriPlanningPage(ymd) { planningPageYmd = ymd || currentPlanningYmd(); mostraView('view-planning'); renderPlanningPage(); }
@@ -3812,25 +2638,22 @@ function renderPlanningPage() {
   const cont = document.getElementById('planning-page-content'); if (!cont) return;
   const ymd = planningPageYmd || ymdDaData(new Date());
   const d = dataDaYmd(ymd); const oggi = ymdDaData(new Date()) === ymd;
-  const gN = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato']; const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  const titolo = (oggi ? 'Oggi · ' : '') + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()];
-  document.getElementById('planning-page-title').textContent = titolo;
+  const titolo = (oggi ? 'Oggi · ' : '') + GIORNI_LUNGHI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()];
   const p = getPlanningPerData(ymd);
   const tot = p.apps.length + p.att.length + p.lib.length;
   let h = '';
-  h += '<div class="cal-header" style="margin-bottom:16px;">';
+  h += '<div class="cal-zoom-header" style="margin-top:50px;">';
   h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(-1)">‹</button>';
-  h += '<h2>' + titolo + '</h2>';
+  h += '<div class="cal-zoom-label">' + titolo + '</div>';
   h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(1)">›</button>';
   h += '</div>';
-  h += '<div class="btn-row" style="margin-bottom:14px;"><button class="btn btn-secondary" onclick="cambiaGiornoPlanningPage(0)">Vai a oggi</button><button class="btn btn-secondary" onclick="apriAgendaPage()">Calendario</button></div>';
+  h += '<div class="qa-pills"><button class="qa-pill" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',13) + ' Libera</button><button class="qa-pill" onclick="apriNuovaAttivitaPianificata(\'' + ymd + '\')">' + ico('piu',13) + ' Attività</button><button class="qa-pill" onclick="cambiaGiornoPlanningPage(0)">' + ico('calendario',13) + ' Oggi</button></div>';
   if (tot === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('calendario',32) + '</div>Niente in programma</div></div>';
   else {
-    if (p.apps.length > 0) { h += '<div class="section-title">Appuntamenti (' + p.apps.length + ')</div>'; for (const a of p.apps) h += renderItemAppuntamento(a); }
-    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Attività da fare (' + p.att.length + ')</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
-    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Cose libere (' + p.lib.length + ')</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
+    if (p.apps.length > 0) { h += '<div class="section-title">Appuntamenti</div>'; for (const a of p.apps) h += renderItemAppuntamento(a); }
+    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Attività da fare</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
+    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Cose libere</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
   }
-  h += '<div class="btn-row" style="margin-top:16px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-primary" onclick="apriNuovaAttivitaPianificata(\'' + ymd + '\')">' + ico('piu',16) + ' Attività</button></div>';
   cont.innerHTML = h;
 }
 
@@ -3881,10 +2704,9 @@ function renderAttivita() {
     let be = '';
     if (isI) be = '<span class="badge badge-' + gg.entitaStato + '">' + gg.entitaStato + '</span>';
     else if (gg.entitaTipoPersona === 'acquirente' && gg.entitaStatoRR) { const s = STATI_RR.find(x => x.id === gg.entitaStatoRR) || STATI_RR[0]; be = '<span class="badge badge-RR-' + s.id + '">' + s.id.replace('-', ' ').toUpperCase() + '</span>'; }
-    else be = '<span class="badge badge-PROF">PROF</span>';
     const di = Math.min(...gg.items.map(x => new Date(dataEffettivaAttivita(x)).getTime())); const di2 = new Date(di);
     let dl = formattaDataBreve(di2.toISOString()); if (di2 < o) dl = ico('attenzione',10) + ' ' + dl;
-    h += '<div class="att-gruppo' + (e ? ' espanso' : '') + '"><div class="att-gruppo-header" onclick="toggleAttGruppo(\'' + k + '\')"><span class="att-icona-ent">' + ic + '</span><div class="att-info"><div class="att-titolo">' + escapeHtml(gg.entitaTitolo) + '</div><div class="att-meta">' + be + ' <span>· ' + dl + '</span></div></div><span class="att-count">' + gg.items.length + '</span><span class="att-arrow">' + ico('freccia',15) + '</span></div><div class="att-gruppo-body">';
+    h += '<div class="att-gruppo' + (e ? ' espanso' : '') + '"><div class="att-gruppo-header" onclick="toggleAttGruppo(\'' + k + '\')"><span class="att-icona-ent">' + ic + '</span><div class="att-info"><div class="att-titolo">' + escapeHtml(gg.entitaTitolo) + '</div><div class="att-meta">' + be + (be ? ' <span>· ' : '') + dl + (be ? '</span>' : '') + '</div></div><span class="att-count">' + gg.items.length + '</span><span class="att-arrow">' + ico('freccia',15) + '</span></div><div class="att-gruppo-body">';
     for (const a of gg.items) h += renderAttivitaItem(a);
     h += '</div></div>';
   }
@@ -3908,11 +2730,11 @@ function cercaPerNuovaAttivita(q) {
   const c = document.getElementById('ng-risultati'); if (!c) return;
   const qq = (q || '').toLowerCase().trim(); const r = [];
   for (const imm of DB.immobili) { const t = ((imm.indirizzo || '') + ' ' + (imm.cognomeNome || '') + ' ' + (imm.telefono || '') + ' ' + (imm.citofono || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'immobile', id: imm.id, titolo: titoloImmobile(imm), badge: imm.stato, villa: !!imm.villa }); }
-  for (const p of DB.persone) { const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: p.tipo === 'acquirente' ? 'RR' : 'PROF' }); }
+  for (const p of DB.persone) { const t = ((p.cognomeNome || '') + ' ' + (p.telefono || '') + ' ' + (p.telefonoCell || '') + ' ' + (p.email || '')).toLowerCase(); if (!qq || t.includes(qq)) r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: p.tipo === 'acquirente' ? 'RR' : null }); }
   const ms = r.slice(0, 40);
   if (ms.length === 0) { c.innerHTML = '<div class="card"><div class="empty" style="padding:16px 0;"><div class="icon">' + ico('lente',28) + '</div>Nessun risultato</div></div>'; return; }
   let h = '<div class="card" style="padding:8px 0;">';
-  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : (x.badge === 'RR' ? ico('utente',13) : ico('valigetta',13)); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
+  for (const x of ms) { const ic = x.tipo === 'immobile' ? (x.villa ? ico('villa',13) : iconaCondo(13)) : ico('utente',13); h += '<div class="immobile-line" style="margin:4px 8px;" onclick="selezionaEntitaPerAttivita(\'' + x.tipo + '\',\'' + x.id + '\')"><span class="txt">' + ic + ' ' + escapeHtml(x.titolo) + '</span>'; if (x.badge) h += '<span class="badge badge-' + x.badge + '" style="font-size:9px;padding:2px 6px;">' + escapeHtml(x.badge) + '</span>'; h += '</div>'; }
   h += '</div>'; c.innerHTML = h;
 }
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
