@@ -14,6 +14,15 @@
 <link rel="icon" type="image/png" sizes="32x32" href="./android-chrome-192x192.png">
 <link rel="manifest" href="./manifest.json">
 <title>ARANGIÒ</title>
+<script>
+  (function() {
+    try {
+      const t = localStorage.getItem('arangiò_theme') || 'auto';
+      if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      else if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+    } catch(e) {}
+  })();
+</script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {
@@ -36,6 +45,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
     background: var(--sfondo); color: var(--testo); font-size: 15px;
     -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+    transition: background 0.2s, color 0.2s;
   }
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
@@ -47,7 +57,7 @@
   .app-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 14px calc(80px + env(safe-area-inset-bottom)); }
   .view { display: none; } .view.active { display: block; }
 
-  .card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); box-shadow: none; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); box-shadow: none; transition: background 0.2s, border-color 0.2s; }
   .card h2 { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; letter-spacing: -0.1px; }
   .card h2 .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--arancione); }
   .card p { font-size: 13px; color: var(--testo-sec); line-height: 1.5; }
@@ -63,7 +73,7 @@
   .btn-danger { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }
   .btn svg { width: 16px; height: 16px; }
 
-  .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(10px); -webkit-backdrop-filter: saturate(180%) blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; }
+  .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(10px); -webkit-backdrop-filter: saturate(180%) blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; transition: background 0.2s, border-color 0.2s; }
   .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit; font-size: 9.5px; font-weight: 500; cursor: pointer; transition: color 0.12s; position: relative; }
   .tabbar button svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .tabbar button.active { color: var(--blu); }
@@ -71,7 +81,7 @@
   .tabbar .badge-tab.show { display: block; }
 
   .search-sticky { position: sticky; top: -2px; z-index: 20; background: var(--sfondo); padding: 4px 0 6px; margin: 0 -2px; }
-  .search-bar { width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--card); font-family: inherit; font-size: 14px; color: var(--testo); outline: none; transition: border-color 0.12s; }
+  .search-bar { width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--card); font-family: inherit; font-size: 14px; color: var(--testo); outline: none; transition: border-color 0.12s, background 0.2s; }
   .search-bar:focus { border-color: var(--blu); }
   .search-bar::placeholder { color: var(--testo-ter); font-size: 13px; }
 
@@ -132,7 +142,7 @@
   .modal-overlay.open { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.18s ease-out; overflow: hidden; }
+  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.18s ease-out; overflow: hidden; transition: background 0.2s; }
   .modal-header { padding: 14px 18px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
   .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); letter-spacing: -0.3px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
   .modal-header h2 svg { flex-shrink: 0; }
@@ -404,6 +414,109 @@
     :root { --max-w: 720px; }
     .app-content { padding-left: 20px; padding-right: 20px; }
   }
+
+  /* ============================================
+     TEMA SCURO — Automatico o manuale
+     ============================================ */
+  :root[data-theme="dark"] {
+    --blu: #7dd3fc;
+    --blu-soft: #1e3a5f;
+    --arancione: #fb923c;
+    --arancione-soft: #3d2817;
+    --sfondo: #0f172a;
+    --card: #1e293b;
+    --testo: #f1f5f9;
+    --testo-sec: #94a3b8;
+    --testo-ter: #64748b;
+    --border: #293548;
+    --border-strong: #334155;
+    --ombra: 0 1px 2px rgba(0,0,0,0.35);
+    --imm: #475569;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --blu: #7dd3fc;
+      --blu-soft: #1e3a5f;
+      --arancione: #fb923c;
+      --arancione-soft: #3d2817;
+      --sfondo: #0f172a;
+      --card: #1e293b;
+      --testo: #f1f5f9;
+      --testo-sec: #94a3b8;
+      --testo-ter: #64748b;
+      --border: #293548;
+      --border-strong: #334155;
+      --ombra: 0 1px 2px rgba(0,0,0,0.35);
+      --imm: #475569;
+    }
+  }
+
+  :root[data-theme="dark"] body,
+  :root[data-theme="dark"] .app { background: var(--sfondo); }
+  :root[data-theme="dark"] .tabbar { background: rgba(15,23,42,0.95); }
+  :root[data-theme="dark"] .btn-secondary,
+  :root[data-theme="dark"] .chip,
+  :root[data-theme="dark"] .chip-dropdown { background: #1e293b; }
+  :root[data-theme="dark"] .btn-secondary:active { background: #334155; }
+  :root[data-theme="dark"] .btn-danger { background: #3d1f1f; color: #fca5a5; border-color: #7f1d1d; }
+  :root[data-theme="dark"] .search-bar { background: #1e293b; color: var(--testo); }
+  :root[data-theme="dark"] .chip.active { background: var(--blu); color: #0f172a; }
+  :root[data-theme="dark"] .chip.sub.active { background: var(--arancione); color: #0f172a; }
+  :root[data-theme="dark"] .badge-IMM { background: #475569; color: white; }
+  :root[data-theme="dark"] .modal-sheet { background: #0f172a; }
+  :root[data-theme="dark"] .modal-close { background: rgba(255,255,255,0.08); color: var(--testo); }
+  :root[data-theme="dark"] .qa-btn { background: #334155; color: #7dd3fc; }
+  :root[data-theme="dark"] .qa-btn.wa { color: #6ee7b7; }
+  :root[data-theme="dark"] .action-btn { background: #1e293b; }
+  :root[data-theme="dark"] .immobile-line { background: #334155; }
+  :root[data-theme="dark"] .immobile-line:active { background: #475569; }
+  :root[data-theme="dark"] .agenda-giorno { background: #1e293b; }
+  :root[data-theme="dark"] .agenda-giorno.oggi { background: #3d2817; }
+  :root[data-theme="dark"] .agenda-giorno .ag-ev { background: #334155; color: #f1f5f9; }
+  :root[data-theme="dark"] .att-subtab { background: #1e293b; }
+  :root[data-theme="dark"] .att-subtab.active { background: #1e3a5f; }
+  :root[data-theme="dark"] .filter-dropdown { background: #1e293b; }
+  :root[data-theme="dark"] .filter-dropdown .opt.selected { background: #1e3a5f; color: #7dd3fc; }
+  :root[data-theme="dark"] .filter-dropdown .opt:active { background: #334155; }
+  :root[data-theme="dark"] .map-chips,
+  :root[data-theme="dark"] .map-status { background: rgba(30,41,59,0.96); color: var(--testo-sec); }
+  :root[data-theme="dark"] .map-chip { background: #334155; color: var(--testo-sec); }
+  :root[data-theme="dark"] .map-chip.active { background: var(--blu); color: #0f172a; }
+  :root[data-theme="dark"] .leaflet-popup-content-wrapper,
+  :root[data-theme="dark"] .leaflet-popup-tip { background: #1e293b; color: var(--testo); }
+  :root[data-theme="dark"] .arangiò-popup .pop-titolo { color: #7dd3fc; }
+  :root[data-theme="dark"] .back-top { background: #1e293b; color: #7dd3fc; }
+  :root[data-theme="dark"] .fab-menu button { background: #1e293b; color: var(--testo); border-color: var(--border-strong); }
+  :root[data-theme="dark"] .active-filter-banner { background: #1e3a5f; color: #7dd3fc; }
+  :root[data-theme="dark"] .active-filter-banner .x { background: rgba(125,211,252,0.15); color: #7dd3fc; }
+  :root[data-theme="dark"] .prefill-banner { background: #1e3a5f; color: #7dd3fc; }
+  :root[data-theme="dark"] .inherit-banner { background: #0d2f24; color: #6ee7b7; }
+  :root[data-theme="dark"] .inherit-banner .ico { color: #6ee7b7; }
+  :root[data-theme="dark"] .zdf-notice { background: #3d2817; color: #fdba74; }
+  :root[data-theme="dark"] .zcode-badge { background: #1e3a5f; color: #7dd3fc; }
+  :root[data-theme="dark"] .timeline-item.da-fare { background: #3d2817; }
+  :root[data-theme="dark"] .timeline-item.da-fare .data { color: #fb923c; }
+  :root[data-theme="dark"] .timeline-item.scaduta { background: #3d1f1f; }
+  :root[data-theme="dark"] .tag { background: #334155; color: var(--testo-sec); }
+  :root[data-theme="dark"] .villa-toggle button { background: #1e293b; }
+  :root[data-theme="dark"] .villa-toggle button.active { background: #1e3a5f; }
+  :root[data-theme="dark"] .zone-chip { background: #334155; color: var(--testo-sec); }
+  :root[data-theme="dark"] .zone-chip.active { background: var(--blu); color: #0f172a; }
+  :root[data-theme="dark"] .zone-chip.special.active { background: var(--arancione); color: #0f172a; }
+  :root[data-theme="dark"] .prop-card { background: #334155; }
+  :root[data-theme="dark"] .app-esito.ok { background: #0d2f24; color: #6ee7b7; }
+  :root[data-theme="dark"] .app-esito.ko { background: #3d1f1f; color: #fca5a5; }
+  :root[data-theme="dark"] .app-esito.neutral { background: #334155; color: var(--testo-sec); }
+  :root[data-theme="dark"] .zone-summary { background: #334155; }
+  :root[data-theme="dark"] .zone-summary strong { color: #7dd3fc; }
+  :root[data-theme="dark"] .sottotipo-line button { background: #334155; color: #7dd3fc; }
+  :root[data-theme="dark"] .condo-header { background: #1e3a5f; color: #7dd3fc; }
+  :root[data-theme="dark"] .add-btn { background: #1e3a5f; color: #7dd3fc; }
+  :root[data-theme="dark"] .app-item-card.libero { border-left-color: var(--arancione); }
+  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
+  }
 </style>
 </head>
 <body>
@@ -511,6 +624,15 @@
 
     <section id="view-altro" class="view">
       <div class="card">
+        <h2><span class="dot"></span>Aspetto</h2>
+        <p style="margin-bottom:10px;">Scegli il tema. "Auto" segue le impostazioni del telefono.</p>
+        <div style="display:flex;gap:6px;">
+          <button type="button" id="th-auto" onclick="setTema('auto')" style="flex:1;padding:10px 8px;border:1.5px solid var(--border-strong);background:var(--card);border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--testo-sec);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.12s;"><span style="font-size:18px;line-height:1;">🌗</span>Auto</button>
+          <button type="button" id="th-light" onclick="setTema('light')" style="flex:1;padding:10px 8px;border:1.5px solid var(--border-strong);background:var(--card);border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--testo-sec);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.12s;"><span style="font-size:18px;line-height:1;">☀️</span>Chiaro</button>
+          <button type="button" id="th-dark" onclick="setTema('dark')" style="flex:1;padding:10px 8px;border:1.5px solid var(--border-strong);background:var(--card);border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--testo-sec);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all 0.12s;"><span style="font-size:18px;line-height:1;">🌙</span>Notte</button>
+        </div>
+      </div>
+      <div class="card">
         <h2><span class="dot"></span>Città principale</h2>
         <p style="margin-bottom:10px;">La città usata per geocodificare gli indirizzi.</p>
         <button class="btn btn-secondary" onclick="apriImpostazioniCitta()" data-icon="ingranaggio">Cambia città principale</button>
@@ -524,7 +646,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.2</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.3</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
         <div class="info-row" style="display:block;padding:8px 0;"><div id="storage-bar"></div></div>
@@ -638,6 +760,42 @@ function applicaIcone() {
 }
 
 // =====================================================
+// TEMA
+// =====================================================
+function setTema(t) {
+  try { localStorage.setItem('arangiò_theme', t); } catch(e) {}
+  applyTema(t);
+}
+function applyTema(t) {
+  if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+  else if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  else document.documentElement.removeAttribute('data-theme');
+  updateThemeColorMeta();
+  updateThemeButtons();
+}
+function updateThemeColorMeta() {
+  const a = document.documentElement.getAttribute('data-theme');
+  const isDark = a === 'dark' || (!a && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isDark ? '#0f172a' : '#fafbfc');
+}
+function updateThemeButtons() {
+  const t = (() => { try { return localStorage.getItem('arangiò_theme') || 'auto'; } catch(e) { return 'auto'; } })();
+  ['auto','light','dark'].forEach(x => {
+    const b = document.getElementById('th-' + x);
+    if (!b) return;
+    const active = x === t;
+    b.style.borderColor = active ? 'var(--blu)' : 'var(--border-strong)';
+    b.style.background = active ? 'var(--blu-soft)' : 'var(--card)';
+    b.style.color = active ? 'var(--blu)' : 'var(--testo-sec)';
+    b.style.fontWeight = active ? '600' : '500';
+  });
+}
+try {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta);
+} catch(e) {}
+
+// =====================================================
 // STORAGE
 // =====================================================
 const DB_KEY = 'arangiò_db_v1';
@@ -686,7 +844,7 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 40, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 41, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -718,7 +876,6 @@ const STATI_RR = [
   { id: 'rogitato', label: 'RR rogitato', tag: '#RR-rogitato' }
 ];
 
-// Tipi di appuntamento "logici" (con immobile/persona)
 const TIPI_APPUNTAMENTO = [
   { sigla: 'G INK', nome: 'Gestione incarico', chi: 'vend', icona: 'clipboard', desc: 'Ribassi, rinnovi, contratto' },
   { sigla: 'VAL', nome: 'Valutazione', chi: 'vend', icona: 'righello', desc: 'Sopralluogo per valutazione' },
@@ -735,7 +892,6 @@ const TIPI_APPUNTAMENTO = [
   { sigla: 'PERIZIA', nome: 'Perizia', chi: 'gen', icona: 'grafico', desc: 'Con perito/geometra' }
 ];
 
-// Tipo speciale: appuntamento libero (senza logica, solo titolo/data/luogo)
 const TIPO_LIBERO = { sigla: 'LIBERO', nome: 'Appuntamento libero', chi: 'solo', icona: 'calendario', desc: 'Riunione, personale, ecc.', libero: true };
 
 const ESITI_APPUNTAMENTO = [
@@ -1044,7 +1200,7 @@ function renderListaImmobili() {
   el.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
   let html = '';
   for (const e of el) {
-    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.15s;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div style="margin-left:10px;margin-bottom:6px;border-left:2px solid #e5e7eb;padding-left:8px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
+    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(24) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.15s;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div style="margin-left:10px;margin-bottom:6px;border-left:2px solid var(--border-strong);padding-left:8px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
     else html += renderItemCardImmobile(e.imm);
   }
   cont.innerHTML = html; aggiornaContatori();
@@ -1559,7 +1715,6 @@ function apriSelezioneTipoApp(immPre, perPre) {
     }
     h += '</div>';
   }
-  // Appuntamento libero (sempre disponibile, senza contesto)
   h += '<button class="btn btn-primary" onclick="apriAppuntamentoLibero()">' + ico('calendario',16) + ' Appuntamento libero</button>';
   h += '<div style="font-size:11px;color:var(--testo-ter);text-align:center;padding:4px 0 10px;line-height:1.4;">Riunione, con persona, assente, evento aziendale…<br>Solo titolo, data/ora e luogo.</div>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button></div>';
@@ -1588,9 +1743,7 @@ function selezionaTipoApp(sigla) {
   }
   apriFormAppuntamento(imm, per, t);
 }
-function apriAppuntamentoLibero() {
-  apriFormAppuntamento(null, null, TIPO_LIBERO);
-}
+function apriAppuntamentoLibero() { apriFormAppuntamento(null, null, TIPO_LIBERO); }
 function apriPickerEntita(te, cb, tipoSigla) {
   const t = te === 'immobile' ? 'Seleziona immobile' : 'Seleziona persona';
   const banner = tipoSigla ? '<div class="prefill-banner">' + ico('calendario',13) + ' ' + escapeHtml(tipoSigla) + ' · solo entità compatibili</div>' : '';
@@ -2240,6 +2393,8 @@ document.getElementById('btn-modal-close').innerHTML = ico('x',14);
 
 applicaIcone();
 aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema(); aggiornaFabPersone(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp();
+updateThemeButtons();
+updateThemeColorMeta();
 
 (function() {
   const dbSize = (localStorage.getItem(DB_KEY) || '').length;
