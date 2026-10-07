@@ -281,7 +281,59 @@
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
 
-  .att-subtabs { display: flex; gap: 6px; margin-bottom: 10px; flex-shrink: 0; }
+  /* =====================================================
+     ATTIVITÀ — 3 BLOCCHI DI ALTEZZA UGUALE CON SCROLL INTERNO
+     ===================================================== */
+  #view-attivita.active {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    min-height: 0;
+    padding-bottom: 4px;
+    overflow: hidden;
+  }
+  .att-col {
+    flex: 1 1 0;              /* tutti e 3 stessa altezza */
+    min-height: 0;            /* necessario per permettere lo shrink */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .att-col-main { flex: 1 1 0; }
+
+  /* Blocco attività (sopra): subtab fisse + lista scrollabile */
+  .att-col-main .att-subtabs { flex-shrink: 0; margin-bottom: 8px; }
+  .att-scroll {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Blocchi agenda e planning: card piena che scrolla internamente */
+  .att-col-side > .agenda-sett,
+  .att-col-side > .planning-sett {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .agenda-sett > h3,
+  .planning-sett > h3 { flex-shrink: 0; }
+  .agenda-sett > .agenda-grid,
+  .planning-sett > #planning-contenuto {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  .planning-sett > .btn-row { flex-shrink: 0; }
+
+  .att-subtabs { display: flex; gap: 6px; flex-shrink: 0; }
   .att-subtab { flex: 1; background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 8px 5px; text-align: center; cursor: pointer; font-family: inherit; }
   .att-subtab .num { font-size: 19px; font-weight: 700; line-height: 1; margin-bottom: 2px; color: var(--testo-sec); }
   .att-subtab .lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--testo-ter); }
@@ -290,23 +342,24 @@
   .att-subtab.prossime.active .num { color: var(--nt); }
   .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
+  /* =====================================================
+     AGENDA SETTIMANALE (widget) — stile minimal
+     ===================================================== */
   .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 12px 10px; border: 1px solid var(--border); }
   .agenda-sett h3 { font-size: 12px; font-weight: 700; color: var(--blu); text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .agenda-sett h3 .lbl-click { cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
   .agenda-sett h3 .nav-sett { display: flex; gap: 3px; }
   .agenda-sett h3 .nav-sett button { background: #f1f5f9; border: none; width: 26px; height: 26px; border-radius: 6px; font-size: 14px; color: var(--blu); cursor: pointer; font-family: inherit; }
-  .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .agenda-giorno { background: #f8fafc; border-radius: 6px; padding: 4px 3px; min-height: 60px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
-  .agenda-giorno.oggi { background: var(--arancione-soft); border: 1px solid #fed7aa; }
-  .agenda-giorno .ag-nome { font-size: 8px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; }
-  .agenda-giorno.oggi .ag-nome { color: var(--arancione); }
-  .agenda-giorno .ag-num { font-size: 13px; font-weight: 700; color: var(--blu); text-align: center; line-height: 1; margin-bottom: 2px; }
-  .agenda-giorno.oggi .ag-num { color: var(--arancione); }
-  .agenda-giorno .ag-ev { background: white; border-radius: 3px; padding: 2px 3px; font-size: 8px; font-weight: 500; color: var(--testo); overflow: hidden; border-left: 2px solid var(--blu); }
-  .agenda-giorno .ag-ev.tipo-vend { border-left-color: var(--pa); }
-  .agenda-giorno .ag-ev.tipo-acq { border-left-color: var(--rr); }
-  .agenda-giorno .ag-ev.tipo-entrambi { border-left-color: var(--vnd); }
-  .agenda-giorno .ag-ev .ora { color: var(--testo-ter); font-weight: 600; font-size: 7px; display: block; }
+  .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .agenda-giorno { background: transparent; border-radius: 8px; padding: 4px 2px; min-height: 60px; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; transition: background 0.15s; }
+  .agenda-giorno:active { background: #f1f5f9; }
+  .agenda-giorno.oggi .ag-num { background: var(--arancione); color: white; }
+  .agenda-giorno .ag-nome { font-size: 8.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; }
+  .agenda-giorno.oggi .ag-nome { color: var(--arancione); font-weight: 700; }
+  .agenda-giorno .ag-num { font-size: 13px; font-weight: 600; color: var(--testo); text-align: center; line-height: 28px; width: 26px; height: 26px; border-radius: 50%; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; }
+  .agenda-giorno .ag-ev { display: none; }
+  .agenda-giorno .ag-dots { display: flex; gap: 2px; justify-content: center; margin-top: 2px; }
+  .agenda-giorno .ag-dot { width: 4px; height: 4px; border-radius: 50%; }
   .agenda-giorno .ag-empty { color: #cbd5e1; font-size: 10px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; }
 
   .planning-sett { background: var(--card); border-radius: var(--radius); padding: 12px; border: 1px solid var(--border); }
@@ -334,23 +387,81 @@
   .page-back-inline { background: none; border: none; color: var(--blu); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 0; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 4px; }
   .page-day-title { font-size: 18px; font-weight: 700; color: var(--blu); margin-bottom: 12px; }
 
-  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; padding: 0 2px; }
-  .cal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); margin: 0; flex: 1; text-align: center; }
-  .cal-header .cal-nav-btn { background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; color: var(--blu); cursor: pointer; font-family: inherit; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .cal-griglia { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .cal-giorno-h { font-size: 10px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; padding: 6px 0; }
-  .cal-cella { background: #f8fafc; border-radius: 8px; padding: 5px 4px 6px; min-height: 76px; height: 76px; overflow: hidden; display: flex; flex-direction: column; gap: 2px; cursor: pointer; position: relative; border: 1px solid transparent; }
-  .cal-cella.fuori-mese { opacity: 0.35; }
-  .cal-cella.oggi { background: var(--arancione-soft); border: 1px solid #fed7aa; }
-  .cal-cella .cal-num { font-size: 13px; font-weight: 700; color: var(--blu); text-align: right; padding-right: 4px; line-height: 1; margin-bottom: 3px; }
-  .cal-cella.oggi .cal-num { color: var(--arancione); }
-  .cal-cella .cal-ev { font-size: 8.5px; font-weight: 600; color: white; padding: 2px 4px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cal-cella .cal-ev.libera { background: var(--arancione); }
-  .cal-cella .cal-ev.vend { background: var(--pa); }
-  .cal-cella .cal-ev.acq { background: var(--rr); }
-  .cal-cella .cal-ev.entrambi { background: var(--vnd); }
-  .cal-cella .cal-ev.att { background: var(--nt); }
-  .cal-cella .cal-more { font-size: 8.5px; font-weight: 700; color: var(--testo-ter); text-align: right; padding-right: 4px; }
+  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; gap: 8px; padding: 0 2px; }
+  .cal-header h2 { font-size: 18px; font-weight: 700; color: var(--blu); margin: 0; flex: 1; text-align: center; letter-spacing: -0.3px; }
+  .cal-header .cal-nav-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: 8px; font-size: 20px; color: var(--blu); cursor: pointer; font-family: inherit; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .cal-header .cal-nav-btn:active { background: #f1f5f9; }
+
+  /* =====================================================
+     CALENDARIO MESE — STILE IPHONE
+     ===================================================== */
+  .cal-griglia {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    padding: 4px 0 8px;
+  }
+  .cal-giorno-h {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--testo-ter);
+    text-transform: uppercase;
+    text-align: center;
+    padding: 6px 0 10px;
+    letter-spacing: 0.4px;
+  }
+  .cal-cella {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 4px 2px;
+    min-height: 58px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: opacity 0.15s;
+  }
+  .cal-cella.fuori-mese { opacity: 0.25; }
+  .cal-cella .cal-num {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--testo);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
+  }
+  .cal-cella.oggi .cal-num {
+    background: var(--arancione);
+    color: white;
+    font-weight: 700;
+  }
+  .cal-cella .cal-dots {
+    display: flex;
+    gap: 3px;
+    height: 7px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .cal-cella .cal-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  /* Retro-compat: se resta qualche cal-ev, nascondiamolo */
+  .cal-cella .cal-ev, .cal-cella .cal-more { display: none; }
 
   .app-item-card { background: var(--card); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
@@ -408,25 +519,6 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* LAYOUT 3 SEZIONI ATTIVITÀ */
-  #view-attivita.active {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    height: 100%;
-    min-height: 0;
-    padding-bottom: 4px;
-  }
-  .att-col {
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0; /* Modificato: tutte e tre le sezioni hanno la stessa altezza */
-  }
-  .att-col-main { flex: 1 1 0; }
-  .att-col-side { flex: 1 1 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .att-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-
   @media (min-width: 768px) {
     body { background: #eef1f5; }
     .app { max-width: var(--max-w); margin: 0 auto; background: var(--sfondo); border-left: 1px solid var(--border); border-right: 1px solid var(--border); box-shadow: 0 0 40px rgba(15,23,42,0.06); }
@@ -436,7 +528,7 @@
     .back-top { right: calc(50% - (var(--max-w) / 2) + 20px); }
     .modal-overlay { align-items: center; padding: 20px; }
     .modal-sheet { border-radius: 18px; max-height: 88dvh; }
-    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .cal-cella:hover, .att-item:hover, .timeline-item:hover, .action-btn:hover, .btn-secondary:hover, .chip:hover { background: var(--hover-bg); }
+    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .cal-cella:hover .cal-num, .att-item:hover, .timeline-item:hover, .action-btn:hover, .btn-secondary:hover, .chip:hover { background: var(--hover-bg); }
     .chip.active:hover { background: var(--blu); }
     .chip.sub.active:hover { background: var(--arancione); }
     .foto-grid { grid-template-columns: repeat(4, 1fr); }
@@ -447,7 +539,7 @@
     :root { --max-w: 760px; }
     .app-content { padding-left: 26px; padding-right: 26px; }
     .foto-grid { grid-template-columns: repeat(5, 1fr); }
-    .cal-cella { min-height: 84px; height: 84px; }
+    .cal-cella { min-height: 66px; }
   }
   @media (min-width: 1400px) {
     :root { --max-w: 860px; }
@@ -468,7 +560,7 @@
   :root[data-theme="dark"] .tabbar { background: rgba(10,10,10,0.95); }
   :root[data-theme="dark"] .modal-sheet { background: #0f0f0f; }
   :root[data-theme="dark"] .btn-secondary, :root[data-theme="dark"] .chip, :root[data-theme="dark"] .chip-dropdown { background: #1a1a1a; }
-  :root[data-theme="dark"] .item-card:hover, :root[data-theme="dark"] .condo-card:hover, :root[data-theme="dark"] .immobile-line:hover, :root[data-theme="dark"] .agenda-giorno:hover, :root[data-theme="dark"] .tipo-app-btn:hover, :root[data-theme="dark"] .planning-item:hover, :root[data-theme="dark"] .cal-cella:hover, :root[data-theme="dark"] .att-item:hover, :root[data-theme="dark"] .timeline-item:hover, :root[data-theme="dark"] .action-btn:hover, :root[data-theme="dark"] .btn-secondary:hover, :root[data-theme="dark"] .chip:hover { background: #1f1f1f; }
+  :root[data-theme="dark"] .item-card:hover, :root[data-theme="dark"] .condo-card:hover, :root[data-theme="dark"] .immobile-line:hover, :root[data-theme="dark"] .agenda-giorno:hover, :root[data-theme="dark"] .tipo-app-btn:hover, :root[data-theme="dark"] .planning-item:hover, :root[data-theme="dark"] .att-item:hover, :root[data-theme="dark"] .timeline-item:hover, :root[data-theme="dark"] .action-btn:hover, :root[data-theme="dark"] .btn-secondary:hover, :root[data-theme="dark"] .chip:hover { background: #1f1f1f; }
   :root[data-theme="dark"] .search-bar { background: #1a1a1a; color: var(--testo); }
   :root[data-theme="dark"] .btn-danger { background: #2a1010; color: #fca5a5; border-color: #5a1e1e; }
   :root[data-theme="dark"] .modal-close { background: rgba(255,255,255,0.08); color: var(--testo); }
@@ -476,9 +568,8 @@
   :root[data-theme="dark"] .qa-btn.wa { color: #6ee7b7; }
   :root[data-theme="dark"] .action-btn { background: #151515; }
   :root[data-theme="dark"] .immobile-line { background: #1a1a1a; }
-  :root[data-theme="dark"] .agenda-giorno { background: #151515; }
-  :root[data-theme="dark"] .agenda-giorno.oggi { background: #221610; }
-  :root[data-theme="dark"] .agenda-giorno .ag-ev { background: #1e1e1e; color: var(--testo); }
+  :root[data-theme="dark"] .agenda-giorno { background: transparent; }
+  :root[data-theme="dark"] .agenda-giorno:active { background: #1f1f1f; }
   :root[data-theme="dark"] .att-subtab { background: #151515; }
   :root[data-theme="dark"] .att-subtab.active { background: #131f2b; }
   :root[data-theme="dark"] .filter-dropdown { background: #1a1a1a; }
@@ -514,11 +605,10 @@
   :root[data-theme="dark"] .badge-IMM { background: #3a3a3a; }
   :root[data-theme="dark"] .foto-item { background: #1e1e1e; }
   :root[data-theme="dark"] .planning-item { background: #1a1a1a; }
-  :root[data-theme="dark"] .cal-cella { background: #151515; }
-  :root[data-theme="dark"] .cal-cella.oggi { background: #221610; }
   :root[data-theme="dark"] .cal-header .cal-nav-btn, :root[data-theme="dark"] .agenda-sett h3 .nav-sett button, :root[data-theme="dark"] .planning-sett h3 .nav-sett button { background: #1e1e1e; color: #7aa9d9; }
   :root[data-theme="dark"] .page-back { background: #1a1a1a; color: #7aa9d9; }
   :root[data-theme="dark"] .app-header h1, :root[data-theme="dark"] .card h2, :root[data-theme="dark"] .tabbar button.active, :root[data-theme="dark"] .btn-secondary, :root[data-theme="dark"] .qa-btn, :root[data-theme="dark"] .action-btn, :root[data-theme="dark"] .condo-card .condo-icon, :root[data-theme="dark"] .sottotipo-line button, :root[data-theme="dark"] .condo-header, :root[data-theme="dark"] .prefill-banner, :root[data-theme="dark"] .zone-summary strong, :root[data-theme="dark"] .zcode-badge, :root[data-theme="dark"] .agenda-sett h3, :root[data-theme="dark"] .agenda-giorno .ag-num, :root[data-theme="dark"] .agenda-sett h3 .nav-sett button, :root[data-theme="dark"] .planning-sett h3, :root[data-theme="dark"] .planning-sett h3 .nav-sett button, :root[data-theme="dark"] .att-icona-ent, :root[data-theme="dark"] .tipo-app-btn .sigla, :root[data-theme="dark"] .map-btn, :root[data-theme="dark"] .arangiò-popup .pop-titolo, :root[data-theme="dark"] .back-top, :root[data-theme="dark"] .add-btn, :root[data-theme="dark"] .map-status .count, :root[data-theme="dark"] .villa-toggle button.active, :root[data-theme="dark"] .addr-click, :root[data-theme="dark"] .cal-header h2, :root[data-theme="dark"] .cal-cella .cal-num, :root[data-theme="dark"] .modal-header h2, :root[data-theme="dark"] .page-title, :root[data-theme="dark"] .page-back-inline, :root[data-theme="dark"] .page-day-title { color: #7aa9d9; }
+  :root[data-theme="dark"] .cal-cella.oggi .cal-num { color: #ffffff; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
   :root[data-theme="dark"] .zone-chip.active { color: #ffffff; }
@@ -573,7 +663,7 @@
     </section>
 
     <section id="view-attivita" class="view">
-      <!-- Sezione 1/3: ATTIVITÀ -->
+      <!-- BLOCCO 1: ATTIVITÀ -->
       <div class="att-col att-col-main">
         <div class="att-subtabs" id="att-subtabs">
           <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')">
@@ -592,7 +682,7 @@
         <div id="lista-attivita" class="att-scroll"></div>
       </div>
 
-      <!-- Sezione 1/3: AGENDA -->
+      <!-- BLOCCO 2: AGENDA -->
       <div class="att-col att-col-side">
         <div class="agenda-sett">
           <h3>
@@ -607,7 +697,7 @@
         </div>
       </div>
 
-      <!-- Sezione 1/3: PLANNING -->
+      <!-- BLOCCO 3: PLANNING -->
       <div class="att-col att-col-side">
         <div class="planning-sett">
           <h3>
@@ -1011,6 +1101,25 @@ const STATO_PRIORITY = { 'PA': 1, 'NT': 2, 'INK': 3 };
 const STATO_COLORS = { 'PA': '#d97706', 'NT': '#2563eb', 'INK': '#059669', 'VND': '#dc2626' };
 const PIN_NEUTRAL_COLOR = '#1a3a5c';
 
+// Palette colori pallini calendario
+const CAL_COLORS = {
+  vend:     '#d97706',
+  acq:      '#7c3aed',
+  entrambi: '#dc2626',
+  visita:   '#dc2626',
+  libero:   '#e0651a',
+  att:      '#2563eb',
+  solo:     '#e0651a'
+};
+function coloreDaClasse(cl) {
+  if (cl === 'tipo-vend') return CAL_COLORS.vend;
+  if (cl === 'tipo-acq') return CAL_COLORS.acq;
+  if (cl === 'tipo-entrambi') return CAL_COLORS.entrambi;
+  if (cl === 'libero') return CAL_COLORS.libero;
+  if (cl === 'att') return CAL_COLORS.att;
+  return '#1a3a5c';
+}
+
 // =====================================================
 // UTILITY
 // =====================================================
@@ -1113,7 +1222,6 @@ tabButtons.forEach(btn => {
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
     const appContent = document.getElementById('app-content');
-    // Reset defaults
     document.querySelector('.app-header').style.display = '';
     appContent.style.padding = '';
     appContent.style.overflow = '';
@@ -1153,10 +1261,8 @@ function mostraView(id) {
   if (id === 'view-attivita') appContent.style.overflow = 'hidden';
   else if (id === 'view-mappa') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
   else { appContent.style.overflow = ''; appContent.style.padding = ''; }
-  // Tabbar: evidenzia "attivita" per le viste agenda/planning/attivita
   const targetTab = (id === 'view-agenda' || id === 'view-planning') ? 'attivita' : id.replace('view-', '');
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === targetTab));
-  // FAB
   const fab = document.getElementById('fab-immobili');
   const fabMenu = document.getElementById('fab-menu');
   if (id === 'view-agenda' || id === 'view-planning' || id === 'view-mappa') {
@@ -1902,8 +2008,6 @@ function aggiornaAgendaSettimanale() {
   const g = document.getElementById('agenda-grid'); const t = document.getElementById('agenda-sett-titolo'); if (!g || !t) return;
   const b = new Date(settimanaCorrente); const gi = b.getDay(); const df = gi === 0 ? -6 : 1 - gi;
   const l = new Date(b); l.setDate(b.getDate() + df); l.setHours(0, 0, 0, 0);
-  const d = new Date(l); d.setDate(l.getDate() + 6); d.setHours(23, 59, 59, 999);
-  const m = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
   t.innerHTML = 'Agenda settimanale ›';
   const gn = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
   const o = new Date(); o.setHours(0, 0, 0, 0);
@@ -1913,9 +2017,21 @@ function aggiornaAgendaSettimanale() {
     const gf = new Date(gi2); gf.setHours(23, 59, 59, 999);
     const io = gi2.getTime() === o.getTime();
     const ag = (DB.appuntamenti || []).filter(a => { const x = new Date(a.dataInizio); return x >= gi2 && x <= gf && a.stato !== 'annullato'; }).sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
+    const libs = (DB.pianificazioni || []).filter(p => p.data === ymdDaData(gi2) && !p.completata);
+    const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymdDaData(gi2));
+    // pallini colorati
+    const dots = [];
+    for (const a of ag) { const tp = getTipoApp(a.tipo); dots.push(coloreDaClasse(getClasseChiApp(tp.chi))); }
+    for (const a of atts) dots.push(CAL_COLORS.att);
+    for (const p of libs) dots.push(CAL_COLORS.libero);
     h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + ymdDaData(gi2) + '\')"><div class="ag-nome">' + gn[i] + '</div><div class="ag-num">' + gi2.getDate() + '</div>';
-    if (ag.length === 0) h += '<div class="ag-empty">·</div>';
-    else { const mx = 3; for (let k = 0; k < Math.min(ag.length, mx); k++) { const a = ag[k]; const tp = getTipoApp(a.tipo); const cl = getClasseChiApp(tp.chi); const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); const lbl = tp.libero ? (a.titolo || 'Libero').slice(0, 10) : a.tipo; h += '<div class="ag-ev ' + cl + '"><span class="ora">' + or + '</span>' + escapeHtml(lbl) + '</div>'; } if (ag.length > mx) h += '<div style="font-size:8px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (ag.length - mx) + '</div>'; }
+    if (dots.length === 0) h += '<div class="ag-empty">·</div>';
+    else {
+      h += '<div class="ag-dots">';
+      for (const c of dots.slice(0, 3)) h += '<span class="ag-dot" style="background:' + c + '"></span>';
+      h += '</div>';
+      if (dots.length > 3) h += '<div style="font-size:8px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (dots.length - 3) + '</div>';
+    }
     h += '</div>';
   }
   g.innerHTML = h;
@@ -1962,14 +2078,16 @@ function htmlCalendarioMese() {
     const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === dYmd && a.stato !== 'annullato');
     const libs = (DB.pianificazioni || []).filter(p => p.data === dYmd && !p.completata);
     const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === dYmd);
+    // Costruisci i pallini colorati (max 3 visibili)
+    const dots = [];
+    for (const a of apps) { const tp = getTipoApp(a.tipo); dots.push(coloreDaClasse(getClasseChiApp(tp.chi))); }
+    for (const a of atts) dots.push(CAL_COLORS.att);
+    for (const p of libs) dots.push(CAL_COLORS.libero);
     h += '<div class="cal-cella' + (outOfMonth ? ' fuori-mese' : '') + (isToday ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + dYmd + '\')">';
     h += '<div class="cal-num">' + d.getDate() + '</div>';
-    const items = [];
-    for (const a of apps) { const tp = getTipoApp(a.tipo); items.push({ t: tp.libero ? (a.titolo || 'Libero') : a.tipo, cls: getClasseChiApp(tp.chi) }); }
-    for (const a of atts) items.push({ t: a.entitaTitolo.split(' - ').pop() || 'Attività', cls: 'att' });
-    for (const p of libs) items.push({ t: p.testo, cls: 'libera' });
-    for (const it of items.slice(0, 2)) h += '<div class="cal-ev ' + it.cls + '">' + escapeHtml(it.t.slice(0, 12)) + '</div>';
-    if (items.length > 2) h += '<div class="cal-more">+' + (items.length - 2) + '</div>';
+    h += '<div class="cal-dots">';
+    for (const col of dots.slice(0, 3)) h += '<span class="cal-dot" style="background:' + col + '"></span>';
+    h += '</div>';
     h += '</div>';
   }
   h += '</div>';
