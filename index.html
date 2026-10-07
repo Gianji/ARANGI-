@@ -497,7 +497,7 @@
   .att-subtab.prossime.active .num { color: var(--nt); }
   .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
-  /* AGENDA SETTIMANALE WIDGET - nuovo formato "- TYPE -" */
+  /* AGENDA SETTIMANALE WIDGET */
   .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 14px 10px; border: 1px solid var(--border); }
   .agenda-sett h3 { font-size: 11.5px; font-weight: 600; color: var(--blu); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .agenda-sett h3 .lbl-click { cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
@@ -536,71 +536,7 @@
   .planning-item.libera .pi-tipo { background: var(--arancione); }
   .planning-empty { text-align: center; padding: 18px 8px; color: var(--testo-ter); font-size: 12.5px; font-weight: 400; }
 
-  /* PAGINE AGENDA / PLANNING */
-  .page-topbar { display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; }
-  .page-back { background: var(--card); border: 1px solid var(--border-strong); width: 38px; height: 38px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: inherit; font-weight: 400; transition: background 0.15s ease; }
-  .page-back:active { background: var(--hover-bg); }
-  .page-title { font-size: 18px; font-weight: 700; color: var(--blu); flex: 1; letter-spacing: -0.025em; }
-  .page-back-inline { background: none; border: none; color: var(--blu); font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; padding: 4px 0; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 4px; letter-spacing: -0.005em; }
-  .page-day-title { font-size: 20px; font-weight: 700; color: var(--blu); margin-bottom: 16px; letter-spacing: -0.025em; }
-
-  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; padding: 0 2px; }
-  .cal-header h2 { font-size: 18px; font-weight: 700; color: var(--blu); margin: 0; flex: 1; text-align: center; letter-spacing: -0.025em; }
-  .cal-header .cal-nav-btn { background: transparent; border: none; width: 36px; height: 36px; border-radius: var(--radius-sm); font-size: 20px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
-  .cal-header .cal-nav-btn:active { background: var(--sfondo-2); }
-
-  /* Vista zoom header (week/3day) */
-  .cal-zoom-header { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; gap: 8px; padding: 0 2px; }
-  .cal-zoom-label { font-size: 15px; font-weight: 700; color: var(--blu); flex: 1; text-align: center; letter-spacing: -0.02em; }
-  .cal-zoom-header .cal-nav-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
-  .cal-zoom-header .cal-nav-btn:active { background: var(--sfondo-2); }
-
-  /* GRIGLIA MESE */
-  .cal-griglia { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; padding: 4px 0 8px; }
-  .cal-giorno-h { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; padding: 8px 0 12px; letter-spacing: 0.06em; }
-  .cal-cella { background: transparent; border: none; border-radius: 0; padding: 4px 2px; min-height: 60px; height: auto; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; position: relative; transition: opacity 0.15s; }
-  .cal-cella.fuori-mese { opacity: 0.22; }
-  .cal-cella .cal-num { font-size: 15px; font-weight: 500; color: var(--testo); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0; padding: 0; line-height: 1; transition: background 0.15s ease, color 0.15s ease; letter-spacing: -0.02em; }
-  .cal-cella.oggi .cal-num { background: var(--arancione); color: white; font-weight: 600; }
-  .cal-cella .cal-dots { display: flex; gap: 3px; height: 8px; align-items: center; justify-content: center; margin-top: 2px; }
-  .cal-cella .cal-dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
-  .cal-cella .cal-ev, .cal-cella .cal-more { display: none; }
-
-  /* GRIGLIA SETTIMANA (7 giorni, più dettagli) */
-  .cal-week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .cal-week-day { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 4px; min-height: 110px; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; gap: 2px; transition: background 0.15s ease; }
-  .cal-week-day:active { background: var(--hover-bg); }
-  .cal-week-day.oggi { background: var(--arancione-soft); border-color: rgba(217, 96, 26, 0.25); }
-  .cal-week-dayname { font-size: 9px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; letter-spacing: 0.05em; }
-  .cal-week-day.oggi .cal-week-dayname { color: var(--arancione); }
-  .cal-week-daynum { font-size: 14px; font-weight: 600; color: var(--testo); text-align: center; letter-spacing: -0.02em; margin-bottom: 3px; }
-  .cal-week-day.oggi .cal-week-daynum { color: var(--arancione); }
-  .cal-week-item { font-size: 8.5px; font-weight: 500; color: var(--testo); line-height: 1.15; padding: 2px 3px; border-radius: 3px; background: var(--sfondo-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 3px; }
-  .cal-week-item .wi-dash { font-weight: 700; }
-  .cal-week-item .wi-ora { font-size: 7.5px; color: var(--testo-ter); font-weight: 500; margin-left: auto; }
-  .cal-week-more { font-size: 8.5px; font-weight: 600; color: var(--testo-ter); text-align: center; margin-top: 1px; }
-
-  /* GRIGLIA 3 GIORNI */
-  .cal-3d-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .cal-3d-day { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px; min-height: 220px; cursor: pointer; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; transition: background 0.15s ease; }
-  .cal-3d-day:active { background: var(--hover-bg); }
-  .cal-3d-day.oggi { background: var(--arancione-soft); border-color: rgba(217, 96, 26, 0.25); }
-  .cal-3d-dayname { font-size: 9.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; text-align: center; letter-spacing: 0.05em; }
-  .cal-3d-day.oggi .cal-3d-dayname { color: var(--arancione); }
-  .cal-3d-daynum { font-size: 20px; font-weight: 700; color: var(--testo); text-align: center; letter-spacing: -0.03em; margin-bottom: 6px; }
-  .cal-3d-day.oggi .cal-3d-daynum { color: var(--arancione); }
-  .cal-3d-item { display: flex; align-items: flex-start; gap: 4px; font-size: 10px; line-height: 1.25; padding: 4px 5px; background: var(--sfondo-2); border-radius: 4px; overflow: hidden; }
-  .cal-3d-item .wi-dash { font-weight: 700; flex-shrink: 0; }
-  .cal-3d-item .wi-body { flex: 1; min-width: 0; }
-  .cal-3d-item .wi-tipo { font-weight: 600; color: var(--testo); font-size: 9.5px; }
-  .cal-3d-item .wi-testo { color: var(--testo-sec); font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cal-3d-item .wi-ora { font-size: 8.5px; color: var(--testo-ter); font-weight: 500; flex-shrink: 0; }
-  .cal-3d-empty { font-size: 10px; color: var(--testo-ter); text-align: center; padding: 12px 4px; opacity: 0.5; }
-
-  /* Vista giorno (dettaglio) */
-  .cal-day-full { padding: 0 0 20px; }
-
-  /* Quick action pills (compact buttons) */
+  /* Quick action pills */
   .qa-pills { display: flex; gap: 6px; margin: 10px 0 14px; flex-wrap: wrap; }
   .qa-pill { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 7px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; letter-spacing: -0.005em; transition: background 0.15s ease; }
   .qa-pill:active { background: var(--hover-bg); }
@@ -661,47 +597,170 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* Topbar agenda/planning integrata nel contenuto */
-  .agenda-topbar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 0 10px;
+  /* ============ AGENDA iPHONE-STYLE ============ */
+  .ag-view { display: flex; flex-direction: column; height: 100%; background: var(--sfondo); }
+
+  .ag-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px 4px;
+    padding-top: calc(8px + env(safe-area-inset-top));
+    flex-shrink: 0;
   }
-  .agenda-topbar .back {
-    background: transparent; border: none;
-    width: 38px; height: 38px; border-radius: 50%;
+  .ag-back-pill {
+    display: inline-flex; align-items: center; gap: 2px;
+    padding: 7px 14px 7px 8px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--border-strong);
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    color: var(--blu); cursor: pointer; transition: background 0.15s ease;
+  }
+  .ag-back-pill:active { background: var(--hover-bg); }
+  .ag-back-pill svg { width: 18px; height: 18px; }
+  .ag-icons { display: flex; gap: 6px; margin-left: auto; }
+  .ag-icon-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border-strong);
     color: var(--blu); cursor: pointer; padding: 0;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: background 0.15s ease;
+    transition: background 0.15s ease;
   }
-  .agenda-topbar .back:active { background: var(--hover-bg); }
-  .agenda-topbar .back svg { width: 22px; height: 22px; }
-  .agenda-topbar .title {
-    flex: 1; font-size: 17px; font-weight: 700;
-    color: var(--blu); letter-spacing: -0.02em;
+  .ag-icon-btn:active { background: var(--hover-bg); }
+  .ag-icon-btn svg { width: 18px; height: 18px; }
+
+  .ag-weekstrip {
+    display: flex; padding: 4px 6px 8px; gap: 0;
+    flex-shrink: 0; border-bottom: 1px solid var(--border);
+  }
+  .ag-ws-day {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 3px; padding: 4px 2px; cursor: pointer; border-radius: 12px;
+    transition: background 0.15s ease;
+  }
+  .ag-ws-day:active { background: var(--hover-bg); }
+  .ag-ws-name { font-size: 10px; font-weight: 600; color: var(--testo-ter); letter-spacing: 0.04em; }
+  .ag-ws-num {
+    font-size: 15px; font-weight: 500; color: var(--testo);
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; letter-spacing: -0.02em;
+  }
+  .ag-ws-day.today .ag-ws-num { background: #ff3b30; color: #fff; font-weight: 600; }
+  .ag-ws-day.today .ag-ws-name { color: #ff3b30; }
+  .ag-ws-day.sel .ag-ws-num { background: var(--blu); color: #fff; }
+  .ag-ws-day.sel.today .ag-ws-num { background: #ff3b30; }
+
+  .ag-content {
+    flex: 1 1 0; min-height: 0;
+    overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+    position: relative;
   }
 
-  /* Animazione fluida cambio vista agenda/planning */
-  .agenda-view-wrap {
-    animation: agendaViewIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
+  .ag-bottombar {
+    display: flex; padding: 8px 14px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    gap: 8px; flex-shrink: 0;
+    align-items: center; border-top: 1px solid var(--border);
+    background: var(--sfondo);
   }
-  @keyframes agendaViewIn {
-    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  .ag-pill {
+    padding: 10px 20px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--border-strong);
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    color: var(--blu); cursor: pointer; transition: background 0.15s ease;
+  }
+  .ag-pill:active { background: var(--hover-bg); }
+
+  .ag-view .ag-content > * { animation: agViewIn 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
+  @keyframes agViewIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.99); }
     to   { opacity: 1; transform: translateY(0)   scale(1); }
   }
 
-  /* Look iPhone: righe più ariose nel mese */
-  .cal-griglia { padding-top: 6px; }
-  .cal-cella { min-height: 62px; }
-  .cal-cella .cal-dots { margin-top: 4px; }
+  /* Anno */
+  .ag-year { padding: 4px 12px 40px; }
+  .ag-year-month { margin-bottom: 22px; }
+  .ag-year-name { font-size: 17px; font-weight: 700; color: var(--testo); margin-bottom: 6px; padding-left: 4px; }
+  .ag-year-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
+  .ag-year-cell {
+    aspect-ratio: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 1px;
+    font-size: 11px; cursor: pointer; border-radius: 50%;
+  }
+  .ag-year-cell.other { opacity: 0.22; }
+  .ag-year-cell.today .ag-year-num {
+    background: #ff3b30; color: #fff; width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-weight: 600;
+  }
+  .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
-  /* Week view: aspetto più “calendario iPhone” */
-  .cal-week-grid { gap: 5px; padding-top: 4px; }
-  .cal-week-day { min-height: 118px; }
-  .cal-week-item { padding: 3px 5px; border-radius: 4px; }
+  /* Mese */
+  .ag-month { padding: 0 8px 40px; }
+  .ag-month-name {
+    font-size: 30px; font-weight: 700; color: var(--testo);
+    padding: 12px 12px 6px; letter-spacing: -0.03em;
+  }
+  .ag-month-weekdays {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    font-size: 11px; font-weight: 600; color: var(--testo-ter);
+    text-align: center; padding: 8px 0 4px; letter-spacing: 0.06em;
+  }
+  .ag-month-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .ag-month-cell {
+    aspect-ratio: 1; padding: 4px 2px 2px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer; border-radius: 8px; transition: background 0.15s ease;
+  }
+  .ag-month-cell:active { background: var(--hover-bg); }
+  .ag-month-num {
+    font-size: 17px; font-weight: 500; color: var(--testo);
+    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; letter-spacing: -0.02em;
+  }
+  .ag-month-cell.other { opacity: 0.28; }
+  .ag-month-cell.today .ag-month-num { background: #ff3b30; color: #fff; font-weight: 600; }
+  .ag-month-bars { display: flex; gap: 2px; justify-content: center; width: 100%; padding: 0 4px; }
+  .ag-month-bar { flex: 1; max-width: 8px; height: 4px; border-radius: 2px; }
 
-  /* 3-day view */
-  .cal-3d-day { min-height: 260px; }
+  /* Timeline oraria */
+  .ag-timeline { display: flex; padding-bottom: 20px; }
+  .ag-hours-col { width: 46px; flex-shrink: 0; padding-top: 0; }
+  .ag-hour-label {
+    height: 60px; font-size: 10px; font-weight: 500; color: var(--testo-ter);
+    text-align: right; padding-right: 8px; position: relative; letter-spacing: 0.02em;
+  }
+  .ag-hour-label::after {
+    content: ''; position: absolute; right: 0; top: 0; left: 10px;
+    height: 1px; background: var(--border);
+  }
+  .ag-days { flex: 1; display: flex; position: relative; }
+  .ag-day-col { flex: 1; position: relative; border-left: 1px solid var(--border); }
+  .ag-day-col:first-child { border-left: 1px solid var(--border-strong); }
+  .ag-hour-line { height: 60px; border-bottom: 1px solid var(--border); }
+  .ag-event {
+    position: absolute; left: 2px; right: 2px;
+    border-radius: 6px; padding: 3px 5px; overflow: hidden;
+    cursor: pointer; transition: opacity 0.15s ease;
+    z-index: 2;
+  }
+  .ag-event:active { opacity: 0.75; }
+  .ag-event-title {
+    font-size: 10px; font-weight: 600; color: #fff;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: 1.2; letter-spacing: -0.01em;
+  }
+  .ag-event-time { font-size: 9px; color: rgba(255,255,255,0.85); margin-top: 1px; line-height: 1.2; }
+  .ag-now-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: #ff3b30; z-index: 6;
+  }
+  .ag-now-dot {
+    position: absolute; left: -6px; top: -5px;
+    width: 12px; height: 12px; border-radius: 50%; background: #ff3b30;
+    box-shadow: 0 0 0 2px var(--sfondo);
+  }
+  :root[data-theme="dark"] .ag-ws-num,
+  :root[data-theme="dark"] .ag-month-num { color: #e8e8ea; }
+  :root[data-theme="dark"] .ag-month-cell.today .ag-month-num,
+  :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num { color: #fff; }
 
   @media (min-width: 768px) {
     body { background: #f0f0f2; }
@@ -719,8 +778,6 @@
     }
     .chip.active:hover { background: var(--blu); }
     .chip.sub.active:hover { background: var(--arancione-deep); }
-    .cal-cella:hover .cal-num { background: var(--sfondo-2); }
-    .cal-cella.oggi:hover .cal-num { background: var(--arancione-deep); }
     .foto-grid { grid-template-columns: repeat(4, 1fr); }
     .app-content { padding-left: 22px; padding-right: 22px; }
     .app-header { padding-left: 26px; padding-right: 26px; }
@@ -729,7 +786,6 @@
     :root { --max-w: 760px; }
     .app-content { padding-left: 28px; padding-right: 28px; }
     .foto-grid { grid-template-columns: repeat(5, 1fr); }
-    .cal-cella { min-height: 68px; }
   }
   @media (min-width: 1400px) {
     :root { --max-w: 860px; }
@@ -808,12 +864,14 @@
   :root[data-theme="dark"] .foto-item { background: var(--sfondo-2); }
   :root[data-theme="dark"] .planning-item { background: transparent; }
   :root[data-theme="dark"] .att-count { background: var(--sfondo-2); color: #8ab0d4; }
-  :root[data-theme="dark"] .cal-week-item { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .cal-3d-item { background: var(--sfondo-2); }
-  :root[data-theme="dark"] .cal-week-day.oggi { background: var(--arancione-soft); }
-  :root[data-theme="dark"] .cal-3d-day.oggi { background: var(--arancione-soft); }
-  :root[data-theme="dark"] .agenda-topbar .back { color: #8ab0d4; }
-  :root[data-theme="dark"] .agenda-topbar .title { color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-back-pill { background: var(--card); color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-icon-btn { background: var(--card); color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-month-name,
+  :root[data-theme="dark"] .ag-year-name { color: #e8e8ea; }
+  :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-bottombar { background: var(--sfondo); }
+  :root[data-theme="dark"] .ag-month-cell.today .ag-month-num,
+  :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num { background: #ff453a; }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -838,14 +896,9 @@
   :root[data-theme="dark"] .map-status .count,
   :root[data-theme="dark"] .villa-toggle button.active,
   :root[data-theme="dark"] .addr-click,
-  :root[data-theme="dark"] .cal-header h2,
-  :root[data-theme="dark"] .cal-cella .cal-num,
   :root[data-theme="dark"] .modal-header h2,
-  :root[data-theme="dark"] .page-title,
-  :root[data-theme="dark"] .page-back-inline,
-  :root[data-theme="dark"] .page-day-title,
-  :root[data-theme="dark"] .cal-zoom-label { color: #8ab0d4; }
-  :root[data-theme="dark"] .cal-cella.oggi .cal-num { color: #ffffff; }
+  :root[data-theme="dark"] .page-title { color: #8ab0d4; }
+  :root[data-theme="dark"] .agenda-giorno.oggi .ag-num { color: #ffffff; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
   :root[data-theme="dark"] .zone-chip.active { color: #ffffff; background: var(--blu-deep); }
@@ -952,6 +1005,9 @@
     </section>
 
     <section id="view-planning" class="view">
+      <button class="cal-back-float" onclick="tornaAttivita()" aria-label="Indietro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <div id="planning-page-content"></div>
     </section>
 
@@ -1489,19 +1545,20 @@ function aggiornaFabPersone() { document.getElementById('fab-menu').innerHTML = 
 function mostraView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === id));
   const appContent = document.getElementById('app-content');
-  document.querySelector('.app-header').style.display = id === 'view-mappa' ? 'none' : '';
+  document.querySelector('.app-header').style.display = (id === 'view-mappa' || id === 'view-agenda') ? 'none' : '';
   appContent.scrollTop = 0;
   document.getElementById('back-top').classList.remove('show');
   appContent.style.padding = ''; appContent.style.overflow = ''; appContent.classList.remove('attivita-active');
   if (id === 'view-attivita') { appContent.style.overflow = 'hidden'; appContent.classList.add('attivita-active'); }
   else if (id === 'view-mappa') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
+  else if (id === 'view-agenda') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
   const targetTab = (id === 'view-agenda' || id === 'view-planning') ? 'attivita' : id.replace('view-', '');
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === targetTab));
   const fab = document.getElementById('fab-immobili');
   const fabMenu = document.getElementById('fab-menu');
-  if (id === 'view-mappa') {
+  if (id === 'view-mappa' || id === 'view-agenda') {
     fab.style.display = 'none'; fabMenu.style.display = 'none'; fabMenuAperto = false;
-  } else if (id === 'view-attivita' || id === 'view-agenda' || id === 'view-planning') {
+  } else if (id === 'view-attivita' || id === 'view-planning') {
     fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false;
   }
 }
@@ -1548,23 +1605,6 @@ function chiudiFilterDD() { document.getElementById('filter-dd-overlay').classLi
 let fabMenuAperto = false;
 function toggleFabMenu() { fabMenuAperto = !fabMenuAperto; document.getElementById('fab-menu').style.display = fabMenuAperto ? 'flex' : 'none'; }
 function onFabClick() {
-  const va = document.getElementById('view-agenda');
-  const vp = document.getElementById('view-planning');
-  const fm = document.getElementById('fab-menu');
-  if (va && va.classList.contains('active')) {
-    const ymd = agendaPageDayYmd || ymdDaData(new Date());
-    fm.innerHTML = '<button onclick="fabMenuNuovaAttivitaConData(\'' + ymd + '\')">' + ico('check',15) + ' Nuova attività</button>'
-      + '<button onclick="fabMenuNuovoAppuntamento()">' + ico('calendario',15) + ' Nuovo appuntamento</button>'
-      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')">' + ico('piu',15) + ' Cosa libera</button>';
-    toggleFabMenu(); return;
-  }
-  if (vp && vp.classList.contains('active')) {
-    const ymd = planningPageYmd || ymdDaData(new Date());
-    fm.innerHTML = '<button onclick="fabMenuNuovaAttivitaConData(\'' + ymd + '\')">' + ico('check',15) + ' Nuova attività</button>'
-      + '<button onclick="fabMenuNuovoAppuntamento()">' + ico('calendario',15) + ' Nuovo appuntamento</button>'
-      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')">' + ico('piu',15) + ' Cosa libera</button>';
-    toggleFabMenu(); return;
-  }
   const t = document.querySelector('.tabbar button.active');
   const tab = t ? t.dataset.tab : null;
   if (tab === 'persone') { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovaPersona(); return; }
@@ -1574,8 +1614,6 @@ function onFabClick() {
   }
   toggleFabMenu();
 }
-function fabMenuNuovaLibera(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovaPianificazioneLibera(ymd || ymdDaData(new Date())); }
-function fabMenuNuovaAttivitaConData(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; window._planningYmd = ymd; apriNuovaAttivitaGlobale(); }
 function fabMenuNuovoImmobile() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovo(); }
 function fabMenuNuovoCondominio() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoCondominio(); }
 function fabMenuNuovaAttivita() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovaAttivitaGlobale(); }
@@ -2435,7 +2473,7 @@ function collectItemsForDay(ymd) {
 }
 
 // =====================================================
-// AGENDA SETTIMANALE WIDGET (nuovo formato)
+// AGENDA SETTIMANALE WIDGET
 // =====================================================
 function cambiaSettimana(d) { if (d === 0) settimanaCorrente = new Date(); else settimanaCorrente = new Date(settimanaCorrente.getTime() + d * 7 * 24 * 60 * 60 * 1000); aggiornaAgendaSettimanale(); }
 function aggiornaAgendaSettimanale() {
@@ -2469,184 +2507,266 @@ function aggiornaAgendaSettimanale() {
 }
 
 // =====================================================
-// PAGINA AGENDA — MULTI-VIEW con pinch-zoom
+// PAGINA AGENDA — STILE iPHONE
 // =====================================================
 let calMeseCorrente = new Date();
-let agendaPageState = 'month'; // 'month' | 'week' | '3day' | 'day'
+let agendaPageState = 'month'; // 'year' | 'month' | 'week' | 'day'
 let agendaPageDayYmd = null;
+let agendaYear = new Date().getFullYear();
 
 function apriAgendaPage() {
   agendaPageState = 'month'; calMeseCorrente = new Date();
   agendaPageDayYmd = ymdDaData(new Date());
+  agendaYear = new Date().getFullYear();
   mostraView('view-agenda'); renderAgendaPage();
 }
 function tornaAttivita() { mostraView('view-attivita'); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); }
 function agendaBack() { tornaAttivita(); }
 function cambiaMeseAgenda(delta) { if (delta === 0) calMeseCorrente = new Date(); else { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; } renderAgendaPage(); }
-function clickGiornoAgenda(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; renderAgendaPage(); }
+function clickGiornoAgenda(ymd) { agendaPageDayYmd = ymd; if (agendaPageState === 'year' || agendaPageState === 'month') agendaPageState = 'day'; renderAgendaPage(); }
+
 function zoomAgendaIn() {
-  if (agendaPageState === 'month') { if (!agendaPageDayYmd) agendaPageDayYmd = ymdDaData(new Date()); agendaPageState = 'week'; }
-  else if (agendaPageState === 'week') { agendaPageState = '3day'; }
-  else if (agendaPageState === '3day') { agendaPageState = 'day'; }
+  if (agendaPageState === 'year') { agendaPageState = 'month'; }
+  else if (agendaPageState === 'month') { agendaPageState = 'week'; }
+  else if (agendaPageState === 'week') { agendaPageState = 'day'; }
   renderAgendaPage();
 }
 function zoomAgendaOut() {
-  if (agendaPageState === 'day') { agendaPageState = '3day'; }
-  else if (agendaPageState === '3day') { agendaPageState = 'week'; }
+  if (agendaPageState === 'day') { agendaPageState = 'week'; }
   else if (agendaPageState === 'week') { agendaPageState = 'month'; }
+  else if (agendaPageState === 'month') { agendaPageState = 'year'; agendaYear = calMeseCorrente.getFullYear(); }
   renderAgendaPage();
 }
 function shiftAgendaPeriod(delta) {
-  if (agendaPageState === 'month') { cambiaMeseAgenda(delta); return; }
-  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
-  if (agendaPageState === 'week') { base.setDate(base.getDate() + delta * 7); }
-  else if (agendaPageState === '3day') { base.setDate(base.getDate() + delta * 3); }
-  else { base.setDate(base.getDate() + delta); }
-  agendaPageDayYmd = ymdDaData(base);
+  if (agendaPageState === 'year') { agendaYear += delta; }
+  else if (agendaPageState === 'month') { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; }
+  else {
+    const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+    if (agendaPageState === 'week') base.setDate(base.getDate() + delta * 7);
+    else base.setDate(base.getDate() + delta);
+    agendaPageDayYmd = ymdDaData(base);
+  }
   renderAgendaPage();
 }
 function apriPlanningGiorno(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; mostraView('view-agenda'); renderAgendaPage(); }
+function vaiAOggi() {
+  agendaPageDayYmd = ymdDaData(new Date());
+  calMeseCorrente = new Date();
+  agendaYear = new Date().getFullYear();
+  renderAgendaPage();
+}
+function apriElementoAgenda(kind, id) {
+  if (kind === 'app') apriSchedaAppuntamento(id);
+  else if (kind === 'att') { const att = raccogliTutteAttivita().find(a => a.id === id); if (att) apriAzioniAttivitaGlobale(att.id, att.entitaTipo, att.entitaId); }
+  else if (kind === 'lib') apriAzioniPianificazione(id);
+}
+function scrollAgendaToNow() {
+  const el = document.getElementById('ag-content-scroll'); if (!el) return;
+  if (agendaPageState !== 'week' && agendaPageState !== 'day') return;
+  const now = new Date();
+  const top = Math.max(0, (now.getHours() - 2) * 60);
+  el.scrollTop = top;
+}
 
 function renderAgendaPage() {
   const cont = document.getElementById('agenda-page-content'); if (!cont) return;
-  const topbar = '<div class="agenda-topbar"><button class="back" onclick="tornaAttivita()" aria-label="Indietro">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
-    + '</button><div class="title">Agenda</div></div>';
-  let inner;
-  if (agendaPageState === 'month') inner = htmlCalendarioMese();
-  else if (agendaPageState === 'week') inner = htmlCalendarioWeek();
-  else if (agendaPageState === '3day') inner = htmlCalendario3Day();
-  else inner = htmlDettaglioGiornoAgenda(agendaPageDayYmd);
-  cont.innerHTML = topbar + '<div class="agenda-view-wrap">' + inner + '</div>';
+  let inner = '';
+  if (agendaPageState === 'year') inner = htmlCalendarioYear();
+  else if (agendaPageState === 'month') inner = htmlCalendarioMonthIPhone();
+  else if (agendaPageState === 'week') inner = htmlCalendarioWeekIPhone();
+  else inner = htmlCalendarioDayIPhone();
+  const strip = (agendaPageState === 'week' || agendaPageState === 'day') ? weekStripHtml() : '';
+  cont.innerHTML = '<div class="ag-view">' + topbarHtml() + strip + '<div class="ag-content" id="ag-content-scroll">' + inner + '</div>' + bottomBarHtml() + '</div>';
+  setTimeout(scrollAgendaToNow, 60);
+  setTimeout(scrollAgendaToNow, 300);
 }
 
-function htmlCalendarioMese() {
-  const c = calMeseCorrente;
-  const gN = ['L','M','M','G','V','S','D'];
-  let h = '<div class="cal-header">';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
-  h += '<h2>' + MESI_LUNGHI[c.getMonth()] + ' ' + c.getFullYear() + '</h2>';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
-  h += '</div>';
-  h += '<div class="cal-griglia">';
-  for (const d of gN) h += '<div class="cal-giorno-h">' + d + '</div>';
-  const first = new Date(c.getFullYear(), c.getMonth(), 1);
-  let startDay = first.getDay(); startDay = startDay === 0 ? 6 : startDay - 1;
-  const start = new Date(first); start.setDate(first.getDate() - startDay);
-  const todayYmd = ymdDaData(new Date());
-  for (let i = 0; i < 42; i++) {
-    const d = new Date(start); d.setDate(start.getDate() + i);
-    const dYmd = ymdDaData(d);
-    const outOfMonth = d.getMonth() !== c.getMonth();
-    const isToday = dYmd === todayYmd;
-    const items = collectItemsForDay(dYmd);
-    h += '<div class="cal-cella' + (outOfMonth ? ' fuori-mese' : '') + (isToday ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + dYmd + '\')">';
-    h += '<div class="cal-num">' + d.getDate() + '</div>';
-    h += '<div class="cal-dots">';
-    for (const it of items.slice(0, 3)) h += '<span class="cal-dot" style="background:' + it.colore + '"></span>';
-    h += '</div>';
-    h += '</div>';
-  }
-  h += '</div>';
-  h += '<div style="text-align:center;font-size:10.5px;color:var(--testo-ter);margin-top:14px;letter-spacing:0.03em;">Pinch per cambiare vista · Settimana · 3 giorni · Giorno</div>';
-  return h;
+function topbarHtml() {
+  let label = '';
+  if (agendaPageState === 'year') label = String(agendaYear);
+  else if (agendaPageState === 'month') { const c = calMeseCorrente; label = MESI_LUNGHI[c.getMonth()]; }
+  else { const b = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date(); label = MESI_LUNGHI[b.getMonth()]; }
+  return '<div class="ag-header">'
+    + '<button class="ag-back-pill" onclick="tornaAttivita()" aria-label="Indietro">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
+    + escapeHtml(label)
+    + '</button>'
+    + '<div class="ag-icons">'
+    + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" title="Nuovo">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+    + '</button>'
+    + '</div>'
+    + '</div>';
 }
 
-function htmlCalendarioWeek() {
+function weekStripHtml() {
   const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
   const dow = base.getDay(); const diff = dow === 0 ? -6 : 1 - dow;
-  const start = new Date(base); start.setDate(base.getDate() + diff); start.setHours(0,0,0,0);
-  const end = new Date(start); end.setDate(start.getDate() + 6);
-  const todayYmd = ymdDaData(new Date());
-  let h = '<div class="cal-zoom-header">';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
-  h += '<div class="cal-zoom-label">' + start.getDate() + ' ' + MESI_BREVI[start.getMonth()] + ' – ' + end.getDate() + ' ' + MESI_BREVI[end.getMonth()] + '</div>';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
-  h += '</div>';
-  h += '<div class="cal-week-grid">';
+  const start = new Date(base); start.setDate(base.getDate() + diff);
+  const today = ymdDaData(new Date());
+  const selYmd = agendaPageDayYmd || ymdDaData(new Date());
+  let h = '<div class="ag-weekstrip">';
   for (let i = 0; i < 7; i++) {
     const d = new Date(start); d.setDate(start.getDate() + i);
     const ymd = ymdDaData(d);
-    const io = ymd === todayYmd;
-    const items = collectItemsForDay(ymd);
-    h += '<div class="cal-week-day' + (io ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
-    h += '<div class="cal-week-dayname">' + GIORNI_BREVI[i] + '</div>';
-    h += '<div class="cal-week-daynum">' + d.getDate() + '</div>';
-    for (const it of items.slice(0, 4)) {
-      h += '<div class="cal-week-item"><span class="wi-dash" style="color:' + it.colore + '">-</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(it.tipo) + '</span><span class="wi-ora">' + (it.ora === '--:--' ? '' : it.ora) + '</span></div>';
-    }
-    if (items.length > 4) h += '<div class="cal-week-more">+' + (items.length - 4) + '</div>';
+    const cls = 'ag-ws-day' + (ymd === today ? ' today' : '') + (ymd === selYmd ? ' sel' : '');
+    h += '<div class="' + cls + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+    h += '<div class="ag-ws-name">' + GIORNI_BREVI[i] + '</div>';
+    h += '<div class="ag-ws-num">' + d.getDate() + '</div>';
     h += '</div>';
   }
   h += '</div>';
   return h;
 }
 
-function htmlCalendario3Day() {
-  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
-  const todayYmd = ymdDaData(new Date());
-  let h = '<div class="cal-zoom-header">';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
-  const dEnd = new Date(base); dEnd.setDate(base.getDate() + 2);
-  h += '<div class="cal-zoom-label">' + base.getDate() + ' – ' + dEnd.getDate() + ' ' + MESI_BREVI[dEnd.getMonth()] + '</div>';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
+function bottomBarHtml() {
+  return '<div class="ag-bottombar">'
+    + '<button class="ag-pill" onclick="vaiAOggi()">Oggi</button>'
+    + '<div style="flex:1;"></div>'
+    + '<button class="ag-icon-btn" onclick="cycleAgendaView()" title="Vista">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>'
+    + '</button>'
+    + '</div>';
+}
+function cycleAgendaView() {
+  const order = ['year', 'month', 'week', 'day'];
+  const i = order.indexOf(agendaPageState);
+  agendaPageState = order[(i + 1) % order.length];
+  if (agendaPageState === 'year') agendaYear = calMeseCorrente.getFullYear();
+  renderAgendaPage();
+}
+
+/* ---------- ANNO ---------- */
+function htmlCalendarioYear() {
+  const today = ymdDaData(new Date());
+  let h = '<div class="ag-year">';
+  for (let m = 0; m < 12; m++) {
+    const firstDay = new Date(agendaYear, m, 1);
+    let startDow = firstDay.getDay(); startDow = startDow === 0 ? 6 : startDow - 1;
+    const start = new Date(firstDay); start.setDate(firstDay.getDate() - startDow);
+    h += '<div class="ag-year-month">';
+    h += '<div class="ag-year-name">' + MESI_LUNGHI[m] + '</div>';
+    h += '<div class="ag-year-grid">';
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const ymd = ymdDaData(d);
+      const out = d.getMonth() !== m;
+      if (out && i >= 35 && d.getDate() > 7) break;
+      const isToday = ymd === today;
+      const items = collectItemsForDay(ymd);
+      h += '<div class="ag-year-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+      h += '<div class="ag-year-num">' + d.getDate() + '</div>';
+      if (items.length > 0) h += '<div class="ag-year-dot" style="background:' + items[0].colore + '"></div>';
+      h += '</div>';
+    }
+    h += '</div></div>';
+  }
   h += '</div>';
-  h += '<div class="cal-3d-grid">';
-  for (let i = 0; i < 3; i++) {
-    const d = new Date(base); d.setDate(base.getDate() + i);
+  return h;
+}
+
+/* ---------- MESE ---------- */
+function htmlCalendarioMonthIPhone() {
+  const c = calMeseCorrente;
+  const today = ymdDaData(new Date());
+  const firstDay = new Date(c.getFullYear(), c.getMonth(), 1);
+  let startDow = firstDay.getDay(); startDow = startDow === 0 ? 6 : startDow - 1;
+  const start = new Date(firstDay); start.setDate(firstDay.getDate() - startDow);
+  let h = '<div class="ag-month">';
+  h += '<div class="ag-month-name">' + MESI_LUNGHI[c.getMonth()] + ' ' + c.getFullYear() + '</div>';
+  h += '<div class="ag-month-weekdays">';
+  for (const d of ['L','M','M','G','V','S','D']) h += '<div>' + d + '</div>';
+  h += '</div>';
+  h += '<div class="ag-month-grid">';
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
     const ymd = ymdDaData(d);
-    const io = ymd === todayYmd;
+    const out = d.getMonth() !== c.getMonth();
+    const isToday = ymd === today;
     const items = collectItemsForDay(ymd);
-    const dowIdx = (d.getDay() + 6) % 7;
-    h += '<div class="cal-3d-day' + (io ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
-    h += '<div class="cal-3d-dayname">' + GIORNI_BREVI[dowIdx] + '</div>';
-    h += '<div class="cal-3d-daynum">' + d.getDate() + '</div>';
-    if (items.length === 0) h += '<div class="cal-3d-empty">—</div>';
-    else for (const it of items) {
-      h += '<div class="cal-3d-item">';
-      h += '<span class="wi-dash" style="color:' + it.colore + '">-</span>';
-      h += '<div class="wi-body"><div class="wi-tipo">' + escapeHtml(it.tipo) + '</div><div class="wi-testo">' + escapeHtml(it.testo) + '</div></div>';
-      h += '<span class="wi-ora">' + (it.ora === '--:--' ? '' : it.ora) + '</span>';
+    h += '<div class="ag-month-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+    h += '<div class="ag-month-num">' + d.getDate() + '</div>';
+    if (items.length > 0) {
+      h += '<div class="ag-month-bars">';
+      for (const it of items.slice(0, 3)) h += '<div class="ag-month-bar" style="background:' + it.colore + '"></div>';
       h += '</div>';
     }
     h += '</div>';
   }
-  h += '</div>';
+  h += '</div></div>';
   return h;
 }
 
-function htmlDettaglioGiornoAgenda(ymd) {
-  const d = dataDaYmd(ymd);
-  const items = collectItemsForDay(ymd);
-  const apps = items.filter(i => i.kind === 'app');
-  const atts = items.filter(i => i.kind === 'att');
-  const libs = items.filter(i => i.kind === 'lib');
-  let h = '<div class="cal-day-full">';
-  h += '<div class="cal-zoom-header">';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(-1)">‹</button>';
-  h += '<div class="cal-zoom-label">' + GIORNI_LUNGHI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()] + '</div>';
-  h += '<button class="cal-nav-btn" onclick="shiftAgendaPeriod(1)">›</button>';
+/* ---------- SETTIMANA (timeline oraria 7 colonne) ---------- */
+function htmlCalendarioWeekIPhone() {
+  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+  const dow = base.getDay(); const diff = dow === 0 ? -6 : 1 - dow;
+  const start = new Date(base); start.setDate(base.getDate() + diff);
+  const today = ymdDaData(new Date());
+  const now = new Date();
+  let h = '<div class="ag-timeline">';
+  h += '<div class="ag-hours-col">';
+  for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + ':00</div>';
   h += '</div>';
-  h += '<div class="qa-pills"><button class="qa-pill" onclick="apriNuovoAppuntamentoGlobale()">' + ico('calendario',13) + ' Appuntamento</button><button class="qa-pill" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',13) + ' Libera</button></div>';
-  if (items.length === 0) {
-    h += '<div class="card"><div class="empty" style="padding:32px 16px;"><div class="icon">' + ico('calendario',28) + '</div>Niente in programma per questo giorno</div></div>';
+  h += '<div class="ag-days">';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const ymd = ymdDaData(d);
+    const isToday = ymd === today;
+    h += '<div class="ag-day-col">';
+    for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-line"></div>';
+    const items = collectItemsForDay(ymd);
+    for (const it of items) {
+      if (it.ora === '--:--') continue;
+      const [hh, mm] = it.ora.split(':').map(Number);
+      const top = (hh * 60 + mm);
+      let dur = 60;
+      if (it.kind === 'app') { const ap = DB.appuntamenti.find(a => a.id === it.id); if (ap) dur = Math.max(30, (new Date(ap.dataFine) - new Date(ap.dataInizio)) / 60000); }
+      h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + 'CC;border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
+      h += '<div class="ag-event-title">' + escapeHtml(it.tipo === 'ATT' ? 'ATT' : (it.tipo === 'LIBERA' ? 'LIB' : it.tipo)) + '</div>';
+      h += '<div class="ag-event-time">' + it.ora + '</div>';
+      h += '</div>';
+    }
+    if (isToday) {
+      const lineTop = now.getHours() * 60 + now.getMinutes();
+      h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>';
+    }
     h += '</div>';
-    return h;
   }
-  if (apps.length > 0) { for (const a of apps) h += renderItemAppuntamento(DB.appuntamenti.find(x => x.id === a.id)); }
-  if (atts.length > 0) {
-    h += '<div class="section-title" style="margin-top:14px;">Attività</div>';
-    for (const a of atts) {
-      h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + (a.ora === '--:--' ? '' : a.ora + ' · ') + 'DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div>' + (a.entitaTitolo ? '<div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div>' : '') + '</div></div>';
-    }
-  }
-  if (libs.length > 0) {
-    h += '<div class="section-title" style="margin-top:14px;">Cose libere</div>';
-    for (const p2 of libs) {
-      h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:var(--arancione);">' + (p2.ora === '--:--' ? '' : p2.ora + ' · ') + 'LIBERA</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>';
-    }
-  }
+  h += '</div></div>';
+  return h;
+}
+
+/* ---------- GIORNO (timeline oraria 1 colonna) ---------- */
+function htmlCalendarioDayIPhone() {
+  const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+  const ymd = ymdDaData(base);
+  const isToday = ymd === ymdDaData(new Date());
+  const now = new Date();
+  let h = '<div class="ag-timeline">';
+  h += '<div class="ag-hours-col">';
+  for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + ':00</div>';
   h += '</div>';
+  h += '<div class="ag-days">';
+  h += '<div class="ag-day-col" style="border-left:none;">';
+  for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-line"></div>';
+  const items = collectItemsForDay(ymd);
+  for (const it of items) {
+    if (it.ora === '--:--') continue;
+    const [hh, mm] = it.ora.split(':').map(Number);
+    const top = (hh * 60 + mm);
+    let dur = 60;
+    if (it.kind === 'app') { const ap = DB.appuntamenti.find(a => a.id === it.id); if (ap) dur = Math.max(30, (new Date(ap.dataFine) - new Date(ap.dataInizio)) / 60000); }
+    h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + 'CC;border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
+    h += '<div class="ag-event-title">' + escapeHtml(it.tipo === 'ATT' ? 'ATTIVITÀ' : (it.tipo === 'LIBERA' ? 'LIBERA' : it.tipo)) + ' · ' + escapeHtml(it.testo.slice(0, 40)) + '</div>';
+    h += '<div class="ag-event-time">' + it.ora + '</div>';
+    h += '</div>';
+  }
+  if (isToday) {
+    const lineTop = now.getHours() * 60 + now.getMinutes();
+    h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>';
+  }
+  h += '</div></div>';
   return h;
 }
 
@@ -2742,7 +2862,7 @@ function eliminaPianificazione(id) {
 }
 
 // =====================================================
-// PAGINA PLANNING (senza data duplicata, meno bottoni)
+// PAGINA PLANNING
 // =====================================================
 let planningPageYmd = null;
 function apriPlanningPage(ymd) { planningPageYmd = ymd || currentPlanningYmd(); mostraView('view-planning'); renderPlanningPage(); }
@@ -2758,11 +2878,8 @@ function renderPlanningPage() {
   const titolo = (oggi ? 'Oggi · ' : '') + GIORNI_LUNGHI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()];
   const p = getPlanningPerData(ymd);
   const tot = p.apps.length + p.att.length + p.lib.length;
-  const topbar = '<div class="agenda-topbar"><button class="back" onclick="tornaAttivita()" aria-label="Indietro">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>'
-    + '</button><div class="title">Planning</div></div>';
   let h = '';
-  h += '<div class="cal-zoom-header">';
+  h += '<div class="cal-zoom-header" style="margin-top:50px;">';
   h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(-1)">‹</button>';
   h += '<div class="cal-zoom-label">' + titolo + '</div>';
   h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(1)">›</button>';
@@ -2774,7 +2891,7 @@ function renderPlanningPage() {
     if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Attività da fare</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
     if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:12px;">Cose libere</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
   }
-  cont.innerHTML = topbar + '<div class="agenda-view-wrap">' + h + '</div>';
+  cont.innerHTML = h;
 }
 
 // =====================================================
