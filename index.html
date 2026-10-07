@@ -195,6 +195,17 @@
   .add-btn svg { width: 14px; height: 14px; }
   .add-btn:active { opacity: 0.7; }
 
+  /* FOTO */
+  .foto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+  .foto-item { aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; background: #f1f5f9; cursor: pointer; position: relative; }
+  .foto-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .foto-item:active { opacity: 0.85; }
+  .foto-placeholder { width: 100%; height: 100%; background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .foto-add { width: 100%; aspect-ratio: 1 / 1; border-radius: 8px; background: var(--card); border: 1.5px dashed var(--border-strong); color: var(--testo-ter); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-family: inherit; font-size: 10.5px; font-weight: 500; }
+  .foto-add:active { background: var(--sfondo); }
+  .foto-add svg { width: 20px; height: 20px; }
+
   .sottotipo-line { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 8px; }
   .sottotipo-line .lbl { color: var(--testo-sec); }
   .sottotipo-line button { background: #f1f5f9; border: none; border-radius: 6px; padding: 5px 10px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; align-items: center; gap: 4px; }
@@ -436,26 +447,22 @@
     .agenda-giorno.oggi:hover { background: #fdebd1; }
     .tipo-app-btn:hover { background: #f8fafc; border-color: var(--blu); }
     .theme-btn:hover { background: var(--sfondo); }
+    .foto-grid { grid-template-columns: repeat(4, 1fr); }
   }
   @media (min-width: 1024px) {
     :root { --max-w: 720px; }
     .app-content { padding-left: 20px; padding-right: 20px; }
+    .foto-grid { grid-template-columns: repeat(5, 1fr); }
   }
 
   /* ============================================
      TEMA SCURO
-     Sempre attivato tramite [data-theme="dark"] risolto in JS.
-     Brand colors Tecnorete invariati: --blu e --arancione sono gli stessi della modalità chiara.
-     Palette neutra: nero/grigio.
      ============================================ */
   :root[data-theme="dark"] {
-    /* Brand Tecnorete - INVARIATI */
     --blu: #1a3a5c;
     --arancione: #e0651a;
-    /* Varianti soft adattate per sfondi scuri */
     --blu-soft: #131f2b;
     --arancione-soft: #2a1a0f;
-    /* Neutri - nero/grigio */
     --sfondo: #0a0a0a;
     --card: #151515;
     --testo: #e6e6e6;
@@ -467,13 +474,11 @@
     --imm: #3a3a3a;
   }
 
-  /* Sfondi principali */
   :root[data-theme="dark"] body,
   :root[data-theme="dark"] .app { background: var(--sfondo); }
   :root[data-theme="dark"] .tabbar { background: rgba(10,10,10,0.95); }
   :root[data-theme="dark"] .modal-sheet { background: #0f0f0f; }
 
-  /* Cards ed elementi neutri */
   :root[data-theme="dark"] .btn-secondary,
   :root[data-theme="dark"] .chip,
   :root[data-theme="dark"] .chip-dropdown { background: #1a1a1a; }
@@ -527,9 +532,10 @@
   :root[data-theme="dark"] .app-esito.ko { background: #2a1010; color: #fca5a5; }
   :root[data-theme="dark"] .app-esito.neutral { background: #1e1e1e; color: var(--testo-sec); }
   :root[data-theme="dark"] .badge-IMM { background: #3a3a3a; color: white; }
+  :root[data-theme="dark"] .foto-item { background: #1e1e1e; }
+  :root[data-theme="dark"] .foto-placeholder { background: linear-gradient(90deg, #1e1e1e 0%, #2a2a2a 50%, #1e1e1e 100%); background-size: 200% 100%; }
+  :root[data-theme="dark"] .foto-add { background: #1a1a1a; }
 
-  /* Dove --blu è usato come TESTO su sfondo scuro: variante chiara per leggibilità.
-     Il --blu Tecnorete (#1a3a5c) resta invariato per gli sfondi (chip attive, badge, ecc.). */
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -561,7 +567,6 @@
   }
   :root[data-theme="dark"] .villa-toggle button.active { border-color: #7aa9d9; }
 
-  /* Chip/zone/map con sfondo --blu → testo bianco */
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
   :root[data-theme="dark"] .zone-chip.active { color: #ffffff; }
@@ -569,7 +574,6 @@
   :root[data-theme="dark"] .map-chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip-dropdown.active { color: #ffffff; }
 
-  /* Tile mappa in dark */
   :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
 </style>
 </head>
@@ -693,15 +697,16 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Dati</h2>
-        <p style="margin-bottom:12px;">Esporta o importa un backup completo.</p>
+        <p style="margin-bottom:12px;">Esporta o importa un backup completo (le foto non sono incluse).</p>
         <button class="btn btn-secondary" onclick="esportaBackup()" data-icon="download">Esporta backup</button>
         <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()" data-icon="uploadBox">Importa backup</button>
         <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaBackup(event)">
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.3</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.4</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
+        <div class="info-row"><span class="label">Foto</span><span class="value" id="storage-foto">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
         <div class="info-row" style="display:block;padding:8px 0;"><div id="storage-bar"></div></div>
         <div class="info-row"><span class="label">Città principale</span><span class="value" id="sistema-citta">—</span></div>
@@ -709,7 +714,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Zona pericolosa</h2>
-        <p style="margin-bottom:12px;">Cancella tutti i dati. Operazione irreversibile.</p>
+        <p style="margin-bottom:12px;">Cancella tutti i dati e tutte le foto. Operazione irreversibile.</p>
         <button class="btn btn-danger" onclick="cancellaTutto()" data-icon="cestino">Cancella tutti i dati</button>
       </div>
     </section>
@@ -791,6 +796,8 @@ const ICON_PATHS = {
   sole: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
   luna: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
   contrasto: '<circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/>',
+  camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  foto: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
   x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   freccia: '<polyline points="9 18 15 12 9 6"/>',
   utente: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
@@ -822,7 +829,6 @@ function applicaIcone() {
 // =====================================================
 // TEMA
 // =====================================================
-// "auto" risolve subito in light/dark in base al sistema e resta in ascolto.
 function getTemaPreferito() { try { return localStorage.getItem('arangiò_theme') || 'auto'; } catch(e) { return 'auto'; } }
 function risolviTema(t) {
   if (t === 'dark') return 'dark';
@@ -852,7 +858,6 @@ function updateThemeButtons() {
     if (b) b.classList.toggle('active', x === t);
   });
 }
-// Ascolta i cambi di tema di sistema: aggiorna solo se in "auto"
 try {
   const mq = window.matchMedia('(prefers-color-scheme: dark)');
   const onChange = () => { if (getTemaPreferito() === 'auto') applyTema('auto'); };
@@ -909,11 +914,283 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 41, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 42, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], condomini: {}, coordinateCondominii: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
 if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
+
+// =====================================================
+// PHOTO STORAGE — IndexedDB (spazio fino a centinaia di MB / GB)
+// =====================================================
+const PhotoDB = {
+  db: null,
+  _opening: null,
+  open() {
+    if (this.db) return Promise.resolve(this.db);
+    if (this._opening) return this._opening;
+    this._opening = new Promise((resolve, reject) => {
+      let req;
+      try { req = indexedDB.open('arangiò_foto_db', 1); }
+      catch(e) { reject(e); return; }
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('foto')) {
+          db.createObjectStore('foto', { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = () => { this.db = req.result; this._opening = null; resolve(this.db); };
+      req.onerror = () => { this._opening = null; reject(req.error); };
+      req.onblocked = () => { this._opening = null; reject(new Error('IndexedDB bloccato')); };
+    });
+    return this._opening;
+  },
+  async save(id, blob, meta) {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('foto', 'readwrite');
+      const st = tx.objectStore('foto');
+      st.put({ id, blob, meta: meta || {}, createdAt: Date.now() });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+  async get(id) {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('foto', 'readonly');
+      const req = tx.objectStore('foto').get(id);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async delete(id) {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('foto', 'readwrite');
+      tx.objectStore('foto').delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+  async allKeys() {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('foto', 'readonly');
+      const req = tx.objectStore('foto').getAllKeys();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async estimateSize() {
+    try {
+      const db = await this.open();
+      return new Promise((resolve) => {
+        const tx = db.transaction('foto', 'readonly');
+        const st = tx.objectStore('foto');
+        let tot = 0;
+        const cur = st.openCursor();
+        cur.onsuccess = (e) => {
+          const c = e.target.result;
+          if (c) {
+            const b = c.value && c.value.blob;
+            if (b && typeof b.size === 'number') tot += b.size;
+            c.continue();
+          } else resolve(tot);
+        };
+        cur.onerror = () => resolve(0);
+      });
+    } catch(e) { return 0; }
+  },
+  async clear() {
+    try {
+      const db = await this.open();
+      return new Promise((resolve) => {
+        const tx = db.transaction('foto', 'readwrite');
+        tx.objectStore('foto').clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => resolve();
+      });
+    } catch(e) {}
+  }
+};
+
+const photoCache = {}; // id -> objectURL
+async function getPhotoURL(id) {
+  if (photoCache[id]) return photoCache[id];
+  try {
+    const rec = await PhotoDB.get(id);
+    if (!rec || !rec.blob) return null;
+    const url = URL.createObjectURL(rec.blob);
+    photoCache[id] = url;
+    return url;
+  } catch(e) { return null; }
+}
+function revocaCacheFoto(id) {
+  if (photoCache[id]) { try { URL.revokeObjectURL(photoCache[id]); } catch(e) {} delete photoCache[id]; }
+}
+
+async function processImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 2000;
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (w > MAX || h > MAX) {
+          if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('Compressione fallita'));
+        }, 'image/jpeg', 0.85);
+      };
+      img.onerror = () => reject(new Error('Immagine non valida'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Errore lettura file'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function apriFilePickerFoto(idImmobile, fromCamera) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  if (fromCamera) input.capture = 'environment';
+  else input.multiple = true;
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  const cleanup = () => { try { document.body.removeChild(input); } catch(e) {} };
+  input.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files || []);
+    cleanup();
+    if (files.length === 0) return;
+    await aggiungiFotoAImmobile(idImmobile, files);
+  });
+  // safety cleanup se l'utente annulla
+  setTimeout(() => { if (document.body.contains(input)) cleanup(); }, 60000);
+  input.click();
+}
+
+async function aggiungiFotoAImmobile(idImmobile, files) {
+  const im = DB.immobili.find(x => x.id === idImmobile);
+  if (!im) return;
+  im.foto = im.foto || [];
+  let ok = 0, fail = 0;
+  for (const f of files) {
+    try {
+      const blob = await processImage(f);
+      const pid = 'ph_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      await PhotoDB.save(pid, blob, { nome: f.name || '', mime: 'image/jpeg', size: blob.size });
+      im.foto.push(pid);
+      ok++;
+    } catch (err) {
+      console.warn('Foto fallita:', err);
+      fail++;
+    }
+  }
+  im.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  if (fail > 0) alert(ok + ' foto aggiunte · ' + fail + ' errori');
+  if (immobileAperto === idImmobile) apriScheda(idImmobile);
+  else renderListaImmobili();
+  aggiornaInfoSistema();
+}
+
+async function caricaFotoGriglia(containerId, photoIds) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  if (!photoIds || photoIds.length === 0) {
+    c.innerHTML = '<p style="font-size:12.5px;color:var(--testo-sec);padding:4px 0;margin:0;">Nessuna foto ancora.</p>';
+    return;
+  }
+  let html = '<div class="foto-grid">';
+  for (const pid of photoIds) {
+    html += '<div class="foto-item" data-pid="' + pid + '" onclick="apriFotoViewer(\'' + pid + '\')"><div class="foto-placeholder"></div></div>';
+  }
+  html += '</div>';
+  c.innerHTML = html;
+  for (const pid of photoIds) {
+    const url = await getPhotoURL(pid);
+    if (!url) continue;
+    const el = c.querySelector('[data-pid="' + pid + '"]');
+    if (el) el.innerHTML = '<img src="' + url + '" alt="" loading="lazy">';
+  }
+}
+
+async function apriFotoViewer(pid) {
+  const url = await getPhotoURL(pid);
+  if (!url) { alert('Foto non disponibile.'); return; }
+  let imId = null;
+  for (const im of DB.immobili) {
+    if ((im.foto || []).includes(pid)) { imId = im.id; break; }
+  }
+  let h = '<div style="text-align:center;background:#000;border-radius:8px;overflow:hidden;margin-bottom:10px;"><img src="' + url + '" style="max-width:100%;max-height:65vh;display:block;margin:0 auto;object-fit:contain;"></div>';
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="scaricaFoto(\'' + pid + '\')">' + ico('download',16) + ' Scarica</button>';
+  h += '<button class="btn btn-danger" onclick="eliminaFoto(\'' + pid + '\')">' + ico('cestino',16) + ' Elimina</button></div>';
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="' + (imId ? 'chiudiModal();setTimeout(function(){apriScheda(\\\'' + imId + '\\\')},100)' : 'chiudiModal()') + '">Chiudi</button></div>';
+  apriModal(ico('camera',18) + ' Foto', h);
+}
+
+async function scaricaFoto(pid) {
+  const rec = await PhotoDB.get(pid);
+  if (!rec || !rec.blob) { alert('Foto non disponibile.'); return; }
+  const url = URL.createObjectURL(rec.blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'arangiò_foto_' + pid + '.jpg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
+async function eliminaFoto(pid) {
+  if (!confirm('Eliminare questa foto?')) return;
+  // rimuovi da tutte le entità
+  for (const im of DB.immobili) {
+    if (im.foto && im.foto.includes(pid)) {
+      im.foto = im.foto.filter(x => x !== pid);
+      im.updatedAt = new Date().toISOString();
+    }
+  }
+  for (const p of DB.persone) {
+    if (p.foto && p.foto.includes(pid)) {
+      p.foto = p.foto.filter(x => x !== pid);
+      p.updatedAt = new Date().toISOString();
+    }
+  }
+  Storage.save(DB);
+  try { await PhotoDB.delete(pid); } catch(e) {}
+  revocaCacheFoto(pid);
+  chiudiModal();
+  if (immobileAperto) apriScheda(immobileAperto);
+  aggiornaInfoSistema();
+}
+
+async function cleanupFotoImmobile(im) {
+  if (!im || !im.foto || im.foto.length === 0) return;
+  for (const pid of im.foto) {
+    try { await PhotoDB.delete(pid); } catch(e) {}
+    revocaCacheFoto(pid);
+  }
+}
+
+async function requestPersistentStorage() {
+  try {
+    if (navigator.storage && navigator.storage.persist) {
+      const already = navigator.storage.persisted ? await navigator.storage.persisted() : false;
+      if (!already) await navigator.storage.persist();
+    }
+  } catch(e) {}
+}
 
 // =====================================================
 // COSTANTI
@@ -994,6 +1271,12 @@ function normalizzaTipoImmobile(s) {
   const t = String(s).trim().toLowerCase();
   if (/^\d+$/.test(t)) { const n = parseInt(t, 10); return MAPPA_LOCALI[n] || (n + ' locali'); }
   return s.trim();
+}
+function formatBytes(b) {
+  if (!b || b < 1024) return (b || 0) + ' B';
+  if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+  if (b < 1024*1024*1024) return (b/(1024*1024)).toFixed(2) + ' MB';
+  return (b/(1024*1024*1024)).toFixed(2) + ' GB';
 }
 
 // =====================================================
@@ -1139,22 +1422,48 @@ tabButtons.forEach(btn => {
 });
 function aggiornaFabPersone() { document.getElementById('fab-menu').innerHTML = ''; }
 
-function aggiornaInfoSistema() {
+async function aggiornaInfoSistema() {
   const el = document.getElementById('sistema-citta'); if (el) el.textContent = getCittaPrincipale();
   const sInfo = document.getElementById('storage-info');
   const sCache = document.getElementById('storage-cache');
+  const sFoto = document.getElementById('storage-foto');
   const sBarra = document.getElementById('storage-bar');
   const dbSize = (localStorage.getItem(DB_KEY) || '').length;
   const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
-  const totMB = (dbSize + cacheSize) / (1024*1024);
   const dbMB = dbSize / (1024*1024);
   const cacheMB = cacheSize / (1024*1024);
+
+  let photoBytes = 0, photoCount = 0;
+  try {
+    photoBytes = await PhotoDB.estimateSize();
+    photoCount = (await PhotoDB.allKeys()).length;
+  } catch(e) {}
+
   if (sInfo) sInfo.textContent = dbMB.toFixed(2) + ' MB';
   if (sCache) sCache.textContent = cacheMB.toFixed(2) + ' MB';
+  if (sFoto) sFoto.textContent = formatBytes(photoBytes) + ' · ' + photoCount + ' foto';
+
   if (sBarra) {
-    const pct = Math.min(100, (totMB / 5) * 100);
+    let pct = 0, label = '—';
+    let quotaBytes = null, usageBytes = null;
+    if (navigator.storage && navigator.storage.estimate) {
+      try {
+        const est = await navigator.storage.estimate();
+        quotaBytes = est.quota;
+        usageBytes = est.usage;
+      } catch(e) {}
+    }
+    if (quotaBytes && usageBytes != null) {
+      pct = Math.min(100, (usageBytes / quotaBytes) * 100);
+      label = formatBytes(usageBytes) + ' / ' + formatBytes(quotaBytes);
+    } else {
+      const tot = dbSize + cacheSize + photoBytes;
+      const symbolic = 1024*1024*1024; // ~1 GB fallback
+      pct = Math.min(100, (tot / symbolic) * 100);
+      label = formatBytes(tot) + ' / ~1 GB';
+    }
     let col = '#059669'; if (pct > 70) col = '#d97706'; if (pct > 90) col = '#dc2626';
-    sBarra.innerHTML = '<div style="font-size:10.5px;color:var(--testo-sec);margin-bottom:3px;">Spazio: <strong style="color:' + col + '">' + totMB.toFixed(2) + ' / ~5 MB</strong>' + (pct > 85 ? ' — ⚠️ quasi pieno!' : '') + '</div><div style="height:4px;background:#eef0f3;border-radius:2px;overflow:hidden;"><div style="height:100%;width:' + pct.toFixed(1) + '%;background:' + col + ';transition:width 0.3s;"></div></div>';
+    sBarra.innerHTML = '<div style="font-size:10.5px;color:var(--testo-sec);margin-bottom:3px;">Spazio: <strong style="color:' + col + '">' + label + '</strong>' + (pct > 85 ? ' — ⚠️ quasi pieno!' : '') + '</div><div style="height:4px;background:#eef0f3;border-radius:2px;overflow:hidden;"><div style="height:100%;width:' + pct.toFixed(2) + '%;background:' + col + ';transition:width 0.3s;"></div></div>';
   }
 }
 function pulisciCacheGeocodifica() {
@@ -1278,6 +1587,7 @@ function renderItemCardImmobile(imm) {
   const condo = getCondominio(imm); const f = immobiliStessoCondominio(imm); const isCondo = f.length > 0;
   const ze = getZoneEffettive(imm);
   const tel = imm.telefono;
+  const nFoto = (imm.foto || []).length;
   let h = '<div class="item-card" onclick="apriScheda(\'' + imm.id + '\')"><div class="item-row"><div class="item-title">' + escapeHtml(titolo) + '</div>';
   if (imm.villa) h += '<span style="font-size:10px;color:#059669;font-weight:600;">VILLA</span>';
   h += '<span class="badge badge-' + imm.stato + '">' + imm.stato + '</span></div>';
@@ -1287,6 +1597,7 @@ function renderItemCardImmobile(imm) {
   if (imm.inTrattativa) h += '<div class="item-sub" style="color:#d97706;font-weight:600;">' + ico('fuoco',11) + ' Trattativa' + (imm.propostaNotificata ? ' · notificata' : (imm.propostaAccettata ? ' · accettata' : '')) + '</div>';
   if (isCondo) h += '<div class="item-sub">' + iconaCondo(11) + ' ' + escapeHtml(condo) + ' · z' + (imm.z || 1) + '</div>';
   if (ze.length > 0) h += '<div class="item-sub">' + ico('pin',11) + ' ' + escapeHtml(ze.join(' · ')) + '</div>';
+  if (nFoto > 0) h += '<div class="item-sub">' + ico('camera',11) + ' ' + nFoto + ' foto</div>';
   if (ultima) h += '<div class="item-meta"><span>' + escapeHtml(ultima.testo.slice(0, 38)) + (ultima.testo.length > 38 ? '…' : '') + '</span><span>' + formattaDataBreve(dataEffettivaAttivita(ultima)) + '</span></div>';
   if (tel) h += '<div class="qa-row" onclick="event.stopPropagation()"><button class="qa-btn" onclick="chiamaNumero(\'' + escapeHtml(tel) + '\')">' + ico('telefono',13) + ' Chiama</button><button class="qa-btn wa" onclick="apriWhatsApp(\'' + escapeHtml(tel) + '\')">' + ico('whatsapp',13) + ' WhatsApp</button></div>';
   h += '</div>'; return h;
@@ -1412,7 +1723,7 @@ function salvaNuovoAcquirente() {
   const ct = (g('a-collega-type') || {}).value; const col = ct === 'collega' ? ((g('a-collega-nome') || {}).value || '').trim() : '';
   const im = ((g('a-immobili') || {}).value || '').split('/').map(s => s.trim().toUpperCase()).filter(s => s);
   const ad = new Date().toISOString();
-  const p = { id: uid(), tipo: 'acquirente', cognomeNome: cn, telefono: (g('a-telefono') || {}).value || '', email: (g('a-email') || {}).value || '', statoRR: (g('a-stato') || {}).value || 'attiva', collega: col, budget: (g('a-budget') || {}).value || '', tipoImmobile: normalizzaTipoImmobile((g('a-tipo-imm') || {}).value || ''), zona: (g('a-zona') || {}).value || '', box: (g('a-box') || {}).value || '', esigenze: (g('a-esigenze') || {}).value || '', immobili: im, note: '', attivita: [], createdAt: ad, updatedAt: ad };
+  const p = { id: uid(), tipo: 'acquirente', cognomeNome: cn, telefono: (g('a-telefono') || {}).value || '', email: (g('a-email') || {}).value || '', statoRR: (g('a-stato') || {}).value || 'attiva', collega: col, budget: (g('a-budget') || {}).value || '', tipoImmobile: normalizzaTipoImmobile((g('a-tipo-imm') || {}).value || ''), zona: (g('a-zona') || {}).value || '', box: (g('a-box') || {}).value || '', esigenze: (g('a-esigenze') || {}).value || '', immobili: im, note: '', attivita: [], foto: [], createdAt: ad, updatedAt: ad };
   DB.persone.push(p); Storage.save(DB); chiudiModal();
   pTabAttivo = 'acquirente';
   document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === 'acquirente'));
@@ -1435,7 +1746,7 @@ function salvaNuovoProfessionista() {
   const g = (id) => document.getElementById(id);
   const cn = ((g('p-cognomeNome') || {}).value || '').trim().toUpperCase(); if (!cn) { alert('Inserisci cognome e nome'); return; }
   const ad = new Date().toISOString();
-  const p = { id: uid(), tipo: 'professionista', cognomeNome: cn, tipoProf: (g('p-tipoProf') || {}).value || 'altro', telefonoCell: (g('p-cell') || {}).value || '', telefonoUff: (g('p-uff') || {}).value || '', email: (g('p-email') || {}).value || '', indirizzoUff: ((g('p-ind') || {}).value || '').trim().toUpperCase(), note: (g('p-note') || {}).value || '', attivita: [], createdAt: ad, updatedAt: ad };
+  const p = { id: uid(), tipo: 'professionista', cognomeNome: cn, tipoProf: (g('p-tipoProf') || {}).value || 'altro', telefonoCell: (g('p-cell') || {}).value || '', telefonoUff: (g('p-uff') || {}).value || '', email: (g('p-email') || {}).value || '', indirizzoUff: ((g('p-ind') || {}).value || '').trim().toUpperCase(), note: (g('p-note') || {}).value || '', attivita: [], foto: [], createdAt: ad, updatedAt: ad };
   DB.persone.push(p); Storage.save(DB); chiudiModal();
   pTabAttivo = 'professionista';
   document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === 'professionista'));
@@ -1608,6 +1919,7 @@ function eliminaAttivitaPersona(idA) {
 function eliminaPersona() {
   const p = DB.persone.find(x => x.id === personaAperta); if (!p) return;
   if (!confirm('Eliminare?\n\n' + titoloPersona(p))) return;
+  if (p.foto && p.foto.length) { (async () => { for (const pid of p.foto) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } })(); }
   DB.persone = DB.persone.filter(x => x.id !== personaAperta);
   Storage.save(DB); personaAperta = null; chiudiModal(); renderPersone();
 }
@@ -1895,13 +2207,14 @@ function salvaAppuntamento() {
   const ds = '[' + formattaData(ap.dataInizio) + ']';
   if (!tp.libero) {
     if (imm && (tp.chi === 'vend' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let rp = per ? (' ' + per.cognomeNome + (per.telefonoCell || per.telefono ? ' ' + (per.telefonoCell || per.telefono) : '')) : ''; if (imm.attivita) imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + rp + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
-    if (per && (tp.chi === 'acq' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let ri = imm ? (' ' + ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || '')) : ''; if (per.attivita) per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + ri + ' fix il [' + formattaData(ap.dataInizio) + ']', completata: true }); }
+    if (per && (tp.chi === 'acq' || tp.chi === 'entrambi' || tp.chi === 'visita')) { let ri = imm ? (' ' + ((imm.stato === 'IMM' ? imm.indirizzo : imm.cognomeNome) || '')) : ''; if (per.attivita) per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + tp.sigla + ri + ' fix il [' + formatDataSafe(ap.dataInizio) + ']', completata: true }); }
   }
   Storage.save(DB); chiudiModal();
   aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale();
   if (map) aggiornaMappa(); if (typeof renderListaImmobili === 'function') renderListaImmobili();
   setTimeout(() => { if (confirm('Aggiungere a Google Calendar?')) apriGoogleCalendarApp(ap); }, 250);
 }
+function formatDataSafe(iso) { return formattaData(iso); }
 function apriSchedaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
   const imm = a.immobileId ? DB.immobili.find(x => x.id === a.immobileId) : null;
@@ -2242,8 +2555,8 @@ function salvaNuovoImmobile() {
   if (!iv) { if (tf === 'censito') { const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind); if (e.length > 0) { const zs = e.map(i => i.z || 1); if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo\nAnnulla = Riprendi esistente')) { const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0]; chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return; } zz = Math.max(...zs) + 1; } else zz = prossimoZPerCondominio(co); } else zz = prossimoZPerCondominio(co); }
   const flagsTrattativa = { inTrattativa: false, propostaAccettata: false, propostaNotificata: false };
   let im;
-  if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
-  else { const cn = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase(); const t = (document.getElementById('f-telefono') || {}).value || ''; const r = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase(); const se = document.getElementById('f-sottotipo'); const st = se ? se.value : ''; if (!cn) { alert('Cognome e nome obbligatori'); return; } const s = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK'; im = Object.assign({ id: uid(), stato: s, indirizzo: ind, z: zz, citofono: '', villa: iv, cognomeNome: cn, telefono: t.trim(), residenza: r, altriImmobili: [], altriProprietari: window._proprietariTemp.slice(), condominio: co, sottotipo: st, note: '', zone: z, dettagli: {}, attivita: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
+  if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
+  else { const cn = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase(); const t = (document.getElementById('f-telefono') || {}).value || ''; const r = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase(); const se = document.getElementById('f-sottotipo'); const st = se ? se.value : ''; if (!cn) { alert('Cognome e nome obbligatori'); return; } const s = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK'; im = Object.assign({ id: uid(), stato: s, indirizzo: ind, z: zz, citofono: '', villa: iv, cognomeNome: cn, telefono: t.trim(), residenza: r, altriImmobili: [], altriProprietari: window._proprietariTemp.slice(), condominio: co, sottotipo: st, note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
   applicaEreditaCondominio(im); DB.immobili.push(im); Storage.save(DB); chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); avviaGeocodificaBackground(im);
   setTimeout(() => { apriScheda(im.id); if (ca) setTimeout(() => apriNuovaAttivita(), 300); }, 180);
 }
@@ -2261,6 +2574,7 @@ function apriScheda(id) {
   const zd = !im.villa && dc.zone && dc.zone.length > 0;
   const hd = !im.villa && (dc.annoCostruzione || dc.statoCondominio || dc.cappotto || dc.ascensoreCondominiale || (dc.amministratore && dc.amministratore.nome));
   const ap2 = im.altriProprietari || []; const hc = !!(im.lat && im.lng);
+  const nFoto = (im.foto || []).length;
   let h = '<div style="margin-bottom:10px;display:flex;flex-wrap:wrap;gap:5px;"><span class="badge badge-' + im.stato + '">' + im.stato + '</span>';
   if (im.villa) h += ' <span style="font-size:10.5px;color:#059669;font-weight:600;">' + ico('villa',10) + ' VILLA</span>';
   if (im.sottotipo) h += ' <span style="font-size:11.5px;color:var(--testo-sec);">' + escapeHtml(im.sottotipo) + '</span>';
@@ -2279,6 +2593,15 @@ function apriScheda(id) {
   if (im.stato === 'NT') { const iv = (im.sottotipo || '').toLowerCase().includes('valutata') && !(im.sottotipo || '').toLowerCase().includes('non'); h += '<div style="padding-top:9px;border-top:1px solid var(--border);margin-top:6px;"><div class="sottotipo-line"><span class="lbl">Stato notizia</span><button onclick="toggleValutazione()">' + (iv ? ico('check',12) + ' Valutata' : ico('clessidra',12) + ' Non valutata') + ' · cambia</button></div></div>'; }
   if (ap2.length > 0) { h += '<div style="padding-top:9px;border-top:1px solid var(--border);margin-top:6px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;">Altri proprietari (' + ap2.length + ')</div>'; for (const p of ap2) { h += '<div class="prop-card"><div class="prop-nome">' + escapeHtml(p.cognomeNome || '') + (p.quota ? ' <span style="font-weight:500;color:var(--blu);">· ' + escapeHtml(p.quota) + '</span>' : '') + '</div>'; let ip = []; if (p.telefono) ip.push(ico('telefono',11) + ' ' + escapeHtml(p.telefono)); if (p.email) ip.push(ico('email',11) + ' ' + escapeHtml(p.email)); if (p.residenza) ip.push(ico('casa',11) + ' ' + escapeHtml(p.residenza)); if (ip.length > 0) h += '<div class="prop-info">' + ip.join('<br>') + '</div>'; h += '</div>'; } h += '</div>'; }
   h += '</div>';
+
+  // FOTO
+  h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFoto + ')</h2>';
+  h += '<div id="foto-grid-' + im.id + '"><div class="foto-grid"><div class="foto-placeholder" style="aspect-ratio:1;border-radius:8px;"></div></div></div>';
+  h += '<div style="display:flex;gap:6px;margin-top:8px;">';
+  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button>';
+  h += '<button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button>';
+  h += '</div></div>';
+
   if (im.telefono) { h += '<div class="actions"><button class="action-btn" onclick="chiamaNumero(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('telefono',19) + '</span>Chiama</button><button class="action-btn" onclick="apriWhatsApp(\'' + escapeHtml(im.telefono) + '\')"><span class="icon">' + ico('whatsapp',19) + '</span>WhatsApp</button></div>'; }
   h += '<div class="actions"><button class="action-btn" onclick="apriModifica()"><span class="icon">' + ico('modifica',19) + '</span>Modifica</button><button class="action-btn" onclick="apriCambiaStato()"><span class="icon">' + ico('aggiorna',19) + '</span>Stato</button><button class="action-btn" onclick="apriNuovaAttivita()"><span class="icon">' + ico('piu',19) + '</span>Attività</button></div>';
   h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoImmobile(\'' + im.id + '\')">' + ico('calendario',16) + ' Nuovo appuntamento</button>';
@@ -2302,6 +2625,8 @@ function apriScheda(id) {
   if (im.stato === 'VND') h += '<button class="btn btn-primary" onclick="archiviaImmobile()">' + ico('pacco',16) + ' Archivia</button>';
   h += '</div>';
   apriModal(t, h);
+  // async load foto griglia
+  setTimeout(() => caricaFotoGriglia('foto-grid-' + im.id, im.foto), 30);
 }
 function apriModificaCoordinate() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; const h = `<div class="form-group"><div class="form-row"><label class="form-label">Latitudine</label><input class="form-input" id="coord-lat" value="${i.lat || ''}" inputmode="decimal"></div><div class="form-row"><label class="form-label">Longitudine</label><input class="form-input" id="coord-lng" value="${i.lng || ''}" inputmode="decimal"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaCoordinateManuali('${i.id}')">Salva</button></div>`; apriModal(ico('pin',18) + ' Coordinate', h); }
 function salvaCoordinateManuali(id) { const i = DB.immobili.find(x => x.id === id); if (!i) return; const a = ((document.getElementById('coord-lat') || {}).value || '').trim(); const b = ((document.getElementById('coord-lng') || {}).value || '').trim(); if (!a || !b) { if (!a && !b) { i.lat = null; i.lng = null; i.geoPreciso = null; Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); return; } alert('Entrambe'); return; } const an = parseFloat(a.replace(',', '.')); const bn = parseFloat(b.replace(',', '.')); if (isNaN(an) || isNaN(bn)) { alert('Non valide'); return; } i.lat = an; i.lng = bn; i.geoPreciso = true; i.updatedAt = new Date().toISOString(); Storage.save(DB); if (map) aggiornaMappa(); apriScheda(id); }
@@ -2408,9 +2733,10 @@ function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === im
 function salvaModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const tx = (document.getElementById('ma-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } const d = document.getElementById('ma-data').value; if (!d) { alert('Data'); return; } const df = a.tipo === 'da_fare' && !a.completata; a.testo = tx.trim(); if (df) a.dataPrevista = new Date(d).toISOString(); else a.data = new Date(d).toISOString(); a.updatedAt = new Date().toISOString(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function eliminaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!confirm('Eliminare?\n\n' + a.testo)) return; i.attivita = (i.attivita || []).filter(x => x.id !== idA); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function toggleValutazione() { const i = DB.immobili.find(x => x.id === immobileAperto); const c = i.sottotipo || ''; const v = c.toLowerCase().includes('valutata') && !c.toLowerCase().includes('non'); i.sottotipo = v ? 'NT non ancora valutata' : 'NT valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Stato notizia: ' + (v ? '→ non ancora valutata' : '→ valutata'), completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); apriScheda(i.id); }
-function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa(); }
+function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); const foto = (i.foto || []).slice(); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa(); // cleanup foto
+  (async () => { for (const pid of foto) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } aggiornaInfoSistema(); })(); }
 function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Archiviato'); }
-function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
+function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
 
 function apriFormNuovoCondominio() {
   zoneTemp.condo = { base: [], speciale: null };
@@ -2443,7 +2769,10 @@ function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i =>
 function aggiornaContatori() { aggiornaInfoSistema(); }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'arangiò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
 function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
-function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati?')) return; if (!confirm('Sicuro?')) return; DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
+async function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati e TUTTE le foto?')) return; if (!confirm('Sicuro? Operazione irreversibile.')) return;
+  try { const keys = await PhotoDB.allKeys(); for (const k of keys) await PhotoDB.delete(k); } catch(e) {}
+  for (const k in photoCache) { try { URL.revokeObjectURL(photoCache[k]); } catch(e) {} delete photoCache[k]; }
+  DB = Storage.default(); Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp(); alert('Cancellato'); }
 function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal(ico('ingranaggio',18) + ' Città', h); }
 function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('Città: ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
 
@@ -2456,19 +2785,16 @@ document.getElementById('chip-ptab-acq').innerHTML = ico('casa',12) + ' Acquiren
 document.getElementById('chip-ptab-prof').innerHTML = ico('valigetta',12) + ' Professionisti';
 document.getElementById('btn-modal-close').innerHTML = ico('x',14);
 
+requestPersistentStorage();
+PhotoDB.open().catch(e => console.warn('IndexedDB non disponibile:', e));
+
 applicaIcone();
 aggiornaChips(); renderListaImmobili(); aggiornaContatori(); aggiornaInfoSistema(); aggiornaFabPersone(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); aggiornaHeaderProssimoApp();
 updateThemeButtons();
 updateThemeColorMeta();
 
-(function() {
-  const dbSize = (localStorage.getItem(DB_KEY) || '').length;
-  const cacheSize = (localStorage.getItem(GEOCODE_CACHE_KEY) || '').length;
-  const totMB = (dbSize + cacheSize) / (1024*1024);
-  if (totMB > 4.5) {
-    setTimeout(() => alert('⚠️ Spazio quasi esaurito (' + totMB.toFixed(2) + ' MB su ~5 MB).\n\nVai in "Altro" → Esporta backup + Svuota cache.'), 800);
-  }
-})();
+// ricontrolla lo spazio dopo il primo render
+setTimeout(() => aggiornaInfoSistema(), 1500);
 </script>
 
 </body>
