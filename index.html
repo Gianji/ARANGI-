@@ -48,7 +48,6 @@
     --tabbar-h: 60px; --max-w: 640px;
     --imm: #94a3b8; --pa: #c2740c; --nt: #2563eb; --ink: #047857; --vnd: #b91c1c; --rr: #7c3aed; --prof: #0e7490;
     --ora-h: 60px;
-    /* Colori tipi appuntamento */
     --app-val: #e91e8c;
     --app-rival: #f8b4d9;
     --app-gink: #26c6a5;
@@ -491,7 +490,6 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* Match banner */
   .match-banner { background: linear-gradient(135deg, var(--blu-soft), var(--arancione-soft)); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 10px; }
   .match-banner .mb-title { font-size: 11px; font-weight: 700; color: var(--blu); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
   .match-banner .mb-chips { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -499,7 +497,6 @@
   .match-banner .mb-chip:active { background: var(--blu-soft); }
   .match-banner .mb-chip.match { border-color: var(--arancione); color: var(--arancione-deep); background: var(--arancione-soft); }
 
-  /* ============ AGENDA / PLANNING PAGE — STILE iPHONE ============ */
   #view-agenda.active, #view-planning.active {
     flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; animation: none;
   }
@@ -559,6 +556,9 @@
   }
   .ag-ws-day.today .ag-ws-num { background: var(--arancione); color: #fff; font-weight: 600; }
   .ag-ws-day.today .ag-ws-name { color: var(--arancione); }
+  .ag-ws-day.sel .ag-ws-num { background: var(--blu); color: #fff; font-weight: 600; }
+  .ag-ws-day.sel .ag-ws-name { color: var(--blu); }
+  .ag-ws-day.sel.today .ag-ws-num { background: var(--arancione); color: #fff; }
 
   .ag-sep { height: 1px; background: var(--border-strong); margin: 0 16px; flex-shrink: 0; }
 
@@ -567,23 +567,43 @@
     overflow-y: auto; overflow-x: hidden;
     -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
     position: relative;
+    padding-bottom: 90px;
   }
+
+  /* Bottom bar FISSO come il FAB */
   .ag-bottombar {
-    display: flex; padding: 8px 14px; gap: 8px;
-    flex-shrink: 0; align-items: center;
-    background: var(--sfondo);
+    position: fixed;
+    left: 0; right: 0;
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 22px);
+    z-index: 45;
+    padding: 0;
+    background: transparent;
+    pointer-events: none;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 22px;
   }
   .ag-pill {
-    padding: 10px 20px; border-radius: 999px;
+    pointer-events: auto;
+    padding: 12px 22px; border-radius: 999px;
     background: var(--card); border: 1px solid var(--border-strong);
     font-family: inherit; font-size: 14px; font-weight: 600;
-    color: var(--blu); cursor: pointer; transition: background 0.15s ease;
+    color: var(--blu); cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    transition: background 0.15s ease;
   }
   .ag-pill:active { background: var(--hover-bg); }
+  @media (min-width: 768px) {
+    .ag-bottombar {
+      left: 50%; transform: translateX(-50%);
+      max-width: var(--max-w);
+      padding-left: 22px;
+    }
+  }
+
   .ag-view .ag-content > * { animation: agViewIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
   @keyframes agViewIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Anno */
   .ag-year { padding: 4px 12px 40px; }
   .ag-year-month { margin-bottom: 22px; }
   .ag-year-name { font-size: 17px; font-weight: 700; color: var(--blu); margin-bottom: 6px; padding-left: 4px; }
@@ -593,7 +613,6 @@
   .ag-year-cell.today .ag-year-num { background: var(--arancione); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
   .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
-  /* Mese */
   .ag-month { padding: 0 8px 40px; }
   .ag-month-name { font-size: 28px; font-weight: 700; color: var(--blu); padding: 4px 12px 8px; letter-spacing: -0.03em; }
   .ag-month-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 8px 0 6px; letter-spacing: 0.06em; }
@@ -603,10 +622,11 @@
   .ag-month-num { font-size: 17px; font-weight: 500; color: var(--testo); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
   .ag-month-cell.other { opacity: 0.28; }
   .ag-month-cell.today .ag-month-num { background: var(--arancione); color: #fff; font-weight: 600; }
+  .ag-month-cell.selected .ag-month-num { box-shadow: 0 0 0 2px var(--blu); }
+  .ag-month-cell.selected.today .ag-month-num { box-shadow: 0 0 0 2px var(--arancione); }
   .ag-month-bars { display: flex; gap: 2px; justify-content: center; width: 100%; padding: 0 4px; }
   .ag-month-bar { flex: 1; max-width: 8px; height: 4px; border-radius: 2px; }
 
-  /* Timeline */
   .ag-timeline {
     display: flex;
     position: relative;
@@ -686,7 +706,6 @@
     .foto-grid { grid-template-columns: repeat(6, 1fr); }
   }
 
-  /* DARK MODE */
   :root[data-theme="dark"] {
     --blu: #8ab0d4; --blu-deep: #6f95bb; --blu-soft: #1a2533;
     --arancione: #ec6f2a; --arancione-deep: #d9601a; --arancione-soft: #2a1a10;
@@ -1220,14 +1239,7 @@ const STATI_RR = [
   { id: 'non-attiva', label: 'RR non attiva', tag: '#RR-non-attiva' }, { id: 'rogitato', label: 'RR rogitato', tag: '#RR-rogitato' }
 ];
 
-/* =====================================================
-   NUOVI TIPI APPUNTAMENTO
-   chi: 'vend' = immobile | 'acq' = persona | 'visita' = immobile+persona | 'entrambi' = immobile+persona | 'solo' = nessuno | 'gen' = immobile o persona
-   colore: variabile CSS
-   esiti: lista esiti specifici
-   ===================================================== */
 const TIPI_APPUNTAMENTO = [
-  // IMMOBILI
   { sigla: 'VAL', nome: 'Valutazione', chi: 'vend', icona: 'righello', desc: 'Valutazione (su NT non valutata)', colore: 'var(--app-val)', sezione: 'immobili', richiede: 'NT_nv', esiti: [
     { id: 'val-ok', label: 'Valutato / acquisito', tipo: 'ok' },
     { id: 'val-ko', label: 'Non interessato', tipo: 'ko' },
@@ -1245,7 +1257,6 @@ const TIPI_APPUNTAMENTO = [
     { id: 'gink-rinnovo', label: 'Rinnovato', tipo: 'ok' },
     { id: 'gink-rifiuto', label: 'Rifiutato', tipo: 'ko' }
   ]},
-  // ACQUIRENTI
   { sigla: 'APP', nome: 'Appuntamento di visita', chi: 'visita', icona: 'occhio', desc: 'Visita immobile con RR', colore: 'var(--app-visita)', sezione: 'acquirenti', richiede: 'RR_e_immobile', esiti: [
     { id: 'app-piace', label: 'Visto e piace', tipo: 'ok' },
     { id: 'app-prezzo', label: 'Non piace per prezzo', tipo: 'ko' },
@@ -1257,7 +1268,6 @@ const TIPI_APPUNTAMENTO = [
     { id: 'cons-ko', label: 'Non mutuabile', tipo: 'ko' },
     { id: 'cons-approfondire', label: 'Da approfondire', tipo: 'neutral' }
   ]},
-  // TRATTATIVA
   { sigla: 'RIT PROP', nome: 'Ritiro proposta', chi: 'visita', icona: 'upload', desc: 'Ritiro proposta da RR', colore: 'var(--app-ritprop)', sezione: 'trattativa', richiede: 'RR_ha_visto_INK', esiti: [
     { id: 'rit-ok', label: 'Proposta ritirata', tipo: 'ok' },
     { id: 'rit-ko', label: 'Proposta non presentata', tipo: 'ko' }
@@ -1280,9 +1290,14 @@ const TIPI_APPUNTAMENTO = [
     { id: 'atto-rinviato', label: 'Rinviato', tipo: 'neutral' },
     { id: 'atto-annullato', label: 'Annullato', tipo: 'ko' }
   ]},
-  // UFFICIO
   { sigla: 'UFFICIO', nome: 'Gestione ufficio', chi: 'solo', icona: 'ufficio', desc: 'Attività di ufficio', colore: 'var(--app-ufficio)', sezione: 'ufficio', richiede: null, esiti: null, senza_tag: true },
-  { sigla: 'GENERICO', nome: 'Generico', chi: 'gen', icona: 'calendario', desc: 'Appuntamento generico', colore: 'var(--app-generico)', sezione: 'ufficio', richiede: 'RR_o_immobile', esiti: null, senza_tag: true },
+  { sigla: 'GENERICO', nome: 'Generico', chi: 'gen', icona: 'calendario', desc: 'Appuntamento generico', colore: 'var(--app-generico)', sezione: 'ufficio', richiede: 'RR_o_immobile', esito_obbligatorio: true, esiti: [
+    { id: 'gen-ok', label: 'Positivo', tipo: 'ok' },
+    { id: 'gen-neutral', label: 'Neutro', tipo: 'neutral' },
+    { id: 'gen-ko', label: 'Negativo', tipo: 'ko' },
+    { id: 'gen-richiama', label: 'Da richiamare', tipo: 'neutral' },
+    { id: 'gen-rimandato', label: 'Rimandato / annullato', tipo: 'ko' }
+  ], senza_tag: true },
   { sigla: 'PERSONALE', nome: 'Personale', chi: 'solo', icona: 'persona', desc: 'Impegno personale', colore: 'var(--app-personale)', sezione: 'ufficio', richiede: null, esiti: null, senza_tag: true },
   { sigla: 'ZONA', nome: 'Zona / Sviluppo', chi: 'solo', icona: 'zona', desc: 'Censimento PA/NT', colore: 'var(--app-zona)', sezione: 'ufficio', richiede: null, esiti: null, senza_tag: true }
 ];
@@ -1331,7 +1346,6 @@ function getTipoApp(sigla) { if (sigla === TIPO_LIBERO.sigla) return TIPO_LIBERO
 function isAppLibero(sigla) { return sigla === 'UFFICIO' || sigla === 'LIBERO'; }
 function isAppUfficio(tipo) { return tipo && (tipo.sezione === 'ufficio' || !tipo.esiti); }
 
-// Verifica immobile in base al requisito del tipo appuntamento
 function immobileValidoPerTipo(tipoSigla, imm) {
   if (!imm) return false;
   const tipo = TIPI_APPUNTAMENTO.find(t => t.sigla === tipoSigla);
@@ -2006,16 +2020,21 @@ function apriProssimoAppuntamento() { const p = getProssimoAppuntamento(); if (p
 function renderItemAppuntamento(a) {
   const t = getTipoApp(a.tipo);
   const col = getColoreTipo(t);
+  const passato = new Date(a.dataFine) < new Date();
+  const esitoMancante = !!t.esito_obbligatorio && !a.esito && a.stato !== 'eseguito';
   let e = '';
   if (a.esito) {
     const x = (t.esiti || []).find(y => y.id === a.esito);
     if (x) { const cls = x.tipo === 'ok' ? 'ok' : x.tipo === 'ko' ? 'ko' : 'neutral'; e = '<div class="app-esito ' + cls + '">' + ico('check',11) + ' ' + x.label + (a.descrizioneEsito ? ' · ' + escapeHtml(a.descrizioneEsito) : '') + '</div>'; }
     else e = '<div class="app-esito neutral">' + escapeHtml(a.esito) + '</div>';
   } else if (a.stato === 'eseguito') e = '<div class="app-esito neutral">' + ico('check',11) + ' Eseguito</div>';
+  else if (esitoMancante) e = '<div class="app-esito ko" style="background:#fef3c7;color:#92400e;">' + ico('attenzione',11) + ' Esito obbligatorio</div>';
   let h = '<div class="app-item-card" style="border-left-color:' + col + ';" onclick="apriSchedaAppuntamento(\'' + a.id + '\')">';
   if (!t.senza_tag) { const icT = ico(t.icona || 'calendario', 11); h += '<div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div>'; }
+  else h += '<div class="app-tipo-badge">' + ico(t.icona || 'calendario', 11) + ' ' + escapeHtml(a.tipo) + '</div>';
   h += '<div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">' + ico('calendario',11) + ' ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
   if (a.luogo) h += '<div class="app-data">' + ico('pin',11) + ' ' + escapeHtml(a.luogo) + '</div>';
+  if (esitoMancante) h += '<button class="btn btn-primary" style="margin-top:8px;padding:9px 12px;font-size:12.5px;" onclick="event.stopPropagation();apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',14) + ' Chiudi con esito</button>';
   h += e + '</div>'; return h;
 }
 function apriGoogleCalendarApp(a) {
@@ -2030,7 +2049,6 @@ function apriNuovoAppuntamentoImmobile(iid) { const i = DB.immobili.find(x => x.
 function tipiAppValidi(imm, per) {
   return TIPI_APPUNTAMENTO.filter(t => {
     if (t.sezione === 'ufficio') return true;
-    // Filtra per sezione in base a imm/per
     if (!imm && !per) return true;
     if (t.richiede === 'RR_e_immobile' || t.richiede === 'RR_INK_proposta_acc' || t.richiede === 'RR_o_immobile') return true;
     if (imm && !immobileValidoPerTipo(t.sigla, imm)) return false;
@@ -2065,7 +2083,6 @@ function selezionaTipoApp(sigla) {
   const imm = window._appImmPre; const per = window._appPersPre; const ts = t.sigla;
   const req = t.richiede;
   if (!req || t.chi === 'solo') { apriFormAppuntamento(null, null, t); return; }
-  // Determinazione flusso
   if (req === 'NT_nv' || req === 'NT_v' || req === 'INK' || req === 'INK_proposta') {
     if (imm && immobileValidoPerTipo(ts, imm)) { apriFormAppuntamento(imm, null, t); return; }
     apriPickerEntita('immobile', (i) => apriFormAppuntamento(i, null, t), ts); return;
@@ -2146,19 +2163,28 @@ function cercaEntitaPicker(te, q, cb, tipoSigla) {
       if (!qq || t.includes(qq)) { let b = p.tipo === 'acquirente' ? 'RR' : null; r.push({ tipo: 'persona', id: p.id, titolo: titoloPersona(p), badge: b }); }
     }
   }
-  r = r.slice(0, 60);
+  r = r.slice(0, 80);
   if (te === 'immobile' && matchPer && r.length > 0) {
-    const consigliati = [], altri = [];
+    const interessati = [], consigliati = [], altri = [];
+    const labelsInteressati = (matchPer.immobili || []).slice();
     for (const x of r) {
       const im = DB.immobili.find(i => i.id === x.id);
       if (!im) { altri.push(x); continue; }
+      const lbl = titoloImmobile(im);
+      if (labelsInteressati.includes(lbl)) { interessati.push(x); continue; }
       const sc = calcolaScoreMatch(matchPer, im);
       if (sc > 0) consigliati.push({ x, sc }); else altri.push(x);
     }
     consigliati.sort((a, b) => b.sc - a.sc);
     let h = '';
+    if (interessati.length > 0) {
+      h += '<div class="section-title" style="padding-left:2px;">' + ico('check',11) + ' Interessati</div>';
+      h += '<div class="card" style="padding:8px 0;">';
+      for (const x of interessati) h += renderEntitaItemForPicker(x);
+      h += '</div>';
+    }
     if (consigliati.length > 0) {
-      h += '<div class="section-title" style="padding-left:2px;">' + ico('check',11) + ' Consigliati</div>';
+      h += '<div class="section-title" style="padding-left:2px;">' + ico('target',11) + ' Consigliati</div>';
       h += '<div class="card" style="padding:8px 0;">';
       for (const { x } of consigliati) h += renderEntitaItemForPicker(x);
       h += '</div>';
@@ -2169,7 +2195,7 @@ function cercaEntitaPicker(te, q, cb, tipoSigla) {
       for (const x of altri) h += renderEntitaItemForPicker(x);
       h += '</div>';
     }
-    if (consigliati.length === 0 && altri.length === 0) h = '<div class="card"><div class="empty" style="padding:16px 0;"><div class="icon">' + ico('lente',28) + '</div>Nessun risultato</div></div>';
+    if (interessati.length === 0 && consigliati.length === 0 && altri.length === 0) h = '<div class="card"><div class="empty" style="padding:16px 0;"><div class="icon">' + ico('lente',28) + '</div>Nessun risultato</div></div>';
     c.innerHTML = h;
     return;
   }
@@ -2193,18 +2219,15 @@ function costruisciTitoloApp(t, imm, per) {
   return s + ' - Appuntamento';
 }
 
-// Cerca match titolo -> entità
 function cercaMatchTitolo(text) {
   if (!text || text.length < 2) return null;
   const q = text.toLowerCase().trim();
-  // Prova per immobili
   for (const imm of DB.immobili) {
     const ind = (imm.indirizzo || '').toLowerCase();
     const nome = (imm.cognomeNome || '').toLowerCase();
     if (q.length >= 3 && ind.includes(q)) return { tipo: 'immobile', entita: imm };
     if (q.length >= 3 && nome.includes(q)) return { tipo: 'immobile', entita: imm };
   }
-  // Prova per persone
   for (const p of DB.persone) {
     const nome = (p.cognomeNome || '').toLowerCase();
     if (q.length >= 3 && nome.includes(q)) return { tipo: 'persona', entita: p };
@@ -2215,6 +2238,7 @@ function cercaMatchTitolo(text) {
 function apriFormAppuntamento(imm, per, tipo) {
   window._appImm = imm; window._appPers = per; window._appTipo = tipo;
   const isUfficio = !!(tipo && tipo.senza_tag);
+  const isZona = tipo.sigla === 'ZONA';
   const titoloIniziale = costruisciTitoloApp(tipo, imm, per);
   const ad = new Date();
   const iD = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ad.getHours(), 0);
@@ -2224,6 +2248,16 @@ function apriFormAppuntamento(imm, per, tipo) {
   h += '<div class="prefill-banner" style="background:' + (tipo.colore || 'var(--blu-soft)') + '20;color:' + (tipo.colore || 'var(--blu)') + ';">' + ico(tipo.icona || 'calendario',14) + ' <strong>' + escapeHtml(tipo.nome || tipo.sigla) + '</strong></div>';
   if (imm) h += '<div class="card" style="padding:11px 14px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:4px;letter-spacing:0.06em;">Immobile</div><div style="font-size:13.5px;font-weight:600;letter-spacing:-0.01em;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>';
   if (per) h += '<div class="card" style="padding:11px 14px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:4px;letter-spacing:0.06em;">Persona</div><div style="font-size:13.5px;font-weight:600;letter-spacing:-0.01em;">' + escapeHtml(titoloPersona(per)) + '</div></div>';
+
+  if (isZona) {
+    h += '<div class="form-group"><div class="form-row"><label class="form-label">Zona *</label><select class="form-select" id="ap-zona">';
+    h += '<option value="">— Seleziona la zona —</option>';
+    for (const z of ZONE_BASE) h += '<option value="' + escapeHtml(z) + '">' + escapeHtml(z) + '</option>';
+    h += '<option value="' + escapeHtml(ZONA_ZDF) + '">' + escapeHtml(ZONA_ZDF) + '</option>';
+    for (const z of ZONE_SPECIALI) h += '<option value="' + escapeHtml(z) + '">' + escapeHtml(z) + '</option>';
+    h += '</select></div>';
+  }
+
   h += '<div class="form-group"><div class="form-row"><label class="form-label">' + (isUfficio ? 'Titolo *' : 'Titolo') + '</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(titoloIniziale) + '" oninput="verificaMatchTitolo(this.value)"><div id="ap-match-suggest" style="margin-top:8px;"></div></div>';
   h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="' + isoToLocalInput(iD.toISOString()) + '" onchange="syncFineAppuntamentoNew()"></div>';
   h += '<div class="form-row"><label class="form-label">Fine</label><input class="form-input" type="datetime-local" step="1" id="ap-fine" value="' + isoToLocalInput(fD.toISOString()) + '"></div>';
@@ -2262,14 +2296,19 @@ function salvaAppuntamento() {
   const i = (g('ap-inizio') || {}).value; const f = (g('ap-fine') || {}).value;
   const l = ((g('ap-luogo') || {}).value || '').trim(); const n = (g('ap-note') || {}).value || '';
   const tp = window._appTipo;
+  const isZona = tp.sigla === 'ZONA';
+  const zonaSel = isZona ? ((g('ap-zona') || {}).value || '') : '';
+  if (isZona && !zonaSel) { alert('Seleziona la zona'); return; }
   if (!tp.senza_tag && !t) { alert('Titolo obbligatorio'); return; }
   if (!i || !f) { alert('Inizio e fine obbligatori'); return; }
   if (new Date(f) <= new Date(i)) { alert('Fine deve essere dopo inizio'); return; }
   const imm = window._appImm || null; const per = window._appPers || null;
   if (!tp.senza_tag) { if (imm && !immobileValidoPerTipo(tp.sigla, imm)) { alert('Immobile non compatibile'); return; } if (per && !personaValidaPerTipo(tp.sigla, per)) { alert('Persona non compatibile'); return; } }
   const ad = new Date().toISOString();
-  const titoloFinale = tp.senza_tag ? (t || tp.nome) : t;
+  let titoloFinale = tp.senza_tag ? (t || tp.nome) : t;
+  if (isZona) titoloFinale = 'ZONA - ' + zonaSel;
   const ap = { id: uid(), tipo: tp.sigla, tipoChi: tp.chi, titolo: titoloFinale, dataInizio: new Date(i).toISOString(), dataFine: new Date(f).toISOString(), luogo: l, note: n, immobileId: imm ? imm.id : null, personaId: per ? per.id : null, esito: null, descrizioneEsito: '', stato: 'programmato', createdAt: ad, updatedAt: ad };
+  if (isZona) ap.extraZona = zonaSel;
   DB.appuntamenti = DB.appuntamenti || []; DB.appuntamenti.push(ap);
   const ds = '[' + formattaData(ap.dataInizio) + ']';
   if (!tp.senza_tag) {
@@ -2289,10 +2328,11 @@ function apriSchedaAppuntamento(id) {
   const t = getTipoApp(a.tipo);
   const col = getColoreTipo(t);
   let h = '';
-  if (!t.senza_tag) h += '<div style="margin-bottom:12px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;color:' + col + ';background:' + col + '22;letter-spacing:0.04em;text-transform:uppercase;">' + ico(t.icona || 'calendario',11) + ' ' + escapeHtml(a.tipo) + '</span></div>';
+  h += '<div style="margin-bottom:12px;"><span class="app-tipo-badge" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;color:' + col + ';background:' + col + '22;letter-spacing:0.04em;text-transform:uppercase;">' + ico(t.icona || 'calendario',11) + ' ' + escapeHtml(a.tipo) + '</span></div>';
   h += '<div class="card">';
   h += '<div class="info-row"><span class="label">Quando</span><span class="value">' + formattaDataOraCompleta(a.dataInizio) + '</span></div>';
   if (a.luogo) h += '<div class="info-row"><span class="label">Luogo</span><span class="value">' + escapeHtml(a.luogo) + '</span></div>';
+  if (a.extraZona) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + escapeHtml(a.extraZona) + '</span></div>';
   if (a.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(a.note) + '</span></div>';
   h += '<div class="info-row"><span class="label">Stato</span><span class="value">' + escapeHtml(a.stato) + '</span></div>';
   if (a.esito) { const e = (t.esiti || []).find(x => x.id === a.esito); if (e) h += '<div class="info-row"><span class="label">Esito</span><span class="value">' + e.label + '</span></div>'; else h += '<div class="info-row"><span class="label">Esito</span><span class="value">' + escapeHtml(a.esito) + '</span></div>'; }
@@ -2301,10 +2341,11 @@ function apriSchedaAppuntamento(id) {
   if (imm) h += '<div class="card"><h2><span class="dot"></span>Immobile</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + imm.id + '\')},100)"><span class="txt">' + iconaCondo(13) + ' ' + escapeHtml(titoloImmobile(imm)) + '</span></div></div>';
   if (per) h += '<div class="card"><h2><span class="dot"></span>Persona</h2><div class="immobile-line" onclick="chiudiModal();setTimeout(function(){apriSchedaPersona(\'' + per.id + '\')},100)"><span class="txt">' + ico('utente',13) + ' ' + escapeHtml(titoloPersona(per)) + '</span></div></div>';
   if (!t.senza_tag) { h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'immobile\', (i)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.immobileId=i.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (imm ? ico('aggiorna',15) + ' Cambia immobile' : iconaCondo(13) + ' Collega immobile') + '</button>'; h += '<button class="btn btn-secondary" onclick="apriPickerEntita(\'persona\', (p)=>{const a=DB.appuntamenti.find(x=>x.id===\'' + a.id + '\');a.personaId=p.id;a.updatedAt=new Date().toISOString();Storage.save(DB);apriSchedaAppuntamento(a.id);},\'' + a.tipo.replace(/'/g, "\\'") + '\')">' + (per ? ico('aggiorna',15) + ' Cambia persona' : ico('utente',13) + ' Collega persona') + '</button>'; }
+  const passato = new Date(a.dataFine) < new Date();
+  const esitoMancante = !!t.esito_obbligatorio && !a.esito && a.stato !== 'eseguito';
+  if ((a.stato !== 'eseguito' && a.stato !== 'annullato' && passato && t.esiti && t.esiti.length > 0) || esitoMancante) h += '<button class="btn btn-primary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',16) + ' Chiudi con esito</button>';
   h += '<button class="btn btn-primary" onclick="apriGoogleCalendarApp(' + JSON.stringify(a).replace(/"/g, '&quot;') + ')">' + ico('calendario',16) + ' Google Calendar</button>';
   h += '<button class="btn btn-secondary" onclick="apriModificaAppuntamento(\'' + a.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
-  const passato = new Date(a.dataFine) < new Date();
-  if (a.stato !== 'eseguito' && a.stato !== 'annullato' && passato && t.esiti && t.esiti.length > 0) h += '<button class="btn btn-secondary" onclick="apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',16) + ' Chiudi con esito</button>';
   h += '<button class="btn btn-secondary" onclick="eliminaAppuntamento(\'' + a.id + '\')">' + ico('cestino',16) + ' Elimina</button>';
   apriModal(ico(t.icona || 'calendario',18) + ' ' + a.titolo, h);
 }
@@ -2336,7 +2377,6 @@ function selezionaEsitoApp(esitoId) {
   const per = a.personaId ? DB.persone.find(x => x.id === a.personaId) : null;
   if (imm) { imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + a.tipo + ' eseguito: ' + es + (d ? ' · ' + d : ''), completata: true }); imm.updatedAt = new Date().toISOString(); }
   if (per) { per.attivita = per.attivita || []; per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - ' + a.tipo + ' eseguito: ' + es + (d ? ' · ' + d : ''), completata: true }); per.updatedAt = new Date().toISOString(); }
-  // Logica automatica in base al tipo
   if (a.tipo === 'VAL' && imm && imm.stato === 'NT' && esitoId === 'val-ok') { imm.sottotipo = 'NT valutata'; }
   if (a.tipo === 'G INK' && imm && esitoId === 'gink-ribasso') { const r = prompt('Nuovo prezzo/ribasso?', ''); if (r) { imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Ribasso: ' + r, completata: true }); } }
   if (a.tipo === 'RIT PROP' && imm && esitoId === 'rit-ok') { imm.inTrattativa = true; }
@@ -2427,9 +2467,6 @@ function aggiornaAgendaSettimanale() {
   g.innerHTML = h;
 }
 
-/* =====================================================
-   PAGINA AGENDA — STILE iPHONE
-   ===================================================== */
 let calMeseCorrente = new Date();
 let agendaPageState = 'month';
 let agendaPageDayYmd = null;
@@ -2491,13 +2528,12 @@ function renderAgendaPage() {
   else if (agendaPageState === 'week') inner = htmlCalendarioWeekIPhone();
   else inner = htmlCalendarioDayIPhone();
 
-  let headerHtml = '';
   let meseLbl = '';
   if (agendaPageState === 'year') meseLbl = String(agendaYear);
   else if (agendaPageState === 'month') meseLbl = MESI_LUNGHI[calMeseCorrente.getMonth()];
   else { const b = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date(); meseLbl = MESI_LUNGHI[b.getMonth()]; }
 
-  headerHtml = '<div class="ag-header">'
+  const headerHtml = '<div class="ag-header">'
     + '<button class="ag-back-btn" onclick="tornaAttivita()" aria-label="Indietro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
     + '<div class="ag-nav-group">'
     + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
@@ -2519,11 +2555,12 @@ function weekStripHtml() {
   const dow = base.getDay(); const diff = dow === 0 ? -6 : 1 - dow;
   const start = new Date(base); start.setDate(base.getDate() + diff);
   const today = ymdDaData(new Date());
+  const selYmd = agendaPageDayYmd || today;
   let h = '<div class="ag-weekstrip">';
   for (let i = 0; i < 7; i++) {
     const d = new Date(start); d.setDate(start.getDate() + i);
     const ymd = ymdDaData(d);
-    const cls = 'ag-ws-day' + (ymd === today ? ' today' : '');
+    const cls = 'ag-ws-day' + (ymd === today ? ' today' : '') + (ymd === selYmd ? ' sel' : '');
     h += '<div class="' + cls + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
     h += '<div class="ag-ws-name">' + GIORNI_BREVI[i] + '</div>';
     h += '<div class="ag-ws-num">' + d.getDate() + '</div>';
@@ -2534,13 +2571,7 @@ function weekStripHtml() {
 }
 
 function bottomBarHtml() {
-  return '<div class="ag-bottombar">'
-    + '<button class="ag-pill" onclick="vaiAOggi()">Oggi</button>'
-    + '<div style="flex:1;"></div>'
-    + '<button class="ag-icon-btn" onclick="cycleAgendaView()" title="Cambia vista" style="width:40px;height:40px;background:var(--card);border:1px solid var(--border-strong);border-radius:50%;color:var(--blu);cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;">'
-    + '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>'
-    + '</button>'
-    + '</div>';
+  return '<div class="ag-bottombar"><button class="ag-pill" onclick="vaiAOggi()">Oggi</button></div>';
 }
 function cycleAgendaView() {
   const order = ['year', 'month', 'week', 'day'];
@@ -2581,6 +2612,7 @@ function htmlCalendarioYear() {
 function htmlCalendarioMonthIPhone() {
   const c = calMeseCorrente;
   const today = ymdDaData(new Date());
+  const selYmd = agendaPageDayYmd || '';
   const firstDay = new Date(c.getFullYear(), c.getMonth(), 1);
   let startDow = firstDay.getDay(); startDow = startDow === 0 ? 6 : startDow - 1;
   const start = new Date(firstDay); start.setDate(firstDay.getDate() - startDow);
@@ -2595,8 +2627,9 @@ function htmlCalendarioMonthIPhone() {
     const ymd = ymdDaData(d);
     const out = d.getMonth() !== c.getMonth();
     const isToday = ymd === today;
+    const isSel = ymd === selYmd;
     const items = collectItemsForDay(ymd);
-    h += '<div class="ag-month-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+    h += '<div class="ag-month-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
     h += '<div class="ag-month-num">' + d.getDate() + '</div>';
     if (items.length > 0) {
       h += '<div class="ag-month-bars">';
@@ -2674,9 +2707,6 @@ function htmlCalendarioDayIPhone() {
   return h;
 }
 
-/* =====================================================
-   PLANNING PAGE
-   ===================================================== */
 let planningYmd = null;
 function currentPlanningYmd() { return planningYmd || ymdDaData(new Date()); }
 function cambiaGiornoPlanning(delta) { if (delta === 0) planningYmd = null; else { const cur = dataDaYmd(currentPlanningYmd()); cur.setDate(cur.getDate() + delta); planningYmd = ymdDaData(cur); } renderPlanning(); }
