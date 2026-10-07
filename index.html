@@ -18,9 +18,9 @@
   (function() {
     try {
       const t = localStorage.getItem('arangiò_theme') || 'auto';
-      const resolved = (t === 'dark') ? 'dark' : (t === 'light') ? 'light'
+      const r = (t === 'dark') ? 'dark' : (t === 'light') ? 'light'
         : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      document.documentElement.setAttribute('data-theme', resolved);
+      document.documentElement.setAttribute('data-theme', r);
     } catch(e) {}
   })();
 </script>
@@ -32,7 +32,6 @@
     --sfondo: #fafbfc; --card: #ffffff;
     --testo: #0f172a; --testo-sec: #64748b; --testo-ter: #94a3b8;
     --border: #eef1f5; --border-strong: #e2e8f0;
-    --ombra: 0 1px 2px rgba(15,23,42,0.03);
     --tabbar-h: 56px;
     --radius: 11px; --radius-sm: 8px;
     --imm: #94a3b8; --pa: #d97706; --nt: #2563eb; --ink: #059669; --vnd: #dc2626;
@@ -40,34 +39,27 @@
     --max-w: 640px;
     --hover-bg: #f8fafc;
   }
-  html { height: 100%; overflow: hidden; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html { height: 100%; overflow: hidden; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    height: 100%; overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
-    background: var(--sfondo); color: var(--testo); font-size: 15px;
-    -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
-    transition: background 0.2s, color 0.2s;
-  }
+  body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--sfondo); color: var(--testo); font-size: 15px; -webkit-font-smoothing: antialiased; transition: background 0.2s, color 0.2s; }
   .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
   .app-header { padding: 14px 18px 10px; padding-top: calc(14px + env(safe-area-inset-top)); flex-shrink: 0; background: var(--sfondo); }
-  .app-header h1 { font-size: 22px; font-weight: 700; color: var(--blu); letter-spacing: -0.5px; display: flex; align-items: center; gap: 0; line-height: 1.1; }
+  .app-header h1 { font-size: 22px; font-weight: 700; color: var(--blu); letter-spacing: -0.5px; line-height: 1.1; }
   .app-header h1 span { color: var(--arancione); }
   .app-header .sub { font-size: 11px; color: var(--testo-ter); margin-top: 2px; font-weight: 500; }
 
   .app-content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 2px 14px calc(80px + env(safe-area-inset-bottom)); }
   .view { display: none; } .view.active { display: block; }
 
-  .card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); box-shadow: none; transition: background 0.2s, border-color 0.2s; }
-  .card h2 { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; letter-spacing: -0.1px; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); transition: background 0.2s, border-color 0.2s; }
+  .card h2 { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
   .card h2 .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--arancione); }
   .card p { font-size: 13px; color: var(--testo-sec); line-height: 1.5; }
   .empty { text-align: center; padding: 40px 16px; color: var(--testo-ter); font-size: 13px; }
-  .empty .icon { font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
-  .empty .icon svg { width: 32px; height: 32px; color: var(--testo-ter); }
+  .empty .icon svg { width: 32px; height: 32px; color: var(--testo-ter); opacity: 0.4; }
 
-  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px; border: 1px solid transparent; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.12s, background 0.12s; margin-bottom: 6px; letter-spacing: -0.1px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 12px; border: 1px solid transparent; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.12s; margin-bottom: 6px; }
   .btn:active { opacity: 0.7; }
   .btn-primary { background: var(--arancione); color: white; }
   .btn-secondary { background: var(--card); color: var(--blu); border-color: var(--border-strong); }
@@ -75,33 +67,31 @@
   .btn-danger { background: #fef2f2; color: #dc2626; border-color: #fee2e2; }
   .btn svg { width: 16px; height: 16px; }
 
-  .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(10px); -webkit-backdrop-filter: saturate(180%) blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; transition: background 0.2s, border-color 0.2s; }
-  .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit; font-size: 9.5px; font-weight: 500; cursor: pointer; transition: color 0.12s; position: relative; }
+  .tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tabbar-h) + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.96); backdrop-filter: saturate(180%) blur(10px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); padding-top: 6px; z-index: 100; }
+  .tabbar button { background: none; border: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; flex: 1; height: 100%; color: var(--testo-ter); font-family: inherit; font-size: 9.5px; font-weight: 500; cursor: pointer; position: relative; }
   .tabbar button svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .tabbar button.active { color: var(--blu); }
   .tabbar .badge-tab { position: absolute; top: 3px; right: 20%; background: var(--arancione); color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; min-width: 15px; text-align: center; display: none; }
   .tabbar .badge-tab.show { display: block; }
 
   .search-sticky { position: sticky; top: -2px; z-index: 20; background: var(--sfondo); padding: 4px 0 6px; margin: 0 -2px; }
-  .search-bar { width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--card); font-family: inherit; font-size: 14px; color: var(--testo); outline: none; transition: border-color 0.12s, background 0.2s; }
+  .search-bar { width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--card); font-family: inherit; font-size: 14px; color: var(--testo); outline: none; }
   .search-bar:focus { border-color: var(--blu); }
   .search-bar::placeholder { color: var(--testo-ter); font-size: 13px; }
 
   .filter-label { font-size: 10px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 2px 6px; }
-  .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 2px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip { background: var(--card); border: 1px solid var(--border-strong); padding: 6px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; transition: all 0.12s; display: inline-flex; align-items: center; gap: 5px; }
-  .chip:active { background: var(--hover-bg); }
+  .chip { background: var(--card); border: 1px solid var(--border-strong); padding: 6px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; }
   .chip.active { background: var(--blu); color: white; border-color: var(--blu); font-weight: 600; }
   .chip svg { width: 12px; height: 12px; }
-  .chip.sub { font-size: 12px; padding: 5px 11px; }
+  .chip.sub { padding: 5px 11px; }
   .chip.sub.active { background: var(--arancione); border-color: var(--arancione); }
   .chip-dropdown { background: var(--card); border: 1px solid var(--border-strong); padding: 6px 12px; border-radius: 16px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: flex; align-items: center; gap: 5px; }
   .chip-dropdown.active { background: var(--blu); color: white; border-color: var(--blu); }
-  .chip-dropdown .caret { font-size: 9px; opacity: 0.6; }
 
-  .zone-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
-  .zone-chip { background: #f5f7fa; border: 1px solid transparent; padding: 5px 10px; border-radius: 14px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; transition: all 0.12s; display: inline-flex; align-items: center; gap: 4px; }
+  .zone-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .zone-chip { background: #f5f7fa; border: 1px solid transparent; padding: 5px 10px; border-radius: 14px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
   .zone-chip.active { background: var(--blu); color: white; }
   .zone-chip.special { font-size: 10.5px; }
   .zone-chip.special.active { background: var(--arancione); }
@@ -110,19 +100,16 @@
   .active-filter-banner .x { background: rgba(26,58,92,0.08); border: none; width: 20px; height: 20px; border-radius: 10px; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .active-filter-banner .x svg { width: 11px; height: 11px; }
 
-  .item-card { background: var(--card); border-radius: var(--radius); padding: 11px 13px; margin-bottom: 6px; border: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
-  .item-card:active { background: var(--hover-bg); }
+  .item-card { background: var(--card); border-radius: var(--radius); padding: 11px 13px; margin-bottom: 6px; border: 1px solid var(--border); cursor: pointer; }
   .item-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
-  .item-title { font-size: 14px; font-weight: 600; color: var(--testo); letter-spacing: -0.1px; flex: 1; word-break: break-word; overflow-wrap: anywhere; line-height: 1.3; }
-  .item-card .badge { margin-top: 2px; }
+  .item-title { font-size: 14px; font-weight: 600; color: var(--testo); flex: 1; word-break: break-word; line-height: 1.3; }
   .item-sub { font-size: 12px; color: var(--testo-sec); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
   .item-sub svg { flex-shrink: 0; width: 11px; height: 11px; opacity: 0.65; }
   .item-meta { font-size: 11px; color: var(--testo-ter); margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
   .qa-row { display: flex; gap: 6px; margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
-  .qa-btn { flex: 1; background: #f8fafc; border: none; padding: 7px 8px; border-radius: 8px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.1s; }
-  .qa-btn:active { background: #eef2f7; }
+  .qa-btn { flex: 1; background: #f8fafc; border: none; padding: 7px 8px; border-radius: 8px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
   .qa-btn svg { width: 13px; height: 13px; }
   .qa-btn.wa { color: #059669; }
 
@@ -130,24 +117,22 @@
   .badge-IMM { background: var(--imm); } .badge-PA { background: var(--pa); } .badge-NT { background: var(--nt); } .badge-INK { background: var(--ink); } .badge-VND { background: var(--vnd); }
   .badge-RR-attiva { background: #7c3aed; } .badge-RR-in-attesa { background: #d97706; } .badge-RR-proposta { background: #059669; } .badge-RR-ha-comprato { background: #dc2626; } .badge-RR-non-attiva { background: #9ca3af; } .badge-RR-rogitato { background: #1e40af; }
   .badge-PROF { background: var(--prof); }
-  .tag { display: inline-block; background: #f1f5f9; color: var(--testo-sec); padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.2px; margin-right: 3px; margin-top: 3px; }
+  .tag { display: inline-block; background: #f1f5f9; color: var(--testo-sec); padding: 2px 7px; border-radius: 5px; font-size: 9.5px; font-weight: 600; margin-right: 3px; margin-top: 3px; }
 
-  .fab { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom)); width: 50px; height: 50px; border-radius: 25px; background: var(--arancione); color: white; border: none; font-size: 26px; font-weight: 300; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(224,101,26,0.35); cursor: pointer; z-index: 50; transition: transform 0.12s; }
+  .fab { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom)); width: 50px; height: 50px; border-radius: 25px; background: var(--arancione); color: white; border: none; font-size: 26px; font-weight: 300; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(224,101,26,0.35); cursor: pointer; z-index: 50; }
   .fab:active { transform: scale(0.9); }
   .fab svg { width: 22px; height: 22px; stroke-width: 2.2; }
 
-  .back-top { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 76px + env(safe-area-inset-bottom)); width: 38px; height: 38px; border-radius: 19px; background: white; border: 1px solid var(--border-strong); color: var(--blu); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 49; box-shadow: 0 2px 6px rgba(15,23,42,0.06); }
+  .back-top { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 76px + env(safe-area-inset-bottom)); width: 38px; height: 38px; border-radius: 19px; background: white; border: 1px solid var(--border-strong); color: var(--blu); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 49; }
   .back-top.show { display: flex; }
   .back-top svg { width: 16px; height: 16px; transform: rotate(-90deg); }
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.35); z-index: 200; display: none; align-items: flex-end; justify-content: center; animation: fadeIn 0.15s; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.35); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.18s ease-out; overflow: hidden; transition: background 0.2s; }
+  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.18s ease-out; overflow: hidden; }
   .modal-header { padding: 14px 18px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; }
-  .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); letter-spacing: -0.3px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
-  .modal-header h2 svg { flex-shrink: 0; }
+  .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
   .modal-close { background: rgba(15,23,42,0.06); border: none; width: 28px; height: 28px; border-radius: 14px; font-size: 16px; color: var(--testo-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .modal-close svg { width: 14px; height: 14px; }
   .modal-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 14px 18px; padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
@@ -165,7 +150,6 @@
 
   .timeline-item { padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--testo); line-height: 1.4; cursor: pointer; }
   .timeline-item:last-child { border-bottom: none; }
-  .timeline-item:active { background: var(--hover-bg); margin: 0 -10px; padding-left: 10px; padding-right: 10px; border-radius: 6px; }
   .timeline-item .data { font-size: 10.5px; color: var(--testo-ter); font-weight: 600; display: block; margin-bottom: 2px; }
   .timeline-item.da-fare .data { color: var(--arancione); }
   .timeline-item.da-fare { background: var(--arancione-soft); margin: 3px -10px; padding: 9px 10px; border-radius: 6px; border-bottom: none; }
@@ -174,18 +158,18 @@
   .timeline-item .chev { float: right; color: var(--testo-ter); font-size: 16px; line-height: 1; margin-left: 6px; }
 
   .actions { display: flex; gap: 6px; margin-bottom: 8px; }
-  .action-btn { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 8px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: background 0.1s; }
+  .action-btn { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 8px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
   .action-btn:active { background: var(--hover-bg); }
   .action-btn .icon { display: flex; align-items: center; justify-content: center; height: 20px; }
   .action-btn .icon svg { width: 19px; height: 19px; }
 
   .info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; gap: 12px; }
-  .info-row .label { color: var(--testo-sec); flex-shrink: 0; font-weight: 400; }
+  .info-row .label { color: var(--testo-sec); flex-shrink: 0; }
   .info-row .value { color: var(--testo); font-weight: 500; text-align: right; word-break: break-word; }
   .info-row + .info-row { border-top: 1px solid var(--border); }
 
   .immobili-list { display: flex; flex-direction: column; gap: 4px; margin-top: 3px; }
-  .immobile-line { background: #f8fafc; border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12.5px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; transition: background 0.1s; }
+  .immobile-line { background: #f8fafc; border-radius: var(--radius-sm); padding: 9px 11px; font-size: 12.5px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; }
   .immobile-line:active { background: #f1f5f9; }
   .immobile-line .txt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
   .immobile-line .txt svg { flex-shrink: 0; width: 13px; height: 13px; opacity: 0.6; }
@@ -193,12 +177,10 @@
   .immobile-line .rm svg { width: 14px; height: 14px; }
   .add-btn { background: var(--blu-soft); border: none; border-radius: var(--radius-sm); padding: 9px 11px; font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--blu); cursor: pointer; width: 100%; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px; }
   .add-btn svg { width: 14px; height: 14px; }
-  .add-btn:active { opacity: 0.7; }
 
   .foto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
-  .foto-item { aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; background: #f1f5f9; cursor: pointer; position: relative; }
+  .foto-item { aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; background: #f1f5f9; cursor: pointer; }
   .foto-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .foto-item:active { opacity: 0.85; }
   .foto-placeholder { width: 100%; height: 100%; background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
   .foto-hint { font-size: 11px; color: var(--testo-ter); margin: 0 0 6px; }
@@ -208,20 +190,18 @@
   .sottotipo-line button { background: #f1f5f9; border: none; border-radius: 6px; padding: 5px 10px; font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--blu); cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .sottotipo-line button svg { width: 12px; height: 12px; }
 
-  .condo-header { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 8px 11px; font-size: 11.5px; color: var(--blu); font-weight: 600; letter-spacing: 0.2px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
-  .condo-card { background: var(--card); border-radius: var(--radius); padding: 12px 13px; margin-bottom: 6px; border: 1px solid var(--border); cursor: pointer; transition: background 0.1s; display: flex; align-items: center; gap: 10px; }
+  .condo-header { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 8px 11px; font-size: 11.5px; color: var(--blu); font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .condo-card { background: var(--card); border-radius: var(--radius); padding: 12px 13px; margin-bottom: 6px; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; }
   .condo-card:active { background: var(--hover-bg); }
   .condo-card .condo-icon { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.7; }
   .condo-card .condo-info { flex: 1; overflow: hidden; }
   .condo-card .condo-title { font-size: 14px; font-weight: 600; color: var(--testo); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .condo-card .condo-sub { font-size: 11.5px; color: var(--testo-sec); }
-  .condo-card .condo-arrow { color: var(--testo-ter); flex-shrink: 0; display: flex; align-items: center; }
   .condo-card .condo-arrow svg { width: 15px; height: 15px; }
-  .condo-card .condo-edit { background: none; border: none; padding: 6px; cursor: pointer; flex-shrink: 0; border-radius: 6px; color: var(--testo-ter); display: flex; align-items: center; justify-content: center; }
+  .condo-card .condo-edit { background: none; border: none; padding: 6px; cursor: pointer; flex-shrink: 0; border-radius: 6px; color: var(--testo-ter); display: flex; align-items: center; }
   .condo-card .condo-edit svg { width: 15px; height: 15px; }
-  .condo-card .condo-edit:active { background: #f1f5f9; }
 
-  .section-title { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 2px 6px; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+  .section-title { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 2px 6px; display: flex; align-items: center; gap: 4px; }
 
   .prefill-banner { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 11.5px; color: var(--blu); font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
   .prefill-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
@@ -233,21 +213,19 @@
   .zone-summary strong { color: var(--blu); }
   .zdf-notice { background: var(--arancione-soft); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 11.5px; color: #c2410c; margin-top: 6px; display: flex; align-items: center; gap: 5px; font-weight: 500; }
   .zdf-notice svg { width: 12px; height: 12px; flex-shrink: 0; }
-  .zcode-badge { display: inline-block; background: var(--blu-soft); color: var(--blu); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+  .zcode-badge { display: inline-block; background: var(--blu-soft); color: var(--blu); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
 
   .villa-toggle { display: flex; gap: 6px; margin-top: 3px; }
-  .villa-toggle button { flex: 1; padding: 10px 8px; border: 1.5px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; transition: all 0.12s; text-align: center; line-height: 1.3; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .villa-toggle button { flex: 1; padding: 10px 8px; border: 1.5px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; }
   .villa-toggle button.active { border-color: var(--blu); color: var(--blu); background: var(--blu-soft); font-weight: 600; }
   .villa-toggle button svg { width: 18px; height: 18px; }
 
-  .theme-btn { flex: 1; padding: 12px 8px; border: 1.5px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: border-color 0.12s, color 0.12s, background 0.12s; }
-  .theme-btn:active { background: var(--sfondo); }
+  .theme-btn { flex: 1; padding: 12px 8px; border: 1.5px solid var(--border-strong); background: var(--card); border-radius: var(--radius-sm); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; }
   .theme-btn.active { border-color: var(--testo); color: var(--testo); font-weight: 600; }
 
   .fab-menu { position: fixed; right: 16px; bottom: calc(var(--tabbar-h) + 76px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 8px; align-items: flex-end; z-index: 51; }
-  .fab-menu button { background: white; border: 1px solid var(--border-strong); padding: 10px 14px; border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu); box-shadow: 0 2px 8px rgba(15,23,42,0.08); cursor: pointer; display: flex; align-items: center; gap: 7px; transition: opacity 0.12s; }
+  .fab-menu button { background: white; border: 1px solid var(--border-strong); padding: 10px 14px; border-radius: var(--radius-sm); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu); box-shadow: 0 2px 8px rgba(15,23,42,0.08); cursor: pointer; display: flex; align-items: center; gap: 7px; }
   .fab-menu button svg { width: 15px; height: 15px; }
-  .fab-menu button:active { opacity: 0.7; }
 
   .prop-card { background: #f8fafc; border-radius: var(--radius-sm); padding: 9px 11px; margin-bottom: 5px; }
   .prop-card .prop-nome { font-size: 12.5px; font-weight: 600; color: var(--testo); margin-bottom: 3px; }
@@ -258,23 +236,21 @@
   .addr-click { color: var(--blu); font-weight: 500; cursor: pointer; }
   .addr-link { color: var(--testo-ter); cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; padding: 2px 3px; border-radius: 5px; }
   .addr-link svg { width: 13px; height: 13px; }
-  .addr-link:active { background: #f1f5f9; }
   .addr-tools { padding-top: 7px; border-top: 1px solid var(--border); margin-top: 7px; }
 
   .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; }
   .filter-dropdown-overlay.open { display: block; background: rgba(15,23,42,0.25); }
   .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--sfondo); border-radius: var(--radius); padding: 14px; min-width: 240px; max-width: 90vw; box-shadow: 0 8px 32px rgba(15,23,42,0.18); }
-  .filter-dropdown h3 { font-size: 11px; font-weight: 700; color: var(--testo-ter); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .filter-dropdown h3 { font-size: 11px; font-weight: 700; color: var(--testo-ter); margin-bottom: 8px; text-transform: uppercase; }
   .filter-dropdown .opt { padding: 10px 11px; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--testo); cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
-  .filter-dropdown .opt:active { background: #eef2f7; }
   .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
   .filter-dropdown .opt svg { width: 13px; height: 13px; color: var(--blu); }
 
-  #map-container { position: relative; width: 100%; height: calc(100vh - var(--tabbar-h) - env(safe-area-inset-bottom)); height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom)); overflow: hidden; background: #e5e7eb; }
+  #map-container { position: relative; width: 100%; height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom)); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
   .map-overlay-top { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 500; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
   .map-overlay-top > * { pointer-events: auto; }
-  .map-chips { display: flex; gap: 5px; overflow-x: auto; padding: 6px 8px; background: rgba(255,255,255,0.96); backdrop-filter: blur(8px); border-radius: var(--radius-sm); box-shadow: 0 1px 4px rgba(15,23,42,0.08); -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .map-chips { display: flex; gap: 5px; overflow-x: auto; padding: 6px 8px; background: rgba(255,255,255,0.96); backdrop-filter: blur(8px); border-radius: var(--radius-sm); box-shadow: 0 1px 4px rgba(15,23,42,0.08); scrollbar-width: none; }
   .map-chips::-webkit-scrollbar { display: none; }
   .map-chip { background: #f1f5f9; border: none; padding: 5px 11px; border-radius: 14px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; }
   .map-chip.active { background: var(--blu); color: white; font-weight: 600; }
@@ -282,96 +258,93 @@
   .map-status .count { font-weight: 700; color: var(--blu); }
   .map-status button { background: var(--blu); border: none; border-radius: 6px; padding: 5px 9px; font-family: inherit; font-size: 10.5px; font-weight: 600; color: white; cursor: pointer; display: flex; align-items: center; gap: 4px; }
   .map-status button svg { width: 12px; height: 12px; }
-  .map-status button:disabled { opacity: 0.5; cursor: wait; }
   .map-overlay-bottom { position: absolute; bottom: 76px; right: 10px; z-index: 500; display: flex; flex-direction: column; gap: 6px; }
   .map-btn { width: 40px; height: 40px; border-radius: 20px; background: white; border: 1px solid var(--border-strong); box-shadow: 0 1px 4px rgba(15,23,42,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--blu); }
   .map-btn svg { width: 18px; height: 18px; }
-  .map-btn:active { background: var(--hover-bg); }
 
-  /* PIN MAPPA */
-  .pin-wrap { position: relative; width: 32px; height: 40px; cursor: pointer; }
+  .pin-wrap { position: relative; width: 32px; height: 40px; }
   .pin-body { position: absolute; bottom: 0; left: 50%; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: translateX(-50%) rotate(-45deg); border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
-  .pin-body .pin-label { transform: rotate(45deg); font-size: 10px; font-weight: 700; color: white; letter-spacing: -0.2px; line-height: 1; }
-  .pin-dot { width: 34px; height: 34px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 9.5px; font-weight: 700; letter-spacing: 0.2px; line-height: 1; }
+  .pin-body .pin-label { transform: rotate(45deg); font-size: 10px; font-weight: 700; color: white; line-height: 1; }
+  .pin-dot { width: 34px; height: 34px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 9.5px; font-weight: 700; line-height: 1; }
 
-  .leaflet-popup-content-wrapper { border-radius: 10px; padding: 0; overflow: hidden; box-shadow: 0 3px 12px rgba(15,23,42,0.15); }
+  .leaflet-popup-content-wrapper { border-radius: 10px; padding: 0; overflow: hidden; }
   .leaflet-popup-content { margin: 0; min-width: 190px; }
-  .arangiò-popup { padding: 10px 12px; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; }
+  .arangiò-popup { padding: 10px 12px; }
   .arangiò-popup .pop-titolo { font-size: 12.5px; font-weight: 600; color: var(--blu); margin-bottom: 3px; line-height: 1.3; display: flex; align-items: center; gap: 4px; }
-  .arangiò-popup .pop-sub { font-size: 11px; color: var(--testo-sec); margin-bottom: 6px; line-height: 1.3; display: flex; align-items: center; gap: 4px; }
-  .arangiò-popup .pop-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; color: white; margin-right: 3px; }
+  .arangiò-popup .pop-sub { font-size: 11px; color: var(--testo-sec); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+  .arangiò-popup .pop-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; color: white; }
   .arangiò-popup .pop-btn { background: var(--arancione); color: white; border: none; border-radius: 6px; padding: 7px 10px; font-family: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px; }
   .arangiò-popup .pop-btn svg { width: 13px; height: 13px; }
   .arangiò-popup .pop-btn.btn-nav { background: var(--blu); margin-top: 3px; }
   #map-container.map-hidden { visibility: hidden !important; pointer-events: none !important; }
-  #map-container.map-hidden #map { visibility: hidden !important; }
   .leaflet-pane { z-index: 1 !important; }
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
 
-  .att-subtabs { display: flex; gap: 6px; margin-bottom: 10px; }
-  .att-subtab { flex: 1; background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 8px 5px; text-align: center; cursor: pointer; transition: all 0.12s; font-family: inherit; }
-  .att-subtab:active { transform: scale(0.98); }
-  .att-subtab .num { font-size: 19px; font-weight: 700; line-height: 1; margin-bottom: 2px; letter-spacing: -0.4px; color: var(--testo-sec); }
-  .att-subtab .lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--testo-ter); }
+  .att-subtabs { display: flex; gap: 6px; margin-bottom: 10px; flex-shrink: 0; }
+  .att-subtab { flex: 1; background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 8px 5px; text-align: center; cursor: pointer; font-family: inherit; }
+  .att-subtab .num { font-size: 19px; font-weight: 700; line-height: 1; margin-bottom: 2px; color: var(--testo-sec); }
+  .att-subtab .lbl { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--testo-ter); }
   .att-subtab.oggi.active .num { color: var(--arancione); }
   .att-subtab.scadute.active .num { color: #dc2626; }
   .att-subtab.prossime.active .num { color: var(--nt); }
   .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
-  .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 14px 10px; margin-top: 14px; border: 1px solid var(--border); }
-  .agenda-sett h3 { font-size: 12px; font-weight: 700; color: var(--blu); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 12px 10px; border: 1px solid var(--border); }
+  .agenda-sett h3 { font-size: 12px; font-weight: 700; color: var(--blu); text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .agenda-sett h3 .lbl-click { cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-  .agenda-sett h3 .lbl-click:hover { opacity: 0.75; }
   .agenda-sett h3 .nav-sett { display: flex; gap: 3px; }
   .agenda-sett h3 .nav-sett button { background: #f1f5f9; border: none; width: 26px; height: 26px; border-radius: 6px; font-size: 14px; color: var(--blu); cursor: pointer; font-family: inherit; }
-  .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .agenda-giorno { background: #f8fafc; border-radius: 8px; padding: 8px 4px; min-height: 160px; display: flex; flex-direction: column; gap: 3px; cursor: pointer; }
+  .agenda-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .agenda-giorno { background: #f8fafc; border-radius: 6px; padding: 4px 3px; min-height: 60px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
   .agenda-giorno.oggi { background: var(--arancione-soft); border: 1px solid #fed7aa; }
-  .agenda-giorno .ag-nome { font-size: 9px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; letter-spacing: 0.2px; }
+  .agenda-giorno .ag-nome { font-size: 8px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; }
   .agenda-giorno.oggi .ag-nome { color: var(--arancione); }
-  .agenda-giorno .ag-num { font-size: 17px; font-weight: 700; color: var(--blu); text-align: center; line-height: 1; margin-bottom: 4px; }
+  .agenda-giorno .ag-num { font-size: 13px; font-weight: 700; color: var(--blu); text-align: center; line-height: 1; margin-bottom: 2px; }
   .agenda-giorno.oggi .ag-num { color: var(--arancione); }
-  .agenda-giorno .ag-ev { background: white; border-radius: 5px; padding: 4px 5px; font-size: 9.5px; font-weight: 500; color: var(--testo); line-height: 1.2; overflow: hidden; border-left: 2px solid var(--blu); }
+  .agenda-giorno .ag-ev { background: white; border-radius: 3px; padding: 2px 3px; font-size: 8px; font-weight: 500; color: var(--testo); overflow: hidden; border-left: 2px solid var(--blu); }
   .agenda-giorno .ag-ev.tipo-vend { border-left-color: var(--pa); }
   .agenda-giorno .ag-ev.tipo-acq { border-left-color: var(--rr); }
   .agenda-giorno .ag-ev.tipo-entrambi { border-left-color: var(--vnd); }
-  .agenda-giorno .ag-ev .ora { color: var(--testo-ter); font-weight: 600; font-size: 8.5px; display: block; }
-  .agenda-giorno .ag-empty { color: #cbd5e1; font-size: 12px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; }
+  .agenda-giorno .ag-ev .ora { color: var(--testo-ter); font-weight: 600; font-size: 7px; display: block; }
+  .agenda-giorno .ag-empty { color: #cbd5e1; font-size: 10px; text-align: center; flex: 1; display: flex; align-items: center; justify-content: center; }
 
-  /* PLANNING GIORNATA */
-  .planning-sett { background: var(--card); border-radius: var(--radius); padding: 14px 12px; margin-top: 10px; border: 1px solid var(--border); }
-  .planning-sett h3 { font-size: 12px; font-weight: 700; color: var(--blu); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .planning-sett { background: var(--card); border-radius: var(--radius); padding: 12px; border: 1px solid var(--border); }
+  .planning-sett h3 { font-size: 12px; font-weight: 700; color: var(--blu); text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .planning-sett h3 .nav-sett { display: flex; gap: 3px; }
   .planning-sett h3 .nav-sett button { background: #f1f5f9; border: none; width: 26px; height: 26px; border-radius: 6px; font-size: 14px; color: var(--blu); cursor: pointer; font-family: inherit; }
-  .planning-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
-  .planning-item { display: flex; gap: 8px; padding: 9px 11px; background: #f8fafc; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; align-items: flex-start; border-left: 3px solid var(--blu); }
-  .planning-item:active { background: #f1f5f9; }
+  .planning-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+  .planning-item { display: flex; gap: 8px; padding: 7px 9px; background: #f8fafc; border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; align-items: flex-start; border-left: 3px solid var(--blu); }
   .planning-item.appuntamento { border-left-color: var(--pa); }
   .planning-item.attivita { border-left-color: var(--nt); }
   .planning-item.libera { border-left-color: var(--arancione); }
   .planning-item.fatta { opacity: 0.55; }
-  .planning-item .pi-ora { font-size: 11px; font-weight: 700; color: var(--testo-sec); flex-shrink: 0; min-width: 42px; }
-  .planning-item .pi-testo { flex: 1; min-width: 0; word-break: break-word; line-height: 1.35; }
-  .planning-item .pi-tipo { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: var(--blu); color: white; flex-shrink: 0; align-self: flex-start; letter-spacing: 0.2px; }
+  .planning-item .pi-ora { font-size: 10px; font-weight: 700; color: var(--testo-sec); flex-shrink: 0; min-width: 38px; }
+  .planning-item .pi-testo { flex: 1; min-width: 0; word-break: break-word; line-height: 1.3; }
+  .planning-item .pi-tipo { font-size: 8px; font-weight: 700; padding: 2px 5px; border-radius: 3px; background: var(--blu); color: white; flex-shrink: 0; align-self: flex-start; }
   .planning-item.attivita .pi-tipo { background: var(--nt); }
   .planning-item.libera .pi-tipo { background: var(--arancione); }
-  .planning-empty { text-align: center; padding: 16px 8px; color: var(--testo-ter); font-size: 12.5px; }
+  .planning-empty { text-align: center; padding: 12px 8px; color: var(--testo-ter); font-size: 12px; }
 
-  /* CALENDARIO MENSILE (Apple style) */
+  /* PAGINE AGENDA E PLANNING */
+  .page-topbar { display: flex; align-items: center; gap: 12px; padding: 4px 0 12px; }
+  .page-back { background: var(--card); border: 1px solid var(--border-strong); width: 34px; height: 34px; border-radius: 10px; font-size: 18px; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: inherit; }
+  .page-back:active { background: var(--hover-bg); }
+  .page-title { font-size: 17px; font-weight: 700; color: var(--blu); flex: 1; letter-spacing: -0.3px; }
+  .page-back-inline { background: none; border: none; color: var(--blu); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 0; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 4px; }
+  .page-day-title { font-size: 18px; font-weight: 700; color: var(--blu); margin-bottom: 12px; }
+
   .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
-  .cal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); letter-spacing: -0.3px; margin: 0; flex: 1; text-align: center; }
+  .cal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); margin: 0; flex: 1; text-align: center; }
   .cal-header .cal-nav-btn { background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; color: var(--blu); cursor: pointer; font-family: inherit; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .cal-header .cal-nav-btn:active { background: #e2e8f0; }
   .cal-griglia { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .cal-giorno-h { font-size: 10px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; padding: 6px 0; letter-spacing: 0.3px; }
-  .cal-cella { background: #f8fafc; border-radius: 8px; padding: 5px 4px 6px; min-height: 72px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; position: relative; transition: background 0.12s; }
-  .cal-cella:active { background: #f1f5f9; }
+  .cal-giorno-h { font-size: 10px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; padding: 6px 0; }
+  .cal-cella { background: #f8fafc; border-radius: 8px; padding: 5px 4px 6px; min-height: 72px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; position: relative; }
   .cal-cella.fuori-mese { opacity: 0.35; }
   .cal-cella.oggi { background: var(--arancione-soft); border: 1px solid #fed7aa; }
   .cal-cella .cal-num { font-size: 13px; font-weight: 700; color: var(--blu); text-align: right; padding-right: 2px; line-height: 1; margin-bottom: 3px; }
   .cal-cella.oggi .cal-num { color: var(--arancione); }
-  .cal-cella .cal-ev { font-size: 8.5px; font-weight: 600; color: white; padding: 2px 4px; border-radius: 4px; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cal-cella .cal-ev { font-size: 8.5px; font-weight: 600; color: white; padding: 2px 4px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cal-cella .cal-ev.libera { background: var(--arancione); }
   .cal-cella .cal-ev.vend { background: var(--pa); }
   .cal-cella .cal-ev.acq { background: var(--rr); }
@@ -379,13 +352,12 @@
   .cal-cella .cal-ev.att { background: var(--nt); }
   .cal-cella .cal-more { font-size: 8.5px; font-weight: 700; color: var(--testo-ter); text-align: right; padding-right: 2px; }
 
-  .app-item-card { background: var(--card); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; transition: background 0.1s; }
-  .app-item-card:active { background: var(--hover-bg); }
+  .app-item-card { background: var(--card); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
   .app-item-card.tipo-acq { border-left-color: var(--rr); }
   .app-item-card.tipo-entrambi { border-left-color: var(--vnd); }
   .app-item-card.libero { border-left-color: var(--arancione); }
-  .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; gap: 3px; background: var(--blu); color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.2px; margin-bottom: 4px; }
+  .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; gap: 3px; background: var(--blu); color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
   .app-item-card .app-tipo-badge svg { width: 10px; height: 10px; }
   .app-item-card.tipo-vend .app-tipo-badge { background: var(--pa); }
   .app-item-card.tipo-acq .app-tipo-badge { background: var(--rr); }
@@ -395,16 +367,14 @@
   .app-item-card .app-data { font-size: 11.5px; color: var(--testo-sec); display: flex; align-items: center; gap: 3px; }
   .app-item-card .app-data svg { width: 11px; height: 11px; opacity: 0.6; }
   .app-item-card .app-esito { font-size: 10.5px; margin-top: 5px; padding: 3px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px; }
-  .app-item-card .app-esito svg { width: 11px; height: 11px; }
   .app-item-card .app-esito.ok { background: #ecfdf5; color: #047857; }
   .app-item-card .app-esito.ko { background: #fef2f2; color: #dc2626; }
   .app-item-card .app-esito.neutral { background: #f1f5f9; color: var(--testo-sec); }
 
   .tipo-app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-  .tipo-app-btn { background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 10px 10px; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.12s; position: relative; }
-  .tipo-app-btn:active { background: var(--hover-bg); }
-  .tipo-app-btn .sigla { font-size: 12.5px; font-weight: 700; color: var(--blu); margin-bottom: 2px; letter-spacing: 0.1px; display: flex; align-items: center; gap: 5px; }
-  .tipo-app-btn .sigla svg { width: 15px; height: 15px; flex-shrink: 0; }
+  .tipo-app-btn { background: var(--card); border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 10px; cursor: pointer; text-align: left; font-family: inherit; }
+  .tipo-app-btn .sigla { font-size: 12.5px; font-weight: 700; color: var(--blu); margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
+  .tipo-app-btn .sigla svg { width: 15px; height: 15px; }
   .tipo-app-btn .desc { font-size: 10px; color: var(--testo-ter); line-height: 1.3; }
   .tipo-app-btn.tipo-vend { border-left: 3px solid var(--pa); }
   .tipo-app-btn.tipo-acq { border-left: 3px solid var(--rr); }
@@ -412,14 +382,12 @@
 
   .att-gruppo { background: var(--card); border-radius: var(--radius); margin-bottom: 6px; border: 1px solid var(--border); overflow: hidden; }
   .att-gruppo-header { display: flex; align-items: center; gap: 9px; padding: 11px 13px; cursor: pointer; }
-  .att-gruppo-header:active { background: var(--hover-bg); }
   .att-icona-ent { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.75; }
   .att-icona-ent svg { width: 18px; height: 18px; }
   .att-info { flex: 1; min-width: 0; }
   .att-titolo { font-size: 13px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .att-meta { font-size: 10.5px; color: var(--testo-ter); margin-top: 2px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
   .att-count { background: var(--arancione); color: white; font-size: 10.5px; font-weight: 700; padding: 1px 8px; border-radius: 9px; }
-  .att-arrow { color: var(--testo-ter); transition: transform 0.15s; display: flex; align-items: center; }
   .att-arrow svg { width: 15px; height: 15px; }
   .att-gruppo.espanso .att-arrow { transform: rotate(90deg); }
   .att-gruppo-body { display: none; border-top: 1px solid var(--border); padding: 3px 0; }
@@ -432,7 +400,7 @@
   .att-dot.scaduta { background: #dc2626; box-shadow: 0 0 0 2px rgba(220,38,38,0.15); }
   .att-dot.prossima { background: #2563eb; }
   .att-body { flex: 1; min-width: 0; }
-  .att-data { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.2px; margin-bottom: 2px; }
+  .att-data { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; margin-bottom: 2px; }
   .att-data.oggi { color: var(--arancione); }
   .att-data.scaduta { color: #dc2626; }
   .att-testo { font-size: 13px; color: var(--testo); line-height: 1.35; word-break: break-word; }
@@ -440,9 +408,24 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  #scroll-sentinel { height: 1px; }
+  /* LAYOUT 3 SEZIONI ATTIVITÀ */
+  #view-attivita.active {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    min-height: 0;
+    padding-bottom: 4px;
+  }
+  .att-col {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .att-col-main { flex: 1 1 34%; }
+  .att-col-side { flex: 1 1 33%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .att-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-  /* DESKTOP RESPONSIVE */
   @media (min-width: 768px) {
     body { background: #eef1f5; }
     .app { max-width: var(--max-w); margin: 0 auto; background: var(--sfondo); border-left: 1px solid var(--border); border-right: 1px solid var(--border); box-shadow: 0 0 40px rgba(15,23,42,0.06); }
@@ -451,14 +434,10 @@
     .fab-menu { right: calc(50% - (var(--max-w) / 2) + 20px); }
     .back-top { right: calc(50% - (var(--max-w) / 2) + 20px); }
     .modal-overlay { align-items: center; padding: 20px; }
-    .modal-sheet { border-radius: 18px; max-height: 88vh; max-height: 88dvh; }
-    .filter-dropdown { min-width: 320px; }
-    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .cal-cella:hover, .att-item:hover, .att-gruppo-header:hover, .timeline-item:hover, .qa-btn:hover, .action-btn:hover { background: var(--hover-bg); }
-    .btn-secondary:hover { background: var(--hover-bg); }
-    .chip:hover { background: var(--hover-bg); }
+    .modal-sheet { border-radius: 18px; max-height: 88dvh; }
+    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .cal-cella:hover, .att-item:hover, .timeline-item:hover, .action-btn:hover, .btn-secondary:hover, .chip:hover { background: var(--hover-bg); }
     .chip.active:hover { background: var(--blu); }
     .chip.sub.active:hover { background: var(--arancione); }
-    .tabbar button:hover { color: var(--blu); }
     .foto-grid { grid-template-columns: repeat(4, 1fr); }
     .app-content { padding-left: 20px; padding-right: 20px; }
     .app-header { padding-left: 22px; padding-right: 22px; }
@@ -476,55 +455,19 @@
 
   /* TEMA SCURO */
   :root[data-theme="dark"] {
-    --blu: #1a3a5c;
-    --arancione: #e0651a;
-    --blu-soft: #131f2b;
-    --arancione-soft: #2a1a0f;
-    --sfondo: #0a0a0a;
-    --card: #151515;
-    --testo: #e6e6e6;
-    --testo-sec: #9a9a9a;
-    --testo-ter: #666666;
-    --border: #222222;
-    --border-strong: #2e2e2e;
-    --ombra: 0 1px 2px rgba(0,0,0,0.6);
+    --blu: #1a3a5c; --arancione: #e0651a;
+    --blu-soft: #131f2b; --arancione-soft: #2a1a0f;
+    --sfondo: #0a0a0a; --card: #151515;
+    --testo: #e6e6e6; --testo-sec: #9a9a9a; --testo-ter: #666666;
+    --border: #222222; --border-strong: #2e2e2e;
     --imm: #3a3a3a;
     --hover-bg: #1f1f1f;
   }
-  :root[data-theme="dark"] body,
-  :root[data-theme="dark"] .app { background: var(--sfondo); }
+  :root[data-theme="dark"] body, :root[data-theme="dark"] .app { background: var(--sfondo); }
   :root[data-theme="dark"] .tabbar { background: rgba(10,10,10,0.95); }
   :root[data-theme="dark"] .modal-sheet { background: #0f0f0f; }
-  :root[data-theme="dark"] .btn-secondary,
-  :root[data-theme="dark"] .chip,
-  :root[data-theme="dark"] .chip-dropdown { background: #1a1a1a; }
-  :root[data-theme="dark"] .btn-secondary:active,
-  :root[data-theme="dark"] .item-card:active,
-  :root[data-theme="dark"] .condo-card:active,
-  :root[data-theme="dark"] .immobile-line:active,
-  :root[data-theme="dark"] .tipo-app-btn:active,
-  :root[data-theme="dark"] .app-item-card:active,
-  :root[data-theme="dark"] .planning-item:active,
-  :root[data-theme="dark"] .cal-cella:active,
-  :root[data-theme="dark"] .att-item:active,
-  :root[data-theme="dark"] .att-gruppo-header:active { background: #222222; }
-  /* Dark hover: scuro, mai bianco */
-  :root[data-theme="dark"] .item-card:hover,
-  :root[data-theme="dark"] .condo-card:hover,
-  :root[data-theme="dark"] .immobile-line:hover,
-  :root[data-theme="dark"] .agenda-giorno:hover,
-  :root[data-theme="dark"] .tipo-app-btn:hover,
-  :root[data-theme="dark"] .planning-item:hover,
-  :root[data-theme="dark"] .cal-cella:hover,
-  :root[data-theme="dark"] .att-item:hover,
-  :root[data-theme="dark"] .att-gruppo-header:hover,
-  :root[data-theme="dark"] .timeline-item:hover,
-  :root[data-theme="dark"] .qa-btn:hover,
-  :root[data-theme="dark"] .action-btn:hover,
-  :root[data-theme="dark"] .btn-secondary:hover,
-  :root[data-theme="dark"] .chip:hover { background: #1f1f1f; }
-  :root[data-theme="dark"] .chip.active:hover { background: var(--blu); }
-  :root[data-theme="dark"] .chip.sub.active:hover { background: var(--arancione); }
+  :root[data-theme="dark"] .btn-secondary, :root[data-theme="dark"] .chip, :root[data-theme="dark"] .chip-dropdown { background: #1a1a1a; }
+  :root[data-theme="dark"] .item-card:hover, :root[data-theme="dark"] .condo-card:hover, :root[data-theme="dark"] .immobile-line:hover, :root[data-theme="dark"] .agenda-giorno:hover, :root[data-theme="dark"] .tipo-app-btn:hover, :root[data-theme="dark"] .planning-item:hover, :root[data-theme="dark"] .cal-cella:hover, :root[data-theme="dark"] .att-item:hover, :root[data-theme="dark"] .timeline-item:hover, :root[data-theme="dark"] .action-btn:hover, :root[data-theme="dark"] .btn-secondary:hover, :root[data-theme="dark"] .chip:hover { background: #1f1f1f; }
   :root[data-theme="dark"] .search-bar { background: #1a1a1a; color: var(--testo); }
   :root[data-theme="dark"] .btn-danger { background: #2a1010; color: #fca5a5; border-color: #5a1e1e; }
   :root[data-theme="dark"] .modal-close { background: rgba(255,255,255,0.08); color: var(--testo); }
@@ -539,12 +482,9 @@
   :root[data-theme="dark"] .att-subtab.active { background: #131f2b; }
   :root[data-theme="dark"] .filter-dropdown { background: #1a1a1a; }
   :root[data-theme="dark"] .filter-dropdown .opt.selected { background: #131f2b; }
-  :root[data-theme="dark"] .filter-dropdown .opt:active { background: #2a2a2a; }
-  :root[data-theme="dark"] .map-chips,
-  :root[data-theme="dark"] .map-status { background: rgba(15,15,15,0.96); color: var(--testo-sec); }
+  :root[data-theme="dark"] .map-chips, :root[data-theme="dark"] .map-status { background: rgba(15,15,15,0.96); color: var(--testo-sec); }
   :root[data-theme="dark"] .map-chip { background: #1e1e1e; color: var(--testo-sec); }
-  :root[data-theme="dark"] .leaflet-popup-content-wrapper,
-  :root[data-theme="dark"] .leaflet-popup-tip { background: #1a1a1a; color: var(--testo); }
+  :root[data-theme="dark"] .leaflet-popup-content-wrapper, :root[data-theme="dark"] .leaflet-popup-tip { background: #1a1a1a; color: var(--testo); }
   :root[data-theme="dark"] .back-top { background: #1a1a1a; }
   :root[data-theme="dark"] .fab-menu button { background: #1a1a1a; color: #7aa9d9; border-color: var(--border-strong); }
   :root[data-theme="dark"] .active-filter-banner { background: #131f2b; color: #7aa9d9; }
@@ -555,13 +495,11 @@
   :root[data-theme="dark"] .zdf-notice { background: #251610; color: #fdba74; }
   :root[data-theme="dark"] .zcode-badge { background: #131f2b; color: #7aa9d9; }
   :root[data-theme="dark"] .timeline-item.da-fare { background: #251610; }
-  :root[data-theme="dark"] .timeline-item.da-fare .data { color: #e0651a; }
   :root[data-theme="dark"] .timeline-item.scaduta { background: #2a1010; }
   :root[data-theme="dark"] .tag { background: #1e1e1e; color: var(--testo-sec); }
   :root[data-theme="dark"] .villa-toggle button { background: #1a1a1a; }
   :root[data-theme="dark"] .villa-toggle button.active { background: #131f2b; }
   :root[data-theme="dark"] .theme-btn { background: #1a1a1a; }
-  :root[data-theme="dark"] .theme-btn:active { background: #2a2a2a; }
   :root[data-theme="dark"] .theme-btn.active { border-color: var(--testo); color: var(--testo); }
   :root[data-theme="dark"] .zone-chip { background: #1e1e1e; color: var(--testo-sec); }
   :root[data-theme="dark"] .prop-card { background: #1e1e1e; }
@@ -572,48 +510,14 @@
   :root[data-theme="dark"] .app-esito.ok { background: #0d1f17; color: #6ee7b7; }
   :root[data-theme="dark"] .app-esito.ko { background: #2a1010; color: #fca5a5; }
   :root[data-theme="dark"] .app-esito.neutral { background: #1e1e1e; color: var(--testo-sec); }
-  :root[data-theme="dark"] .badge-IMM { background: #3a3a3a; color: white; }
+  :root[data-theme="dark"] .badge-IMM { background: #3a3a3a; }
   :root[data-theme="dark"] .foto-item { background: #1e1e1e; }
-  :root[data-theme="dark"] .foto-placeholder { background: linear-gradient(90deg, #1e1e1e 0%, #2a2a2a 50%, #1e1e1e 100%); background-size: 200% 100%; }
   :root[data-theme="dark"] .planning-item { background: #1a1a1a; }
-  :root[data-theme="dark"] .planning-item:active { background: #222222; }
   :root[data-theme="dark"] .cal-cella { background: #151515; }
   :root[data-theme="dark"] .cal-cella.oggi { background: #221610; }
-  :root[data-theme="dark"] .cal-header .cal-nav-btn,
-  :root[data-theme="dark"] .agenda-sett h3 .nav-sett button,
-  :root[data-theme="dark"] .planning-sett h3 .nav-sett button { background: #1e1e1e; color: #7aa9d9; }
-  :root[data-theme="dark"] .app-header h1,
-  :root[data-theme="dark"] .card h2,
-  :root[data-theme="dark"] .tabbar button.active,
-  :root[data-theme="dark"] .btn-secondary,
-  :root[data-theme="dark"] .qa-btn,
-  :root[data-theme="dark"] .action-btn,
-  :root[data-theme="dark"] .condo-card .condo-icon,
-  :root[data-theme="dark"] .sottotipo-line button,
-  :root[data-theme="dark"] .condo-header,
-  :root[data-theme="dark"] .prefill-banner,
-  :root[data-theme="dark"] .zone-summary strong,
-  :root[data-theme="dark"] .zcode-badge,
-  :root[data-theme="dark"] .agenda-sett h3,
-  :root[data-theme="dark"] .agenda-giorno .ag-num,
-  :root[data-theme="dark"] .agenda-sett h3 .nav-sett button,
-  :root[data-theme="dark"] .planning-sett h3,
-  :root[data-theme="dark"] .planning-sett h3 .nav-sett button,
-  :root[data-theme="dark"] .att-icona-ent,
-  :root[data-theme="dark"] .tipo-app-btn .sigla,
-  :root[data-theme="dark"] .map-btn,
-  :root[data-theme="dark"] .arangiò-popup .pop-titolo,
-  :root[data-theme="dark"] .back-top,
-  :root[data-theme="dark"] .add-btn,
-  :root[data-theme="dark"] .filter-dropdown .opt.selected,
-  :root[data-theme="dark"] .filter-dropdown .opt.selected svg,
-  :root[data-theme="dark"] .map-status .count,
-  :root[data-theme="dark"] .villa-toggle button.active,
-  :root[data-theme="dark"] .addr-click,
-  :root[data-theme="dark"] .cal-header h2,
-  :root[data-theme="dark"] .cal-cella .cal-num,
-  :root[data-theme="dark"] .modal-header h2 { color: #7aa9d9; }
-  :root[data-theme="dark"] .villa-toggle button.active { border-color: #7aa9d9; }
+  :root[data-theme="dark"] .cal-header .cal-nav-btn, :root[data-theme="dark"] .agenda-sett h3 .nav-sett button, :root[data-theme="dark"] .planning-sett h3 .nav-sett button { background: #1e1e1e; color: #7aa9d9; }
+  :root[data-theme="dark"] .page-back { background: #1a1a1a; color: #7aa9d9; }
+  :root[data-theme="dark"] .app-header h1, :root[data-theme="dark"] .card h2, :root[data-theme="dark"] .tabbar button.active, :root[data-theme="dark"] .btn-secondary, :root[data-theme="dark"] .qa-btn, :root[data-theme="dark"] .action-btn, :root[data-theme="dark"] .condo-card .condo-icon, :root[data-theme="dark"] .sottotipo-line button, :root[data-theme="dark"] .condo-header, :root[data-theme="dark"] .prefill-banner, :root[data-theme="dark"] .zone-summary strong, :root[data-theme="dark"] .zcode-badge, :root[data-theme="dark"] .agenda-sett h3, :root[data-theme="dark"] .agenda-giorno .ag-num, :root[data-theme="dark"] .agenda-sett h3 .nav-sett button, :root[data-theme="dark"] .planning-sett h3, :root[data-theme="dark"] .planning-sett h3 .nav-sett button, :root[data-theme="dark"] .att-icona-ent, :root[data-theme="dark"] .tipo-app-btn .sigla, :root[data-theme="dark"] .map-btn, :root[data-theme="dark"] .arangiò-popup .pop-titolo, :root[data-theme="dark"] .back-top, :root[data-theme="dark"] .add-btn, :root[data-theme="dark"] .map-status .count, :root[data-theme="dark"] .villa-toggle button.active, :root[data-theme="dark"] .addr-click, :root[data-theme="dark"] .cal-header h2, :root[data-theme="dark"] .cal-cella .cal-num, :root[data-theme="dark"] .modal-header h2, :root[data-theme="dark"] .page-title, :root[data-theme="dark"] .page-back-inline, :root[data-theme="dark"] .page-day-title { color: #7aa9d9; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
   :root[data-theme="dark"] .zone-chip.active { color: #ffffff; }
@@ -641,9 +545,7 @@
 
   <main class="app-content" id="app-content">
     <section id="view-immobili" class="view active">
-      <div class="search-sticky">
-        <input type="search" class="search-bar" id="search-immobili" placeholder="Cerca indirizzo, nome, zona...">
-      </div>
+      <div class="search-sticky"><input type="search" class="search-bar" id="search-immobili" placeholder="Cerca indirizzo, nome, zona..."></div>
       <div class="filter-label">Filtra per</div>
       <div class="chips" id="chips-immobili">
         <button class="chip active" data-filtro="tutti">Tutti</button>
@@ -657,7 +559,6 @@
       </div>
       <div id="filtro-attivo"></div>
       <div id="lista-immobili"></div>
-      <div id="scroll-sentinel"></div>
     </section>
 
     <section id="view-persone" class="view">
@@ -665,58 +566,84 @@
         <button class="chip sub active" data-ptab="acquirente" id="chip-ptab-acq"></button>
         <button class="chip sub" data-ptab="professionista" id="chip-ptab-prof"></button>
       </div>
-      <div class="search-sticky">
-        <input type="search" class="search-bar" id="search-persone" placeholder="Cerca nome, telefono, email...">
-      </div>
+      <div class="search-sticky"><input type="search" class="search-bar" id="search-persone" placeholder="Cerca nome, telefono, email..."></div>
       <div id="filtro-persone-attivo" style="margin-bottom:8px;"></div>
       <div id="lista-persone"></div>
     </section>
 
     <section id="view-attivita" class="view">
-      <div class="att-subtabs" id="att-subtabs">
-        <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')">
-          <div class="num" id="att-num-scadute">0</div>
-          <div class="lbl">Scadute</div>
-        </div>
-        <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')">
-          <div class="num" id="att-num-oggi">0</div>
-          <div class="lbl">Oggi</div>
-        </div>
-        <div class="att-subtab prossime" data-att="prossime" onclick="setAttTab('prossime')">
-          <div class="num" id="att-num-prossime">0</div>
-          <div class="lbl">Prossime</div>
-        </div>
-      </div>
-      <div id="lista-attivita"></div>
-
-      <div class="agenda-sett">
-        <h3>
-          <span class="lbl-click" onclick="apriAgendaCompleta()" id="agenda-sett-titolo">Agenda settimanale ›</span>
-          <div class="nav-sett">
-            <button onclick="cambiaSettimana(-1)">‹</button>
-            <button onclick="cambiaSettimana(0)">•</button>
-            <button onclick="cambiaSettimana(1)">›</button>
+      <!-- Sezione 1/3: ATTIVITÀ -->
+      <div class="att-col att-col-main">
+        <div class="att-subtabs" id="att-subtabs">
+          <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')">
+            <div class="num" id="att-num-scadute">0</div>
+            <div class="lbl">Scadute</div>
           </div>
-        </h3>
-        <div class="agenda-grid" id="agenda-grid"></div>
+          <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')">
+            <div class="num" id="att-num-oggi">0</div>
+            <div class="lbl">Oggi</div>
+          </div>
+          <div class="att-subtab prossime" data-att="prossime" onclick="setAttTab('prossime')">
+            <div class="num" id="att-num-prossime">0</div>
+            <div class="lbl">Prossime</div>
+          </div>
+        </div>
+        <div id="lista-attivita" class="att-scroll"></div>
       </div>
 
-      <div class="planning-sett">
-        <h3>
-          <span id="planning-titolo">Planning giornata</span>
-          <div class="nav-sett">
-            <button onclick="cambiaGiornoPlanning(-1)">‹</button>
-            <button onclick="cambiaGiornoPlanning(0)">•</button>
-            <button onclick="cambiaGiornoPlanning(1)">›</button>
-          </div>
-        </h3>
-        <div id="planning-contenuto"></div>
-        <div class="btn-row" style="margin-top:8px;">
-          <button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(currentPlanningYmd())">+ Libera</button>
-          <button class="btn btn-primary" onclick="apriNuovaAttivitaPianificata(currentPlanningYmd())">+ Attività</button>
+      <!-- Sezione 1/3: AGENDA -->
+      <div class="att-col att-col-side">
+        <div class="agenda-sett">
+          <h3>
+            <span class="lbl-click" onclick="apriAgendaPage()" id="agenda-sett-titolo">Agenda settimanale ›</span>
+            <div class="nav-sett">
+              <button onclick="cambiaSettimana(-1)">‹</button>
+              <button onclick="cambiaSettimana(0)">•</button>
+              <button onclick="cambiaSettimana(1)">›</button>
+            </div>
+          </h3>
+          <div class="agenda-grid" id="agenda-grid"></div>
         </div>
-        <button class="btn btn-secondary" style="margin-top:6px;" onclick="apriPlanningCompleto()">Apri planning completo →</button>
       </div>
+
+      <!-- Sezione 1/3: PLANNING -->
+      <div class="att-col att-col-side">
+        <div class="planning-sett">
+          <h3>
+            <span id="planning-titolo">Planning giornata</span>
+            <div class="nav-sett">
+              <button onclick="cambiaGiornoPlanning(-1)">‹</button>
+              <button onclick="cambiaGiornoPlanning(0)">•</button>
+              <button onclick="cambiaGiornoPlanning(1)">›</button>
+            </div>
+          </h3>
+          <div id="planning-contenuto"></div>
+          <div class="btn-row" style="margin-top:6px;gap:4px;">
+            <button class="btn btn-secondary" style="font-size:11.5px;padding:8px;margin-bottom:0;" onclick="apriNuovaPianificazioneLibera(currentPlanningYmd())">+ Libera</button>
+            <button class="btn btn-primary" style="font-size:11.5px;padding:8px;margin-bottom:0;" onclick="apriPlanningPage()">Apri ›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGINA AGENDA -->
+    <section id="view-agenda" class="view">
+      <div class="page-topbar">
+        <button class="page-back" onclick="tornaAttivita()">‹</button>
+        <div class="page-title" id="agenda-page-title">Agenda</div>
+        <div style="width:34px;"></div>
+      </div>
+      <div id="agenda-page-content"></div>
+    </section>
+
+    <!-- PAGINA PLANNING -->
+    <section id="view-planning" class="view">
+      <div class="page-topbar">
+        <button class="page-back" onclick="tornaAttivita()">‹</button>
+        <div class="page-title" id="planning-page-title">Planning</div>
+        <div style="width:34px;"></div>
+      </div>
+      <div id="planning-page-content"></div>
     </section>
 
     <section id="view-mappa" class="view" style="padding:0;margin:0;">
@@ -761,13 +688,13 @@
       <div class="card">
         <h2><span class="dot"></span>Dati</h2>
         <p style="margin-bottom:12px;">Esporta o importa un backup completo (le foto non sono incluse).</p>
-        <button class="btn btn-secondary" onclick="esportaBackup()" data-icon="download">Esporta backup</button>
-        <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()" data-icon="uploadBox">Importa backup</button>
+        <button class="btn btn-secondary" onclick="esportaBackup()" data-icon="uploadBox">Esporta backup</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()" data-icon="download">Importa backup</button>
         <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaBackup(event)">
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">2.7</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">2.8</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Foto</span><span class="value" id="storage-foto">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
@@ -864,7 +791,6 @@ const ICON_PATHS = {
   freccia: '<polyline points="9 18 15 12 9 6"/>',
   utente: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   utenti: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/>',
-  orologio: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
   campanello: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
   condominio: '<rect x="3" y="2" width="11" height="20" rx="1"/><rect x="14" y="8" width="7" height="14" rx="1"/><path d="M6 6h1.5M6 10h1.5M6 14h1.5M6 18h1.5M10 6h1.5M10 10h1.5M10 14h1.5M10 18h1.5M16.5 12h1.5M16.5 16h1.5M16.5 20h1.5"/>',
   nav: '<polygon points="3 11 22 2 13 21 11 13 3 11"/>'
@@ -877,10 +803,7 @@ function ico(name, size) {
 function applicaIcone() {
   document.querySelectorAll('[data-icon]').forEach(el => {
     const n = el.dataset.icon; if (!n) return;
-    const sz = el.classList.contains('theme-btn') ? 20
-      : el.classList.contains('map-btn') ? 18
-      : el.classList.contains('back-top') ? 16
-      : el.classList.contains('btn') ? 16 : 14;
+    const sz = el.classList.contains('theme-btn') ? 20 : el.classList.contains('map-btn') ? 18 : el.classList.contains('back-top') ? 16 : el.classList.contains('btn') ? 16 : 14;
     const prev = el.querySelector(':scope > .icona-inline'); if (prev) prev.remove();
     el.insertAdjacentHTML('afterbegin', '<span class="icona-inline">' + ico(n, sz) + '</span>');
   });
@@ -892,10 +815,10 @@ function applicaIcone() {
 function getTemaPreferito() { try { return localStorage.getItem('arangiò_theme') || 'auto'; } catch(e) { return 'auto'; } }
 function risolviTema(t) { if (t === 'dark') return 'dark'; if (t === 'light') return 'light'; return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
 function setTema(t) { try { localStorage.setItem('arangiò_theme', t); } catch(e) {} applyTema(t); }
-function applyTema(t) { const resolved = risolviTema(t); document.documentElement.setAttribute('data-theme', resolved); updateThemeColorMeta(); updateThemeButtons(); }
-function updateThemeColorMeta() { const resolved = document.documentElement.getAttribute('data-theme'); const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', resolved === 'dark' ? '#0a0a0a' : '#fafbfc'); }
+function applyTema(t) { document.documentElement.setAttribute('data-theme', risolviTema(t)); updateThemeColorMeta(); updateThemeButtons(); }
+function updateThemeColorMeta() { const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', document.documentElement.getAttribute('data-theme') === 'dark' ? '#0a0a0a' : '#fafbfc'); }
 function updateThemeButtons() { const t = getTemaPreferito(); ['auto','light','dark'].forEach(x => { const b = document.getElementById('th-' + x); if (b) b.classList.toggle('active', x === t); }); }
-try { const mq = window.matchMedia('(prefers-color-scheme: dark)'); const onChange = () => { if (getTemaPreferito() === 'auto') applyTema('auto'); }; if (mq.addEventListener) mq.addEventListener('change', onChange); else if (mq.addListener) mq.addListener(onChange); } catch(e) {}
+try { const mq = window.matchMedia('(prefers-color-scheme: dark)'); const onChange = () => { if (getTemaPreferito() === 'auto') applyTema('auto'); }; if (mq.addEventListener) mq.addEventListener('change', onChange); } catch(e) {}
 
 // =====================================================
 // STORAGE
@@ -908,24 +831,11 @@ const CREMONA_CENTER = [45.1333, 10.0167];
 const Storage = {
   load() {
     try {
-      const raw = localStorage.getItem(DB_KEY);
-      if (!raw) return this.default();
-      const parsed = JSON.parse(raw);
-      const def = this.default();
+      const raw = localStorage.getItem(DB_KEY); if (!raw) return this.default();
+      const parsed = JSON.parse(raw); const def = this.default();
       const condomini = parsed.condomini || {};
       for (const k in condomini) { if (!Array.isArray(condomini[k].foto)) condomini[k].foto = []; }
-      return {
-        versione: parsed.versione || def.versione,
-        nextSeq: parsed.nextSeq || def.nextSeq,
-        cittaPrincipale: parsed.cittaPrincipale || def.cittaPrincipale,
-        immobili: parsed.immobili || [],
-        persone: parsed.persone || [],
-        attivita: parsed.attivita || [],
-        appuntamenti: parsed.appuntamenti || [],
-        pianificazioni: parsed.pianificazioni || [],
-        condomini: condomini,
-        coordinateCondomini: parsed.coordinateCondomini || {}
-      };
+      return { versione: parsed.versione || def.versione, nextSeq: parsed.nextSeq || def.nextSeq, cittaPrincipale: parsed.cittaPrincipale || def.cittaPrincipale, immobili: parsed.immobili || [], persone: parsed.persone || [], attivita: parsed.attivita || [], appuntamenti: parsed.appuntamenti || [], pianificazioni: parsed.pianificazioni || [], condomini: condomini, coordinateCondomini: parsed.coordinateCondomini || {} };
     } catch (e) { return this.default(); }
   },
   save(data) {
@@ -949,7 +859,7 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 45, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], pianificazioni: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 46, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], pianificazioni: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -957,7 +867,7 @@ if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
 if (!DB.pianificazioni) DB.pianificazioni = [];
 
 // =====================================================
-// PHOTO STORAGE — IndexedDB
+// PHOTO STORAGE
 // =====================================================
 const PhotoDB = {
   db: null, _opening: null,
@@ -969,7 +879,6 @@ const PhotoDB = {
       req.onupgradeneeded = (e) => { const db = e.target.result; if (!db.objectStoreNames.contains('foto')) db.createObjectStore('foto', { keyPath: 'id' }); };
       req.onsuccess = () => { this.db = req.result; this._opening = null; resolve(this.db); };
       req.onerror = () => { this._opening = null; reject(req.error); };
-      req.onblocked = () => { this._opening = null; reject(new Error('IndexedDB bloccato')); };
     });
     return this._opening;
   },
@@ -1002,7 +911,6 @@ async function processImage(file) {
     reader.readAsDataURL(file);
   });
 }
-
 function apriFilePickerFoto(targetType, targetId, fromCamera) {
   const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
   if (fromCamera) input.capture = 'environment'; else input.multiple = true;
@@ -1019,10 +927,7 @@ async function aggiungiFoto(targetType, targetId, files) {
   if (!target) return;
   if (!Array.isArray(target.foto)) target.foto = [];
   let ok = 0, fail = 0;
-  for (const f of files) {
-    try { const blob = await processImage(f); const pid = 'ph_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); await PhotoDB.save(pid, blob, { nome: f.name || '', mime: 'image/jpeg', size: blob.size }); target.foto.push(pid); ok++; }
-    catch (err) { fail++; }
-  }
+  for (const f of files) { try { const blob = await processImage(f); const pid = 'ph_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); await PhotoDB.save(pid, blob, { nome: f.name || '', mime: 'image/jpeg', size: blob.size }); target.foto.push(pid); ok++; } catch (err) { fail++; } }
   if (targetType === 'immobile') target.updatedAt = new Date().toISOString();
   Storage.save(DB);
   if (fail > 0) alert(ok + ' foto aggiunte · ' + fail + ' errori');
@@ -1136,7 +1041,7 @@ function normalizzaTipoImmobile(s) { if (!s) return ''; const t = String(s).trim
 function formatBytes(b) { if (!b || b < 1024) return (b || 0) + ' B'; if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB'; if (b < 1024*1024*1024) return (b/(1024*1024)).toFixed(2) + ' MB'; return (b/(1024*1024*1024)).toFixed(2) + ' GB'; }
 
 // =====================================================
-// PERSONE UTILITY
+// PERSONE / APPUNTAMENTI / GEOCODING (già definiti)
 // =====================================================
 function titoloAcquirente(p) { const nome = (p.cognomeNome || '').toUpperCase(); const tel = p.telefono ? ' ' + p.telefono : ''; const coll = p.collega ? ' (' + p.collega.toUpperCase() + ')' : ''; const immobili = (p.immobili || []).length > 0 ? ' x ' + p.immobili.join(' / ') : ''; return 'RR - ' + nome + tel + coll + immobili; }
 function titoloProfessionista(p) { return 'PROF - ' + (p.cognomeNome || '').toUpperCase(); }
@@ -1145,25 +1050,19 @@ function getStatoRR(p) { if (p.tipo !== 'acquirente') return null; const s = STA
 function getTagPersona(p) { if (p.tipo === 'acquirente') { const s = getStatoRR(p); return s ? s.tag : '#RR-attiva'; } if (p.tipo === 'professionista') { const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf) || TIPI_PROFESSIONISTA[6]; return t.tag; } return ''; }
 function getLabelTipoPersona(p) { if (p.tipo === 'acquirente') return 'Acquirente'; if (p.tipo === 'professionista') { const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf); return t ? t.label : 'Professionista'; } return ''; }
 function acquirenteHaVistoNTINK(per) { if (!per || !per.immobili) return false; return per.immobili.some(l => /^(NT|INK)\s*-/.test(l)); }
-
-// =====================================================
-// TIPI APPUNTAMENTO
-// =====================================================
 function getTipoApp(sigla) { if (sigla === TIPO_LIBERO.sigla) return TIPO_LIBERO; return TIPI_APPUNTAMENTO.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10]; }
 function isAppLibero(sigla) { return sigla === TIPO_LIBERO.sigla; }
 
-// =====================================================
-// GEOCODING
-// =====================================================
+// Geocoding
 let geocodeCache = {};
 try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
 function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
 function parseIndirizzoStrutturato(indirizzo) {
   const ind = normalizzaIndirizzo(indirizzo); if (!ind) return null;
   const parti = ind.split(',').map(s => s.trim()).filter(s => s.length > 0);
-  const cittaPrincipale = getCittaPrincipale().split(',').map(s => s.trim());
-  let via = parti[0] || ''; let citta = parti[1] || cittaPrincipale[0] || ''; let provincia = parti[2] || cittaPrincipale[1] || ''; let cap = parti[3] || cittaPrincipale[2] || '';
-  if (/^\d{5}$/.test(citta)) { cap = citta; citta = cittaPrincipale[0] || ''; provincia = cittaPrincipale[1] || ''; }
+  const cp = getCittaPrincipale().split(',').map(s => s.trim());
+  let via = parti[0] || ''; let citta = parti[1] || cp[0] || ''; let provincia = parti[2] || cp[1] || ''; let cap = parti[3] || cp[2] || '';
+  if (/^\d{5}$/.test(citta)) { cap = citta; citta = cp[0] || ''; provincia = cp[1] || ''; }
   return { via, citta, provincia, cap };
 }
 async function geocodificaIndirizzo(indirizzo) {
@@ -1212,22 +1111,26 @@ tabButtons.forEach(btn => {
     const tab = btn.dataset.tab;
     tabButtons.forEach(b => b.classList.toggle('active', b === btn));
     views.forEach(v => v.classList.toggle('active', v.id === 'view-' + tab));
+    const appContent = document.getElementById('app-content');
+    // Reset defaults
+    document.querySelector('.app-header').style.display = '';
+    appContent.style.padding = '';
+    appContent.style.overflow = '';
+    appContent.scrollTop = 0;
+    document.getElementById('back-top').classList.remove('show');
+    const fab = document.getElementById('fab-immobili');
+    const fabMenu = document.getElementById('fab-menu');
     if (tab === 'mappa') {
       document.querySelector('.app-header').style.display = 'none';
-      document.getElementById('app-content').style.padding = '0';
-      document.getElementById('app-content').style.overflow = 'hidden';
-      document.getElementById('fab-immobili').style.display = 'none';
-      document.getElementById('fab-menu').style.display = 'none';
-      document.getElementById('back-top').classList.remove('show');
+      appContent.style.padding = '0';
+      appContent.style.overflow = 'hidden';
+      fab.style.display = 'none';
+      fabMenu.style.display = 'none';
       setTimeout(async () => { if (!map) initMappa(); else map.invalidateSize(); if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); aggiornaMappa(); }, 100);
     } else {
-      document.querySelector('.app-header').style.display = '';
-      document.getElementById('app-content').style.padding = '';
-      document.getElementById('app-content').style.overflow = '';
-      document.querySelector('.app-content').scrollTop = 0;
-      document.getElementById('back-top').classList.remove('show');
-      const fab = document.getElementById('fab-immobili');
-      const fabMenu = document.getElementById('fab-menu');
+      if (tab === 'attivita') {
+        appContent.style.overflow = 'hidden';
+      }
       if (tab === 'immobili' || tab === 'persone' || tab === 'attivita') fab.style.display = 'flex'; else fab.style.display = 'none';
       fabMenu.style.display = 'none'; fabMenuAperto = false;
       if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()">' + ico('casa',15) + ' Nuovo immobile</button><button onclick="fabMenuNuovoCondominio()">' + iconaCondo(15) + ' Nuovo condominio</button>';
@@ -1239,6 +1142,28 @@ tabButtons.forEach(btn => {
   });
 });
 function aggiornaFabPersone() { document.getElementById('fab-menu').innerHTML = ''; }
+
+function mostraView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === id));
+  const appContent = document.getElementById('app-content');
+  document.querySelector('.app-header').style.display = id === 'view-mappa' ? 'none' : '';
+  appContent.scrollTop = 0;
+  document.getElementById('back-top').classList.remove('show');
+  if (id === 'view-attivita') appContent.style.overflow = 'hidden';
+  else if (id === 'view-mappa') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
+  else { appContent.style.overflow = ''; appContent.style.padding = ''; }
+  // Tabbar: evidenzia "attivita" per le viste agenda/planning/attivita
+  const targetTab = (id === 'view-agenda' || id === 'view-planning') ? 'attivita' : id.replace('view-', '');
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === targetTab));
+  // FAB
+  const fab = document.getElementById('fab-immobili');
+  const fabMenu = document.getElementById('fab-menu');
+  if (id === 'view-agenda' || id === 'view-planning' || id === 'view-mappa') {
+    fab.style.display = 'none'; fabMenu.style.display = 'none'; fabMenuAperto = false;
+  } else if (id === 'view-attivita') {
+    fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false;
+  }
+}
 
 async function aggiornaInfoSistema() {
   const el = document.getElementById('sistema-citta'); if (el) el.textContent = getCittaPrincipale();
@@ -1390,7 +1315,7 @@ function renderListaCondomini(cont) {
 function selezionaCondominio(condo) { const im = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo); if (im.length === 0) { apriModificaCondominio(condo); return; } condoSelezionato = condo; vistaCondomini = false; aggiornaChips(); renderListaImmobili(); }
 
 // =====================================================
-// SELEZIONE ZONE
+// SELEZIONE ZONE + SELETTORE ZONE
 // =====================================================
 function apriSelezioneZone() {
   let h = '<p style="font-size:12.5px;color:var(--testo-sec);padding:0 4px 10px;">Seleziona una zona per filtrare.</p><div class="section-title">Zone</div><div class="zone-chips">';
@@ -1404,9 +1329,6 @@ function toggleZoneFiltro(z) { zonaSelezionata = (zonaSelezionata === z) ? null 
 function azzeraZoneFiltro() { zonaSelezionata = null; apriSelezioneZone(); }
 function confermaZoneFiltro() { chiudiModal(); aggiornaChips(); renderListaImmobili(); }
 
-// =====================================================
-// SELETTORE ZONE
-// =====================================================
 const zoneTemp = { nuovo: { base: [], speciale: null }, modifica: { base: [], speciale: null }, condo: { base: [], speciale: null } };
 function htmlSelettoreZone(idPrefix) {
   const st = zoneTemp[idPrefix]; const hb = st.base.length > 0;
@@ -1463,22 +1385,14 @@ function renderPersone() {
 }
 function resetFiltroPersone() { if (pTabAttivo === 'acquirente') pStatoRRFiltro = null; if (pTabAttivo === 'professionista') pTipoProfFiltro = null; renderPersone(); }
 function apriFormNuovaPersona() { if (pTabAttivo === 'acquirente') apriFormNuovoAcquirente(); else if (pTabAttivo === 'professionista') apriFormNuovoProfessionista(); }
+
+// ... [i form / schede persone restano identici - omessi per brevità, funzionano come prima]
+
 function apriFormNuovoAcquirente() {
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome *</label><input class="form-input" id="a-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="a-telefono" type="tel"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="a-email" type="email"></div></div>
     <div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Stato</h2></div>
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Stato iniziale</label><select class="form-select" id="a-stato">${STATI_RR.slice(0, 4).map(s => '<option value="' + s.id + '">' + s.label + '</option>').join('')}</select></div>
-      <div class="form-row"><label class="form-label">Cliente</label><select class="form-select" id="a-collega-type"><option value="mio">Mio</option><option value="collega">Di un collega</option></select></div>
-      <div class="form-row" id="a-collega-nome-row" style="display:none;"><label class="form-label">Nome del collega</label><input class="form-input" id="a-collega-nome"></div>
-    </div>
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="a-budget"></div>
-      <div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="a-tipo-imm"></div>
-      <div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona"></div>
-      <div class="form-row"><label class="form-label">Box</label><select class="form-select" id="a-box"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option><option value="Indifferente">Indifferente</option></select></div>
-      <div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div>
-      <div class="form-row"><label class="form-label">Immobili interessati (/ separati)</label><input class="form-input" id="a-immobili"></div>
-    </div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Stato iniziale</label><select class="form-select" id="a-stato">${STATI_RR.slice(0, 4).map(s => '<option value="' + s.id + '">' + s.label + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cliente</label><select class="form-select" id="a-collega-type"><option value="mio">Mio</option><option value="collega">Di un collega</option></select></div><div class="form-row" id="a-collega-nome-row" style="display:none;"><label class="form-label">Nome del collega</label><input class="form-input" id="a-collega-nome"></div></div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Budget</label><input class="form-input" id="a-budget"></div><div class="form-row"><label class="form-label">Tipo immobile</label><input class="form-input" id="a-tipo-imm"></div><div class="form-row"><label class="form-label">Zona preferita</label><input class="form-input" id="a-zona"></div><div class="form-row"><label class="form-label">Box</label><select class="form-select" id="a-box"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option><option value="Indifferente">Indifferente</option></select></div><div class="form-row"><label class="form-label">Esigenze</label><textarea class="form-textarea" id="a-esigenze"></textarea></div><div class="form-row"><label class="form-label">Immobili interessati (/ separati)</label><input class="form-input" id="a-immobili"></div></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoAcquirente()">Salva</button></div>`;
   apriModal('Nuovo acquirente', h);
   const s = document.getElementById('a-collega-type'); s.addEventListener('change', () => { document.getElementById('a-collega-nome-row').style.display = s.value === 'collega' ? 'block' : 'none'; });
@@ -1498,13 +1412,7 @@ function salvaNuovoAcquirente() {
 }
 function apriFormNuovoProfessionista() {
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome *</label><input class="form-input" id="p-cognomeNome"></div><div class="form-row"><label class="form-label">Tipo *</label><select class="form-select" id="p-tipoProf">${TIPI_PROFESSIONISTA.map(t => '<option value="' + t.id + '">' + t.label + '</option>').join('')}</select></div></div>
-    <div class="form-group">
-      <div class="form-row"><label class="form-label">Cellulare</label><input class="form-input" id="p-cell" type="tel"></div>
-      <div class="form-row"><label class="form-label">Ufficio</label><input class="form-input" id="p-uff" type="tel"></div>
-      <div class="form-row"><label class="form-label">Email</label><input class="form-input" id="p-email" type="email"></div>
-      <div class="form-row"><label class="form-label">Indirizzo ufficio</label><input class="form-input" id="p-ind"></div>
-      <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="p-note"></textarea></div>
-    </div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Cellulare</label><input class="form-input" id="p-cell" type="tel"></div><div class="form-row"><label class="form-label">Ufficio</label><input class="form-input" id="p-uff" type="tel"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="p-email" type="email"></div><div class="form-row"><label class="form-label">Indirizzo ufficio</label><input class="form-input" id="p-ind"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="p-note"></textarea></div></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoProfessionista()">Salva</button></div>`;
   apriModal('Nuovo professionista', h);
 }
@@ -1530,15 +1438,13 @@ function apriSchedaPersona(id) {
   let h = '<div style="margin-bottom:10px;">';
   if (p.tipo === 'acquirente') { const s = getStatoRR(p); h += '<span class="badge badge-RR-' + s.id + '">' + s.label + '</span>'; }
   else if (p.tipo === 'professionista') h += '<span class="badge badge-PROF">PROFESSIONISTA</span>';
-  h += '</div>';
-  h += '<div class="card">';
+  h += '</div><div class="card">';
   if (p.cognomeNome) h += '<div class="info-row"><span class="label">Nome</span><span class="value">' + escapeHtml(p.cognomeNome) + '</span></div>';
   if (lt) h += '<div class="info-row"><span class="label">Tipo</span><span class="value">' + escapeHtml(lt) + '</span></div>';
   const tp = p.telefonoCell || p.telefono; if (tp) h += '<div class="info-row"><span class="label">Cellulare</span><span class="value">' + escapeHtml(tp) + '</span></div>';
   if (p.telefonoUff) h += '<div class="info-row"><span class="label">Ufficio</span><span class="value">' + escapeHtml(p.telefonoUff) + '</span></div>';
   if (p.email) h += '<div class="info-row"><span class="label">Email</span><span class="value">' + escapeHtml(p.email) + '</span></div>';
   if (p.indirizzoUff) h += '<div class="info-row"><span class="label">Indirizzo ufficio</span><span class="value">' + escapeHtml(p.indirizzoUff) + '</span></div>';
-  if (p.residenza) h += '<div class="info-row"><span class="label">Residenza</span><span class="value">' + escapeHtml(p.residenza) + '</span></div>';
   if (p.tipo === 'acquirente') { if (p.collega) h += '<div class="info-row"><span class="label">Cliente di</span><span class="value">' + escapeHtml(p.collega.toUpperCase()) + '</span></div>'; if (p.budget) h += '<div class="info-row"><span class="label">Budget</span><span class="value">' + escapeHtml(p.budget) + '</span></div>'; if (p.tipoImmobile) h += '<div class="info-row"><span class="label">Cerca</span><span class="value">' + escapeHtml(p.tipoImmobile) + '</span></div>'; if (p.zona) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + escapeHtml(p.zona) + '</span></div>'; if (p.box) h += '<div class="info-row"><span class="label">Box</span><span class="value">' + escapeHtml(p.box) + '</span></div>'; if (p.esigenze) h += '<div class="info-row"><span class="label">Esigenze</span><span class="value">' + escapeHtml(p.esigenze) + '</span></div>'; }
   if (p.note) h += '<div class="info-row"><span class="label">Note</span><span class="value">' + escapeHtml(p.note) + '</span></div>';
   h += '<div style="margin-top:6px;"><span class="tag">' + tag + '</span></div></div>';
@@ -1609,7 +1515,7 @@ function salvaModificaProfessionista(id) {
 function apriCambiaStatoRR() {
   const p = DB.persone.find(x => x.id === personaAperta); if (!p || p.tipo !== 'acquirente') return;
   const sa = p.statoRR || 'attiva';
-  let h = '<div class="card" style="padding:10px 14px;"><div style="font-size:10.5px;color:var(--testo-ter);text-transform:uppercase;letter-spacing:0.4px;font-weight:600;">Stato attuale</div><div style="font-weight:600;font-size:14px;margin-top:2px;">' + getStatoRR(p).label + '</div></div><div class="card" style="padding:10px 4px 8px;"><h2 style="padding:0 10px;"><span class="dot"></span>Cambia in</h2>';
+  let h = '<div class="card" style="padding:10px 14px;"><div style="font-size:10.5px;color:var(--testo-ter);text-transform:uppercase;font-weight:600;">Stato attuale</div><div style="font-weight:600;font-size:14px;margin-top:2px;">' + getStatoRR(p).label + '</div></div><div class="card" style="padding:10px 4px 8px;"><h2 style="padding:0 10px;"><span class="dot"></span>Cambia in</h2>';
   for (const s of STATI_RR) { if (s.id === sa) continue; h += '<button class="btn btn-secondary" style="margin:0 10px 6px;width:calc(100% - 20px);" onclick="cambiaStatoRR(\'' + s.id + '\')">→ ' + s.label + '</button>'; }
   h += '</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Annulla</button></div>';
   apriModal('Cambia stato', h);
@@ -1699,13 +1605,7 @@ function trovaMatchNTINK(p) {
   const tipo = normalizzaTipoImmobile(p.tipoImmobile).toLowerCase();
   const zona = (p.zona || '').toLowerCase().trim();
   const list = DB.immobili.filter(i => i.stato === 'NT' || i.stato === 'INK');
-  return list.map(i => {
-    let score = 0;
-    const ze = getZoneEffettive(i);
-    if (zona) for (const z of ze) if (z.toLowerCase().includes(zona)) { score += 3; break; }
-    if (tipo) { const loc = (i.dettagli && i.dettagli.camere) ? normalizzaTipoImmobile(i.dettagli.camere).toLowerCase() : ''; if (loc && loc.includes(tipo)) score += 2; if ((i.sottotipo || '').toLowerCase().includes(tipo)) score += 1; }
-    return { imm: i, score };
-  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+  return list.map(i => { let score = 0; const ze = getZoneEffettive(i); if (zona) for (const z of ze) if (z.toLowerCase().includes(zona)) { score += 3; break; } if (tipo) { const loc = (i.dettagli && i.dettagli.camere) ? normalizzaTipoImmobile(i.dettagli.camere).toLowerCase() : ''; if (loc && loc.includes(tipo)) score += 2; if ((i.sottotipo || '').toLowerCase().includes(tipo)) score += 1; } return { imm: i, score }; }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
 }
 function apriMatchNTINKPerAcquirente(pid) {
   const p = DB.persone.find(x => x.id === pid); if (!p) return;
@@ -1864,14 +1764,13 @@ function apriFormAppuntamento(imm, per, tipo) {
   let h = '';
   if (isLibero) h += '<div class="prefill-banner" style="background:var(--arancione-soft);color:#c2410c;">' + ico('calendario',14) + ' Appuntamento libero</div>';
   else { h += '<div class="prefill-banner">' + ico(tipo.icona || 'calendario',14) + ' ' + escapeHtml((tipo.nome || tipo.sigla)) + '</div>'; if (imm) h += '<div class="card" style="padding:9px 12px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:3px;">Immobile</div><div style="font-size:13px;font-weight:600;">' + escapeHtml(titoloImmobile(imm)) + '</div></div>'; if (per) h += '<div class="card" style="padding:9px 12px;"><div style="font-size:10px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:3px;">Persona</div><div style="font-size:13px;font-weight:600;">' + escapeHtml(titoloPersona(per)) + '</div></div>'; }
-  const titoloLabel = isLibero ? 'Titolo *' : 'Titolo';
-  h += '<div class="form-group"><div class="form-row"><label class="form-label">' + titoloLabel + '</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"></div>';
+  h += '<div class="form-group"><div class="form-row"><label class="form-label">' + (isLibero ? 'Titolo *' : 'Titolo') + '</label><input class="form-input" id="ap-titolo" value="' + escapeHtml(t) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="' + isoToLocalInput(iD.toISOString()) + '" onchange="syncFineAppuntamentoNew()"></div>';
   h += '<div class="form-row"><label class="form-label">Fine</label><input class="form-input" type="datetime-local" step="1" id="ap-fine" value="' + isoToLocalInput(fD.toISOString()) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Luogo</label><input class="form-input" id="ap-luogo" value="' + escapeHtml(lu) + '"></div>';
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="ap-note"></textarea></div></div>';
-  if (tipo.sigla === 'APP') { const hc = imm && imm.dettagli && imm.dettagli.chiavi === 'Sì'; h += '<div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Dettagli visita</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Chiavi?</label><select class="form-select" id="ap-chiavi"><option value="Sì"' + (hc ? ' selected' : '') + '>Sì</option><option value="No"' + (!hc ? ' selected' : '') + '>No</option></select></div><div class="form-row"><label class="form-label">Proprietario presente?</label><select class="form-select" id="ap-prop-presente"><option value="No">No</option><option value="Sì">Sì</option></select></div></div>'; }
-  if (tipo.sigla === 'CONS') { h += '<div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Consulenza Kiron</h2></div><div class="form-group"><div class="form-row"><label class="form-label">Mutuabile?</label><select class="form-select" id="ap-mutuabile"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option></select></div><div class="form-row"><label class="form-label">Importo mutuo</label><input class="form-input" id="ap-importo"></div><div class="form-row"><label class="form-label">Percentuale</label><input class="form-input" id="ap-perc"></div></div>'; }
+  if (tipo.sigla === 'APP') { const hc = imm && imm.dettagli && imm.dettagli.chiavi === 'Sì'; h += '<div class="form-group"><div class="form-row"><label class="form-label">Chiavi?</label><select class="form-select" id="ap-chiavi"><option value="Sì"' + (hc ? ' selected' : '') + '>Sì</option><option value="No"' + (!hc ? ' selected' : '') + '>No</option></select></div><div class="form-row"><label class="form-label">Proprietario presente?</label><select class="form-select" id="ap-prop-presente"><option value="No">No</option><option value="Sì">Sì</option></select></div></div>'; }
+  if (tipo.sigla === 'CONS') { h += '<div class="form-group"><div class="form-row"><label class="form-label">Mutuabile?</label><select class="form-select" id="ap-mutuabile"><option value="">—</option><option value="Sì">Sì</option><option value="No">No</option></select></div><div class="form-row"><label class="form-label">Importo mutuo</label><input class="form-input" id="ap-importo"></div><div class="form-row"><label class="form-label">Percentuale</label><input class="form-input" id="ap-perc"></div></div>'; }
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaAppuntamento()">Salva</button></div>';
   apriModal(ico('calendario',18) + (isLibero ? ' Appuntamento libero' : ' Appuntamento'), h);
 }
@@ -1898,7 +1797,7 @@ function salvaAppuntamento() {
   }
   window._planningYmd = null;
   Storage.save(DB); chiudiModal();
-  aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning();
+  aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderAgendaPage(); renderPlanningPage();
   if (map) aggiornaMappa(); if (typeof renderListaImmobili === 'function') renderListaImmobili();
   setTimeout(() => { if (confirm('Aggiungere a Google Calendar?')) apriGoogleCalendarApp(ap); }, 250);
 }
@@ -1949,12 +1848,12 @@ function selezionaEsitoApp(esitoId) {
   if (a.tipo === 'VAL' && imm && imm.stato === 'NT') { const ev = (imm.sottotipo || '').toLowerCase().includes('valutata') && !(imm.sottotipo || '').toLowerCase().includes('non'); if (!ev) imm.sottotipo = 'NT valutata'; }
   if (a.tipo === 'G INK' && imm) { const r = prompt('Ribasso richiesto?', ''); if (r) { imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Ribasso: ' + r, completata: true }); } }
   if (a.tipo === 'RIT PROP' && imm) { imm.inTrattativa = true; imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Proposta → in trattativa', completata: true }); }
-  if (a.tipo === 'ACC PROP' && imm) { const acc = confirm('Proposta accettata? (OK = sì · Annulla = no)'); if (acc) { imm.inTrattativa = true; imm.propostaAccettata = true; imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Proposta ACCETTATA', completata: true }); if (per && per.tipo === 'acquirente') { per.statoRR = 'ha-comprato'; per.attivita = per.attivita || []; per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Ha comprato', completata: true }); } } else if (per && per.tipo === 'acquirente') per.statoRR = 'in-attesa'; }
+  if (a.tipo === 'ACC PROP' && imm) { const acc = confirm('Proposta accettata?'); if (acc) { imm.inTrattativa = true; imm.propostaAccettata = true; imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Proposta ACCETTATA', completata: true }); if (per && per.tipo === 'acquirente') { per.statoRR = 'ha-comprato'; per.attivita = per.attivita || []; per.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Ha comprato', completata: true }); } } else if (per && per.tipo === 'acquirente') per.statoRR = 'in-attesa'; }
   if (a.tipo === 'NOT ACC PROP' && imm) { imm.propostaNotificata = true; imm.attivita = imm.attivita || []; imm.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: ds + ' - Notificata', completata: true }); }
   if (a.tipo === 'ROGITO' && imm) { imm.stato = 'VND'; imm.inTrattativa = false; if (per && per.tipo === 'acquirente') per.statoRR = 'rogitato'; }
   if (a.tipo === 'APP' && per && per.tipo === 'acquirente' && esitoId === 'piace') per.statoRR = 'in-attesa';
   Storage.save(DB); chiudiModal();
-  aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderPersone();
+  aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderPersone(); renderAgendaPage(); renderPlanningPage();
   if (typeof renderListaImmobili === 'function') renderListaImmobili();
   if (map) aggiornaMappa();
 }
@@ -1962,7 +1861,7 @@ function eliminaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
   if (!confirm('Eliminare?\n\n' + a.titolo)) return;
   DB.appuntamenti = DB.appuntamenti.filter(x => x.id !== id);
-  Storage.save(DB); chiudiModal(); aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning();
+  Storage.save(DB); chiudiModal(); aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderAgendaPage(); renderPlanningPage();
 }
 function apriModificaAppuntamento(id) {
   const a = DB.appuntamenti.find(x => x.id === id); if (!a) return;
@@ -1992,12 +1891,12 @@ function salvaModificaAppuntamento(id) {
   if (a.tipo === 'CONS') { a.extraMutuabile = (g('mapp-mutuabile') || {}).value || ''; a.extraImporto = (g('mapp-importo') || {}).value || ''; a.extraPerc = (g('mapp-perc') || {}).value || ''; }
   if (a.tipo === 'APP') { a.extraChiavi = (g('mapp-chiavi') || {}).value || ''; a.extraPropPresente = (g('mapp-prop') || {}).value || ''; }
   Storage.save(DB);
-  aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning();
+  aggiornaHeaderProssimoApp(); aggiornaBadgeAttivita(); renderAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderAgendaPage(); renderPlanningPage();
   apriSchedaAppuntamento(a.id);
 }
 
 // =====================================================
-// AGENDA
+// AGENDA SETTIMANALE
 // =====================================================
 function cambiaSettimana(d) { if (d === 0) settimanaCorrente = new Date(); else settimanaCorrente = new Date(settimanaCorrente.getTime() + d * 7 * 24 * 60 * 60 * 1000); aggiornaAgendaSettimanale(); }
 function aggiornaAgendaSettimanale() {
@@ -2006,7 +1905,7 @@ function aggiornaAgendaSettimanale() {
   const l = new Date(b); l.setDate(b.getDate() + df); l.setHours(0, 0, 0, 0);
   const d = new Date(l); d.setDate(l.getDate() + 6); d.setHours(23, 59, 59, 999);
   const m = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-  t.innerHTML = 'Agenda settimanale: ' + l.getDate() + ' ' + m[l.getMonth()] + ' — ' + d.getDate() + ' ' + m[d.getMonth()] + ' ›';
+  t.innerHTML = 'Agenda settimanale ›';
   const gn = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
   const o = new Date(); o.setHours(0, 0, 0, 0);
   let h = '';
@@ -2015,26 +1914,37 @@ function aggiornaAgendaSettimanale() {
     const gf = new Date(gi2); gf.setHours(23, 59, 59, 999);
     const io = gi2.getTime() === o.getTime();
     const ag = (DB.appuntamenti || []).filter(a => { const x = new Date(a.dataInizio); return x >= gi2 && x <= gf && a.stato !== 'annullato'; }).sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
-    h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriAppGiorno(\'' + gi2.toISOString() + '\')"><div class="ag-nome">' + gn[i] + '</div><div class="ag-num">' + gi2.getDate() + '</div>';
+    h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + ymdDaData(gi2) + '\')"><div class="ag-nome">' + gn[i] + '</div><div class="ag-num">' + gi2.getDate() + '</div>';
     if (ag.length === 0) h += '<div class="ag-empty">·</div>';
-    else { const mx = 6; for (let k = 0; k < Math.min(ag.length, mx); k++) { const a = ag[k]; const tp = getTipoApp(a.tipo); const cl = getClasseChiApp(tp.chi); const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); const lbl = tp.libero ? (a.titolo || 'Libero').slice(0, 14) : a.tipo; h += '<div class="ag-ev ' + cl + '"><span class="ora">' + or + '</span>' + escapeHtml(lbl) + '</div>'; } if (ag.length > mx) h += '<div style="font-size:9px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (ag.length - mx) + '</div>'; }
+    else { const mx = 3; for (let k = 0; k < Math.min(ag.length, mx); k++) { const a = ag[k]; const tp = getTipoApp(a.tipo); const cl = getClasseChiApp(tp.chi); const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); const lbl = tp.libero ? (a.titolo || 'Libero').slice(0, 10) : a.tipo; h += '<div class="ag-ev ' + cl + '"><span class="ora">' + or + '</span>' + escapeHtml(lbl) + '</div>'; } if (ag.length > mx) h += '<div style="font-size:8px;color:var(--testo-ter);text-align:center;font-weight:600;">+' + (ag.length - mx) + '</div>'; }
     h += '</div>';
   }
   g.innerHTML = h;
 }
 
 // =====================================================
-// AGENDA COMPLETA (calendario mensile)
+// PAGINA AGENDA
 // =====================================================
 let calMeseCorrente = new Date();
-function apriAgendaCompleta() { calMeseCorrente = new Date(); renderAgendaCompleta(); }
-function cambiaMeseAgenda(delta) { if (delta === 0) calMeseCorrente = new Date(); else { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; } renderAgendaCompleta(); }
-function renderAgendaCompleta() {
+let agendaPageState = 'month';
+let agendaPageDayYmd = null;
+function apriAgendaPage() { agendaPageState = 'month'; calMeseCorrente = new Date(); mostraView('view-agenda'); renderAgendaPage(); }
+function tornaAttivita() { mostraView('view-attivita'); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); }
+function cambiaMeseAgenda(delta) { if (delta === 0) calMeseCorrente = new Date(); else { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; } renderAgendaPage(); }
+function clickGiornoAgenda(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; renderAgendaPage(); }
+function tornaCalendarioAgenda() { agendaPageState = 'month'; renderAgendaPage(); }
+function apriPlanningGiorno(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; mostraView('view-agenda'); renderAgendaPage(); }
+
+function renderAgendaPage() {
+  const cont = document.getElementById('agenda-page-content'); if (!cont) return;
+  if (agendaPageState === 'month') { document.getElementById('agenda-page-title').textContent = 'Agenda'; cont.innerHTML = htmlCalendarioMese(); }
+  else { document.getElementById('agenda-page-title').textContent = 'Dettaglio giorno'; cont.innerHTML = htmlDettaglioGiornoAgenda(agendaPageDayYmd); }
+}
+function htmlCalendarioMese() {
   const c = calMeseCorrente;
   const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
   const gN = ['L','M','M','G','V','S','D'];
-  let h = '';
-  h += '<div class="cal-header">';
+  let h = '<div class="cal-header">';
   h += '<button class="cal-nav-btn" onclick="cambiaMeseAgenda(-1)">‹</button>';
   h += '<h2>' + mN[c.getMonth()] + ' ' + c.getFullYear() + '</h2>';
   h += '<button class="cal-nav-btn" onclick="cambiaMeseAgenda(1)">›</button>';
@@ -2053,7 +1963,7 @@ function renderAgendaCompleta() {
     const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === dYmd && a.stato !== 'annullato');
     const libs = (DB.pianificazioni || []).filter(p => p.data === dYmd && !p.completata);
     const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === dYmd);
-    h += '<div class="cal-cella' + (outOfMonth ? ' fuori-mese' : '') + (isToday ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + dYmd + '\')">';
+    h += '<div class="cal-cella' + (outOfMonth ? ' fuori-mese' : '') + (isToday ? ' oggi' : '') + '" onclick="clickGiornoAgenda(\'' + dYmd + '\')">';
     h += '<div class="cal-num">' + d.getDate() + '</div>';
     const items = [];
     for (const a of apps) { const tp = getTipoApp(a.tipo); items.push({ t: tp.libero ? (a.titolo || 'Libero') : a.tipo, cls: getClasseChiApp(tp.chi) }); }
@@ -2064,20 +1974,40 @@ function renderAgendaCompleta() {
     h += '</div>';
   }
   h += '</div>';
-  h += '<div class="btn-row" style="margin-top:14px;"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
-  apriModal(ico('calendario',18) + ' Calendario', h);
+  return h;
 }
-function apriPlanningGiorno(ymd) {
-  window._planningFullYmd = ymd;
-  chiudiModal();
-  setTimeout(() => renderPlanningCompleto(), 120);
+function htmlDettaglioGiornoAgenda(ymd) {
+  const d = dataDaYmd(ymd);
+  const gN = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato']; const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === ymd && a.stato !== 'annullato').sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
+  const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymd).sort(compareAttivitaCrescente);
+  const libs = (DB.pianificazioni || []).filter(p => p.data === ymd && !p.completata).sort((a, b) => (a.ora || '99:99').localeCompare(b.ora || '99:99'));
+  let h = '<button class="page-back-inline" onclick="tornaCalendarioAgenda()">‹ Torna al calendario</button>';
+  h += '<div class="page-day-title">' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + '</div>';
+  h += '<div class="section-title">Appuntamenti in agenda</div>';
+  if (apps.length === 0) {
+    h += '<div class="card"><div class="empty" style="padding:22px 16px;"><div class="icon">' + ico('calendario',28) + '</div>Nessun appuntamento fissato per questa giornata</div></div>';
+    h += '<button class="btn btn-primary" onclick="apriNuovoAppuntamentoGlobale()">' + ico('calendario',16) + ' Fissa appuntamento</button>';
+  } else {
+    for (const a of apps) h += renderItemAppuntamento(a);
+    h += '<button class="btn btn-secondary" onclick="apriNuovoAppuntamentoGlobale()">' + ico('piu',16) + ' Aggiungi appuntamento</button>';
+  }
+  if (atts.length > 0) {
+    h += '<div class="section-title" style="margin-top:14px;">Attività da fare (' + atts.length + ')</div>';
+    for (const a of atts) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;padding:10px 12px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; }
+  }
+  if (libs.length > 0) {
+    h += '<div class="section-title" style="margin-top:14px;">Cose libere (' + libs.length + ')</div>';
+    for (const p2 of libs) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;padding:10px 12px;border-left:3px solid var(--arancione);" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:var(--arancione);">' + (p2.ora || '--:--') + ' · LIBERA</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; }
+  }
+  h += '<div class="btn-row" style="margin-top:14px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-secondary" onclick="apriPlanningPage(\'' + ymd + '\')">Apri planning →</button></div>';
+  return h;
 }
 
 // =====================================================
-// PLANNING GIORNATA
+// PLANNING GIORNATA (widget in attività)
 // =====================================================
-let planningYmd = null; // null = oggi
-let planningFullYmd = null;
+let planningYmd = null;
 function currentPlanningYmd() { return planningYmd || ymdDaData(new Date()); }
 function cambiaGiornoPlanning(delta) {
   if (delta === 0) planningYmd = null;
@@ -2100,58 +2030,22 @@ function renderPlanning() {
   const p = getPlanningPerData(ymd);
   const totale = p.apps.length + p.att.length + p.lib.length;
   let h = '';
-  if (totale === 0) h = '<div class="planning-empty">Niente in programma. Aggiungi qualcosa qui sotto.</div>';
+  if (totale === 0) h = '<div class="planning-empty">Niente in programma.</div>';
   else {
     h += '<div class="planning-list">';
     for (const a of p.apps) { const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); h += '<div class="planning-item appuntamento" onclick="apriSchedaAppuntamento(\'' + a.id + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.titolo) + '</div><span class="pi-tipo">' + escapeHtml(a.tipo) + '</span></div>'; }
-    for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="planning-item attivita" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.testo) + '<br><span style="font-size:11px;color:var(--testo-ter);">' + escapeHtml(a.entitaTitolo) + '</span></div><span class="pi-tipo">DA FARE</span></div>'; }
-    for (const p2 of p.lib) { h += '<div class="planning-item libera' + (p2.completata ? ' fatta' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><span class="pi-ora">' + (p2.ora || '--:--') + '</span><div class="pi-testo">' + escapeHtml(p2.testo) + (p2.completata ? ' <span style="color:#059669;font-weight:600;">✓</span>' : '') + '</div><span class="pi-tipo">' + (p2.completata ? 'FATTA' : 'LIBERA') + '</span></div>'; }
+    for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="planning-item attivita" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.testo) + '</div><span class="pi-tipo">ATT</span></div>'; }
+    for (const p2 of p.lib) { h += '<div class="planning-item libera' + (p2.completata ? ' fatta' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><span class="pi-ora">' + (p2.ora || '--:--') + '</span><div class="pi-testo">' + escapeHtml(p2.testo) + (p2.completata ? ' ✓' : '') + '</div><span class="pi-tipo">' + (p2.completata ? 'FATTA' : 'LIBERA') + '</span></div>'; }
     h += '</div>';
   }
   c.innerHTML = h;
 }
-function apriPlanningCompleto() { planningFullYmd = currentPlanningYmd(); renderPlanningCompleto(); }
-function cambiaGiornoPlanningFull(delta) {
-  if (delta === 0) planningFullYmd = ymdDaData(new Date());
-  else { const cur = dataDaYmd(planningFullYmd); cur.setDate(cur.getDate() + delta); planningFullYmd = ymdDaData(cur); }
-  renderPlanningCompleto();
-}
-function renderPlanningCompleto() {
-  const ymd = planningFullYmd;
-  const d = dataDaYmd(ymd);
-  const oggi = ymdDaData(new Date()) === ymd;
-  const gN = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato']; const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  const titolo = (oggi ? 'Oggi · ' : '') + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()];
-  const p = getPlanningPerData(ymd);
-  const tot = p.apps.length + p.att.length + p.lib.length;
-  let h = '';
-  h += '<div class="cal-header" style="margin-bottom:14px;">';
-  h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningFull(-1)">‹</button>';
-  h += '<h2>' + titolo + '</h2>';
-  h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningFull(1)">›</button>';
-  h += '</div>';
-  h += '<div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-secondary" onclick="cambiaGiornoPlanningFull(0)">Vai a oggi</button><button class="btn btn-secondary" onclick="apriAgendaCompleta()">Calendario</button></div>';
-  if (tot === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('calendario',32) + '</div>Niente in programma</div></div>';
-  else {
-    if (p.apps.length > 0) { h += '<div class="section-title">Appuntamenti (' + p.apps.length + ')</div>'; for (const a of p.apps) h += renderItemAppuntamento(a); }
-    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:10px;">Attività da fare (' + p.att.length + ')</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;padding:10px 12px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
-    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:10px;">Cose libere (' + p.lib.length + ')</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;padding:10px 12px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? '#059669' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'DA FARE') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
-  }
-  h += '<div class="btn-row" style="margin-top:14px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-primary" onclick="apriNuovaAttivitaPianificata(\'' + ymd + '\')">' + ico('piu',16) + ' Attività</button></div>';
-  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
-  apriModal(ico('calendario',18) + ' Planning', h);
-}
-function apriNuovaAttivitaPianificata(ymd) {
-  window._planningYmd = ymd;
-  chiudiModal();
-  setTimeout(() => apriNuovaAttivitaGlobale(), 150);
-}
-// Pianificazioni libere
+function apriNuovaAttivitaPianificata(ymd) { window._planningYmd = ymd; chiudiModal(); setTimeout(() => apriNuovaAttivitaGlobale(), 150); }
 function apriNuovaPianificazioneLibera(ymd, oraDefault) {
   const h = `<div class="form-group">
     <div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="pl-data" value="${ymd || ymdDaData(new Date())}"></div>
     <div class="form-row"><label class="form-label">Ora (opzionale)</label><input class="form-input" type="time" id="pl-ora" value="${oraDefault || ''}"></div>
-    <div class="form-row"><label class="form-label">Cosa devi fare? *</label><textarea class="form-textarea" id="pl-testo" placeholder="es. Zona Castello, Ufficio, riunione, ..."></textarea></div>
+    <div class="form-row"><label class="form-label">Cosa devi fare? *</label><textarea class="form-textarea" id="pl-testo" placeholder="es. Zona Castello, Ufficio, riunione..."></textarea></div>
   </div>
   <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaPianificazioneLibera()">Salva</button></div>`;
   apriModal(ico('calendario',18) + ' Nuova cosa da fare', h);
@@ -2164,15 +2058,12 @@ function salvaPianificazioneLibera() {
   if (!DB.pianificazioni) DB.pianificazioni = [];
   const ad = new Date().toISOString();
   DB.pianificazioni.push({ id: uid(), data, ora: ora || '', testo, completata: false, createdAt: ad, updatedAt: ad });
-  Storage.save(DB);
-  chiudiModal();
-  renderPlanning();
-  if (planningFullYmd) setTimeout(() => renderPlanningCompleto(), 100);
+  Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100);
 }
 function apriAzioniPianificazione(id) {
   const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return;
   const d = dataDaYmd(p.data); const gN = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const mN = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-  let h = '<div class="card" style="padding:12px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:5px;">Libera · ' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14px;">' + escapeHtml(p.testo) + (p.completata ? ' <span style="color:#059669;font-weight:600;">✓</span>' : '') + '</div></div>';
+  let h = '<div class="card" style="padding:12px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:5px;">Libera · ' + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14px;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
   if (!p.completata) h += '<button class="btn btn-primary" onclick="completaPianificazione(\'' + p.id + '\')">' + ico('check',16) + ' Segna come fatta</button>';
   else h += '<button class="btn btn-secondary" onclick="riapriPianificazione(\'' + p.id + '\')">' + ico('aggiorna',16) + ' Riporta da fare</button>';
   h += '<button class="btn btn-secondary" onclick="modificaPianificazione(\'' + p.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
@@ -2180,16 +2071,11 @@ function apriAzioniPianificazione(id) {
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
   apriModal('Cosa da fare', h);
 }
-function completaPianificazione(id) { const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return; p.completata = true; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); if (planningFullYmd) setTimeout(() => renderPlanningCompleto(), 100); }
-function riapriPianificazione(id) { const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return; p.completata = false; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); if (planningFullYmd) setTimeout(() => renderPlanningCompleto(), 100); }
+function completaPianificazione(id) { const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return; p.completata = true; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100); }
+function riapriPianificazione(id) { const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return; p.completata = false; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100); }
 function modificaPianificazione(id) {
   const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return;
-  const h = `<div class="form-group">
-    <div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="pl-data" value="${p.data}"></div>
-    <div class="form-row"><label class="form-label">Ora</label><input class="form-input" type="time" id="pl-ora" value="${p.ora || ''}"></div>
-    <div class="form-row"><label class="form-label">Cosa</label><textarea class="form-textarea" id="pl-testo">${escapeHtml(p.testo)}</textarea></div>
-  </div>
-  <div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniPianificazione('${id}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaPianificazione('${id}')">Salva</button></div>`;
+  const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="pl-data" value="${p.data}"></div><div class="form-row"><label class="form-label">Ora</label><input class="form-input" type="time" id="pl-ora" value="${p.ora || ''}"></div><div class="form-row"><label class="form-label">Cosa</label><textarea class="form-textarea" id="pl-testo">${escapeHtml(p.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniPianificazione('${id}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaPianificazione('${id}')">Salva</button></div>`;
   apriModal('Modifica', h);
 }
 function salvaModificaPianificazione(id) {
@@ -2198,22 +2084,49 @@ function salvaModificaPianificazione(id) {
   p.ora = (document.getElementById('pl-ora') || {}).value || '';
   p.testo = ((document.getElementById('pl-testo') || {}).value || '').trim() || p.testo;
   p.updatedAt = new Date().toISOString();
-  Storage.save(DB); chiudiModal(); renderPlanning(); if (planningFullYmd) setTimeout(() => renderPlanningCompleto(), 100);
+  Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100);
 }
 function eliminaPianificazione(id) {
   const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return;
   if (!confirm('Eliminare?\n\n' + p.testo)) return;
   DB.pianificazioni = DB.pianificazioni.filter(x => x.id !== id);
-  Storage.save(DB); chiudiModal(); renderPlanning(); if (planningFullYmd) setTimeout(() => renderPlanningCompleto(), 100);
+  Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100);
 }
 
 // =====================================================
-// APRI GIORNO (usato dall'agenda settimanale)
+// PAGINA PLANNING
 // =====================================================
-function apriAppGiorno(iso) {
-  const g = new Date(iso); const ymd = ymdDaData(g);
-  planningFullYmd = ymd;
-  renderPlanningCompleto();
+let planningPageYmd = null;
+function apriPlanningPage(ymd) { planningPageYmd = ymd || currentPlanningYmd(); mostraView('view-planning'); renderPlanningPage(); }
+function cambiaGiornoPlanningPage(delta) {
+  if (delta === 0) planningPageYmd = ymdDaData(new Date());
+  else { const cur = dataDaYmd(planningPageYmd); cur.setDate(cur.getDate() + delta); planningPageYmd = ymdDaData(cur); }
+  renderPlanningPage();
+}
+function renderPlanningPage() {
+  const cont = document.getElementById('planning-page-content'); if (!cont) return;
+  const ymd = planningPageYmd || ymdDaData(new Date());
+  const d = dataDaYmd(ymd); const oggi = ymdDaData(new Date()) === ymd;
+  const gN = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato']; const mN = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const titolo = (oggi ? 'Oggi · ' : '') + gN[d.getDay()] + ' ' + d.getDate() + ' ' + mN[d.getMonth()];
+  document.getElementById('planning-page-title').textContent = titolo;
+  const p = getPlanningPerData(ymd);
+  const tot = p.apps.length + p.att.length + p.lib.length;
+  let h = '';
+  h += '<div class="cal-header" style="margin-bottom:14px;">';
+  h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(-1)">‹</button>';
+  h += '<h2>' + titolo + '</h2>';
+  h += '<button class="cal-nav-btn" onclick="cambiaGiornoPlanningPage(1)">›</button>';
+  h += '</div>';
+  h += '<div class="btn-row" style="margin-bottom:12px;"><button class="btn btn-secondary" onclick="cambiaGiornoPlanningPage(0)">Vai a oggi</button><button class="btn btn-secondary" onclick="apriAgendaPage()">Calendario</button></div>';
+  if (tot === 0) h += '<div class="card"><div class="empty"><div class="icon">' + ico('calendario',32) + '</div>Niente in programma</div></div>';
+  else {
+    if (p.apps.length > 0) { h += '<div class="section-title">Appuntamenti (' + p.apps.length + ')</div>'; for (const a of p.apps) h += renderItemAppuntamento(a); }
+    if (p.att.length > 0) { h += '<div class="section-title" style="margin-top:10px;">Attività da fare (' + p.att.length + ')</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;padding:10px 12px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
+    if (p.lib.length > 0) { h += '<div class="section-title" style="margin-top:10px;">Cose libere (' + p.lib.length + ')</div>'; for (const p2 of p.lib) { h += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;padding:10px 12px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? '#059669' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
+  }
+  h += '<div class="btn-row" style="margin-top:14px;"><button class="btn btn-secondary" onclick="apriNuovaPianificazioneLibera(\'' + ymd + '\')">' + ico('piu',16) + ' Libera</button><button class="btn btn-primary" onclick="apriNuovaAttivitaPianificata(\'' + ymd + '\')">' + ico('piu',16) + ' Attività</button></div>';
+  cont.innerHTML = h;
 }
 
 // =====================================================
@@ -2300,7 +2213,7 @@ function cercaPerNuovaAttivita(q) {
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
 
 // =====================================================
-// IMMOBILI - FORM E SCHEDE
+// IMMOBILI - FORM E SCHEDE (invariate dalla versione precedente)
 // =====================================================
 function apriFormNuovo() {
   const dc = !!condoSelezionato;
@@ -2326,13 +2239,11 @@ function aggiornaFormNuovo() {
   const pc = condoSelezionato && !iv ? escapeHtml(condoSelezionato) : '';
   const pl = 'VIA ROMA 1, ' + nc + ', CR, 26100';
   if (t === 'censito') { let ch = ''; if (!iv) ch = '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-condominio" placeholder="Lascia vuoto per indirizzo" value="' + pc + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>'; c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-indirizzo" placeholder="${escapeHtml(pl)}" value="${pi}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div><div class="form-row"><label class="form-label">Citofono (opzionale)</label><input class="form-input" id="f-citofono"></div>${ch}</div>`; }
-  else {
-    let st = ''; if (t === 'nt') st = '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="f-sottotipo"><option value="NT non ancora valutata">NT non ancora valutata</option><option value="NT valutata">NT valutata</option></select></div>';
+  else { let st = ''; if (t === 'nt') st = '<div class="form-row"><label class="form-label">Stato notizia</label><select class="form-select" id="f-sottotipo"><option value="NT non ancora valutata">NT non ancora valutata</option><option value="NT valutata">NT valutata</option></select></div>';
     else if (t === 'ink') st = '<div class="form-row"><label class="form-label">Tipo incarico</label><select class="form-select" id="f-sottotipo"><option value="">—</option><option value="INK gestione">INK gestione</option><option value="INK esclusiva">INK esclusiva</option></select></div>';
     let ch = ''; if (!iv) ch = '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-condominio" value="' + pc + '" onblur="aggiornaBloccoZoneDaCondominio(this.value, \'nuovo\')"></div>';
     c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome proprietario</label><input class="form-input" id="f-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="f-telefono" type="tel"></div><div class="form-row"><label class="form-label">Indirizzo immobile</label><input class="form-input" id="f-indirizzo" placeholder="${escapeHtml(pl)}" value="${pi}" onblur="rilevaCondominioDaIndirizzo(this.value)"></div><div class="form-row"><label class="form-label">Residenza (opzionale)</label><input class="form-input" id="f-residenza"></div>${ch}${st}</div>
-    <div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Altri proprietari</h2></div>
-    <div class="form-group" style="padding:10px 14px;"><div id="prop-list-container">${htmlPropList()}</div></div>`;
+    <div class="card" style="padding:10px 14px 6px;"><h2><span class="dot"></span>Altri proprietari</h2></div><div class="form-group" style="padding:10px 14px;"><div id="prop-list-container">${htmlPropList()}</div></div>`;
   }
 }
 function htmlPropList() {
@@ -2387,18 +2298,14 @@ function salvaNuovoImmobile() {
   const dc = (!iv && DB.condomini && DB.condomini[co]) || {}; const zc = dc.zone || [];
   const z = iv ? calcolaZoneFinali('nuovo') : (zc.length > 0 ? zc.slice() : calcolaZoneFinali('nuovo'));
   let zz = null;
-  if (!iv) {
-    if (tf === 'censito') { const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind); if (e.length > 0) { if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo\nAnnulla = Riprendi esistente')) { const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0]; chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return; } } }
-    zz = prossimoZPerCondominio(co);
-  }
-  const flagsTrattativa = { inTrattativa: false, propostaAccettata: false, propostaNotificata: false };
+  if (!iv) { if (tf === 'censito') { const e = DB.immobili.filter(i => !i.villa && i.stato === 'IMM' && (i.indirizzo || '').toUpperCase() === ind); if (e.length > 0) { if (!confirm('Esiste già un IMM su "' + ind + '".\n\nOK = Crea nuovo\nAnnulla = Riprendi esistente')) { const p = e.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0]; chiudiModal(); setTimeout(() => apriScheda(p.id), 100); return; } } } zz = prossimoZPerCondominio(co); }
+  const flags = { inTrattativa: false, propostaAccettata: false, propostaNotificata: false };
   let im;
-  if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
-  else { const cn = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase(); const t = (document.getElementById('f-telefono') || {}).value || ''; const r = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase(); const se = document.getElementById('f-sottotipo'); const st = se ? se.value : ''; if (!cn) { alert('Cognome e nome obbligatori'); return; } const s = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK'; im = Object.assign({ id: uid(), stato: s, indirizzo: ind, z: zz, citofono: '', villa: iv, cognomeNome: cn, telefono: t.trim(), residenza: r, altriImmobili: [], altriProprietari: window._proprietariTemp.slice(), condominio: co, sottotipo: st, note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flagsTrattativa); }
+  if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flags); }
+  else { const cn = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase(); const t = (document.getElementById('f-telefono') || {}).value || ''; const r = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase(); const se = document.getElementById('f-sottotipo'); const st = se ? se.value : ''; if (!cn) { alert('Cognome e nome obbligatori'); return; } const s = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK'; im = Object.assign({ id: uid(), stato: s, indirizzo: ind, z: zz, citofono: '', villa: iv, cognomeNome: cn, telefono: t.trim(), residenza: r, altriImmobili: [], altriProprietari: window._proprietariTemp.slice(), condominio: co, sottotipo: st, note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flags); }
   applicaEreditaCondominio(im); DB.immobili.push(im); Storage.save(DB); chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); avviaGeocodificaBackground(im);
   setTimeout(() => { apriScheda(im.id); if (ca) setTimeout(() => apriNuovaAttivita(), 300); }, 180);
 }
-
 let immobileAperto = null; window._addrToolsAperti = false;
 function toggleAddrTools() { window._addrToolsAperti = !window._addrToolsAperti; const e = document.getElementById('addr-tools'); if (e) e.style.display = window._addrToolsAperti ? 'block' : 'none'; }
 function apriScheda(id) {
@@ -2441,15 +2348,8 @@ function apriScheda(id) {
   if (at.length === 0) h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessuna attività.</p>';
   else { for (const a of at) { const df = a.tipo === 'da_fare' && !a.completata; const sc = df && new Date(a.dataPrevista) < new Date(new Date().setHours(0, 0, 0, 0)); let cl = ''; if (sc) cl = 'scaduta'; else if (df) cl = 'da-fare'; h += '<div class="timeline-item ' + cl + '" onclick="apriAzioniAttivita(\'' + a.id + '\')"><span class="chev">›</span><span class="data">' + formattaData(dataEffettivaAttivita(a)) + '</span>' + escapeHtml(a.testo); if (df) h += ' <span style="color:' + (sc ? '#dc2626' : 'var(--arancione)') + ';font-weight:600;">[' + (sc ? 'scaduta' : 'da fare') + ']</span>'; h += '</div>'; } }
   h += '</div>';
-  if (isInCondo) {
-    h += '<div class="card"><h2>' + iconaCondo(13) + ' Foto condominio (' + nFotoCondo + ')</h2>';
-    h += '<p class="foto-hint">Ereditate da tutti gli immobili di questo condominio (in aggiunta a quelle dell\'immobile).</p>';
-    h += '<div id="foto-condo-grid-' + im.id + '"></div>';
-    h += '<div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>';
-    h += '<div class="card"><h2>' + ico('camera',13) + ' Foto immobile (' + nFotoProprie + ')</h2><div id="foto-grid-' + im.id + '"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>';
-  } else {
-    h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFotoProprie + ')</h2><div id="foto-grid-' + im.id + '"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>';
-  }
+  if (isInCondo) { h += '<div class="card"><h2>' + iconaCondo(13) + ' Foto condominio (' + nFotoCondo + ')</h2><p class="foto-hint">Ereditate da tutti gli immobili di questo condominio.</p><div id="foto-condo-grid-' + im.id + '"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'condominio\', \'' + escapeHtml(co).replace(/'/g, "\\'") + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>'; h += '<div class="card"><h2>' + ico('camera',13) + ' Foto immobile (' + nFotoProprie + ')</h2><div id="foto-grid-' + im.id + '"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>'; }
+  else { h += '<div class="card"><h2>' + ico('camera',13) + ' Foto (' + nFotoProprie + ')</h2><div id="foto-grid-' + im.id + '"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', true)">' + ico('camera',14) + ' Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto(\'immobile\', \'' + im.id + '\', false)">' + ico('foto',14) + ' Galleria</button></div></div>'; }
   if (!im.villa) { const dm = []; if (dc.annoCostruzione) dm.push(['Anno', dc.annoCostruzione]); if (dc.statoCondominio) dm.push(['Stato', dc.statoCondominio]); if (dc.cappotto) dm.push(['Cappotto', dc.cappotto]); if (dc.ascensoreCondominiale) dm.push(['Ascensore', dc.ascensoreCondominiale]); h += '<div class="card"><h2><span class="dot"></span>' + iconaCondo(13) + ' Dettagli condominio</h2>'; if (hd || zd) { for (const [k, v] of dm) h += '<div class="info-row"><span class="label">' + k + '</span><span class="value">' + escapeHtml(v) + '</span></div>'; if (zd) h += '<div class="info-row"><span class="label">Zona</span><span class="value">' + ico('pin',11) + ' ' + escapeHtml(dc.zone.join(' · ')) + '</span></div>'; if (dc.amministratore && dc.amministratore.nome) { h += '<div class="info-row"><span class="label">Amministratore</span><span class="value">' + escapeHtml(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) h += '<div class="info-row"><span class="label">Tel. amm.</span><span class="value">' + escapeHtml(dc.amministratore.telefono) + '</span></div>'; } } else h += '<p style="font-size:12.5px;color:var(--testo-sec);">Nessun dettaglio.</p>'; if (co) h += '<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + escapeHtml(co).replace(/'/g, "\\'") + '\')">' + ico('modifica',14) + ' Modifica condominio</button>'; h += '</div>'; }
   if (ze.length > 0) { h += '<div class="card"><h2><span class="dot"></span>Zone' + (zd ? ' <span style="font-size:10.5px;color:#059669;font-weight:500;text-transform:none;">(ereditate)</span>' : '') + '</h2><div class="zone-chips">'; for (const z of ze) { const is = (z === ZONA_ZDF || ZONE_SPECIALI.includes(z)); h += '<span class="zone-chip active' + (is ? ' special' : '') + '" style="cursor:default;">' + escapeHtml(z) + '</span>'; } h += '</div></div>'; }
   const d = im.dettagli || {};
@@ -2480,19 +2380,10 @@ function apriModificaCondominio(co) {
   if (d.zone && d.zone.length > 0) { const s = d.zone.filter(z => ZONA_ZDF === z || ZONE_SPECIALI.includes(z)); const b = d.zone.filter(z => ZONE_BASE.includes(z)); if (b.length > 0) zoneTemp.condo.base = b; else if (s.length === 1 && ZONE_SPECIALI.includes(s[0])) zoneTemp.condo.speciale = s[0]; }
   const h = `<div class="prefill-banner">${iconaCondo(13)} Condominio: ${escapeHtml(co)}</div>
     <button class="btn btn-secondary" onclick="apriCoordinateCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('pin',16)} Coordinate ${coord.lat ? ico('check',13) : ''}</button>
-    <div class="form-group"><div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" value="${escapeHtml(d.annoCostruzione || '')}"></div>
-      <div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (d.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
-      <div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="cd-cappotto">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (d.cappotto === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
-      <div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="cd-ascensore">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (d.ascensoreCondominiale === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div>
-    </div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" value="${escapeHtml(d.annoCostruzione || '')}"></div><div class="form-row"><label class="form-label">Stato condominio</label><select class="form-select" id="cd-stato">${['', 'Nuovo', 'Ristrutturato', 'Ottimo', 'Buono', 'Da ristrutturare'].map(s => '<option value="' + s + '"' + (d.statoCondominio === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Cappotto</label><select class="form-select" id="cd-cappotto">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (d.cappotto === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div><div class="form-row"><label class="form-label">Ascensore condominiale</label><select class="form-select" id="cd-ascensore">${['', 'Sì', 'No'].map(s => '<option value="' + s + '"' + (d.ascensoreCondominiale === s ? ' selected' : '') + '>' + (s || '—') + '</option>').join('')}</select></div></div>
     <div class="form-group" style="padding:10px 14px;"><div id="condo-zone-container">${htmlSelettoreZone('condo')}</div></div>
-    <div class="form-group"><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="cd-amm-nome" value="${escapeHtml(a.nome || '')}"></div>
-      <div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="cd-amm-tel" type="tel" value="${escapeHtml(a.telefono || '')}"></div>
-      <div class="form-row"><label class="form-label">Email</label><input class="form-input" id="cd-amm-email" value="${escapeHtml(a.email || '')}"></div>
-      <div class="form-row"><label class="form-label">Studio</label><input class="form-input" id="cd-amm-studio" value="${escapeHtml(a.studio || '')}"></div>
-      <div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="cd-note">${escapeHtml(d.note || '')}</textarea></div>
-    </div>
-    <div class="card"><h2>${ico('camera',13)} Foto condominio (${nFotoC})</h2><p class="foto-hint">Ereditate da tutti gli immobili di questo condominio (in aggiunta alle loro foto).</p><div id="foto-condo-modal-grid"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', true)">${ico('camera',14)} Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', false)">${ico('foto',14)} Galleria</button></div></div>
+    <div class="form-group"><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="cd-amm-nome" value="${escapeHtml(a.nome || '')}"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="cd-amm-tel" type="tel" value="${escapeHtml(a.telefono || '')}"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="cd-amm-email" value="${escapeHtml(a.email || '')}"></div><div class="form-row"><label class="form-label">Studio</label><input class="form-input" id="cd-amm-studio" value="${escapeHtml(a.studio || '')}"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="cd-note">${escapeHtml(d.note || '')}</textarea></div></div>
+    <div class="card"><h2>${ico('camera',13)} Foto condominio (${nFotoC})</h2><p class="foto-hint">Ereditate da tutti gli immobili di questo condominio.</p><div id="foto-condo-modal-grid"></div><div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', true)">${ico('camera',14)} Scatta</button><button type="button" class="add-btn" style="flex:1;margin-top:0;" onclick="apriFilePickerFoto('condominio', '${escapeHtml(co).replace(/'/g, "\\'")}', false)">${ico('foto',14)} Galleria</button></div></div>
     <button class="btn btn-danger" onclick="eliminaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">${ico('cestino',16)} Elimina condominio</button>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCondominio('${escapeHtml(co).replace(/'/g, "\\'")}')">Salva</button></div>`;
   apriModal('Dettagli condominio', h);
@@ -2574,13 +2465,11 @@ function cambiaStato(ns) { const i = DB.immobili.find(x => x.id === immobileAper
 function confermaCambioStato(ns) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = document.getElementById('cs-cognomeNome'); if (a) i.cognomeNome = a.value.trim().toUpperCase(); const b = document.getElementById('cs-telefono'); if (b) i.telefono = b.value || ''; const c = document.getElementById('cs-residenza'); if (c) i.residenza = (c.value || '').trim().toUpperCase(); eseguiCambioStato(i, i.stato, ns); }
 function eseguiCambioStato(i, v, ns) { i.stato = ns; if (ns === 'IMM') { i.cognomeNome = ''; i.telefono = ''; i.residenza = ''; i.altriImmobili = []; i.altriProprietari = []; } if (ns === 'NT' && !i.sottotipo) i.sottotipo = 'NT non ancora valutata'; i.attivita = i.attivita || []; i.attivita.push({ id: uid(), seq: prossimoSeq(), data: new Date().toISOString(), tipo: 'fatta', testo: 'Cambio stato: ' + v + ' → ' + ns, completata: true }); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function apriNuovaAttivita() {
-  const dflt = window._planningYmd ? (window._planningYmd + 'T09:00:00') : adessoLocal();
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="a-tipo" onchange="aggiornaFormAttivita()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div></div><div id="a-campi"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${immobileAperto}')">Annulla</button><button class="btn btn-primary" onclick="salvaAttivita()">Salva</button></div>`;
   apriModal('Nuova attività', h); aggiornaFormAttivita();
-  window._planningYmd = null;
 }
-function aggiornaFormAttivita() { const t = document.getElementById('a-tipo').value; const c = document.getElementById('a-campi'); const dflt = adessoLocal(); if (t === 'fatta') c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora</label><input class="form-input" type="datetime-local" step="1" id="a-data" value="${dflt}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; else c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data prevista</label><input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${window._planningYmd ? (window._planningYmd + 'T09:00:00') : adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; }
-function salvaAttivita() { const i = DB.immobili.find(x => x.id === immobileAperto); const t = document.getElementById('a-tipo').value; const tx = (document.getElementById('a-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } i.attivita = i.attivita || []; const s = prossimoSeq(); if (t === 'fatta') { const d = document.getElementById('a-data').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); } else { const d = document.getElementById('a-dataPrevista').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); } i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
+function aggiornaFormAttivita() { const t = document.getElementById('a-tipo').value; const c = document.getElementById('a-campi'); if (t === 'fatta') c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora</label><input class="form-input" type="datetime-local" step="1" id="a-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; else c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data prevista</label><input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${window._planningYmd ? (window._planningYmd + 'T09:00:00') : adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; }
+function salvaAttivita() { const i = DB.immobili.find(x => x.id === immobileAperto); const t = document.getElementById('a-tipo').value; const tx = (document.getElementById('a-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } i.attivita = i.attivita || []; const s = prossimoSeq(); if (t === 'fatta') { const d = document.getElementById('a-data').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); } else { const d = document.getElementById('a-dataPrevista').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); } i.updatedAt = new Date().toISOString(); window._planningYmd = null; Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:12px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:5px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14px;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">' + ico('check',16) + ' Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">' + ico('modifica',16) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">' + ico('cestino',16) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
 function segnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora esecuzione</label><input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="sf-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idA}')">Conferma</button></div>`; apriModal('Segna come fatta', h); }
 function confermaSegnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const d = document.getElementById('sf-data').value; const tx = (document.getElementById('sf-testo') || {}).value || a.testo; if (!d) { alert('Data'); return; } a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date(d).toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.testo = tx.trim(); a.updatedAt = new Date().toISOString(); a.seq = prossimoSeq(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
@@ -2591,10 +2480,6 @@ function toggleValutazione() { const i = DB.immobili.find(x => x.id === immobile
 function eliminaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); const fotoProprie = (i.foto || []).slice(); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); if (map) aggiornaMappa(); (async () => { for (const pid of fotoProprie) { try { await PhotoDB.delete(pid); } catch(e) {} revocaCacheFoto(pid); } aggiornaInfoSistema(); })(); }
 function archiviaImmobile() { const i = DB.immobili.find(x => x.id === immobileAperto); if (!i) return; if (!confirm('Archiviare?\n\n' + titoloImmobile(i))) return; const c = getCondominio(i); DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto); if (c) rinumeraZCondominio(c); Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); if (map) aggiornaMappa(); alert('Archiviato'); }
 function duplicaImmobile(id) { const o = DB.immobili.find(x => x.id === id); if (!o) return; if (o.villa) { const n = prompt('Indirizzo:', o.indirizzo); if (!n) return; const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.indirizzo = n.trim().toUpperCase(); c.lat = null; c.lng = null; c.geoPreciso = null; c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); avviaGeocodificaBackground(c); return; } const co = getCondominio(o); const c = JSON.parse(JSON.stringify(o)); c.id = uid(); c.z = prossimoZPerCondominio(co); c.attivita = []; c.foto = []; c.altriProprietari = (c.altriProprietari || []).map(p => ({ ...p, id: uid() })); c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt; c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false; DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
-
-// =====================================================
-// NUOVO CONDOMINIO
-// =====================================================
 function apriFormNuovoCondominio() {
   zoneTemp.condo = { base: [], speciale: null };
   const nc = getNomeCittaPrincipale();
@@ -2651,26 +2536,11 @@ function aggiornaMappa() {
     const lat = cc ? cc.lat : p.lat; const lng = cc ? cc.lng : p.lng;
     const info = calcolaInfoIcona(im);
     const mk = L.marker([lat, lng], { icon: creaIconaMap(info) });
-    if (im.length === 1) {
-      const x = im[0];
-      const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(x.citofono)}</div>` : '';
-      const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`;
-      mk.bindPopup(pp);
-    } else {
-      window._condoPopups.push(c);
-      const idx = window._condoPopups.length - 1;
-      const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(12)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">${iconaCondo(13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`;
-      mk.bindPopup(pp);
-    }
+    if (im.length === 1) { const x = im[0]; const cito = (x.stato === 'IMM' && x.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(x.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(x))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${x.stato}">${x.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${x.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${x.lat}, ${x.lng}, '${escapeHtml(x.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`; mk.bindPopup(pp); }
+    else { window._condoPopups.push(c); const idx = window._condoPopups.length - 1; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${iconaCondo(12)} CONDOMINIO</div><div class="pop-sub">${escapeHtml(c)}</div><div class="pop-sub"><strong>${im.length} immobili</strong></div><button class="pop-btn" onclick="apriPopupCondominioByIndex(${idx})">${iconaCondo(13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${lat}, ${lng}, '${escapeHtml(c).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`; mk.bindPopup(pp); }
     mk.addTo(markersLayer); pt++;
   }
-  for (const im of vs) {
-    const info = calcolaInfoIcona([im]);
-    const mk = L.marker([im.lat, im.lng], { icon: creaIconaMap(info) });
-    const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(im.citofono)}</div>` : '';
-    const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`;
-    mk.bindPopup(pp); mk.addTo(markersLayer); pt++;
-  }
+  for (const im of vs) { const info = calcolaInfoIcona([im]); const mk = L.marker([im.lat, im.lng], { icon: creaIconaMap(info) }); const cito = (im.stato === 'IMM' && im.citofono) ? `<div class="pop-sub">${ico('campanello',10)} Citofono: ${escapeHtml(im.citofono)}</div>` : ''; const pp = `<div class="arangiò-popup"><div class="pop-titolo">${escapeHtml(titoloImmobile(im))}</div>${cito}<div class="pop-sub"><span class="pop-badge badge-${im.stato}">${im.stato}</span></div><button class="pop-btn" onclick="apriPopupImmobile('${im.id}')">${ico('file',13)} Apri</button><button class="pop-btn btn-nav" onclick="apriNavigazioneMaps(${im.lat}, ${im.lng}, '${escapeHtml(im.indirizzo).replace(/'/g, "\\'")}')">${ico('nav',13)} Naviga</button></div>`; mk.bindPopup(pp); mk.addTo(markersLayer); pt++; }
   const t = DB.immobili.length; const g = DB.immobili.filter(i => i.lat && i.lng).length;
   document.getElementById('map-count').textContent = pt;
   document.getElementById('map-tot').textContent = '/ ' + t + ' (' + g + ' geo)';
