@@ -18,8 +18,10 @@
   (function() {
     try {
       const t = localStorage.getItem('arangiò_theme') || 'auto';
-      if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
-      else if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+      const resolved = (t === 'dark') ? 'dark'
+        : (t === 'light') ? 'light'
+        : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', resolved);
     } catch(e) {}
   })();
 </script>
@@ -441,110 +443,134 @@
   }
 
   /* ============================================
-     TEMA SCURO — Automatico o manuale
+     TEMA SCURO
+     Sempre attivato tramite [data-theme="dark"] risolto in JS.
+     Brand colors Tecnorete invariati: --blu e --arancione sono gli stessi della modalità chiara.
+     Palette neutra: nero/grigio.
      ============================================ */
   :root[data-theme="dark"] {
-    --blu: #7dd3fc;
-    --blu-soft: #1e3a5f;
-    --arancione: #fb923c;
-    --arancione-soft: #3d2817;
-    --sfondo: #0f172a;
-    --card: #1e293b;
-    --testo: #f1f5f9;
-    --testo-sec: #94a3b8;
-    --testo-ter: #64748b;
-    --border: #293548;
-    --border-strong: #334155;
-    --ombra: 0 1px 2px rgba(0,0,0,0.35);
-    --imm: #475569;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --blu: #7dd3fc;
-      --blu-soft: #1e3a5f;
-      --arancione: #fb923c;
-      --arancione-soft: #3d2817;
-      --sfondo: #0f172a;
-      --card: #1e293b;
-      --testo: #f1f5f9;
-      --testo-sec: #94a3b8;
-      --testo-ter: #64748b;
-      --border: #293548;
-      --border-strong: #334155;
-      --ombra: 0 1px 2px rgba(0,0,0,0.35);
-      --imm: #475569;
-    }
+    /* Brand Tecnorete - INVARIATI */
+    --blu: #1a3a5c;
+    --arancione: #e0651a;
+    /* Varianti soft adattate per sfondi scuri */
+    --blu-soft: #131f2b;
+    --arancione-soft: #2a1a0f;
+    /* Neutri - nero/grigio */
+    --sfondo: #0a0a0a;
+    --card: #151515;
+    --testo: #e6e6e6;
+    --testo-sec: #9a9a9a;
+    --testo-ter: #666666;
+    --border: #222222;
+    --border-strong: #2e2e2e;
+    --ombra: 0 1px 2px rgba(0,0,0,0.6);
+    --imm: #3a3a3a;
   }
 
+  /* Sfondi principali */
   :root[data-theme="dark"] body,
   :root[data-theme="dark"] .app { background: var(--sfondo); }
-  :root[data-theme="dark"] .tabbar { background: rgba(15,23,42,0.95); }
+  :root[data-theme="dark"] .tabbar { background: rgba(10,10,10,0.95); }
+  :root[data-theme="dark"] .modal-sheet { background: #0f0f0f; }
+
+  /* Cards ed elementi neutri */
   :root[data-theme="dark"] .btn-secondary,
   :root[data-theme="dark"] .chip,
-  :root[data-theme="dark"] .chip-dropdown { background: #1e293b; }
-  :root[data-theme="dark"] .btn-secondary:active { background: #334155; }
-  :root[data-theme="dark"] .btn-danger { background: #3d1f1f; color: #fca5a5; border-color: #7f1d1d; }
-  :root[data-theme="dark"] .search-bar { background: #1e293b; color: var(--testo); }
-  :root[data-theme="dark"] .chip.active { background: var(--blu); color: #0f172a; }
-  :root[data-theme="dark"] .chip.sub.active { background: var(--arancione); color: #0f172a; }
-  :root[data-theme="dark"] .badge-IMM { background: #475569; color: white; }
-  :root[data-theme="dark"] .modal-sheet { background: #0f172a; }
+  :root[data-theme="dark"] .chip-dropdown { background: #1a1a1a; }
+  :root[data-theme="dark"] .btn-secondary:active { background: #2a2a2a; }
+  :root[data-theme="dark"] .search-bar { background: #1a1a1a; color: var(--testo); }
+  :root[data-theme="dark"] .btn-danger { background: #2a1010; color: #fca5a5; border-color: #5a1e1e; }
   :root[data-theme="dark"] .modal-close { background: rgba(255,255,255,0.08); color: var(--testo); }
-  :root[data-theme="dark"] .qa-btn { background: #334155; color: #7dd3fc; }
+  :root[data-theme="dark"] .qa-btn { background: #1e1e1e; }
   :root[data-theme="dark"] .qa-btn.wa { color: #6ee7b7; }
-  :root[data-theme="dark"] .action-btn { background: #1e293b; }
-  :root[data-theme="dark"] .immobile-line { background: #334155; }
-  :root[data-theme="dark"] .immobile-line:active { background: #475569; }
-  :root[data-theme="dark"] .agenda-giorno { background: #1e293b; }
-  :root[data-theme="dark"] .agenda-giorno.oggi { background: #3d2817; }
-  :root[data-theme="dark"] .agenda-giorno .ag-ev { background: #334155; color: #f1f5f9; }
-  :root[data-theme="dark"] .att-subtab { background: #1e293b; }
-  :root[data-theme="dark"] .att-subtab.active { background: #1e3a5f; }
-  :root[data-theme="dark"] .filter-dropdown { background: #1e293b; }
-  :root[data-theme="dark"] .filter-dropdown .opt.selected { background: #1e3a5f; color: #7dd3fc; }
-  :root[data-theme="dark"] .filter-dropdown .opt:active { background: #334155; }
+  :root[data-theme="dark"] .action-btn { background: #151515; }
+  :root[data-theme="dark"] .immobile-line { background: #1a1a1a; }
+  :root[data-theme="dark"] .immobile-line:active { background: #2a2a2a; }
+  :root[data-theme="dark"] .agenda-giorno { background: #151515; }
+  :root[data-theme="dark"] .agenda-giorno.oggi { background: #221610; }
+  :root[data-theme="dark"] .agenda-giorno .ag-ev { background: #1e1e1e; color: var(--testo); }
+  :root[data-theme="dark"] .att-subtab { background: #151515; }
+  :root[data-theme="dark"] .att-subtab.active { background: #131f2b; }
+  :root[data-theme="dark"] .filter-dropdown { background: #1a1a1a; }
+  :root[data-theme="dark"] .filter-dropdown .opt.selected { background: #131f2b; }
+  :root[data-theme="dark"] .filter-dropdown .opt:active { background: #2a2a2a; }
   :root[data-theme="dark"] .map-chips,
-  :root[data-theme="dark"] .map-status { background: rgba(30,41,59,0.96); color: var(--testo-sec); }
-  :root[data-theme="dark"] .map-chip { background: #334155; color: var(--testo-sec); }
-  :root[data-theme="dark"] .map-chip.active { background: var(--blu); color: #0f172a; }
+  :root[data-theme="dark"] .map-status { background: rgba(15,15,15,0.96); color: var(--testo-sec); }
+  :root[data-theme="dark"] .map-chip { background: #1e1e1e; color: var(--testo-sec); }
   :root[data-theme="dark"] .leaflet-popup-content-wrapper,
-  :root[data-theme="dark"] .leaflet-popup-tip { background: #1e293b; color: var(--testo); }
-  :root[data-theme="dark"] .arangiò-popup .pop-titolo { color: #7dd3fc; }
-  :root[data-theme="dark"] .back-top { background: #1e293b; color: #7dd3fc; }
-  :root[data-theme="dark"] .fab-menu button { background: #1e293b; color: var(--testo); border-color: var(--border-strong); }
-  :root[data-theme="dark"] .active-filter-banner { background: #1e3a5f; color: #7dd3fc; }
-  :root[data-theme="dark"] .active-filter-banner .x { background: rgba(125,211,252,0.15); color: #7dd3fc; }
-  :root[data-theme="dark"] .prefill-banner { background: #1e3a5f; color: #7dd3fc; }
-  :root[data-theme="dark"] .inherit-banner { background: #0d2f24; color: #6ee7b7; }
+  :root[data-theme="dark"] .leaflet-popup-tip { background: #1a1a1a; color: var(--testo); }
+  :root[data-theme="dark"] .back-top { background: #1a1a1a; }
+  :root[data-theme="dark"] .fab-menu button { background: #1a1a1a; color: #7aa9d9; border-color: var(--border-strong); }
+  :root[data-theme="dark"] .active-filter-banner { background: #131f2b; color: #7aa9d9; }
+  :root[data-theme="dark"] .active-filter-banner .x { background: rgba(122,169,217,0.15); color: #7aa9d9; }
+  :root[data-theme="dark"] .prefill-banner { background: #131f2b; color: #7aa9d9; }
+  :root[data-theme="dark"] .inherit-banner { background: #0d1f17; color: #6ee7b7; }
   :root[data-theme="dark"] .inherit-banner .ico { color: #6ee7b7; }
-  :root[data-theme="dark"] .zdf-notice { background: #3d2817; color: #fdba74; }
-  :root[data-theme="dark"] .zcode-badge { background: #1e3a5f; color: #7dd3fc; }
-  :root[data-theme="dark"] .timeline-item.da-fare { background: #3d2817; }
-  :root[data-theme="dark"] .timeline-item.da-fare .data { color: #fb923c; }
-  :root[data-theme="dark"] .timeline-item.scaduta { background: #3d1f1f; }
-  :root[data-theme="dark"] .tag { background: #334155; color: var(--testo-sec); }
-  :root[data-theme="dark"] .villa-toggle button { background: #1e293b; }
-  :root[data-theme="dark"] .villa-toggle button.active { background: #1e3a5f; }
-  :root[data-theme="dark"] .theme-btn { background: #1e293b; }
-  :root[data-theme="dark"] .theme-btn:active { background: #334155; }
+  :root[data-theme="dark"] .zdf-notice { background: #251610; color: #fdba74; }
+  :root[data-theme="dark"] .zcode-badge { background: #131f2b; color: #7aa9d9; }
+  :root[data-theme="dark"] .timeline-item.da-fare { background: #251610; }
+  :root[data-theme="dark"] .timeline-item.da-fare .data { color: #e0651a; }
+  :root[data-theme="dark"] .timeline-item.scaduta { background: #2a1010; }
+  :root[data-theme="dark"] .tag { background: #1e1e1e; color: var(--testo-sec); }
+  :root[data-theme="dark"] .villa-toggle button { background: #1a1a1a; }
+  :root[data-theme="dark"] .villa-toggle button.active { background: #131f2b; }
+  :root[data-theme="dark"] .theme-btn { background: #1a1a1a; }
+  :root[data-theme="dark"] .theme-btn:active { background: #2a2a2a; }
   :root[data-theme="dark"] .theme-btn.active { border-color: var(--testo); color: var(--testo); }
-  :root[data-theme="dark"] .zone-chip { background: #334155; color: var(--testo-sec); }
-  :root[data-theme="dark"] .zone-chip.active { background: var(--blu); color: #0f172a; }
-  :root[data-theme="dark"] .zone-chip.special.active { background: var(--arancione); color: #0f172a; }
-  :root[data-theme="dark"] .prop-card { background: #334155; }
-  :root[data-theme="dark"] .app-esito.ok { background: #0d2f24; color: #6ee7b7; }
-  :root[data-theme="dark"] .app-esito.ko { background: #3d1f1f; color: #fca5a5; }
-  :root[data-theme="dark"] .app-esito.neutral { background: #334155; color: var(--testo-sec); }
-  :root[data-theme="dark"] .zone-summary { background: #334155; }
-  :root[data-theme="dark"] .zone-summary strong { color: #7dd3fc; }
-  :root[data-theme="dark"] .sottotipo-line button { background: #334155; color: #7dd3fc; }
-  :root[data-theme="dark"] .condo-header { background: #1e3a5f; color: #7dd3fc; }
-  :root[data-theme="dark"] .add-btn { background: #1e3a5f; color: #7dd3fc; }
-  :root[data-theme="dark"] .app-item-card.libero { border-left-color: var(--arancione); }
-  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
+  :root[data-theme="dark"] .zone-chip { background: #1e1e1e; color: var(--testo-sec); }
+  :root[data-theme="dark"] .prop-card { background: #1e1e1e; }
+  :root[data-theme="dark"] .zone-summary { background: #1e1e1e; }
+  :root[data-theme="dark"] .sottotipo-line button { background: #1e1e1e; }
+  :root[data-theme="dark"] .condo-header { background: #131f2b; }
+  :root[data-theme="dark"] .add-btn { background: #131f2b; }
+  :root[data-theme="dark"] .app-esito.ok { background: #0d1f17; color: #6ee7b7; }
+  :root[data-theme="dark"] .app-esito.ko { background: #2a1010; color: #fca5a5; }
+  :root[data-theme="dark"] .app-esito.neutral { background: #1e1e1e; color: var(--testo-sec); }
+  :root[data-theme="dark"] .badge-IMM { background: #3a3a3a; color: white; }
+
+  /* Dove --blu è usato come TESTO su sfondo scuro: variante chiara per leggibilità.
+     Il --blu Tecnorete (#1a3a5c) resta invariato per gli sfondi (chip attive, badge, ecc.). */
+  :root[data-theme="dark"] .app-header h1,
+  :root[data-theme="dark"] .card h2,
+  :root[data-theme="dark"] .tabbar button.active,
+  :root[data-theme="dark"] .btn-secondary,
+  :root[data-theme="dark"] .qa-btn,
+  :root[data-theme="dark"] .action-btn,
+  :root[data-theme="dark"] .condo-card .condo-icon,
+  :root[data-theme="dark"] .sottotipo-line button,
+  :root[data-theme="dark"] .condo-header,
+  :root[data-theme="dark"] .prefill-banner,
+  :root[data-theme="dark"] .zone-summary strong,
+  :root[data-theme="dark"] .zcode-badge,
+  :root[data-theme="dark"] .agenda-sett h3,
+  :root[data-theme="dark"] .agenda-giorno .ag-num,
+  :root[data-theme="dark"] .agenda-sett h3 .nav-sett button,
+  :root[data-theme="dark"] .att-icona-ent,
+  :root[data-theme="dark"] .tipo-app-btn .sigla,
+  :root[data-theme="dark"] .map-btn,
+  :root[data-theme="dark"] .arangiò-popup .pop-titolo,
+  :root[data-theme="dark"] .back-top,
+  :root[data-theme="dark"] .add-btn,
+  :root[data-theme="dark"] .filter-dropdown .opt.selected,
+  :root[data-theme="dark"] .filter-dropdown .opt.selected svg,
+  :root[data-theme="dark"] .map-status .count,
+  :root[data-theme="dark"] .villa-toggle button.active,
+  :root[data-theme="dark"] .addr-click,
+  :root[data-theme="dark"] .modal-header h2 {
+    color: #7aa9d9;
   }
+  :root[data-theme="dark"] .villa-toggle button.active { border-color: #7aa9d9; }
+
+  /* Chip/zone/map con sfondo --blu → testo bianco */
+  :root[data-theme="dark"] .chip.active { color: #ffffff; }
+  :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
+  :root[data-theme="dark"] .zone-chip.active { color: #ffffff; }
+  :root[data-theme="dark"] .zone-chip.special.active { color: #ffffff; background: var(--arancione); }
+  :root[data-theme="dark"] .map-chip.active { color: #ffffff; }
+  :root[data-theme="dark"] .chip-dropdown.active { color: #ffffff; }
+
+  /* Tile mappa in dark */
+  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9) saturate(0.7); }
 </style>
 </head>
 <body>
@@ -796,32 +822,42 @@ function applicaIcone() {
 // =====================================================
 // TEMA
 // =====================================================
+// "auto" risolve subito in light/dark in base al sistema e resta in ascolto.
+function getTemaPreferito() { try { return localStorage.getItem('arangiò_theme') || 'auto'; } catch(e) { return 'auto'; } }
+function risolviTema(t) {
+  if (t === 'dark') return 'dark';
+  if (t === 'light') return 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
 function setTema(t) {
   try { localStorage.setItem('arangiò_theme', t); } catch(e) {}
   applyTema(t);
 }
 function applyTema(t) {
-  if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
-  else if (t === 'light') document.documentElement.setAttribute('data-theme','light');
-  else document.documentElement.removeAttribute('data-theme');
+  const resolved = risolviTema(t);
+  document.documentElement.setAttribute('data-theme', resolved);
   updateThemeColorMeta();
   updateThemeButtons();
 }
 function updateThemeColorMeta() {
-  const a = document.documentElement.getAttribute('data-theme');
-  const isDark = a === 'dark' || (!a && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const resolved = document.documentElement.getAttribute('data-theme');
+  const isDark = resolved === 'dark';
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', isDark ? '#0f172a' : '#fafbfc');
+  if (meta) meta.setAttribute('content', isDark ? '#0a0a0a' : '#fafbfc');
 }
 function updateThemeButtons() {
-  const t = (() => { try { return localStorage.getItem('arangiò_theme') || 'auto'; } catch(e) { return 'auto'; } })();
+  const t = getTemaPreferito();
   ['auto','light','dark'].forEach(x => {
     const b = document.getElementById('th-' + x);
     if (b) b.classList.toggle('active', x === t);
   });
 }
+// Ascolta i cambi di tema di sistema: aggiorna solo se in "auto"
 try {
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColorMeta);
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const onChange = () => { if (getTemaPreferito() === 'auto') applyTema('auto'); };
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else if (mq.addListener) mq.addListener(onChange);
 } catch(e) {}
 
 // =====================================================
