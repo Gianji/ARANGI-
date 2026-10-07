@@ -334,15 +334,15 @@
   .page-back-inline { background: none; border: none; color: var(--blu); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 0; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 4px; }
   .page-day-title { font-size: 18px; font-weight: 700; color: var(--blu); margin-bottom: 12px; }
 
-  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; padding: 0 2px; }
   .cal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); margin: 0; flex: 1; text-align: center; }
   .cal-header .cal-nav-btn { background: #f1f5f9; border: none; width: 34px; height: 34px; border-radius: 8px; font-size: 16px; color: var(--blu); cursor: pointer; font-family: inherit; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .cal-griglia { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-giorno-h { font-size: 10px; font-weight: 700; color: var(--testo-ter); text-transform: uppercase; text-align: center; padding: 6px 0; }
-  .cal-cella { background: #f8fafc; border-radius: 8px; padding: 5px 4px 6px; min-height: 72px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; position: relative; }
+  .cal-cella { background: #f8fafc; border-radius: 8px; padding: 5px 4px 6px; min-height: 76px; height: 76px; overflow: hidden; display: flex; flex-direction: column; gap: 2px; cursor: pointer; position: relative; border: 1px solid transparent; }
   .cal-cella.fuori-mese { opacity: 0.35; }
   .cal-cella.oggi { background: var(--arancione-soft); border: 1px solid #fed7aa; }
-  .cal-cella .cal-num { font-size: 13px; font-weight: 700; color: var(--blu); text-align: right; padding-right: 2px; line-height: 1; margin-bottom: 3px; }
+  .cal-cella .cal-num { font-size: 13px; font-weight: 700; color: var(--blu); text-align: right; padding-right: 4px; line-height: 1; margin-bottom: 3px; }
   .cal-cella.oggi .cal-num { color: var(--arancione); }
   .cal-cella .cal-ev { font-size: 8.5px; font-weight: 600; color: white; padding: 2px 4px; border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cal-cella .cal-ev.libera { background: var(--arancione); }
@@ -350,7 +350,7 @@
   .cal-cella .cal-ev.acq { background: var(--rr); }
   .cal-cella .cal-ev.entrambi { background: var(--vnd); }
   .cal-cella .cal-ev.att { background: var(--nt); }
-  .cal-cella .cal-more { font-size: 8.5px; font-weight: 700; color: var(--testo-ter); text-align: right; padding-right: 2px; }
+  .cal-cella .cal-more { font-size: 8.5px; font-weight: 700; color: var(--testo-ter); text-align: right; padding-right: 4px; }
 
   .app-item-card { background: var(--card); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 6px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; }
   .app-item-card.tipo-vend { border-left-color: var(--pa); }
@@ -421,9 +421,10 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
+    flex: 1 1 0; /* Modificato: tutte e tre le sezioni hanno la stessa altezza */
   }
-  .att-col-main { flex: 1 1 34%; }
-  .att-col-side { flex: 1 1 33%; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .att-col-main { flex: 1 1 0; }
+  .att-col-side { flex: 1 1 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .att-scroll { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
   @media (min-width: 768px) {
@@ -446,7 +447,7 @@
     :root { --max-w: 760px; }
     .app-content { padding-left: 26px; padding-right: 26px; }
     .foto-grid { grid-template-columns: repeat(5, 1fr); }
-    .cal-cella { min-height: 84px; }
+    .cal-cella { min-height: 84px; height: 84px; }
   }
   @media (min-width: 1400px) {
     :root { --max-w: 860px; }
@@ -1041,7 +1042,7 @@ function normalizzaTipoImmobile(s) { if (!s) return ''; const t = String(s).trim
 function formatBytes(b) { if (!b || b < 1024) return (b || 0) + ' B'; if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB'; if (b < 1024*1024*1024) return (b/(1024*1024)).toFixed(2) + ' MB'; return (b/(1024*1024*1024)).toFixed(2) + ' GB'; }
 
 // =====================================================
-// PERSONE / APPUNTAMENTI / GEOCODING (già definiti)
+// PERSONE / APPUNTAMENTI / GEOCODING
 // =====================================================
 function titoloAcquirente(p) { const nome = (p.cognomeNome || '').toUpperCase(); const tel = p.telefono ? ' ' + p.telefono : ''; const coll = p.collega ? ' (' + p.collega.toUpperCase() + ')' : ''; const immobili = (p.immobili || []).length > 0 ? ' x ' + p.immobili.join(' / ') : ''; return 'RR - ' + nome + tel + coll + immobili; }
 function titoloProfessionista(p) { return 'PROF - ' + (p.cognomeNome || '').toUpperCase(); }
@@ -1385,8 +1386,6 @@ function renderPersone() {
 }
 function resetFiltroPersone() { if (pTabAttivo === 'acquirente') pStatoRRFiltro = null; if (pTabAttivo === 'professionista') pTipoProfFiltro = null; renderPersone(); }
 function apriFormNuovaPersona() { if (pTabAttivo === 'acquirente') apriFormNuovoAcquirente(); else if (pTabAttivo === 'professionista') apriFormNuovoProfessionista(); }
-
-// ... [i form / schede persone restano identici - omessi per brevità, funzionano come prima]
 
 function apriFormNuovoAcquirente() {
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Cognome e Nome *</label><input class="form-input" id="a-cognomeNome"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="a-telefono" type="tel"></div><div class="form-row"><label class="form-label">Email</label><input class="form-input" id="a-email" type="email"></div></div>
@@ -2213,7 +2212,7 @@ function cercaPerNuovaAttivita(q) {
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
 
 // =====================================================
-// IMMOBILI - FORM E SCHEDE (invariate dalla versione precedente)
+// IMMOBILI - FORM E SCHEDE
 // =====================================================
 function apriFormNuovo() {
   const dc = !!condoSelezionato;
