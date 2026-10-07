@@ -39,33 +39,14 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {
-    --blu: #1f3a5f;
-    --blu-deep: #162a47;
-    --blu-soft: #f0f4f9;
-    --arancione: #d9601a;
-    --arancione-deep: #b84d10;
-    --arancione-soft: #fdf5ee;
-    --sfondo: #fafafa;
-    --sfondo-2: #f5f5f7;
-    --card: #ffffff;
-    --testo: #1a1a1a;
-    --testo-sec: #6b7280;
-    --testo-ter: #9ca3af;
-    --border: #f0f0f2;
-    --border-strong: #e5e5e8;
-    --hover-bg: #fafafa;
-    --radius: 12px;
-    --radius-sm: 9px;
-    --radius-pill: 999px;
-    --tabbar-h: 60px;
-    --max-w: 640px;
-    --imm: #94a3b8;
-    --pa: #c2740c;
-    --nt: #2563eb;
-    --ink: #047857;
-    --vnd: #b91c1c;
-    --rr: #7c3aed;
-    --prof: #0e7490;
+    --blu: #1f3a5f; --blu-deep: #162a47; --blu-soft: #f0f4f9;
+    --arancione: #d9601a; --arancione-deep: #b84d10; --arancione-soft: #fdf5ee;
+    --sfondo: #fafafa; --sfondo-2: #f5f5f7; --card: #ffffff;
+    --testo: #1a1a1a; --testo-sec: #6b7280; --testo-ter: #9ca3af;
+    --border: #f0f0f2; --border-strong: #e5e5e8; --hover-bg: #fafafa;
+    --radius: 12px; --radius-sm: 9px; --radius-pill: 999px;
+    --tabbar-h: 60px; --max-w: 640px;
+    --imm: #94a3b8; --pa: #c2740c; --nt: #2563eb; --ink: #047857; --vnd: #b91c1c; --rr: #7c3aed; --prof: #0e7490;
   }
   html { height: 100%; overflow: hidden; text-size-adjust: 100%; }
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -92,14 +73,19 @@
     padding: 4px 18px calc(92px + env(safe-area-inset-bottom));
   }
   .app-content.attivita-active { padding: 4px 18px calc(70px + env(safe-area-inset-bottom)); }
+  /* AGENDA MODE: layout a tutta altezza tra header e navbar */
+  .app-content.agenda-mode {
+    display: flex !important; flex-direction: column;
+    padding: 0 0 calc(var(--tabbar-h) + env(safe-area-inset-bottom)) 0 !important;
+    overflow: hidden !important;
+  }
   .view { display: none; }
   .view.active { display: block; animation: fadeIn 0.24s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .card {
     background: var(--card); border-radius: var(--radius); padding: 18px 20px;
-    margin-bottom: 10px; border: 1px solid var(--border);
-    transition: border-color 0.2s ease;
+    margin-bottom: 10px; border: 1px solid var(--border); transition: border-color 0.2s ease;
   }
   .card h2 { font-size: 13px; font-weight: 600; color: var(--blu); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em; }
   .card h2 .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--arancione); }
@@ -142,70 +128,37 @@
   .tabbar button svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: stroke-width 0.2s ease; }
   .tabbar button.active { color: var(--blu); font-weight: 600; }
   .tabbar button.active svg { stroke-width: 2; }
-  .tabbar .badge-tab {
-    position: absolute; top: 2px; right: 24%; background: var(--arancione); color: white;
-    font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: var(--radius-pill);
-    min-width: 15px; text-align: center; display: none; letter-spacing: 0;
-  }
+  .tabbar .badge-tab { position: absolute; top: 2px; right: 24%; background: var(--arancione); color: white; font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: var(--radius-pill); min-width: 15px; text-align: center; display: none; letter-spacing: 0; }
   .tabbar .badge-tab.show { display: block; }
 
   .search-sticky { position: sticky; top: -2px; z-index: 20; background: var(--sfondo); padding: 6px 0 8px; margin: 0 -2px; }
-  .search-bar {
-    width: 100%; padding: 11px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
-    background: var(--card); font-family: inherit; font-size: 14.5px; font-weight: 500;
-    color: var(--testo); outline: none; transition: border-color 0.2s ease; letter-spacing: -0.005em;
-  }
+  .search-bar { width: 100%; padding: 11px 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--card); font-family: inherit; font-size: 14.5px; font-weight: 500; color: var(--testo); outline: none; transition: border-color 0.2s ease; letter-spacing: -0.005em; }
   .search-bar:focus { border-color: var(--blu); }
   .search-bar::placeholder { color: var(--testo-ter); font-weight: 400; font-size: 13.5px; }
 
   .filter-label { font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 2px 8px; }
   .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
   .chips::-webkit-scrollbar { display: none; }
-  .chip {
-    background: transparent; border: 1px solid var(--border-strong); padding: 6px 13px; border-radius: var(--radius-pill);
-    font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); white-space: nowrap;
-    cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px;
-    transition: all 0.2s ease; letter-spacing: -0.005em;
-  }
+  .chip { background: transparent; border: 1px solid var(--border-strong); padding: 6px 13px; border-radius: var(--radius-pill); font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); white-space: nowrap; cursor: pointer; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease; letter-spacing: -0.005em; }
   .chip.active { background: var(--blu); color: white; border-color: var(--blu); font-weight: 600; }
   .chip svg { width: 12px; height: 12px; }
   .chip.sub { padding: 6px 12px; font-size: 12px; }
   .chip.sub.active { background: var(--arancione); border-color: var(--arancione); }
-  .chip-dropdown {
-    background: transparent; border: 1px solid var(--border-strong); padding: 6px 13px; border-radius: var(--radius-pill);
-    font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer;
-    display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;
-  }
+  .chip-dropdown { background: transparent; border: 1px solid var(--border-strong); padding: 6px 13px; border-radius: var(--radius-pill); font-family: inherit; font-size: 12.5px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease; }
   .chip-dropdown.active { background: var(--blu); color: white; border-color: var(--blu); }
 
   .zone-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .zone-chip {
-    background: var(--sfondo-2); border: 1px solid transparent; padding: 6px 12px; border-radius: var(--radius-pill);
-    font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); cursor: pointer;
-    display: inline-flex; align-items: center; gap: 4px; transition: all 0.18s ease; letter-spacing: -0.005em;
-  }
+  .zone-chip { background: var(--sfondo-2); border: 1px solid transparent; padding: 6px 12px; border-radius: var(--radius-pill); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--testo-sec); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.18s ease; letter-spacing: -0.005em; }
   .zone-chip.active { background: var(--blu); color: white; }
   .zone-chip.special { font-size: 11px; padding: 5px 11px; }
   .zone-chip.special.active { background: var(--arancione); }
 
-  .active-filter-banner {
-    display: flex; align-items: center; justify-content: space-between; background: var(--blu-soft);
-    border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 10px;
-    font-size: 12.5px; color: var(--blu); font-weight: 500; gap: 8px; letter-spacing: -0.005em;
-  }
-  .active-filter-banner .x {
-    background: rgba(31, 58, 95, 0.06); border: none; width: 22px; height: 22px; border-radius: 50%;
-    color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: background 0.15s ease;
-  }
+  .active-filter-banner { display: flex; align-items: center; justify-content: space-between; background: var(--blu-soft); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 10px; font-size: 12.5px; color: var(--blu); font-weight: 500; gap: 8px; letter-spacing: -0.005em; }
+  .active-filter-banner .x { background: rgba(31, 58, 95, 0.06); border: none; width: 22px; height: 22px; border-radius: 50%; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s ease; }
   .active-filter-banner .x:active { background: rgba(31, 58, 95, 0.12); }
   .active-filter-banner .x svg { width: 11px; height: 11px; }
 
-  .item-card {
-    background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px;
-    border: 1px solid var(--border); cursor: pointer;
-    transition: border-color 0.2s ease, background 0.15s ease;
-  }
+  .item-card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.2s ease, background 0.15s ease; }
   .item-card:active { background: var(--hover-bg); border-color: var(--border-strong); }
   .item-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
   .item-title { font-size: 14.5px; font-weight: 600; color: var(--testo); flex: 1; word-break: break-word; line-height: 1.35; letter-spacing: -0.015em; }
@@ -215,21 +168,12 @@
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
   .qa-row { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-  .qa-btn {
-    flex: 1; background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; border-radius: var(--radius-sm);
-    font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-    transition: background 0.15s ease; letter-spacing: -0.005em;
-  }
+  .qa-btn { flex: 1; background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
   .qa-btn:active { background: var(--hover-bg); }
   .qa-btn svg { width: 13px; height: 13px; }
   .qa-btn.wa { color: var(--ink); }
 
-  .badge {
-    display: inline-block; padding: 2.5px 8px; border-radius: var(--radius-pill);
-    font-size: 9.5px; font-weight: 600; color: white; letter-spacing: 0.04em;
-    flex-shrink: 0; text-transform: uppercase;
-  }
+  .badge { display: inline-block; padding: 2.5px 8px; border-radius: var(--radius-pill); font-size: 9.5px; font-weight: 600; color: white; letter-spacing: 0.04em; flex-shrink: 0; text-transform: uppercase; }
   .badge-IMM { background: var(--imm); }
   .badge-PA { background: var(--pa); }
   .badge-NT { background: var(--nt); }
@@ -243,11 +187,7 @@
   .badge-RR-rogitato { background: var(--blu-deep); }
   .badge-PROF { background: var(--prof); }
 
-  .tag {
-    display: inline-block; background: transparent; color: var(--testo-ter); padding: 2px 8px;
-    border-radius: var(--radius-pill); border: 1px solid var(--border-strong);
-    font-size: 10px; font-weight: 500; margin-right: 4px; margin-top: 4px; letter-spacing: 0.005em;
-  }
+  .tag { display: inline-block; background: transparent; color: var(--testo-ter); padding: 2px 8px; border-radius: var(--radius-pill); border: 1px solid var(--border-strong); font-size: 10px; font-weight: 500; margin-right: 4px; margin-top: 4px; letter-spacing: 0.005em; }
 
   .fab {
     position: fixed; right: 22px; bottom: calc(var(--tabbar-h) + 22px + env(safe-area-inset-bottom));
@@ -261,33 +201,16 @@
   .fab:active { transform: scale(0.94); background: var(--arancione-deep); box-shadow: 0 2px 8px rgba(217, 96, 26, 0.25); }
   .fab svg { width: 22px; height: 22px; stroke-width: 2.2; }
 
-  .back-top {
-    position: fixed; right: 22px; bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom));
-    width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong);
-    color: var(--blu); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 49;
-    transition: background 0.15s ease;
-  }
+  .back-top { position: fixed; right: 22px; bottom: calc(var(--tabbar-h) + 84px + env(safe-area-inset-bottom)); width: 40px; height: 40px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong); color: var(--blu); display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 49; transition: background 0.15s ease; }
   .back-top.show { display: flex; }
   .back-top:active { background: var(--hover-bg); }
   .back-top svg { width: 16px; height: 16px; transform: rotate(-90deg); }
 
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(20, 20, 30, 0.35);
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-    z-index: 200; display: none; align-items: flex-end; justify-content: center;
-    opacity: 0; transition: opacity 0.25s ease;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(20, 20, 30, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 200; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.25s ease; }
   .modal-overlay.open { display: flex; opacity: 1; }
   @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-sheet {
-    background: var(--sfondo); width: 100%; max-width: var(--max-w);
-    max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0;
-    display: flex; flex-direction: column; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
-  }
-  .modal-header {
-    padding: 20px 22px 14px; display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--border);
-  }
+  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
+  .modal-header { padding: 20px 22px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--border); }
   .modal-header::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 32px; height: 4px; border-radius: 2px; background: var(--border-strong); }
   .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; margin-top: 6px; }
   .modal-close { background: transparent; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; color: var(--testo-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 6px; transition: background 0.15s ease; }
@@ -302,11 +225,7 @@
   .form-input, .form-select, .form-textarea { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14.5px; font-weight: 500; color: var(--testo); outline: none; padding: 0; letter-spacing: -0.005em; }
   .form-input::placeholder { color: var(--testo-ter); font-weight: 400; }
   .form-textarea { resize: vertical; min-height: 56px; line-height: 1.5; }
-  .form-select {
-    -webkit-appearance: none; appearance: none;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 2px center; padding-right: 22px;
-  }
+  .form-select { -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 2px center; padding-right: 22px; }
   .btn-row { display: flex; gap: 8px; margin-top: 12px; }
   .btn-row .btn { margin-bottom: 0; flex: 1; }
 
@@ -320,12 +239,7 @@
   .timeline-item .chev { float: right; color: var(--testo-ter); font-size: 16px; line-height: 1; margin-left: 6px; }
 
   .actions { display: flex; gap: 8px; margin-bottom: 10px; }
-  .action-btn {
-    flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 13px 8px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--blu);
-    cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px;
-    transition: background 0.15s ease; letter-spacing: -0.005em;
-  }
+  .action-btn { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 13px 8px; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--blu); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
   .action-btn:active { background: var(--hover-bg); }
   .action-btn .icon { display: flex; align-items: center; justify-content: center; height: 20px; }
   .action-btn .icon svg { width: 18px; height: 18px; stroke-width: 1.6; }
@@ -336,22 +250,13 @@
   .info-row + .info-row { border-top: 1px solid var(--border); }
 
   .immobili-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-  .immobile-line {
-    background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px;
-    font-size: 13px; color: var(--testo); display: flex; justify-content: space-between; align-items: center;
-    gap: 8px; cursor: pointer; font-weight: 400; transition: background 0.15s ease;
-  }
+  .immobile-line { background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; color: var(--testo); display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; font-weight: 400; transition: background 0.15s ease; }
   .immobile-line:active { background: var(--hover-bg); }
   .immobile-line .txt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
   .immobile-line .txt svg { flex-shrink: 0; width: 13px; height: 13px; opacity: 0.5; }
   .immobile-line .rm { background: none; border: none; color: var(--vnd); font-size: 16px; cursor: pointer; padding: 0 3px; flex-shrink: 0; display: flex; align-items: center; }
   .immobile-line .rm svg { width: 14px; height: 14px; }
-  .add-btn {
-    background: transparent; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm);
-    padding: 10px 12px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu);
-    cursor: pointer; width: 100%; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: background 0.15s ease, border-color 0.15s ease; letter-spacing: -0.005em;
-  }
+  .add-btn { background: transparent; border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); padding: 10px 12px; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--blu); cursor: pointer; width: 100%; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.15s ease, border-color 0.15s ease; letter-spacing: -0.005em; }
   .add-btn:active { background: var(--hover-bg); border-color: var(--blu); }
   .add-btn svg { width: 14px; height: 14px; }
 
@@ -370,11 +275,7 @@
   .sottotipo-line button svg { width: 12px; height: 12px; }
 
   .condo-header { background: var(--blu-soft); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 11.5px; color: var(--blu); font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
-  .condo-card {
-    background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border);
-    cursor: pointer; display: flex; align-items: center; gap: 12px;
-    transition: border-color 0.2s ease, background 0.15s ease;
-  }
+  .condo-card { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s ease, background 0.15s ease; }
   .condo-card:active { background: var(--hover-bg); border-color: var(--border-strong); }
   .condo-card .condo-icon { flex-shrink: 0; color: var(--blu); display: flex; align-items: center; opacity: 0.65; }
   .condo-card .condo-info { flex: 1; overflow: hidden; }
@@ -471,19 +372,12 @@
   .leaflet-top, .leaflet-bottom { z-index: 10 !important; }
   .leaflet-popup { z-index: 20 !important; }
 
-  /* ATTIVITÀ — 3 blocchi uguali */
-  #view-attivita.active {
-    display: flex; flex-direction: column; gap: 8px;
-    height: 100%; min-height: 0; overflow: hidden;
-  }
-  .att-col {
-    flex: 1 1 0; min-height: 0; max-height: calc((100% - 16px) / 3);
-    display: flex; flex-direction: column; overflow: hidden;
-  }
+  /* ATTIVITÀ */
+  #view-attivita.active { display: flex; flex-direction: column; gap: 8px; height: 100%; min-height: 0; overflow: hidden; }
+  .att-col { flex: 1 1 0; min-height: 0; max-height: calc((100% - 16px) / 3); display: flex; flex-direction: column; overflow: hidden; }
   .att-col-main .att-subtabs { flex-shrink: 0; margin-bottom: 8px; }
   .att-scroll { flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
-  .att-col-side > .agenda-sett,
-  .att-col-side > .planning-sett { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .att-col-side > .agenda-sett, .att-col-side > .planning-sett { flex: 1 1 0; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
   .agenda-sett > h3, .planning-sett > h3 { flex-shrink: 0; cursor: pointer; user-select: none; -webkit-user-select: none; }
   .agenda-sett > .agenda-grid, .planning-sett > #planning-contenuto { flex: 1 1 0; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
   #planning-contenuto { cursor: pointer; }
@@ -497,7 +391,6 @@
   .att-subtab.prossime.active .num { color: var(--nt); }
   .att-subtab.active { border-color: var(--blu); background: var(--blu-soft); }
 
-  /* AGENDA SETTIMANALE WIDGET */
   .agenda-sett { background: var(--card); border-radius: var(--radius); padding: 14px 10px; border: 1px solid var(--border); }
   .agenda-sett h3 { font-size: 11.5px; font-weight: 600; color: var(--blu); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .agenda-sett h3 .lbl-click { cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
@@ -536,7 +429,14 @@
   .planning-item.libera .pi-tipo { background: var(--arancione); }
   .planning-empty { text-align: center; padding: 18px 8px; color: var(--testo-ter); font-size: 12.5px; font-weight: 400; }
 
-  /* Quick action pills */
+  /* PLANNING PAGE - ripristinato */
+  .cal-back-float { position: fixed; top: calc(14px + env(safe-area-inset-top)); left: 16px; width: 38px; height: 38px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong); color: var(--blu); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 60; transition: background 0.15s ease, transform 0.15s ease; }
+  .cal-back-float:active { background: var(--hover-bg); transform: scale(0.94); }
+  .cal-back-float svg { width: 18px; height: 18px; }
+  .cal-zoom-header { display: flex; justify-content: space-between; align-items: center; margin: 0 0 10px; gap: 8px; padding: 0 2px; }
+  .cal-zoom-label { font-size: 15px; font-weight: 700; color: var(--blu); flex: 1; text-align: center; letter-spacing: -0.02em; }
+  .cal-zoom-header .cal-nav-btn { background: transparent; border: none; width: 34px; height: 34px; border-radius: var(--radius-sm); font-size: 18px; color: var(--blu); cursor: pointer; font-family: inherit; font-weight: 400; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
+  .cal-zoom-header .cal-nav-btn:active { background: var(--sfondo-2); }
   .qa-pills { display: flex; gap: 6px; margin: 10px 0 14px; flex-wrap: wrap; }
   .qa-pill { background: transparent; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); padding: 7px 12px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; letter-spacing: -0.005em; transition: background 0.15s ease; }
   .qa-pill:active { background: var(--hover-bg); }
@@ -597,170 +497,75 @@
   .icona-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
   .icona-inline svg { width: 13px; height: 13px; }
 
-  /* ============ AGENDA iPHONE-STYLE ============ */
-  .ag-view { display: flex; flex-direction: column; height: 100%; background: var(--sfondo); }
+  /* ============ AGENDA iPHONE-STYLE (colori ARANJÒ) ============ */
+  #view-agenda.active { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; animation: none; }
+  #agenda-page-content { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+  .ag-view { flex: 1; min-height: 0; display: flex; flex-direction: column; background: var(--sfondo); }
 
-  .ag-header {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 14px 4px;
-    padding-top: calc(8px + env(safe-area-inset-top));
-    flex-shrink: 0;
-  }
-  .ag-back-pill {
-    display: inline-flex; align-items: center; gap: 2px;
-    padding: 7px 14px 7px 8px; border-radius: 999px;
-    background: var(--card); border: 1px solid var(--border-strong);
-    font-family: inherit; font-size: 15px; font-weight: 600;
-    color: var(--blu); cursor: pointer; transition: background 0.15s ease;
-  }
+  .ag-header { display: flex; align-items: center; gap: 8px; padding: 6px 14px; flex-shrink: 0; }
+  .ag-back-pill { display: inline-flex; align-items: center; gap: 2px; padding: 7px 14px 7px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--border-strong); font-family: inherit; font-size: 15px; font-weight: 600; color: var(--blu); cursor: pointer; transition: background 0.15s ease; }
   .ag-back-pill:active { background: var(--hover-bg); }
   .ag-back-pill svg { width: 18px; height: 18px; }
   .ag-icons { display: flex; gap: 6px; margin-left: auto; }
-  .ag-icon-btn {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--card); border: 1px solid var(--border-strong);
-    color: var(--blu); cursor: pointer; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s ease;
-  }
+  .ag-icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--card); border: 1px solid var(--border-strong); color: var(--blu); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s ease; }
   .ag-icon-btn:active { background: var(--hover-bg); }
   .ag-icon-btn svg { width: 18px; height: 18px; }
 
-  .ag-weekstrip {
-    display: flex; padding: 4px 6px 8px; gap: 0;
-    flex-shrink: 0; border-bottom: 1px solid var(--border);
-  }
-  .ag-ws-day {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 3px; padding: 4px 2px; cursor: pointer; border-radius: 12px;
-    transition: background 0.15s ease;
-  }
+  .ag-weekstrip { display: flex; padding: 4px 6px 8px; gap: 0; flex-shrink: 0; border-bottom: 1px solid var(--border); }
+  .ag-ws-day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 2px; cursor: pointer; border-radius: 12px; transition: background 0.15s ease; }
   .ag-ws-day:active { background: var(--hover-bg); }
   .ag-ws-name { font-size: 10px; font-weight: 600; color: var(--testo-ter); letter-spacing: 0.04em; }
-  .ag-ws-num {
-    font-size: 15px; font-weight: 500; color: var(--testo);
-    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; letter-spacing: -0.02em;
-  }
-  .ag-ws-day.today .ag-ws-num { background: #ff3b30; color: #fff; font-weight: 600; }
-  .ag-ws-day.today .ag-ws-name { color: #ff3b30; }
+  .ag-ws-num { font-size: 15px; font-weight: 500; color: var(--testo); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
+  .ag-ws-day.today .ag-ws-num { background: var(--arancione); color: #fff; font-weight: 600; }
+  .ag-ws-day.today .ag-ws-name { color: var(--arancione); }
   .ag-ws-day.sel .ag-ws-num { background: var(--blu); color: #fff; }
-  .ag-ws-day.sel.today .ag-ws-num { background: #ff3b30; }
+  .ag-ws-day.sel.today .ag-ws-num { background: var(--arancione); }
 
-  .ag-content {
-    flex: 1 1 0; min-height: 0;
-    overflow-y: auto; overflow-x: hidden;
-    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    position: relative;
-  }
-
-  .ag-bottombar {
-    display: flex; padding: 8px 14px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
-    gap: 8px; flex-shrink: 0;
-    align-items: center; border-top: 1px solid var(--border);
-    background: var(--sfondo);
-  }
-  .ag-pill {
-    padding: 10px 20px; border-radius: 999px;
-    background: var(--card); border: 1px solid var(--border-strong);
-    font-family: inherit; font-size: 13px; font-weight: 600;
-    color: var(--blu); cursor: pointer; transition: background 0.15s ease;
-  }
+  .ag-content { flex: 1 1 0; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; position: relative; }
+  .ag-bottombar { display: flex; padding: 8px 14px; gap: 8px; flex-shrink: 0; align-items: center; border-top: 1px solid var(--border); background: var(--sfondo); }
+  .ag-pill { padding: 10px 20px; border-radius: 999px; background: var(--card); border: 1px solid var(--border-strong); font-family: inherit; font-size: 13px; font-weight: 600; color: var(--blu); cursor: pointer; transition: background 0.15s ease; }
   .ag-pill:active { background: var(--hover-bg); }
-
   .ag-view .ag-content > * { animation: agViewIn 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
-  @keyframes agViewIn {
-    from { opacity: 0; transform: translateY(6px) scale(0.99); }
-    to   { opacity: 1; transform: translateY(0)   scale(1); }
-  }
+  @keyframes agViewIn { from { opacity: 0; transform: translateY(6px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
   /* Anno */
   .ag-year { padding: 4px 12px 40px; }
   .ag-year-month { margin-bottom: 22px; }
   .ag-year-name { font-size: 17px; font-weight: 700; color: var(--testo); margin-bottom: 6px; padding-left: 4px; }
   .ag-year-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; }
-  .ag-year-cell {
-    aspect-ratio: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 1px;
-    font-size: 11px; cursor: pointer; border-radius: 50%;
-  }
+  .ag-year-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 11px; cursor: pointer; border-radius: 50%; }
   .ag-year-cell.other { opacity: 0.22; }
-  .ag-year-cell.today .ag-year-num {
-    background: #ff3b30; color: #fff; width: 20px; height: 20px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-weight: 600;
-  }
+  .ag-year-cell.today .ag-year-num { background: var(--arancione); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
   .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
   /* Mese */
   .ag-month { padding: 0 8px 40px; }
-  .ag-month-name {
-    font-size: 30px; font-weight: 700; color: var(--testo);
-    padding: 12px 12px 6px; letter-spacing: -0.03em;
-  }
-  .ag-month-weekdays {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    font-size: 11px; font-weight: 600; color: var(--testo-ter);
-    text-align: center; padding: 8px 0 4px; letter-spacing: 0.06em;
-  }
+  .ag-month-name { font-size: 28px; font-weight: 700; color: var(--blu); padding: 12px 12px 6px; letter-spacing: -0.03em; }
+  .ag-month-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 8px 0 4px; letter-spacing: 0.06em; }
   .ag-month-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-  .ag-month-cell {
-    aspect-ratio: 1; padding: 4px 2px 2px;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-    cursor: pointer; border-radius: 8px; transition: background 0.15s ease;
-  }
+  .ag-month-cell { aspect-ratio: 1; padding: 4px 2px 2px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; border-radius: 8px; transition: background 0.15s ease; }
   .ag-month-cell:active { background: var(--hover-bg); }
-  .ag-month-num {
-    font-size: 17px; font-weight: 500; color: var(--testo);
-    width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; letter-spacing: -0.02em;
-  }
+  .ag-month-num { font-size: 17px; font-weight: 500; color: var(--testo); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
   .ag-month-cell.other { opacity: 0.28; }
-  .ag-month-cell.today .ag-month-num { background: #ff3b30; color: #fff; font-weight: 600; }
+  .ag-month-cell.today .ag-month-num { background: var(--arancione); color: #fff; font-weight: 600; }
   .ag-month-bars { display: flex; gap: 2px; justify-content: center; width: 100%; padding: 0 4px; }
   .ag-month-bar { flex: 1; max-width: 8px; height: 4px; border-radius: 2px; }
 
-  /* Timeline oraria */
+  /* Timeline */
   .ag-timeline { display: flex; padding-bottom: 20px; }
   .ag-hours-col { width: 46px; flex-shrink: 0; padding-top: 0; }
-  .ag-hour-label {
-    height: 60px; font-size: 10px; font-weight: 500; color: var(--testo-ter);
-    text-align: right; padding-right: 8px; position: relative; letter-spacing: 0.02em;
-  }
-  .ag-hour-label::after {
-    content: ''; position: absolute; right: 0; top: 0; left: 10px;
-    height: 1px; background: var(--border);
-  }
+  .ag-hour-label { height: 60px; font-size: 10px; font-weight: 500; color: var(--testo-ter); text-align: right; padding-right: 8px; position: relative; letter-spacing: 0.02em; }
+  .ag-hour-label::after { content: ''; position: absolute; right: 0; top: 0; left: 10px; height: 1px; background: var(--border); }
   .ag-days { flex: 1; display: flex; position: relative; }
   .ag-day-col { flex: 1; position: relative; border-left: 1px solid var(--border); }
   .ag-day-col:first-child { border-left: 1px solid var(--border-strong); }
   .ag-hour-line { height: 60px; border-bottom: 1px solid var(--border); }
-  .ag-event {
-    position: absolute; left: 2px; right: 2px;
-    border-radius: 6px; padding: 3px 5px; overflow: hidden;
-    cursor: pointer; transition: opacity 0.15s ease;
-    z-index: 2;
-  }
+  .ag-event { position: absolute; left: 2px; right: 2px; border-radius: 6px; padding: 3px 5px; overflow: hidden; cursor: pointer; transition: opacity 0.15s ease; z-index: 2; }
   .ag-event:active { opacity: 0.75; }
-  .ag-event-title {
-    font-size: 10px; font-weight: 600; color: #fff;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    line-height: 1.2; letter-spacing: -0.01em;
-  }
+  .ag-event-title { font-size: 10px; font-weight: 600; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.2; letter-spacing: -0.01em; }
   .ag-event-time { font-size: 9px; color: rgba(255,255,255,0.85); margin-top: 1px; line-height: 1.2; }
-  .ag-now-line {
-    position: absolute; left: 0; right: 0; height: 2px;
-    background: #ff3b30; z-index: 6;
-  }
-  .ag-now-dot {
-    position: absolute; left: -6px; top: -5px;
-    width: 12px; height: 12px; border-radius: 50%; background: #ff3b30;
-    box-shadow: 0 0 0 2px var(--sfondo);
-  }
-  :root[data-theme="dark"] .ag-ws-num,
-  :root[data-theme="dark"] .ag-month-num { color: #e8e8ea; }
-  :root[data-theme="dark"] .ag-month-cell.today .ag-month-num,
-  :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num { color: #fff; }
+  .ag-now-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--arancione); z-index: 6; }
+  .ag-now-dot { position: absolute; left: -6px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--arancione); box-shadow: 0 0 0 2px var(--sfondo); }
 
   @media (min-width: 768px) {
     body { background: #f0f0f2; }
@@ -771,20 +576,18 @@
     .back-top { right: calc(50% - (var(--max-w) / 2) + 22px); }
     .modal-overlay { align-items: center; padding: 24px; }
     .modal-sheet { border-radius: 18px; max-height: 88dvh; border: 1px solid var(--border); }
-    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover,
-    .tipo-app-btn:hover, .planning-item:hover, .att-item:hover, .timeline-item:hover,
-    .action-btn:hover, .btn-secondary:hover, .chip:hover {
-      background: var(--hover-bg); border-color: var(--border-strong);
-    }
+    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .att-item:hover, .timeline-item:hover, .action-btn:hover, .btn-secondary:hover, .chip:hover { background: var(--hover-bg); border-color: var(--border-strong); }
     .chip.active:hover { background: var(--blu); }
     .chip.sub.active:hover { background: var(--arancione-deep); }
     .foto-grid { grid-template-columns: repeat(4, 1fr); }
     .app-content { padding-left: 22px; padding-right: 22px; }
+    .app-content.agenda-mode { padding-left: 0 !important; padding-right: 0 !important; }
     .app-header { padding-left: 26px; padding-right: 26px; }
   }
   @media (min-width: 1024px) {
     :root { --max-w: 760px; }
     .app-content { padding-left: 28px; padding-right: 28px; }
+    .app-content.agenda-mode { padding-left: 0 !important; padding-right: 0 !important; }
     .foto-grid { grid-template-columns: repeat(5, 1fr); }
   }
   @media (min-width: 1400px) {
@@ -794,28 +597,12 @@
 
   /* DARK MODE */
   :root[data-theme="dark"] {
-    --blu: #8ab0d4;
-    --blu-deep: #6f95bb;
-    --blu-soft: #1a2533;
-    --arancione: #ec6f2a;
-    --arancione-deep: #d9601a;
-    --arancione-soft: #2a1a10;
-    --sfondo: #0f0f11;
-    --sfondo-2: #1a1a1d;
-    --card: #17171a;
-    --testo: #e8e8ea;
-    --testo-sec: #9a9aa0;
-    --testo-ter: #6a6a72;
-    --border: #232327;
-    --border-strong: #2e2e33;
-    --hover-bg: #1c1c20;
-    --imm: #52525b;
-    --pa: #d97706;
-    --nt: #3b82f6;
-    --ink: #10b981;
-    --vnd: #ef4444;
-    --rr: #a78bfa;
-    --prof: #06b6d4;
+    --blu: #8ab0d4; --blu-deep: #6f95bb; --blu-soft: #1a2533;
+    --arancione: #ec6f2a; --arancione-deep: #d9601a; --arancione-soft: #2a1a10;
+    --sfondo: #0f0f11; --sfondo-2: #1a1a1d; --card: #17171a;
+    --testo: #e8e8ea; --testo-sec: #9a9aa0; --testo-ter: #6a6a72;
+    --border: #232327; --border-strong: #2e2e33; --hover-bg: #1c1c20;
+    --imm: #52525b; --pa: #d97706; --nt: #3b82f6; --ink: #10b981; --vnd: #ef4444; --rr: #a78bfa; --prof: #06b6d4;
   }
   :root[data-theme="dark"] body, :root[data-theme="dark"] .app { background: var(--sfondo); }
   :root[data-theme="dark"] .tabbar { background: rgba(15, 15, 17, 0.9); }
@@ -866,12 +653,14 @@
   :root[data-theme="dark"] .att-count { background: var(--sfondo-2); color: #8ab0d4; }
   :root[data-theme="dark"] .ag-back-pill { background: var(--card); color: #8ab0d4; }
   :root[data-theme="dark"] .ag-icon-btn { background: var(--card); color: #8ab0d4; }
-  :root[data-theme="dark"] .ag-month-name,
+  :root[data-theme="dark"] .ag-month-name { color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-month-num,
+  :root[data-theme="dark"] .ag-ws-num,
   :root[data-theme="dark"] .ag-year-name { color: #e8e8ea; }
   :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
-  :root[data-theme="dark"] .ag-bottombar { background: var(--sfondo); }
   :root[data-theme="dark"] .ag-month-cell.today .ag-month-num,
-  :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num { background: #ff453a; }
+  :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num,
+  :root[data-theme="dark"] .ag-year-cell.today .ag-year-num { color: #fff; }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -897,7 +686,8 @@
   :root[data-theme="dark"] .villa-toggle button.active,
   :root[data-theme="dark"] .addr-click,
   :root[data-theme="dark"] .modal-header h2,
-  :root[data-theme="dark"] .page-title { color: #8ab0d4; }
+  :root[data-theme="dark"] .cal-zoom-label,
+  :root[data-theme="dark"] .cal-back-float { color: #8ab0d4; }
   :root[data-theme="dark"] .agenda-giorno.oggi .ag-num { color: #ffffff; }
   :root[data-theme="dark"] .chip.active { color: #ffffff; }
   :root[data-theme="dark"] .chip.sub.active { color: #ffffff; background: var(--arancione); border-color: var(--arancione); }
@@ -955,26 +745,15 @@
     <section id="view-attivita" class="view">
       <div class="att-col att-col-main">
         <div class="att-subtabs" id="att-subtabs">
-          <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')">
-            <div class="num" id="att-num-scadute">0</div>
-            <div class="lbl">Scadute</div>
-          </div>
-          <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')">
-            <div class="num" id="att-num-oggi">0</div>
-            <div class="lbl">Oggi</div>
-          </div>
-          <div class="att-subtab prossime" data-att="prossime" onclick="setAttTab('prossime')">
-            <div class="num" id="att-num-prossime">0</div>
-            <div class="lbl">Prossime</div>
-          </div>
+          <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')"><div class="num" id="att-num-scadute">0</div><div class="lbl">Scadute</div></div>
+          <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')"><div class="num" id="att-num-oggi">0</div><div class="lbl">Oggi</div></div>
+          <div class="att-subtab prossime" data-att="prossime" onclick="setAttTab('prossime')"><div class="num" id="att-num-prossime">0</div><div class="lbl">Prossime</div></div>
         </div>
         <div id="lista-attivita" class="att-scroll"></div>
       </div>
-
       <div class="att-col att-col-side">
         <div class="agenda-sett">
-          <h3 onclick="apriAgendaPage()">
-            <span class="lbl-click" id="agenda-sett-titolo">Agenda settimanale ›</span>
+          <h3 onclick="apriAgendaPage()"><span class="lbl-click" id="agenda-sett-titolo">Agenda settimanale ›</span>
             <div class="nav-sett" onclick="event.stopPropagation()">
               <button onclick="cambiaSettimana(-1)">‹</button>
               <button onclick="cambiaSettimana(0)">•</button>
@@ -984,11 +763,9 @@
           <div class="agenda-grid" id="agenda-grid"></div>
         </div>
       </div>
-
       <div class="att-col att-col-side">
         <div class="planning-sett">
-          <h3 onclick="apriPlanningPage()">
-            <span id="planning-titolo">Planning giornata</span>
+          <h3 onclick="apriPlanningPage()"><span id="planning-titolo">Planning giornata</span>
             <div class="nav-sett" onclick="event.stopPropagation()">
               <button onclick="cambiaGiornoPlanning(-1)">‹</button>
               <button onclick="cambiaGiornoPlanning(0)">•</button>
@@ -1082,11 +859,7 @@
   <nav class="tabbar">
     <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Immobili</button>
     <button data-tab="persone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>Persone</button>
-    <button data-tab="attivita" id="tab-attivita">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      <span class="badge-tab" id="tab-badge-attivita">0</span>
-      Attività
-    </button>
+    <button data-tab="attivita" id="tab-attivita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="badge-tab" id="tab-badge-attivita">0</span>Attività</button>
     <button data-tab="mappa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>Mappa</button>
     <button data-tab="altro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg>Altro</button>
   </nav>
@@ -1108,9 +881,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// =====================================================
-// ICONE SVG
-// =====================================================
 const ICON_PATHS = {
   calendario: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
   clipboard: '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>',
@@ -1174,9 +944,6 @@ function applicaIcone() {
   });
 }
 
-// =====================================================
-// TEMA
-// =====================================================
 function getTemaPreferito() { try { return localStorage.getItem('aranjò_theme') || 'auto'; } catch(e) { return 'auto'; } }
 function risolviTema(t) { if (t === 'dark') return 'dark'; if (t === 'light') return 'light'; return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
 function setTema(t) { try { localStorage.setItem('aranjò_theme', t); } catch(e) {} applyTema(t); }
@@ -1185,9 +952,6 @@ function updateThemeColorMeta() { const meta = document.querySelector('meta[name
 function updateThemeButtons() { const t = getTemaPreferito(); ['auto','light','dark'].forEach(x => { const b = document.getElementById('th-' + x); if (b) b.classList.toggle('active', x === t); }); }
 try { const mq = window.matchMedia('(prefers-color-scheme: dark)'); const onChange = () => { if (getTemaPreferito() === 'auto') applyTema('auto'); }; if (mq.addEventListener) mq.addEventListener('change', onChange); } catch(e) {}
 
-// =====================================================
-// STORAGE
-// =====================================================
 const DB_KEY = 'aranjò_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjò_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1231,9 +995,6 @@ let DB = Storage.load();
 if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
 if (!DB.pianificazioni) DB.pianificazioni = [];
 
-// =====================================================
-// PHOTO STORAGE
-// =====================================================
 const PhotoDB = {
   db: null, _opening: null,
   open() {
@@ -1335,9 +1096,6 @@ async function eliminaFoto(pid) {
 }
 async function requestPersistentStorage() { try { if (navigator.storage && navigator.storage.persist) { const already = navigator.storage.persisted ? await navigator.storage.persisted() : false; if (!already) await navigator.storage.persist(); } } catch(e) {} }
 
-// =====================================================
-// COSTANTI
-// =====================================================
 const ZONE_BASE = ['CASTELLO', 'GHINAGLIA', 'PIAZZA RISORGIMENTO', 'VIA DANTE', 'STAZIONE', "SANT'AMBROGIO", 'SAN ZENO', 'VIA FILZI', 'VIA BERGAMO', 'CASTELLEONE', 'VIA MILANO', 'SAN PAOLO', 'VIA BISSOLATI', 'VIA MASSAROTTI', 'CORSO GARIBALDI', 'VIA PALESTRO'];
 const ZONA_ZDF = 'ZONA ZdF';
 const ZONE_SPECIALI = ['ZONA Libera', 'ZONA ZdF altrui'];
@@ -1380,28 +1138,9 @@ const ESITI_APPUNTAMENTO = [
 const STATO_PRIORITY = { 'PA': 1, 'NT': 2, 'INK': 3 };
 const STATO_COLORS = { 'PA': '#c2740c', 'NT': '#2563eb', 'INK': '#047857', 'VND': '#b91c1c' };
 const PIN_NEUTRAL_COLOR = '#1f3a5f';
+const CAL_COLORS = { vend: '#c2740c', acq: '#7c3aed', entrambi: '#b91c1c', visita: '#b91c1c', libero: '#d9601a', att: '#2563eb', solo: '#d9601a' };
+function coloreDaClasse(cl) { if (cl === 'tipo-vend') return CAL_COLORS.vend; if (cl === 'tipo-acq') return CAL_COLORS.acq; if (cl === 'tipo-entrambi') return CAL_COLORS.entrambi; if (cl === 'libero') return CAL_COLORS.libero; if (cl === 'att') return CAL_COLORS.att; return '#1f3a5f'; }
 
-const CAL_COLORS = {
-  vend:     '#c2740c',
-  acq:      '#7c3aed',
-  entrambi: '#b91c1c',
-  visita:   '#b91c1c',
-  libero:   '#d9601a',
-  att:      '#2563eb',
-  solo:     '#d9601a'
-};
-function coloreDaClasse(cl) {
-  if (cl === 'tipo-vend') return CAL_COLORS.vend;
-  if (cl === 'tipo-acq') return CAL_COLORS.acq;
-  if (cl === 'tipo-entrambi') return CAL_COLORS.entrambi;
-  if (cl === 'libero') return CAL_COLORS.libero;
-  if (cl === 'att') return CAL_COLORS.att;
-  return '#1f3a5f';
-}
-
-// =====================================================
-// UTILITY
-// =====================================================
 function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
 function pad2(n) { return String(n).padStart(2, '0'); }
 function ymdDaData(d) { return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
@@ -1429,15 +1168,8 @@ const MAPPA_LOCALI = {1:'monolocale',2:'bilocale',3:'trilocale',4:'quadrilocale'
 function normalizzaTipoImmobile(s) { if (!s) return ''; const t = String(s).trim().toLowerCase(); if (/^\d+$/.test(t)) { const n = parseInt(t, 10); return MAPPA_LOCALI[n] || (n + ' locali'); } return s.trim(); }
 function formatBytes(b) { if (!b || b < 1024) return (b || 0) + ' B'; if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB'; if (b < 1024*1024*1024) return (b/(1024*1024)).toFixed(2) + ' MB'; return (b/(1024*1024*1024)).toFixed(2) + ' GB'; }
 
-// =====================================================
-// PERSONE / APPUNTAMENTI
-// =====================================================
 function titoloAcquirente(p) { const nome = (p.cognomeNome || '').toUpperCase(); const tel = p.telefono ? ' ' + p.telefono : ''; const coll = p.collega ? ' (' + p.collega.toUpperCase() + ')' : ''; const immobili = (p.immobili || []).length > 0 ? ' x ' + p.immobili.join(' / ') : ''; return 'RR - ' + nome + tel + coll + immobili; }
-function titoloProfessionista(p) {
-  const t = TIPI_PROFESSIONISTA.find(x => x.id === p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length - 1];
-  const abbr = (t && t.abbr) ? (t.abbr + ' ') : '';
-  return abbr + (p.cognomeNome || '').toUpperCase();
-}
+function titoloProfessionista(p) { const t = TIPI_PROFESSIONISTA.find(x => x.id === p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length - 1]; const abbr = (t && t.abbr) ? (t.abbr + ' ') : ''; return abbr + (p.cognomeNome || '').toUpperCase(); }
 function titoloPersona(p) { if (p.tipo === 'acquirente') return titoloAcquirente(p); if (p.tipo === 'professionista') return titoloProfessionista(p); return p.cognomeNome || ''; }
 function getStatoRR(p) { if (p.tipo !== 'acquirente') return null; const s = STATI_RR.find(s => s.id === p.statoRR); return s || STATI_RR[0]; }
 function getTagPersona(p) { if (p.tipo === 'acquirente') { const s = getStatoRR(p); return s ? s.tag : '#RR-attiva'; } if (p.tipo === 'professionista') { const t = TIPI_PROFESSIONISTA.find(t => t.id === p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length - 1]; return t.tag; } return ''; }
@@ -1446,7 +1178,6 @@ function acquirenteHaVistoNTINK(per) { if (!per || !per.immobili) return false; 
 function getTipoApp(sigla) { if (sigla === TIPO_LIBERO.sigla) return TIPO_LIBERO; return TIPI_APPUNTAMENTO.find(t => t.sigla === sigla) || TIPI_APPUNTAMENTO[10]; }
 function isAppLibero(sigla) { return sigla === TIPO_LIBERO.sigla; }
 
-// Geocoding
 let geocodeCache = {};
 try { geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); } catch(e) { geocodeCache = {}; }
 function salvaGeocodeCache() { try { localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); } catch(e) {} }
@@ -1494,21 +1225,17 @@ async function riGeocodificaImmobile(id) {
   else alert('Indirizzo non trovato.');
 }
 
-// =====================================================
-// NAVIGAZIONE
-// =====================================================
 const tabButtons = document.querySelectorAll('.tabbar button');
 const views = document.querySelectorAll('.view');
 function setAppContentMode(tab) {
   const appContent = document.getElementById('app-content');
   document.querySelector('.app-header').style.display = '';
-  appContent.style.padding = '';
-  appContent.style.overflow = '';
+  appContent.style.padding = ''; appContent.style.overflow = '';
   appContent.classList.remove('attivita-active');
+  appContent.classList.remove('agenda-mode');
   if (tab === 'mappa') {
     document.querySelector('.app-header').style.display = 'none';
-    appContent.style.padding = '0';
-    appContent.style.overflow = 'hidden';
+    appContent.style.padding = '0'; appContent.style.overflow = 'hidden';
   } else if (tab === 'attivita') {
     appContent.style.overflow = 'hidden';
     appContent.classList.add('attivita-active');
@@ -1526,8 +1253,7 @@ tabButtons.forEach(btn => {
     const fab = document.getElementById('fab-immobili');
     const fabMenu = document.getElementById('fab-menu');
     if (tab === 'mappa') {
-      fab.style.display = 'none';
-      fabMenu.style.display = 'none';
+      fab.style.display = 'none'; fabMenu.style.display = 'none';
       setTimeout(async () => { if (!map) initMappa(); else map.invalidateSize(); if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); aggiornaMappa(); }, 100);
     } else {
       if (tab === 'immobili' || tab === 'persone' || tab === 'attivita') fab.style.display = 'flex'; else fab.style.display = 'none';
@@ -1545,22 +1271,22 @@ function aggiornaFabPersone() { document.getElementById('fab-menu').innerHTML = 
 function mostraView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === id));
   const appContent = document.getElementById('app-content');
-  document.querySelector('.app-header').style.display = (id === 'view-mappa' || id === 'view-agenda') ? 'none' : '';
+  document.querySelector('.app-header').style.display = id === 'view-mappa' ? 'none' : '';
   appContent.scrollTop = 0;
   document.getElementById('back-top').classList.remove('show');
-  appContent.style.padding = ''; appContent.style.overflow = ''; appContent.classList.remove('attivita-active');
+  appContent.style.padding = ''; appContent.style.overflow = '';
+  appContent.classList.remove('attivita-active');
+  appContent.classList.remove('agenda-mode');
   if (id === 'view-attivita') { appContent.style.overflow = 'hidden'; appContent.classList.add('attivita-active'); }
   else if (id === 'view-mappa') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
-  else if (id === 'view-agenda') { appContent.style.padding = '0'; appContent.style.overflow = 'hidden'; }
+  else if (id === 'view-agenda') { appContent.classList.add('agenda-mode'); }
   const targetTab = (id === 'view-agenda' || id === 'view-planning') ? 'attivita' : id.replace('view-', '');
   document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === targetTab));
   const fab = document.getElementById('fab-immobili');
   const fabMenu = document.getElementById('fab-menu');
-  if (id === 'view-mappa' || id === 'view-agenda') {
-    fab.style.display = 'none'; fabMenu.style.display = 'none'; fabMenuAperto = false;
-  } else if (id === 'view-attivita' || id === 'view-planning') {
-    fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false;
-  }
+  if (id === 'view-mappa') { fab.style.display = 'none'; fabMenu.style.display = 'none'; fabMenuAperto = false; }
+  else if (id === 'view-attivita' || id === 'view-agenda' || id === 'view-planning') { fab.style.display = 'flex'; fabMenu.style.display = 'none'; fabMenuAperto = false; }
+  else { fab.style.display = 'none'; fabMenu.style.display = 'none'; }
 }
 
 async function aggiornaInfoSistema() {
@@ -1586,25 +1312,33 @@ function pulisciCacheGeocodifica() { const cacheSize = (localStorage.getItem(GEO
 
 (function() { const content = document.getElementById('app-content'); const btn = document.getElementById('back-top'); if (content && btn) content.addEventListener('scroll', () => { if (content.scrollTop > 400) btn.classList.add('show'); else btn.classList.remove('show'); }, { passive: true }); })();
 
-// =====================================================
-// MODAL
-// =====================================================
 function apriModal(titolo, html) { document.getElementById('modal-title').innerHTML = titolo; document.getElementById('modal-body').innerHTML = html; document.getElementById('modal').classList.add('open'); const mc = document.getElementById('map-container'); if (mc) mc.classList.add('map-hidden'); }
 function chiudiModal() { document.getElementById('modal').classList.remove('open'); document.getElementById('modal-body').innerHTML = ''; const mc = document.getElementById('map-container'); if (mc) mc.classList.remove('map-hidden'); }
 
-// =====================================================
-// FILTRI DROPDOWN
-// =====================================================
 function apriFilterDD(titolo, opzioni, sel, cb) { let h = '<h3>' + titolo + '</h3>'; for (const o of opzioni) { const s = o.value === sel ? ' selected' : ''; h += '<div class="opt' + s + '" onclick="selezionaFilterDD(\'' + String(o.value).replace(/'/g, "\\'") + '\')">' + escapeHtml(o.label) + (s ? ' ' + ico('check',13) : '') + '</div>'; } document.getElementById('filter-dd').innerHTML = h; document.getElementById('filter-dd-overlay').classList.add('open'); window._filterDDCallback = cb; }
 function selezionaFilterDD(v) { const cb = window._filterDDCallback; chiudiFilterDD(); if (cb) cb(v === '' ? null : v); }
 function chiudiFilterDD() { document.getElementById('filter-dd-overlay').classList.remove('open'); window._filterDDCallback = null; }
 
-// =====================================================
-// FAB
-// =====================================================
 let fabMenuAperto = false;
 function toggleFabMenu() { fabMenuAperto = !fabMenuAperto; document.getElementById('fab-menu').style.display = fabMenuAperto ? 'flex' : 'none'; }
 function onFabClick() {
+  const va = document.getElementById('view-agenda');
+  const vp = document.getElementById('view-planning');
+  const fm = document.getElementById('fab-menu');
+  if (va && va.classList.contains('active')) {
+    const ymd = agendaPageDayYmd || ymdDaData(new Date());
+    fm.innerHTML = '<button onclick="fabMenuNuovaAttivitaConData(\'' + ymd + '\')">' + ico('check',15) + ' Nuova attività</button>'
+      + '<button onclick="fabMenuNuovoAppuntamento()">' + ico('calendario',15) + ' Nuovo appuntamento</button>'
+      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')">' + ico('piu',15) + ' Cosa libera</button>';
+    toggleFabMenu(); return;
+  }
+  if (vp && vp.classList.contains('active')) {
+    const ymd = planningPageYmd || ymdDaData(new Date());
+    fm.innerHTML = '<button onclick="fabMenuNuovaAttivitaConData(\'' + ymd + '\')">' + ico('check',15) + ' Nuova attività</button>'
+      + '<button onclick="fabMenuNuovoAppuntamento()">' + ico('calendario',15) + ' Nuovo appuntamento</button>'
+      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')">' + ico('piu',15) + ' Cosa libera</button>';
+    toggleFabMenu(); return;
+  }
   const t = document.querySelector('.tabbar button.active');
   const tab = t ? t.dataset.tab : null;
   if (tab === 'persone') { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovaPersona(); return; }
@@ -1614,19 +1348,16 @@ function onFabClick() {
   }
   toggleFabMenu();
 }
+function fabMenuNuovaLibera(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovaPianificazioneLibera(ymd || ymdDaData(new Date())); }
+function fabMenuNuovaAttivitaConData(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; window._planningYmd = ymd; apriNuovaAttivitaGlobale(); }
 function fabMenuNuovoImmobile() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovo(); }
 function fabMenuNuovoCondominio() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoCondominio(); }
 function fabMenuNuovaAttivita() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovaAttivitaGlobale(); }
 function fabMenuNuovoAppuntamento() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovoAppuntamentoGlobale(); }
 
-// =====================================================
-// SWIPE-BACK
-// =====================================================
 (function setupSwipeBack() {
   let startX = null, startY = null, startTime = 0, tracking = false;
-  const EDGE = 32;
-  const MIN_DIST = 60;
-  const MAX_TIME = 800;
+  const EDGE = 32; const MIN_DIST = 60; const MAX_TIME = 800;
   document.addEventListener('touchstart', (e) => {
     if (e.touches.length !== 1) { tracking = false; return; }
     const t = e.touches[0];
@@ -1636,13 +1367,9 @@ function fabMenuNuovoAppuntamento() { fabMenuAperto = false; document.getElement
   document.addEventListener('touchend', (e) => {
     if (!tracking) return; tracking = false;
     const t = e.changedTouches[0];
-    const dx = t.clientX - startX;
-    const dy = Math.abs(t.clientY - startY);
-    const dt = Date.now() - startTime;
+    const dx = t.clientX - startX; const dy = Math.abs(t.clientY - startY); const dt = Date.now() - startTime;
     startX = null;
-    if (dx > MIN_DIST && dy < dx * 0.7 && dt < MAX_TIME) {
-      eseguiBack();
-    }
+    if (dx > MIN_DIST && dy < dx * 0.7 && dt < MAX_TIME) eseguiBack();
   }, { passive: true });
   document.addEventListener('touchcancel', () => { tracking = false; startX = null; });
 })();
@@ -1658,15 +1385,9 @@ function eseguiBack() {
   const vp = document.getElementById('view-planning');
   if (vp && vp.classList.contains('active')) { tornaAttivita(); return; }
   const at = document.querySelector('.tabbar button.active');
-  if (at && at.dataset.tab !== 'immobili') {
-    const homeBtn = document.querySelector('.tabbar button[data-tab="immobili"]');
-    if (homeBtn) homeBtn.click();
-  }
+  if (at && at.dataset.tab !== 'immobili') { const homeBtn = document.querySelector('.tabbar button[data-tab="immobili"]'); if (homeBtn) homeBtn.click(); }
 }
 
-// =====================================================
-// PINCH-ZOOM per il calendario agenda
-// =====================================================
 (function setupPinchZoom() {
   let startDist = 0, ratio = 1, active = false;
   document.addEventListener('touchstart', (e) => {
@@ -1675,15 +1396,13 @@ function eseguiBack() {
     if (!va || !va.classList.contains('active')) return;
     const dx = e.touches[0].clientX - e.touches[1].clientX;
     const dy = e.touches[0].clientY - e.touches[1].clientY;
-    startDist = Math.hypot(dx, dy);
-    ratio = 1; active = true;
+    startDist = Math.hypot(dx, dy); ratio = 1; active = true;
   }, { passive: true });
   document.addEventListener('touchmove', (e) => {
     if (!active || e.touches.length !== 2) return;
     const dx = e.touches[0].clientX - e.touches[1].clientX;
     const dy = e.touches[0].clientY - e.touches[1].clientY;
-    const dist = Math.hypot(dx, dy);
-    ratio = dist / startDist;
+    ratio = Math.hypot(dx, dy) / startDist;
   }, { passive: true });
   document.addEventListener('touchend', (e) => {
     if (!active) return;
@@ -1695,18 +1414,12 @@ function eseguiBack() {
   document.addEventListener('touchcancel', () => { active = false; startDist = 0; ratio = 1; });
 })();
 
-// =====================================================
-// NAV ESTERNA
-// =====================================================
 function apriNavigazioneMaps(lat, lng, nome) { const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent); const enc = encodeURIComponent(nome || ''); const url = isIOS ? 'https://maps.apple.com/?daddr=' + lat + ',' + lng + (enc ? '&q=' + enc : '') : 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng; window.open(url, '_blank'); }
 function apriAppleMaps(lat, lng, nome) { const enc = encodeURIComponent(nome || ''); window.open('https://maps.apple.com/?daddr=' + lat + ',' + lng + (enc ? '&q=' + enc : ''), '_blank'); }
 function chiamaNumero(tel) { if (tel) window.location.href = 'tel:' + tel.replace(/\s+/g, ''); }
 function scriviEmail(email) { if (email) window.location.href = 'mailto:' + email; }
 function apriWhatsApp(tel) { if (!tel) return; const p = tel.replace(/\D/g, ''); if (!p) return; const n = p.startsWith('39') ? p : '39' + p; window.open('https://wa.me/' + n, '_blank'); }
 
-// =====================================================
-// TITOLO IMMOBILE
-// =====================================================
 function titoloImmobile(imm) {
   if (imm.stato === 'IMM') { if (imm.villa) return 'IMM - ' + (imm.indirizzo || '').toUpperCase(); return 'IMM - ' + (imm.indirizzo || '').toUpperCase() + ' - z' + (imm.z || 1); }
   const tipo = imm.stato; const nome = (imm.cognomeNome || '').toUpperCase(); const tel = imm.telefono ? ' ' + imm.telefono : ''; const ind = imm.indirizzo ? ' x ' + imm.indirizzo.toUpperCase() : ''; return tipo + ' - ' + nome + tel + ind;
@@ -1715,7 +1428,7 @@ function titoloImmobile(imm) {
 // =====================================================
 // FILTRI IMMOBILI
 // =====================================================
-let statoSelezionato = null; let zonaSelezionata = null; let vistaCondomini = false; let condoSelezionato = null; let queryRicerca = ''; let mappaFiltroStato = null; let condoListaEspansi = {};
+let statoSelezionato = null, zonaSelezionata = null, vistaCondomini = false, condoSelezionato = null, queryRicerca = '', mappaFiltroStato = null, condoListaEspansi = {};
 document.getElementById('search-immobili').addEventListener('input', (e) => { queryRicerca = e.target.value.toLowerCase().trim(); renderListaImmobili(); });
 document.querySelectorAll('#chips-immobili .chip').forEach(chip => { chip.addEventListener('click', () => { const f = chip.dataset.filtro; if (f === 'tutti') { statoSelezionato = null; zonaSelezionata = null; vistaCondomini = false; condoSelezionato = null; } else if (f === 'COND') { vistaCondomini = !vistaCondomini; condoSelezionato = null; } else if (f === 'ZONE') { apriSelezioneZone(); return; } else statoSelezionato = (statoSelezionato === f) ? null : f; aggiornaChips(); renderListaImmobili(); }); });
 document.querySelectorAll('#map-chips .map-chip').forEach(chip => { chip.addEventListener('click', () => { const f = chip.dataset.filtro; mappaFiltroStato = (f === 'tutti' || mappaFiltroStato === f) ? null : f; aggiornaMapChips(); aggiornaMappa(); }); });
@@ -1730,9 +1443,6 @@ function compareAttivitaDecrescente(a, b) { return compareAttivitaCrescente(b, a
 function renderBannerFiltroAttivo() { const cont = document.getElementById('filtro-attivo'); const p = []; if (condoSelezionato) p.push(iconaCondo(11) + ' ' + condoSelezionato); if (statoSelezionato) p.push(statoSelezionato); if (zonaSelezionata) p.push(ico('pin',11) + ' ' + zonaSelezionata); if (p.length === 0) { cont.innerHTML = ''; return; } cont.innerHTML = '<div class="active-filter-banner"><span>' + p.join(' · ') + '</span><button class="x" onclick="rimuoviTuttiFiltri()">' + ico('x',11) + '</button></div>'; }
 function rimuoviTuttiFiltri() { condoSelezionato = null; zonaSelezionata = null; if (!vistaCondomini) statoSelezionato = null; aggiornaChips(); renderListaImmobili(); }
 
-// =====================================================
-// RENDER LISTA IMMOBILI
-// =====================================================
 function renderListaImmobili() {
   const cont = document.getElementById('lista-immobili'); if (!cont) return;
   if (vistaCondomini) { renderBannerFiltroAttivo(); renderListaCondomini(cont); return; }
@@ -1797,9 +1507,6 @@ function renderListaCondomini(cont) {
 }
 function selezionaCondominio(condo) { const im = DB.immobili.filter(i => !i.villa && getCondominio(i) === condo); if (im.length === 0) { apriModificaCondominio(condo); return; } condoSelezionato = condo; vistaCondomini = false; aggiornaChips(); renderListaImmobili(); }
 
-// =====================================================
-// SELEZIONE ZONE + SELETTORE ZONE
-// =====================================================
 function apriSelezioneZone() {
   let h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Seleziona una zona per filtrare.</p><div class="section-title">Zone</div><div class="zone-chips">';
   for (const z of ZONE_BASE) { const a = zonaSelezionata === z; h += '<button type="button" class="zone-chip' + (a ? ' active' : '') + '" onclick="toggleZoneFiltro(\'' + escapeHtml(z).replace(/'/g, "\\'") + '\')">' + escapeHtml(z) + '</button>'; }
@@ -1831,7 +1538,7 @@ function calcolaZoneFinali(p) { const st = zoneTemp[p]; if (st.base.length > 0) 
 // =====================================================
 // PERSONE
 // =====================================================
-let pTabAttivo = 'acquirente'; let pStatoRRFiltro = null; let pTipoProfFiltro = null; let pQueryRicerca = '';
+let pTabAttivo = 'acquirente', pStatoRRFiltro = null, pTipoProfFiltro = null, pQueryRicerca = '';
 document.querySelectorAll('#persone-tabs .chip').forEach(chip => { chip.addEventListener('click', () => { pTabAttivo = chip.dataset.ptab; pStatoRRFiltro = null; pTipoProfFiltro = null; pQueryRicerca = ''; document.getElementById('search-persone').value = ''; document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c === chip)); aggiornaFabPersone(); renderPersone(); }); });
 document.getElementById('search-persone').addEventListener('input', (e) => { pQueryRicerca = e.target.value.toLowerCase().trim(); renderPersone(); });
 function getFiltroPersonaLabel() { if (pTabAttivo === 'acquirente') { if (!pStatoRRFiltro) return 'Stato'; const s = STATI_RR.find(s => s.id === pStatoRRFiltro); return s ? s.label : 'Stato'; } if (pTabAttivo === 'professionista') { if (!pTipoProfFiltro) return 'Tipo'; const t = TIPI_PROFESSIONISTA.find(t => t.id === pTipoProfFiltro); return t ? t.label : 'Tipo'; } return 'Filtro'; }
@@ -2077,9 +1784,6 @@ function eliminaPersona() {
   Storage.save(DB); personaAperta = null; chiudiModal(); renderPersone();
 }
 
-// =====================================================
-// MATCHING NT/INK
-// =====================================================
 function trovaMatchNTINK(p) {
   const tipo = normalizzaTipoImmobile(p.tipoImmobile).toLowerCase();
   const zona = (p.zona || '').toLowerCase().trim();
@@ -2108,9 +1812,6 @@ function toggleImmobileAcquirente(pid, iid) {
   Storage.save(DB); apriMatchNTINKPerAcquirente(pid);
 }
 
-// =====================================================
-// APPUNTAMENTI
-// =====================================================
 let settimanaCorrente = new Date();
 function formattaDataOraCompleta(iso) { const d = new Date(iso); const g = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const m = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic']; return g[d.getDay()] + ' ' + d.getDate() + ' ' + m[d.getMonth()] + ' · ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
 function getClasseChiApp(c) { if (c === 'vend') return 'tipo-vend'; if (c === 'acq') return 'tipo-acq'; if (c === 'entrambi') return 'tipo-entrambi'; if (c === 'visita') return 'tipo-entrambi'; if (c === 'solo') return 'libero'; return ''; }
@@ -2441,9 +2142,6 @@ function salvaModificaAppuntamento(id) {
   apriSchedaAppuntamento(a.id);
 }
 
-// =====================================================
-// HELPERS CALENDARIO
-// =====================================================
 const GIORNI_BREVI = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 const MESI_BREVI = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
 const MESI_LUNGHI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
@@ -2454,27 +2152,13 @@ function collectItemsForDay(ymd) {
   const apps = (DB.appuntamenti || []).filter(a => ymdDaData(new Date(a.dataInizio)) === ymd && a.stato !== 'annullato');
   const atts = raccogliTutteAttivita().filter(a => a.tipo === 'da_fare' && !a.completata && ymdDaData(new Date(a.dataPrevista)) === ymd);
   const libs = (DB.pianificazioni || []).filter(p => p.data === ymd);
-  for (const a of apps) {
-    const tp = getTipoApp(a.tipo);
-    items.push({ tipo: a.tipo, testo: a.titolo, ora: pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()), colore: coloreDaClasse(getClasseChiApp(tp.chi)), id: a.id, kind: 'app' });
-  }
-  for (const a of atts) {
-    items.push({ tipo: 'ATT', testo: a.testo, ora: a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore: CAL_COLORS.att, id: a.id, kind: 'att', entitaTipo: a.entitaTipo, entitaId: a.entitaId, entitaTitolo: a.entitaTitolo });
-  }
-  for (const p of libs) {
-    items.push({ tipo: 'LIBERA', testo: p.testo, ora: p.ora || '--:--', colore: CAL_COLORS.libero, id: p.id, kind: 'lib' });
-  }
-  items.sort((a, b) => {
-    const ta = a.ora === '--:--' ? '99:99' : a.ora;
-    const tb = b.ora === '--:--' ? '99:99' : b.ora;
-    return ta.localeCompare(tb);
-  });
+  for (const a of apps) { const tp = getTipoApp(a.tipo); items.push({ tipo: a.tipo, testo: a.titolo, ora: pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()), colore: coloreDaClasse(getClasseChiApp(tp.chi)), id: a.id, kind: 'app' }); }
+  for (const a of atts) { items.push({ tipo: 'ATT', testo: a.testo, ora: a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore: CAL_COLORS.att, id: a.id, kind: 'att', entitaTipo: a.entitaTipo, entitaId: a.entitaId, entitaTitolo: a.entitaTitolo }); }
+  for (const p of libs) { items.push({ tipo: 'LIBERA', testo: p.testo, ora: p.ora || '--:--', colore: CAL_COLORS.libero, id: p.id, kind: 'lib' }); }
+  items.sort((a, b) => { const ta = a.ora === '--:--' ? '99:99' : a.ora; const tb = b.ora === '--:--' ? '99:99' : b.ora; return ta.localeCompare(tb); });
   return items;
 }
 
-// =====================================================
-// AGENDA SETTIMANALE WIDGET
-// =====================================================
 function cambiaSettimana(d) { if (d === 0) settimanaCorrente = new Date(); else settimanaCorrente = new Date(settimanaCorrente.getTime() + d * 7 * 24 * 60 * 60 * 1000); aggiornaAgendaSettimanale(); }
 function aggiornaAgendaSettimanale() {
   const g = document.getElementById('agenda-grid'); const t = document.getElementById('agenda-sett-titolo'); if (!g || !t) return;
@@ -2491,14 +2175,10 @@ function aggiornaAgendaSettimanale() {
     h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + ymd + '\')">';
     h += '<div class="ag-nome">' + GIORNI_BREVI[i] + '</div>';
     h += '<div class="ag-num">' + gi2.getDate() + '</div>';
-    if (items.length === 0) {
-      h += '<div class="ag-empty">·</div>';
-    } else {
+    if (items.length === 0) h += '<div class="ag-empty">·</div>';
+    else {
       const max = 2;
-      for (let k = 0; k < Math.min(items.length, max); k++) {
-        const it = items[k];
-        h += '<div class="ag-ev-row"><div class="ag-ev-label"><span class="dash" style="color:' + it.colore + '">-</span> ' + escapeHtml(it.tipo) + ' <span class="dash" style="color:' + it.colore + '">-</span></div><div class="ag-ev-ora">' + (it.ora === '--:--' ? '·' : it.ora) + '</div></div>';
-      }
+      for (let k = 0; k < Math.min(items.length, max); k++) { const it = items[k]; h += '<div class="ag-ev-row"><div class="ag-ev-label"><span class="dash" style="color:' + it.colore + '">-</span> ' + escapeHtml(it.tipo) + ' <span class="dash" style="color:' + it.colore + '">-</span></div><div class="ag-ev-ora">' + (it.ora === '--:--' ? '·' : it.ora) + '</div></div>'; }
       if (items.length > max) h += '<div style="font-size:7px;color:var(--testo-ter);text-align:center;font-weight:600;letter-spacing:0.02em;">+' + (items.length - max) + '</div>';
     }
     h += '</div>';
@@ -2510,7 +2190,7 @@ function aggiornaAgendaSettimanale() {
 // PAGINA AGENDA — STILE iPHONE
 // =====================================================
 let calMeseCorrente = new Date();
-let agendaPageState = 'month'; // 'year' | 'month' | 'week' | 'day'
+let agendaPageState = 'month';
 let agendaPageDayYmd = null;
 let agendaYear = new Date().getFullYear();
 
@@ -2549,12 +2229,7 @@ function shiftAgendaPeriod(delta) {
   renderAgendaPage();
 }
 function apriPlanningGiorno(ymd) { agendaPageDayYmd = ymd; agendaPageState = 'day'; mostraView('view-agenda'); renderAgendaPage(); }
-function vaiAOggi() {
-  agendaPageDayYmd = ymdDaData(new Date());
-  calMeseCorrente = new Date();
-  agendaYear = new Date().getFullYear();
-  renderAgendaPage();
-}
+function vaiAOggi() { agendaPageDayYmd = ymdDaData(new Date()); calMeseCorrente = new Date(); agendaYear = new Date().getFullYear(); renderAgendaPage(); }
 function apriElementoAgenda(kind, id) {
   if (kind === 'app') apriSchedaAppuntamento(id);
   else if (kind === 'att') { const att = raccogliTutteAttivita().find(a => a.id === id); if (att) apriAzioniAttivitaGlobale(att.id, att.entitaTipo, att.entitaId); }
@@ -2564,8 +2239,7 @@ function scrollAgendaToNow() {
   const el = document.getElementById('ag-content-scroll'); if (!el) return;
   if (agendaPageState !== 'week' && agendaPageState !== 'day') return;
   const now = new Date();
-  const top = Math.max(0, (now.getHours() - 2) * 60);
-  el.scrollTop = top;
+  el.scrollTop = Math.max(0, (now.getHours() - 2) * 60);
 }
 
 function renderAgendaPage() {
@@ -2592,7 +2266,7 @@ function topbarHtml() {
     + escapeHtml(label)
     + '</button>'
     + '<div class="ag-icons">'
-    + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" title="Nuovo">'
+    + '<button class="ag-icon-btn" onclick="apriNuovoAppuntamentoGlobale()" title="Nuovo appuntamento" aria-label="Nuovo">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
     + '</button>'
     + '</div>'
@@ -2623,7 +2297,7 @@ function bottomBarHtml() {
   return '<div class="ag-bottombar">'
     + '<button class="ag-pill" onclick="vaiAOggi()">Oggi</button>'
     + '<div style="flex:1;"></div>'
-    + '<button class="ag-icon-btn" onclick="cycleAgendaView()" title="Vista">'
+    + '<button class="ag-icon-btn" onclick="cycleAgendaView()" title="Cambia vista" aria-label="Vista">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>'
     + '</button>'
     + '</div>';
@@ -2636,7 +2310,6 @@ function cycleAgendaView() {
   renderAgendaPage();
 }
 
-/* ---------- ANNO ---------- */
 function htmlCalendarioYear() {
   const today = ymdDaData(new Date());
   let h = '<div class="ag-year">';
@@ -2665,7 +2338,6 @@ function htmlCalendarioYear() {
   return h;
 }
 
-/* ---------- MESE ---------- */
 function htmlCalendarioMonthIPhone() {
   const c = calMeseCorrente;
   const today = ymdDaData(new Date());
@@ -2697,7 +2369,6 @@ function htmlCalendarioMonthIPhone() {
   return h;
 }
 
-/* ---------- SETTIMANA (timeline oraria 7 colonne) ---------- */
 function htmlCalendarioWeekIPhone() {
   const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
   const dow = base.getDay(); const diff = dow === 0 ? -6 : 1 - dow;
@@ -2727,17 +2398,13 @@ function htmlCalendarioWeekIPhone() {
       h += '<div class="ag-event-time">' + it.ora + '</div>';
       h += '</div>';
     }
-    if (isToday) {
-      const lineTop = now.getHours() * 60 + now.getMinutes();
-      h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>';
-    }
+    if (isToday) { const lineTop = now.getHours() * 60 + now.getMinutes(); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
     h += '</div>';
   }
   h += '</div></div>';
   return h;
 }
 
-/* ---------- GIORNO (timeline oraria 1 colonna) ---------- */
 function htmlCalendarioDayIPhone() {
   const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
   const ymd = ymdDaData(base);
@@ -2762,24 +2429,14 @@ function htmlCalendarioDayIPhone() {
     h += '<div class="ag-event-time">' + it.ora + '</div>';
     h += '</div>';
   }
-  if (isToday) {
-    const lineTop = now.getHours() * 60 + now.getMinutes();
-    h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>';
-  }
+  if (isToday) { const lineTop = now.getHours() * 60 + now.getMinutes(); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
   h += '</div></div>';
   return h;
 }
 
-// =====================================================
-// PLANNING GIORNATA WIDGET
-// =====================================================
 let planningYmd = null;
 function currentPlanningYmd() { return planningYmd || ymdDaData(new Date()); }
-function cambiaGiornoPlanning(delta) {
-  if (delta === 0) planningYmd = null;
-  else { const cur = dataDaYmd(currentPlanningYmd()); cur.setDate(cur.getDate() + delta); planningYmd = ymdDaData(cur); }
-  renderPlanning();
-}
+function cambiaGiornoPlanning(delta) { if (delta === 0) planningYmd = null; else { const cur = dataDaYmd(currentPlanningYmd()); cur.setDate(cur.getDate() + delta); planningYmd = ymdDaData(cur); } renderPlanning(); }
 function getPlanningPerData(ymd) {
   const apps = (DB.appuntamenti || []).filter(a => { const d = new Date(a.dataInizio); return ymdDaData(d) === ymd && a.stato !== 'annullato'; }).sort((a, b) => a.dataInizio.localeCompare(b.dataInizio));
   const att = raccogliTutteAttivita().filter(a => { if (a.tipo !== 'da_fare' || a.completata) return false; return ymdDaData(new Date(a.dataPrevista)) === ymd; }).sort(compareAttivitaCrescente);
@@ -2799,10 +2456,7 @@ function renderPlanning() {
   else {
     h += '<div class="planning-list">';
     for (const a of p.apps) { const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); h += '<div class="planning-item appuntamento" onclick="event.stopPropagation();apriSchedaAppuntamento(\'' + a.id + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.titolo) + '</div><span class="pi-tipo">' + escapeHtml(a.tipo) + '</span></div>'; }
-    for (const a of p.att) {
-      const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--';
-      h += '<div class="planning-item attivita" onclick="event.stopPropagation();apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.testo) + (a.entitaTitolo ? '<div style="font-size:10px;color:var(--testo-ter);margin-top:2px;">' + escapeHtml(a.entitaTitolo) + '</div>' : '') + '</div><span class="pi-tipo">ATT</span></div>';
-    }
+    for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="planning-item attivita" onclick="event.stopPropagation();apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.testo) + (a.entitaTitolo ? '<div style="font-size:10px;color:var(--testo-ter);margin-top:2px;">' + escapeHtml(a.entitaTitolo) + '</div>' : '') + '</div><span class="pi-tipo">ATT</span></div>'; }
     for (const p2 of p.lib) { h += '<div class="planning-item libera' + (p2.completata ? ' fatta' : '') + '" onclick="event.stopPropagation();apriAzioniPianificazione(\'' + p2.id + '\')"><span class="pi-ora">' + (p2.ora || '--:--') + '</span><div class="pi-testo">' + escapeHtml(p2.testo) + (p2.completata ? ' ✓' : '') + '</div><span class="pi-tipo">' + (p2.completata ? 'FATTA' : 'LIBERA') + '</span></div>'; }
     h += '</div>';
   }
@@ -2861,9 +2515,6 @@ function eliminaPianificazione(id) {
   Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100);
 }
 
-// =====================================================
-// PAGINA PLANNING
-// =====================================================
 let planningPageYmd = null;
 function apriPlanningPage(ymd) { planningPageYmd = ymd || currentPlanningYmd(); mostraView('view-planning'); renderPlanningPage(); }
 function cambiaGiornoPlanningPage(delta) {
@@ -2894,10 +2545,7 @@ function renderPlanningPage() {
   cont.innerHTML = h;
 }
 
-// =====================================================
-// ATTIVITÀ
-// =====================================================
-let attTabFiltro = 'oggi'; let attQueryRicerca = ''; let attGruppiEspansi = {};
+let attTabFiltro = 'oggi', attQueryRicerca = '', attGruppiEspansi = {};
 function setAttTab(t) { attTabFiltro = t; document.querySelectorAll('.att-subtab').forEach(s => s.classList.toggle('active', s.dataset.att === t)); renderAttivita(); }
 function raccogliTutteAttivita() {
   const t = [];
@@ -2976,9 +2624,6 @@ function cercaPerNuovaAttivita(q) {
 }
 function selezionaEntitaPerAttivita(t, id) { if (t === 'immobile') { immobileAperto = id; setTimeout(() => apriNuovaAttivita(), 100); } else { personaAperta = id; setTimeout(() => apriNuovaAttivitaPersona(), 100); } }
 
-// =====================================================
-// IMMOBILI - FORM E SCHEDE
-// =====================================================
 function apriFormNuovo() {
   const dc = !!condoSelezionato;
   const tf = dc ? 'Nuovo immobile in condominio' : 'Nuovo immobile';
@@ -3265,9 +2910,6 @@ function salvaNuovoCondominio() {
   Storage.save(DB); chiudiModal(); alert('Creato: ' + i); vistaCondomini = true; aggiornaChips(); renderListaImmobili();
 }
 
-// =====================================================
-// MAPPA
-// =====================================================
 let map = null; let markersLayer = null; window._condoPopups = [];
 function calcolaInfoIcona(immobili) {
   if (!immobili || immobili.length === 0) return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 0 };
@@ -3312,9 +2954,6 @@ function aggiornaMappa() {
 async function centraMappaSuCittaPrincipale() { if (!map) return; if (!_coordsCittaPrincipale) await geocodificaCittaPrincipale(); map.setView(_coordsCittaPrincipale, 14); }
 function fitBoundsImmobili() { if (!map) return; let l = DB.immobili.filter(i => i.lat && i.lng); if (mappaFiltroStato) l = l.filter(i => i.stato === mappaFiltroStato); if (l.length === 0) { centraMappaSuCittaPrincipale(); return; } const b = L.latLngBounds(l.map(i => [i.lat, i.lng])); map.fitBounds(b, { padding: [60, 60], maxZoom: 17 }); }
 
-// =====================================================
-// CONTATORI / BACKUP
-// =====================================================
 function aggiornaContatori() { aggiornaInfoSistema(); }
 function esportaBackup() { const d = JSON.stringify(DB, null, 2); const b = new Blob([d], { type: 'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = 'aranjò_backup_' + o.getFullYear() + '-' + pad2(o.getMonth() + 1) + '-' + pad2(o.getDate()) + '.json'; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); }
 function importaBackup(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = (ev) => { try { const i = JSON.parse(ev.target.result); if (!i || typeof i !== 'object') throw new Error('Formato non valido'); if (!confirm('Importare?')) return; DB = Object.assign(Storage.default(), i); if (!DB.coordinateCondomini) DB.coordinateCondomini = {}; if (!DB.condomini) DB.condomini = {}; if (!DB.pianificazioni) DB.pianificazioni = []; for (const k in DB.condomini) { if (!Array.isArray(DB.condomini[k].foto)) DB.condomini[k].foto = []; if (!Array.isArray(DB.condomini[k].zone)) DB.condomini[k].zone = []; } Storage.save(DB); renderListaImmobili(); aggiornaContatori(); aggiornaMappa(); aggiornaInfoSistema(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderProssimoApp(); alert('Importato'); } catch (err) { alert('Errore: ' + err.message); } }; r.readAsText(f); e.target.value = ''; }
@@ -3322,9 +2961,6 @@ async function cancellaTutto() { if (!confirm('Cancellare TUTTI i dati e TUTTE l
 function apriImpostazioniCitta() { const c = getCittaPrincipale(); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="${escapeHtml(c)}"></div></div><button class="btn btn-secondary" onclick="document.getElementById('imp-citta').value='${CITTA_DEFAULT}'">Ripristina Cremona</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCittaPrincipale()">Salva</button></div>`; apriModal(ico('ingranaggio',18) + ' Città', h); }
 function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta') || {}).value || ''; const n = v.trim().toUpperCase(); if (!n) { alert('Inserisci una città'); return; } DB.cittaPrincipale = n; Storage.save(DB); _coordsCittaPrincipale = null; if (confirm('Svuotare cache geocodifiche?')) { geocodeCache = {}; salvaGeocodeCache(); } chiudiModal(); alert('Città: ' + n); aggiornaInfoSistema(); aggiornaMappa(); }
 
-// =====================================================
-// AVVIO
-// =====================================================
 document.getElementById('chip-zone').innerHTML = ico('pin',12) + ' ZONE';
 document.getElementById('chip-cond').innerHTML = iconaCondo(12) + ' COND';
 document.getElementById('chip-ptab-acq').innerHTML = ico('casa',12) + ' Acquirenti';
