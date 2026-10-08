@@ -94,8 +94,8 @@
     overflow: hidden !important;
   }
   .view { display: none; }
-  .view.active { display: block; animation: fadeIn 0.24s ease; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .view.active { display: block; animation: viewFade 0.22s ease-out; }
+  @keyframes viewFade { from { opacity: 0.9; } to { opacity: 1; } }
 
   .card {
     background: var(--card); border-radius: var(--radius); padding: 18px 20px;
@@ -222,8 +222,8 @@
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(20, 20, 30, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 200; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.25s ease; }
   .modal-overlay.open { display: flex; opacity: 1; }
-  @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
+  @keyframes slideUp { from { transform: translateY(24px); opacity: 0.4; } to { transform: translateY(0); opacity: 1; } }
+  .modal-sheet { background: var(--sfondo); width: 100%; max-width: var(--max-w); max-height: 92vh; max-height: 92dvh; border-radius: 18px 18px 0 0; display: flex; flex-direction: column; animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
   .modal-header { padding: 20px 22px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-shrink: 0; position: relative; border-bottom: 1px solid var(--border); }
   .modal-header::before { content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 32px; height: 4px; border-radius: 2px; background: var(--border-strong); }
   .modal-header h2 { font-size: 17px; font-weight: 700; color: var(--blu); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; margin-top: 6px; }
@@ -338,7 +338,7 @@
   .addr-link svg { width: 13px; height: 13px; }
   .addr-tools { padding-top: 10px; border-top: 1px solid var(--border); margin-top: 10px; }
 
-  .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; background: rgba(20, 20, 30, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: fadeIn 0.2s ease; }
+  .filter-dropdown-overlay { position: fixed; inset: 0; z-index: 180; display: none; background: rgba(20, 20, 30, 0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: viewFade 0.2s ease; }
   .filter-dropdown-overlay.open { display: block; }
   .filter-dropdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card); border-radius: var(--radius); padding: 16px; min-width: 260px; max-width: 90vw; box-shadow: 0 12px 48px rgba(20, 20, 30, 0.16); animation: popIn 0.24s cubic-bezier(0.16, 1, 0.3, 1); }
   @keyframes popIn { from { opacity: 0; transform: translate(-50%, -48%) scale(0.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
@@ -601,8 +601,11 @@
     }
   }
 
-  .ag-view .ag-content > * { animation: agViewIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
-  @keyframes agViewIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  /* Animazioni SOffici (no flash) */
+  .ag-view { }
+  .ag-header, .ag-weekstrip, .ag-sep { }
+  .ag-view .ag-content > * { animation: agViewIn 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+  @keyframes agViewIn { from { transform: translateY(3px); opacity: 0.98; } to { transform: translateY(0); opacity: 1; } }
 
   .ag-year { padding: 4px 12px 40px; }
   .ag-year-month { margin-bottom: 22px; }
@@ -615,7 +618,6 @@
   .ag-year-cell.selected.today .ag-year-num { box-shadow: 0 0 0 2px var(--arancione); }
   .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
-  /* ============ MULTI-MESE (penultimo zoom out) ============ */
   .ag-multi-month { padding: 0 8px 40px; }
   .ag-mm-month { margin-bottom: 26px; }
   .ag-mm-name { font-size: 22px; font-weight: 700; color: var(--blu); padding: 10px 8px 8px; letter-spacing: -0.025em; }
@@ -649,6 +651,9 @@
     background-repeat: repeat-y;
     background-size: 100% var(--ora-h);
     touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
   .ag-hours-col {
     width: 52px; flex-shrink: 0;
@@ -705,20 +710,12 @@
     line-height: 1.2;
     letter-spacing: -0.01em;
     transition: top 0.06s linear;
+    animation: previewIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  @keyframes previewIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
   :root[data-theme="dark"] .ag-preview {
     background: rgba(236, 111, 42, 0.22);
     color: #fdba74;
-  }
-  .ag-view { animation: agViewFade 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-  @keyframes agViewFade {
-    from { opacity: 0.5; }
-    to { opacity: 1; }
-  }
-  .ag-header, .ag-weekstrip, .ag-sep { animation: agHeaderFade 0.22s ease-out; }
-  @keyframes agHeaderFade {
-    from { opacity: 0.4; }
-    to { opacity: 1; }
   }
 
   input.form-input, textarea.form-textarea, select.form-select {
@@ -1970,7 +1967,7 @@ function aggiornaFormAttivitaPersona() {
 function salvaAttivitaPersona() {
   const p = DB.persone.find(x => x.id === personaAperta); if (!p) return;
   const t = document.getElementById('pa-tipo').value; const tx = (document.getElementById('pa-testo') || {}).value || '';
-  if (!tx.trim()) { alert('Scrivi qualcosa'); return; }
+  if (!tx.trim()) { chiudiModal(); return; }
   p.attivita = p.attivita || []; const sq = prossimoSeq();
   if (t === 'fatta') { const d = document.getElementById('pa-data').value; if (!d) { alert('Data'); return; } p.attivita.push({ id: uid(), seq: sq, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); }
   else { const d = document.getElementById('pa-dataPrevista').value; if (!d) { alert('Data'); return; } p.attivita.push({ id: uid(), seq: sq, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); }
@@ -2526,7 +2523,7 @@ function aggiornaAgendaSettimanale() {
 }
 
 let calMeseCorrente = new Date();
-let agendaPageState = 'month'; // 'year' | 'month' (multi-mese) | 'week' | 'day'
+let agendaPageState = 'month';
 let agendaPageDayYmd = null;
 let agendaYear = new Date().getFullYear();
 
@@ -2541,7 +2538,7 @@ function agendaBack() { tornaAttivita(); }
 function clickGiornoAgenda(ymd) {
   agendaPageDayYmd = ymd;
   if (agendaPageState === 'year' || agendaPageState === 'month') { agendaPageState = 'day'; }
-  else if (agendaPageState === 'week') { /* resta in week ma cambia giorno */ }
+  else if (agendaPageState === 'week') { }
   renderAgendaPage();
 }
 
@@ -2702,7 +2699,6 @@ function htmlCalendarioYear() {
   return h;
 }
 
-// ============ MULTI-MESE ============
 function htmlCalendarioMultiMonth() {
   const today = ymdDaData(new Date());
   const selYmd = agendaPageDayYmd || '';
@@ -2820,10 +2816,12 @@ function htmlCalendarioDayIPhone() {
   return h;
 }
 
-/* ============ GESTURE: swipe su timeline e weekstrip, tap/long-press per creare ============ */
+/* ============ GESTURE: long-press per creare, swipe per cambiare periodo ============ */
 (function setupAgendaGestures() {
   let startX = null, startY = null, startTime = 0, gestureTarget = null, moved = false, targetEl = null;
   let preview = null;
+  let longPressTimer = null;
+  let longPressActive = false;
 
   function removePreview() {
     if (preview && preview.el && preview.el.parentNode) preview.el.parentNode.removeChild(preview.el);
@@ -2852,6 +2850,16 @@ function htmlCalendarioDayIPhone() {
     preview.el.textContent = pad2(sh) + ':' + pad2(sm) + ' – ' + pad2(eh) + ':' + pad2(em);
   }
 
+  function startPreview(dayCol, clientY) {
+    const el = document.createElement('div');
+    el.className = 'ag-preview';
+    dayCol.appendChild(el);
+    preview = { dayCol, startMin: 0, durationMin: 60, el };
+    updatePreview(clientY);
+    longPressActive = true;
+    if (navigator.vibrate) { try { navigator.vibrate(15); } catch(e) {} }
+  }
+
   document.addEventListener('touchstart', (e) => {
     if (e.touches.length !== 1) { gestureTarget = null; return; }
     const va = document.getElementById('view-agenda');
@@ -2865,15 +2873,16 @@ function htmlCalendarioDayIPhone() {
     else { gestureTarget = null; return; }
     startX = t.clientX; startY = t.clientY; startTime = Date.now(); moved = false;
     targetEl = t.target;
+    longPressActive = false;
 
     if (gestureTarget === 'timeline' && !t.target.closest('.ag-event')) {
       const dayCol = t.target.closest('.ag-day-col');
       if (dayCol) {
-        const el = document.createElement('div');
-        el.className = 'ag-preview';
-        dayCol.appendChild(el);
-        preview = { dayCol, startMin: 0, durationMin: 60, el };
-        updatePreview(t.clientY);
+        const clientY = t.clientY;
+        longPressTimer = setTimeout(() => {
+          longPressTimer = null;
+          startPreview(dayCol, clientY);
+        }, 400);
       }
     }
   }, { passive: true });
@@ -2884,26 +2893,44 @@ function htmlCalendarioDayIPhone() {
     const dx = t.clientX - startX, dy = t.clientY - startY;
     const adx = Math.abs(dx), ady = Math.abs(dy);
     if (adx > 10 || ady > 10) moved = true;
-    if (preview && adx > ady && adx > 20) { removePreview(); return; }
-    if (gestureTarget === 'timeline' && preview) updatePreview(t.clientY);
-  }, { passive: true });
+
+    if (!longPressActive && longPressTimer) {
+      if (adx > 8 || ady > 8) {
+        clearTimeout(longPressTimer); longPressTimer = null;
+      }
+    }
+    if (longPressActive && preview) {
+      if (e.cancelable) e.preventDefault();
+      updatePreview(t.clientY);
+    }
+  }, { passive: false });
 
   document.addEventListener('touchend', (e) => {
-    if (!gestureTarget || startX === null) { gestureTarget = null; removePreview(); return; }
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    if (!gestureTarget || startX === null) { gestureTarget = null; removePreview(); longPressActive = false; return; }
     const t = e.changedTouches[0];
     const dx = t.clientX - startX, dy = t.clientY - startY;
     const adx = Math.abs(dx), ady = Math.abs(dy);
     const dt = Date.now() - startTime;
     const which = gestureTarget;
-    const el = targetEl;
+    const wasLong = longPressActive;
 
-    if (dt > 900) { gestureTarget = null; startX = null; moved = false; targetEl = null; removePreview(); return; }
+    // Rilascio dopo long press → apri form precompilata
+    if (wasLong && preview) {
+      const ymd = preview.dayCol.dataset.ymd || (agendaPageDayYmd || ymdDaData(new Date()));
+      const min = preview.startMin;
+      const sh = Math.floor(min / 60), sm = min % 60;
+      _prefillDataOra = new Date(ymd + 'T' + pad2(sh) + ':' + pad2(sm) + ':00');
+      removePreview();
+      gestureTarget = null; startX = null; moved = false; targetEl = null; longPressActive = false;
+      apriSelezioneTipoApp(null, null);
+      return;
+    }
 
-    // Swipe orizzontale
+    // Swipe orizzontale (solo se non è stato un long-press)
     if (adx > ady && adx > 50) {
       removePreview();
       if (which === 'strip' && agendaPageState === 'day') {
-        // Punto 2: in vista giorno, swipe sulla riga giorni → una settimana
         const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
         base.setDate(base.getDate() + (dx < 0 ? 7 : -7));
         agendaPageDayYmd = ymdDaData(base);
@@ -2911,28 +2938,16 @@ function htmlCalendarioDayIPhone() {
       } else {
         if (dx < 0) shiftAgendaPeriod(1); else shiftAgendaPeriod(-1);
       }
-      gestureTarget = null; startX = null; moved = false; targetEl = null;
-      return;
     }
 
-    // Tap sul preview → apre form con data/ora precompilata
-    if (preview && which === 'timeline') {
-      const ymd = preview.dayCol.dataset.ymd || (agendaPageDayYmd || ymdDaData(new Date()));
-      const min = preview.startMin;
-      const sh = Math.floor(min / 60), sm = min % 60;
-      _prefillDataOra = new Date(ymd + 'T' + pad2(sh) + ':' + pad2(sm) + ':00');
-      removePreview();
-      gestureTarget = null; startX = null; moved = false; targetEl = null;
-      apriSelezioneTipoApp(null, null);
-      return;
-    }
-
-    gestureTarget = null; startX = null; moved = false; targetEl = null;
+    gestureTarget = null; startX = null; moved = false; targetEl = null; longPressActive = false;
     removePreview();
   }, { passive: true });
 
   document.addEventListener('touchcancel', () => {
-    gestureTarget = null; startX = null; moved = false; targetEl = null; removePreview();
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    gestureTarget = null; startX = null; moved = false; targetEl = null; longPressActive = false;
+    removePreview();
   });
 })();
 
@@ -3154,7 +3169,6 @@ function apriFormNuovo() {
     <div class="form-group" style="padding:14px 18px;"><div class="villa-toggle"><button type="button" id="btn-condominio" class="active" onclick="setVilla(false)">${iconaCondo(18)}In condominio</button><button type="button" id="btn-villa" onclick="setVilla(true)">${ico('villa',18)}Villa / Singolo</button></div></div>
     <div id="campi-dinamici"></div>
     <div id="f-zone-block"><div class="card" style="padding:14px 18px 8px;"><h2><span class="dot"></span>Zone</h2></div><div class="form-group" style="padding:14px 18px;"><div id="nuovo-zone-container">${htmlSelettoreZone('nuovo')}</div></div></div>
-    <div class="form-group" style="padding:14px 18px;"><label style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:500;color:var(--blu);cursor:pointer;"><input type="checkbox" id="f-chiedi-attivita" checked style="width:16px;height:16px;accent-color:var(--arancione);">Aggiungi subito un'attività</label></div>
     <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>`;
   apriModal(tf, h); aggiornaFormNuovo();
   if (dc) aggiornaBloccoZoneDaCondominio(condoSelezionato, 'nuovo');
@@ -3219,7 +3233,6 @@ function salvaNuovoImmobile() {
   if (!ind) { alert('Inserisci un indirizzo'); return; }
   const iv = window._villaNuovo === true;
   const ci = iv ? '' : normalizzaIndirizzo((document.getElementById('f-condominio') || {}).value);
-  const ca = (() => { const el = document.getElementById('f-chiedi-attivita'); return el ? el.checked : true; })();
   const ad = new Date().toISOString();
   let co = '';
   if (!iv) { co = ci || ind; if (!ci) { const c = DB.immobili.filter(i => !i.villa && (i.indirizzo || '').toUpperCase() === ind); if (c.length > 0) co = c[0].condominio || normalizzaIndirizzo(c[0].indirizzo); } }
@@ -3232,7 +3245,7 @@ function salvaNuovoImmobile() {
   if (tf === 'censito') { const ci2 = ((document.getElementById('f-citofono') || {}).value || '').trim().toUpperCase(); im = Object.assign({ id: uid(), stato: 'IMM', indirizzo: ind, z: zz, citofono: ci2, villa: iv, cognomeNome: '', telefono: '', residenza: '', altriImmobili: [], altriProprietari: [], condominio: co, sottotipo: '', note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flags); }
   else { const cn = ((document.getElementById('f-cognomeNome') || {}).value || '').trim().toUpperCase(); const t = (document.getElementById('f-telefono') || {}).value || ''; const r = ((document.getElementById('f-residenza') || {}).value || '').trim().toUpperCase(); const se = document.getElementById('f-sottotipo'); const st = se ? se.value : ''; if (!cn) { alert('Cognome e nome obbligatori'); return; } const s = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK'; im = Object.assign({ id: uid(), stato: s, indirizzo: ind, z: zz, citofono: '', villa: iv, cognomeNome: cn, telefono: t.trim(), residenza: r, altriImmobili: [], altriProprietari: window._proprietariTemp.slice(), condominio: co, sottotipo: st, note: '', zone: z, dettagli: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad }, flags); }
   applicaEreditaCondominio(im); DB.immobili.push(im); Storage.save(DB); chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); avviaGeocodificaBackground(im);
-  setTimeout(() => { apriScheda(im.id); if (ca) setTimeout(() => apriNuovaAttivita(), 300); }, 180);
+  setTimeout(() => { apriScheda(im.id); setTimeout(() => apriNuovaAttivita(), 400); }, 180);
 }
 let immobileAperto = null; window._addrToolsAperti = false;
 function toggleAddrTools() { window._addrToolsAperti = !window._addrToolsAperti; const e = document.getElementById('addr-tools'); if (e) e.style.display = window._addrToolsAperti ? 'block' : 'none'; }
@@ -3397,7 +3410,16 @@ function apriNuovaAttivita() {
   apriModal('Nuova attività', h); aggiornaFormAttivita();
 }
 function aggiornaFormAttivita() { const t = document.getElementById('a-tipo').value; const c = document.getElementById('a-campi'); if (t === 'fatta') c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora</label><input class="form-input" type="datetime-local" step="1" id="a-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; else c.innerHTML = `<div class="form-group"><div class="form-row"><label class="form-label">Data prevista</label><input class="form-input" type="datetime-local" step="1" id="a-dataPrevista" value="${window._planningYmd ? (window._planningYmd + 'T09:00:00') : adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="a-testo"></textarea></div></div>`; }
-function salvaAttivita() { const i = DB.immobili.find(x => x.id === immobileAperto); const t = document.getElementById('a-tipo').value; const tx = (document.getElementById('a-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } i.attivita = i.attivita || []; const s = prossimoSeq(); if (t === 'fatta') { const d = document.getElementById('a-data').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); } else { const d = document.getElementById('a-dataPrevista').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); } i.updatedAt = new Date().toISOString(); window._planningYmd = null; Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
+function salvaAttivita() {
+  const i = DB.immobili.find(x => x.id === immobileAperto);
+  const t = document.getElementById('a-tipo').value;
+  const tx = (document.getElementById('a-testo') || {}).value || '';
+  if (!tx.trim()) { chiudiModal(); return; }
+  i.attivita = i.attivita || []; const s = prossimoSeq();
+  if (t === 'fatta') { const d = document.getElementById('a-data').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date(d).toISOString(), tipo: 'fatta', testo: tx.trim(), completata: true }); }
+  else { const d = document.getElementById('a-dataPrevista').value; if (!d) { alert('Data'); return; } i.attivita.push({ id: uid(), seq: s, data: new Date().toISOString(), tipo: 'da_fare', testo: tx.trim(), dataPrevista: new Date(d).toISOString(), completata: false }); }
+  i.updatedAt = new Date().toISOString(); window._planningYmd = null; Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id);
+}
 function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">' + ico('check',16) + ' Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">' + ico('modifica',16) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">' + ico('cestino',16) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
 function segnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora esecuzione</label><input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="sf-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idA}')">Conferma</button></div>`; apriModal('Segna come fatta', h); }
 function confermaSegnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const d = document.getElementById('sf-data').value; const tx = (document.getElementById('sf-testo') || {}).value || a.testo; if (!d) { alert('Data'); return; } a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date(d).toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.testo = tx.trim(); a.updatedAt = new Date().toISOString(); a.seq = prossimoSeq(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
