@@ -184,15 +184,17 @@
   /* ===== Compact immobili card (dentro condominio) ===== */
   .icc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 0 10px 8px; padding-left: 0; }
   .item-card-compact {
-    background: var(--card); border-radius: 8px; padding: 10px 10px;
+    background: var(--card); border-radius: 8px; padding: 8px 10px;
     border: 1px solid var(--border); cursor: pointer; min-width: 0;
-    display: flex; align-items: center; justify-content: center;
     transition: background 0.15s ease, border-color 0.15s ease;
     min-height: 38px;
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: 2px;
   }
   .item-card-compact:active { background: var(--hover-bg); border-color: var(--border-strong); }
   .icc-cito { font-size: 12px; color: var(--testo-sec); display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; letter-spacing: -0.005em; }
   .icc-cito svg { width: 11px; height: 11px; opacity: 0.7; flex-shrink: 0; }
+  .icc-owner { font-size: 10.5px; color: var(--testo-ter); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; letter-spacing: -0.005em; max-width: 100%; }
 
   .qa-row { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
   .qa-btn { flex: 1; background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
@@ -869,6 +871,7 @@
   :root[data-theme="dark"] .ag-mm-ev-title { color: #e8e8ea; }
   :root[data-theme="dark"] .item-card-compact { background: var(--card); }
   :root[data-theme="dark"] .icc-cito { color: var(--testo-sec); }
+  :root[data-theme="dark"] .icc-owner { color: var(--testo-ter); }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -1774,11 +1777,26 @@ function renderListaImmobili() {
   renderBannerFiltroAttivo();
   if (lista.length === 0) { cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + ico('casa',32) + '</div>' + (DB.immobili.length === 0 ? 'Nessun immobile.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
 
-  // === Modalità "in condominio": griglia compatta ===
+  // === Modalità "in condominio": griglia compatta per IMM + full card per PA/NT/INK/VND in fondo ===
   if (condoSelezionato) {
-    let html = '<div class="icc-list" style="margin-left:0;">';
-    for (const imm of lista) html += renderItemCardImmobile(imm, true);
-    html += '</div>';
+    const censiti = [];
+    const altri = [];
+    for (const imm of lista) {
+      if (imm.stato === 'IMM') censiti.push(imm); else altri.push(imm);
+    }
+    // Ordina gli "altri" con PA, NT, INK, VND in fondo, mantenendo un ordine coerente
+    const ordine = { 'PA': 1, 'NT': 2, 'INK': 3, 'VND': 4 };
+    altri.sort((a, b) => (ordine[a.stato] || 9) - (ordine[b.stato] || 9));
+    let html = '';
+    if (censiti.length > 0) {
+      html += '<div class="icc-list" style="margin-left:0;">';
+      for (const imm of censiti) html += renderItemCardImmobile(imm, true);
+      html += '</div>';
+    }
+    if (altri.length > 0) {
+      if (censiti.length > 0) html += '<div class="section-title" style="margin-top:10px;">Altri immobili (' + altri.length + ')</div>';
+      for (const imm of altri) html += renderItemCardImmobile(imm);
+    }
     cont.innerHTML = html;
     aggiornaContatori();
     return;
@@ -1794,7 +1812,26 @@ function renderListaImmobili() {
   el.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
   let html = '';
   for (const e of el) {
-    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(22) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s ease;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div class="icc-list">'; for (const imm of im) html += renderItemCardImmobile(imm, true); html += '</div>'; } }
+    if (e.tipo === 'gruppo') {
+      const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo];
+      const det = (DB.condomini && DB.condomini[condo]) || {};
+      const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : '';
+      html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(22) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s ease;">' + ico('freccia',15) + '</div></div>';
+      if (esp) {
+        const censiti = im.filter(i => i.stato === 'IMM');
+        const altri = im.filter(i => i.stato !== 'IMM');
+        if (censiti.length > 0) {
+          html += '<div class="icc-list">';
+          for (const imm of censiti) html += renderItemCardImmobile(imm, true);
+          html += '</div>';
+        }
+        if (altri.length > 0) {
+          html += '<div style="margin-left:10px;margin-bottom:8px;">';
+          for (const imm of altri) html += renderItemCardImmobile(imm);
+          html += '</div>';
+        }
+      }
+    }
     else html += renderItemCardImmobile(e.imm);
   }
   cont.innerHTML = html; aggiornaContatori();
@@ -1802,11 +1839,12 @@ function renderListaImmobili() {
 function toggleCondoLista(condo) { condoListaEspansi[condo] = !condoListaEspansi[condo]; renderListaImmobili(); }
 function renderItemCardImmobile(imm, compact) {
   if (compact) {
-    // Solo citofono (fallback: codice z)
     const cito = imm.citofono || '';
+    const prop = imm.cognomeNome || '';
     let h = '<div class="item-card-compact" onclick="event.stopPropagation();apriScheda(\'' + imm.id + '\')">';
     if (cito) h += '<div class="icc-cito">' + ico('campanello',11) + ' ' + escapeHtml(cito) + '</div>';
     else h += '<div class="icc-cito" style="opacity:0.5;">z' + (imm.z || 1) + '</div>';
+    if (prop) h += '<div class="icc-owner">' + escapeHtml(prop) + '</div>';
     h += '</div>';
     return h;
   }
@@ -3083,7 +3121,7 @@ function apriNuovaPianificazioneLibera(ymd, oraDefault) {
     <div class="form-row"><label class="form-label">Cosa devi fare? *</label><textarea class="form-textarea" id="pl-testo" placeholder="es. Zona Castello, Ufficio, riunione..."></textarea></div>
   </div>
   <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaPianificazioneLibera()">Salva</button></div>`;
-  apriModal(ico('calendario',18) + ' Gestione ufficio', h);
+  apriModal(ico('ufficio',18) + ' Gestione ufficio', h);
 }
 function salvaPianificazioneLibera() {
   const data = (document.getElementById('pl-data') || {}).value;
@@ -3515,8 +3553,8 @@ function salvaAttivita() {
   i.updatedAt = new Date().toISOString(); window._planningYmd = null; Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id);
 }
 function apriAzioniAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!a) return; const df = a.tipo === 'da_fare' && !a.completata; let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + formattaData(dataEffettivaAttivita(a)) + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(a.testo) + '</div></div>'; if (df) h += '<button class="btn btn-primary" onclick="segnaComeFatta(\'' + idA + '\')">' + ico('check',16) + ' Segna come fatta</button>'; h += '<button class="btn btn-secondary" onclick="apriModificaAttivita(\'' + idA + '\')">' + ico('modifica',16) + ' Modifica</button><button class="btn btn-danger" onclick="eliminaAttivita(\'' + idA + '\')">' + ico('cestino',16) + ' Elimina</button><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>'; apriModal('Attività', h); }
-function segnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora esecuzione</label><input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="sf-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idA}')">Conferma</button></div>`; apriModal('Segna come fatta', h); }
-function confermaSegnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const d = document.getElementById('sf-data').value; const tx = (document.getElementById('sf-testo') || {}).value || a.testo; if (!d) { alert('Data'); return; } a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date(d).toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.testo = tx.trim(); a.updatedAt = new Date().toISOString(); a.seq = prossimoSeq(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
+function segnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data e ora esecuzione</label><input class="form-input" type="datetime-local" step="1" id="sf-data" value="${adessoLocal()}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="sf-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="confermaSegnaComeFatta('${idA}')">Conferma</button></div>`;Seq apriModal('Segna come fatta', h); }
+function confermaSegnaComeFatta(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const d = document.getElementById('sf-data').value; const tx = (document.getElementById('sf-testo') || {}).value || a.testo; if (!d) { alert('Data'); return; } a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date(d).toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.testo = tx.trim(); a.updatedAt = new Date().toISOString(); a.seq = prossimo(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function apriModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const df = a.tipo === 'da_fare' && !a.completata; const dv = isoToLocalInput(df ? (a.dataPrevista || a.data) : a.data); const h = `<div class="form-group"><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="datetime-local" step="1" id="ma-data" value="${dv}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ma-testo">${escapeHtml(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriAzioniAttivita('${idA}')">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAttivita('${idA}')">Salva</button></div>`; apriModal(ico('modifica',16) + ' Modifica', h); }
 function salvaModificaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); const tx = (document.getElementById('ma-testo') || {}).value || ''; if (!tx.trim()) { alert('Scrivi qualcosa'); return; } const d = document.getElementById('ma-data').value; if (!d) { alert('Data'); return; } const df = a.tipo === 'da_fare' && !a.completata; a.testo = tx.trim(); if (df) a.dataPrevista = new Date(d).toISOString(); else a.data = new Date(d).toISOString(); a.updatedAt = new Date().toISOString(); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
 function eliminaAttivita(idA) { const i = DB.immobili.find(x => x.id === immobileAperto); const a = (i.attivita || []).find(x => x.id === idA); if (!confirm('Eliminare?\n\n' + a.testo)) return; i.attivita = (i.attivita || []).filter(x => x.id !== idA); i.updatedAt = new Date().toISOString(); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id); }
