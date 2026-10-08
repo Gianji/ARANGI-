@@ -181,6 +181,18 @@
   .item-meta { font-size: 11.5px; color: var(--testo-ter); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
   .item-meta span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
 
+  /* ===== Compact immobili card (dentro condominio) ===== */
+  .icc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 0 10px 8px; padding-left: 0; }
+  .item-card-compact {
+    background: var(--card); border-radius: 8px; padding: 8px 10px;
+    border: 1px solid var(--border); cursor: pointer; min-width: 0;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .item-card-compact:active { background: var(--hover-bg); border-color: var(--border-strong); }
+  .icc-title { font-size: 11.5px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.01em; line-height: 1.35; }
+  .icc-cito { font-size: 10px; color: var(--testo-sec); margin-top: 3px; display: flex; align-items: center; gap: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+  .icc-cito svg { width: 10px; height: 10px; opacity: 0.7; flex-shrink: 0; }
+
   .qa-row { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
   .qa-btn { flex: 1; background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
   .qa-btn:active { background: var(--hover-bg); }
@@ -348,6 +360,23 @@
   .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
   .filter-dropdown .opt svg { width: 13px; height: 13px; color: var(--blu); }
 
+  /* ===== Tooltip fluttuante (long-press su badge tipo appuntamento) ===== */
+  .floating-tip {
+    position: fixed; z-index: 99999;
+    background: rgba(20, 20, 30, 0.92);
+    color: #fff; padding: 6px 12px;
+    border-radius: 8px; font-size: 12.5px; font-weight: 500;
+    letter-spacing: -0.005em;
+    pointer-events: none;
+    transform: translate(-50%, -100%) scale(0.94);
+    opacity: 0;
+    transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.28);
+  }
+  .floating-tip.show { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+  :root[data-theme="dark"] .floating-tip { background: rgba(60, 60, 70, 0.96); }
+
   #map-container { position: relative; width: 100%; height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom)); overflow: hidden; background: #e5e7eb; }
   #map { width: 100%; height: 100%; }
   .map-overlay-top { position: absolute; top: 12px; left: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
@@ -444,8 +473,8 @@
 
   .app-item-card { background: var(--card); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; border: 1px solid var(--border); border-left: 3px solid var(--blu); cursor: pointer; transition: border-color 0.2s ease, background 0.15s ease; }
   .app-item-card:active { background: var(--hover-bg); }
-  .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; gap: 4px; background: transparent; color: var(--testo-sec); font-size: 10px; font-weight: 600; padding: 0; margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; }
-  .app-item-card .app-tipo-badge svg { width: 11px; height: 11px; }
+  .app-item-card .app-tipo-badge { display: inline-flex; align-items: center; justify-content: center; background: transparent; color: var(--testo-sec); font-size: 10px; font-weight: 600; padding: 2px; margin-bottom: 6px; letter-spacing: 0.03em; text-transform: uppercase; border-radius: 6px; transition: background 0.15s ease; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .app-item-card .app-tipo-badge svg { width: 14px; height: 14px; }
   .app-item-card .app-titolo { font-size: 13.5px; font-weight: 600; color: var(--testo); margin-bottom: 5px; line-height: 1.35; word-break: break-word; letter-spacing: -0.01em; }
   .app-item-card .app-data { font-size: 12px; color: var(--testo-sec); display: flex; align-items: center; gap: 4px; font-weight: 400; }
   .app-item-card .app-data svg { width: 11px; height: 11px; opacity: 0.5; }
@@ -601,9 +630,6 @@
     }
   }
 
-  /* Animazioni SOffici (no flash) */
-  .ag-view { }
-  .ag-header, .ag-weekstrip, .ag-sep { }
   .ag-view .ag-content > * { animation: agViewIn 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
   @keyframes agViewIn { from { transform: translateY(3px); opacity: 0.98; } to { transform: translateY(0); opacity: 1; } }
 
@@ -618,23 +644,24 @@
   .ag-year-cell.selected.today .ag-year-num { box-shadow: 0 0 0 2px var(--arancione); }
   .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
+  /* ============ MULTI-MESE — celle con altezza fissa ============ */
   .ag-multi-month { padding: 0 8px 40px; }
   .ag-mm-month { margin-bottom: 26px; }
   .ag-mm-name { font-size: 22px; font-weight: 700; color: var(--blu); padding: 10px 8px 8px; letter-spacing: -0.025em; }
   .ag-mm-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 2px 0 6px; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
   .ag-mm-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-  .ag-mm-cell { min-height: 74px; padding: 4px 3px 4px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 3px; cursor: pointer; transition: background 0.15s ease; position: relative; }
+  .ag-mm-cell { height: 74px; padding: 4px 3px 4px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 3px; cursor: pointer; transition: background 0.15s ease; position: relative; overflow: hidden; }
   .ag-mm-cell:active { background: var(--hover-bg); }
-  .ag-mm-num { font-size: 13px; font-weight: 500; color: var(--testo); width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
+  .ag-mm-num { font-size: 13px; font-weight: 500; color: var(--testo); width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; flex-shrink: 0; }
   .ag-mm-cell.other .ag-mm-num { opacity: 0.3; }
   .ag-mm-cell.today .ag-mm-num { background: var(--arancione); color: #fff; font-weight: 600; }
   .ag-mm-cell.selected .ag-mm-num { box-shadow: 0 0 0 2px var(--blu); }
   .ag-mm-cell.selected.today .ag-mm-num { box-shadow: 0 0 0 2px var(--arancione); }
-  .ag-mm-events { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-  .ag-mm-ev { display: flex; gap: 3px; align-items: center; padding: 1px 4px; border-radius: 3px; overflow: hidden; }
+  .ag-mm-events { display: flex; flex-direction: column; gap: 2px; overflow: hidden; max-height: 42px; }
+  .ag-mm-ev { display: flex; gap: 3px; align-items: center; padding: 1px 4px; border-radius: 3px; overflow: hidden; min-width: 0; }
   .ag-mm-ev-time { font-size: 8.5px; font-weight: 600; color: var(--testo-sec); flex-shrink: 0; }
-  .ag-mm-ev-title { font-size: 9px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ag-mm-ev-more { font-size: 9px; color: var(--testo-ter); font-weight: 600; padding-left: 4px; }
+  .ag-mm-ev-title { font-size: 9px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+  .ag-mm-ev-more { font-size: 8.5px; color: var(--testo-ter); font-weight: 600; padding-left: 4px; }
 
   .ag-timeline {
     display: flex;
@@ -737,10 +764,11 @@
     .back-top { right: calc(50% - (var(--max-w) / 2) + 22px); }
     .modal-overlay { align-items: center; padding: 24px; }
     .modal-sheet { border-radius: 18px; max-height: 88dvh; border: 1px solid var(--border); }
-    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .att-item:hover, .timeline-item:hover, .action-btn:hover, .btn-secondary:hover, .chip:hover { background: var(--hover-bg); border-color: var(--border-strong); }
+    .item-card:hover, .condo-card:hover, .immobile-line:hover, .agenda-giorno:hover, .tipo-app-btn:hover, .planning-item:hover, .att-item:hover, .timeline-item:hover, .action-btn:hover, .btn-secondary:hover, .chip:hover, .item-card-compact:hover { background: var(--hover-bg); border-color: var(--border-strong); }
     .chip.active:hover { background: var(--blu); }
     .chip.sub.active:hover { background: var(--arancione-deep); }
     .foto-grid { grid-template-columns: repeat(4, 1fr); }
+    .icc-list { grid-template-columns: 1fr 1fr 1fr; }
     .app-content { padding-left: 22px; padding-right: 22px; }
     .app-content.agenda-mode { padding-left: 0 !important; padding-right: 0 !important; }
     .app-header { padding-left: 26px; padding-right: 26px; }
@@ -750,6 +778,7 @@
     .app-content { padding-left: 28px; padding-right: 28px; }
     .app-content.agenda-mode { padding-left: 0 !important; padding-right: 0 !important; }
     .foto-grid { grid-template-columns: repeat(5, 1fr); }
+    .icc-list { grid-template-columns: 1fr 1fr 1fr 1fr; }
   }
   @media (min-width: 1400px) {
     :root { --max-w: 860px; }
@@ -837,6 +866,8 @@
   :root[data-theme="dark"] .ag-hours-col { background: var(--sfondo); }
   :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
   :root[data-theme="dark"] .ag-mm-ev-title { color: #e8e8ea; }
+  :root[data-theme="dark"] .item-card-compact { background: var(--card); }
+  :root[data-theme="dark"] .icc-title { color: #e8e8ea; }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -1118,6 +1149,50 @@ function applicaIcone() {
     el.insertAdjacentHTML('afterbegin', '<span class="icona-inline">' + ico(n, sz) + '</span>');
   });
 }
+
+/* ============ Tooltip fluttuante (long-press) ============ */
+function mostraTooltip(el, txt) {
+  if (!txt) return;
+  const old = document.querySelector('.floating-tip');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.className = 'floating-tip';
+  t.textContent = txt;
+  document.body.appendChild(t);
+  const r = el.getBoundingClientRect();
+  const left = Math.max(20, Math.min(window.innerWidth - 20, r.left + r.width / 2));
+  const top = Math.max(40, r.top - 6);
+  t.style.left = left + 'px';
+  t.style.top = top + 'px';
+  requestAnimationFrame(() => t.classList.add('show'));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => { try { t.remove(); } catch(_) {} }, 250);
+  }, 1600);
+}
+let _lpTipoTimer = null;
+document.addEventListener('touchstart', (e) => {
+  const b = e.target.closest && e.target.closest('.app-tipo-badge[data-tipo]');
+  if (!b) return;
+  const txt = b.dataset.tipo;
+  if (_lpTipoTimer) clearTimeout(_lpTipoTimer);
+  _lpTipoTimer = setTimeout(() => {
+    _lpTipoTimer = null;
+    mostraTooltip(b, txt);
+    if (navigator.vibrate) { try { navigator.vibrate(10); } catch(_) {} }
+  }, 400);
+}, { passive: true });
+document.addEventListener('touchend', () => { if (_lpTipoTimer) { clearTimeout(_lpTipoTimer); _lpTipoTimer = null; } }, { passive: true });
+document.addEventListener('touchcancel', () => { if (_lpTipoTimer) { clearTimeout(_lpTipoTimer); _lpTipoTimer = null; } }, { passive: true });
+document.addEventListener('touchmove', () => { if (_lpTipoTimer) { clearTimeout(_lpTipoTimer); _lpTipoTimer = null; } }, { passive: true });
+document.addEventListener('mousedown', (e) => {
+  const b = e.target.closest && e.target.closest('.app-tipo-badge[data-tipo]');
+  if (!b) return;
+  if (_lpTipoTimer) clearTimeout(_lpTipoTimer);
+  _lpTipoTimer = setTimeout(() => { _lpTipoTimer = null; mostraTooltip(b, b.dataset.tipo); }, 400);
+});
+document.addEventListener('mouseup', () => { if (_lpTipoTimer) { clearTimeout(_lpTipoTimer); _lpTipoTimer = null; } });
+document.addEventListener('mouseleave', () => { if (_lpTipoTimer) { clearTimeout(_lpTipoTimer); _lpTipoTimer = null; } });
 
 function getTemaPreferito() { try { return localStorage.getItem('aranjò_theme') || 'auto'; } catch(e) { return 'auto'; } }
 function risolviTema(t) { if (t === 'dark') return 'dark'; if (t === 'light') return 'light'; return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
@@ -1707,13 +1782,21 @@ function renderListaImmobili() {
   el.sort((a, b) => b.sortDate.localeCompare(a.sortDate));
   let html = '';
   for (const e of el) {
-    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(22) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s ease;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div style="margin-left:10px;margin-bottom:8px;border-left:1px solid var(--border-strong);padding-left:10px;">'; for (const imm of im) html += renderItemCardImmobile(imm); html += '</div>'; } }
+    if (e.tipo === 'gruppo') { const condo = e.condo; const im = e.immobili; const esp = !!condoListaEspansi[condo]; const det = (DB.condomini && DB.condomini[condo]) || {}; const amm = det.amministratore && det.amministratore.nome ? ' · Amm. ' + escapeHtml(det.amministratore.nome) : ''; html += '<div class="condo-card" onclick="toggleCondoLista(\'' + escapeHtml(condo).replace(/'/g, "\\'") + '\')"><div class="condo-icon">' + iconaCondo(22) + '</div><div class="condo-info"><div class="condo-title">' + escapeHtml(condo) + '</div><div class="condo-sub">' + im.length + ' immobili' + amm + '</div></div><div class="condo-arrow" style="transform:' + (esp ? 'rotate(90deg)' : 'rotate(0deg)') + ';transition:transform 0.2s ease;">' + ico('freccia',15) + '</div></div>'; if (esp) { html += '<div class="icc-list">'; for (const imm of im) html += renderItemCardImmobile(imm, true); html += '</div>'; } }
     else html += renderItemCardImmobile(e.imm);
   }
   cont.innerHTML = html; aggiornaContatori();
 }
 function toggleCondoLista(condo) { condoListaEspansi[condo] = !condoListaEspansi[condo]; renderListaImmobili(); }
-function renderItemCardImmobile(imm) {
+function renderItemCardImmobile(imm, compact) {
+  if (compact) {
+    const titolo = titoloImmobile(imm);
+    let h = '<div class="item-card-compact" onclick="event.stopPropagation();apriScheda(\'' + imm.id + '\')">';
+    h += '<div class="icc-title">' + escapeHtml(titolo) + '</div>';
+    if (imm.stato === 'IMM' && imm.citofono) h += '<div class="icc-cito">' + ico('campanello',10) + ' ' + escapeHtml(imm.citofono) + '</div>';
+    h += '</div>';
+    return h;
+  }
   const titolo = titoloImmobile(imm);
   const att = (imm.attivita || []).slice().sort(compareAttivitaDecrescente); const ultima = att[0];
   const condo = getCondominio(imm); const f = immobiliStessoCondominio(imm); const isCondo = f.length > 0;
@@ -2082,9 +2165,10 @@ function renderItemAppuntamento(a) {
     else e = '<div class="app-esito neutral">' + escapeHtml(a.esito) + '</div>';
   } else if (a.stato === 'eseguito') e = '<div class="app-esito neutral">' + ico('check',11) + ' Eseguito</div>';
   else if (esitoMancante) e = '<div class="app-esito ko" style="background:#fef3c7;color:#92400e;">' + ico('attenzione',11) + ' Esito obbligatorio</div>';
+  const icT = ico(t.icona || 'calendario', 14);
+  const tipoNome = t.nome || a.tipo;
   let h = '<div class="app-item-card" style="border-left-color:' + col + ';" onclick="apriSchedaAppuntamento(\'' + a.id + '\')">';
-  if (!t.senza_tag) { const icT = ico(t.icona || 'calendario', 11); h += '<div class="app-tipo-badge">' + icT + ' ' + escapeHtml(a.tipo) + '</div>'; }
-  else h += '<div class="app-tipo-badge">' + ico(t.icona || 'calendario', 11) + ' ' + escapeHtml(a.tipo) + '</div>';
+  h += '<div class="app-tipo-badge" data-tipo="' + escapeHtml(tipoNome) + '" title="' + escapeHtml(tipoNome) + '">' + icT + '</div>';
   h += '<div class="app-titolo">' + escapeHtml(a.titolo) + '</div><div class="app-data">' + ico('calendario',11) + ' ' + formattaDataOraCompleta(a.dataInizio) + '</div>';
   if (a.luogo) h += '<div class="app-data">' + ico('pin',11) + ' ' + escapeHtml(a.luogo) + '</div>';
   if (esitoMancante) h += '<button class="btn btn-primary" style="margin-top:8px;padding:9px 12px;font-size:12.5px;" onclick="event.stopPropagation();apriChiusuraAppuntamento(\'' + a.id + '\')">' + ico('check',14) + ' Chiudi con esito</button>';
@@ -2490,7 +2574,7 @@ function collectItemsForDay(ymd) {
   const libs = (DB.pianificazioni || []).filter(p => p.data === ymd);
   for (const a of apps) { const tp = getTipoApp(a.tipo); items.push({ tipo: a.tipo, testo: a.titolo, ora: pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()), colore: getColoreTipo(tp), id: a.id, kind: 'app', dataInizio: a.dataInizio, dataFine: a.dataFine }); }
   for (const a of atts) { items.push({ tipo: 'ATT', testo: a.testo, ora: a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore: 'var(--nt)', id: a.id, kind: 'att', entitaTipo: a.entitaTipo, entitaId: a.entitaId, entitaTitolo: a.entitaTitolo, dataPrevista: a.dataPrevista }); }
-  for (const p of libs) { items.push({ tipo: 'LIBERA', testo: p.testo, ora: p.ora || '--:--', colore: 'var(--arancione)', id: p.id, kind: 'lib' }); }
+  for (const p of libs) { items.push({ tipo: 'GESTIONE UFFICIO', testo: p.testo, ora: p.ora || '--:--', colore: 'var(--arancione)', id: p.id, kind: 'lib' }); }
   items.sort((a, b) => { const ta = a.ora === '--:--' ? '99:99' : a.ora; const tb = b.ora === '--:--' ? '99:99' : b.ora; return ta.localeCompare(tb); });
   return items;
 }
@@ -2699,6 +2783,7 @@ function htmlCalendarioYear() {
   return h;
 }
 
+/* ============ MULTI-MESE — contenuto troncato, una sola riga ============ */
 function htmlCalendarioMultiMonth() {
   const today = ymdDaData(new Date());
   const selYmd = agendaPageDayYmd || '';
@@ -2733,14 +2818,12 @@ function htmlCalendarioMultiMonth() {
       h += '<div class="ag-mm-cell' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
       h += '<div class="ag-mm-num">' + d.getDate() + '</div>';
       if (items.length > 0) {
+        const it = items[0];
+        const timeStr = (it.ora && it.ora !== '--:--') ? it.ora : '';
         h += '<div class="ag-mm-events">';
-        for (const it of items.slice(0, 2)) {
-          h += '<div class="ag-mm-ev" style="background:' + it.colore + '22;border-left:2px solid ' + it.colore + ';">';
-          if (it.ora !== '--:--') h += '<div class="ag-mm-ev-time">' + it.ora + '</div>';
-          h += '<div class="ag-mm-ev-title">' + escapeHtml(it.tipo) + '</div>';
-          h += '</div>';
-        }
-        if (items.length > 2) h += '<div class="ag-mm-ev-more">+' + (items.length - 2) + '</div>';
+        h += '<div class="ag-mm-ev" style="background:' + it.colore + '22;border-left:2px solid ' + it.colore + ';">';
+        h += '<div class="ag-mm-ev-title">' + escapeHtml((timeStr ? timeStr + ' ' : '') + it.tipo) + '</div>';
+        h += '</div>';
         h += '</div>';
       }
       h += '</div>';
@@ -2915,7 +2998,6 @@ function htmlCalendarioDayIPhone() {
     const which = gestureTarget;
     const wasLong = longPressActive;
 
-    // Rilascio dopo long press → apri form precompilata
     if (wasLong && preview) {
       const ymd = preview.dayCol.dataset.ymd || (agendaPageDayYmd || ymdDaData(new Date()));
       const min = preview.startMin;
@@ -2927,7 +3009,6 @@ function htmlCalendarioDayIPhone() {
       return;
     }
 
-    // Swipe orizzontale (solo se non è stato un long-press)
     if (adx > ady && adx > 50) {
       removePreview();
       if (which === 'strip' && agendaPageState === 'day') {
@@ -2974,7 +3055,7 @@ function renderPlanning() {
     h += '<div class="planning-list">';
     for (const a of p.apps) { const or = pad2(new Date(a.dataInizio).getHours()) + ':' + pad2(new Date(a.dataInizio).getMinutes()); const tp = getTipoApp(a.tipo); const col = getColoreTipo(tp); h += '<div class="planning-item appuntamento" style="border-left-color:' + col + ';" onclick="event.stopPropagation();apriSchedaAppuntamento(\'' + a.id + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.titolo) + '</div><span class="pi-tipo">' + escapeHtml(a.tipo) + '</span></div>'; }
     for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; h += '<div class="planning-item attivita" onclick="event.stopPropagation();apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="pi-ora">' + or + '</span><div class="pi-testo">' + escapeHtml(a.testo) + (a.entitaTitolo ? '<div style="font-size:10px;color:var(--testo-ter);margin-top:2px;">' + escapeHtml(a.entitaTitolo) + '</div>' : '') + '</div><span class="pi-tipo">ATT</span></div>'; }
-    for (const p2 of p.lib) { h += '<div class="planning-item libera' + (p2.completata ? ' fatta' : '') + '" onclick="event.stopPropagation();apriAzioniPianificazione(\'' + p2.id + '\')"><span class="pi-ora">' + (p2.ora || '--:--') + '</span><div class="pi-testo">' + escapeHtml(p2.testo) + (p2.completata ? ' ✓' : '') + '</div><span class="pi-tipo">' + (p2.completata ? 'FATTA' : 'LIBERA') + '</span></div>'; }
+    for (const p2 of p.lib) { h += '<div class="planning-item libera' + (p2.completata ? ' fatta' : '') + '" onclick="event.stopPropagation();apriAzioniPianificazione(\'' + p2.id + '\')"><span class="pi-ora">' + (p2.ora || '--:--') + '</span><div class="pi-testo">' + escapeHtml(p2.testo) + (p2.completata ? ' ✓' : '') + '</div><span class="pi-tipo">' + (p2.completata ? 'FATTA' : 'GESTIONE UFFICIO') + '</span></div>'; }
     h += '</div>';
   }
   c.innerHTML = h;
@@ -3004,7 +3085,7 @@ function salvaPianificazioneLibera() {
 function apriAzioniPianificazione(id) {
   const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return;
   const d = dataDaYmd(p.data);
-  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">Libera · ' + GIORNI_BREVI[(d.getDay()+6)%7] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
+  let h = '<div class="card" style="padding:14px;"><div style="font-size:10.5px;font-weight:600;color:var(--testo-ter);text-transform:uppercase;margin-bottom:6px;letter-spacing:0.05em;">Gestione ufficio · ' + GIORNI_BREVI[(d.getDay()+6)%7] + ' ' + d.getDate() + ' ' + MESI_BREVI[d.getMonth()] + (p.ora ? ' · ' + p.ora : '') + '</div><div style="font-size:14.5px;letter-spacing:-0.005em;">' + escapeHtml(p.testo) + (p.completata ? ' ✓' : '') + '</div></div>';
   if (!p.completata) h += '<button class="btn btn-primary" onclick="completaPianificazione(\'' + p.id + '\')">' + ico('check',16) + ' Segna come fatta</button>';
   else h += '<button class="btn btn-secondary" onclick="riapriPianificazione(\'' + p.id + '\')">' + ico('aggiorna',16) + ' Riporta da fare</button>';
   h += '<button class="btn btn-secondary" onclick="modificaPianificazione(\'' + p.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
@@ -3072,7 +3153,7 @@ function renderPlanningPage() {
     bodyHtml += '<div style="padding:10px 14px;">';
     if (p.apps.length > 0) { for (const a of p.apps) bodyHtml += renderItemAppuntamento(a); }
     if (p.att.length > 0) { if (p.apps.length > 0) bodyHtml += '<div class="section-title" style="margin-top:14px;">Attività da fare</div>'; for (const a of p.att) { const or = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours()) + ':' + pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; bodyHtml += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--nt);" onclick="apriAzioniAttivitaGlobale(\'' + a.id + '\',\'' + a.entitaTipo + '\',\'' + a.entitaId + '\')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">' + or + ' · DA FARE</div><div class="att-testo">' + escapeHtml(a.testo) + '</div><div style="font-size:11px;color:var(--testo-ter);margin-top:3px;">' + escapeHtml(a.entitaTitolo) + '</div></div></div>'; } }
-    if (p.lib.length > 0) { bodyHtml += '<div class="section-title" style="margin-top:14px;">Cose libere</div>'; for (const p2 of p.lib) { bodyHtml += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'LIBERA') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
+    if (p.lib.length > 0) { bodyHtml += '<div class="section-title" style="margin-top:14px;">Gestioni ufficio</div>'; for (const p2 of p.lib) { bodyHtml += '<div class="att-item" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;padding:11px 13px;border-left:3px solid var(--arancione);' + (p2.completata ? 'opacity:0.55;' : '') + '" onclick="apriAzioniPianificazione(\'' + p2.id + '\')"><div class="att-body"><div class="att-data" style="color:' + (p2.completata ? 'var(--ink)' : 'var(--arancione)') + ';">' + (p2.ora || '--:--') + ' · ' + (p2.completata ? 'FATTA' : 'GESTIONE UFFICIO') + '</div><div class="att-testo">' + escapeHtml(p2.testo) + '</div></div></div>'; } }
     bodyHtml += '</div>';
   }
 
