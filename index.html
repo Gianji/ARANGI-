@@ -184,14 +184,15 @@
   /* ===== Compact immobili card (dentro condominio) ===== */
   .icc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 0 10px 8px; padding-left: 0; }
   .item-card-compact {
-    background: var(--card); border-radius: 8px; padding: 8px 10px;
+    background: var(--card); border-radius: 8px; padding: 10px 10px;
     border: 1px solid var(--border); cursor: pointer; min-width: 0;
+    display: flex; align-items: center; justify-content: center;
     transition: background 0.15s ease, border-color 0.15s ease;
+    min-height: 38px;
   }
   .item-card-compact:active { background: var(--hover-bg); border-color: var(--border-strong); }
-  .icc-title { font-size: 11.5px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.01em; line-height: 1.35; }
-  .icc-cito { font-size: 10px; color: var(--testo-sec); margin-top: 3px; display: flex; align-items: center; gap: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
-  .icc-cito svg { width: 10px; height: 10px; opacity: 0.7; flex-shrink: 0; }
+  .icc-cito { font-size: 12px; color: var(--testo-sec); display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; letter-spacing: -0.005em; }
+  .icc-cito svg { width: 11px; height: 11px; opacity: 0.7; flex-shrink: 0; }
 
   .qa-row { display: flex; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
   .qa-btn { flex: 1; background: transparent; border: 1px solid var(--border-strong); padding: 8px 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--blu); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0.15s ease; letter-spacing: -0.005em; }
@@ -867,7 +868,7 @@
   :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
   :root[data-theme="dark"] .ag-mm-ev-title { color: #e8e8ea; }
   :root[data-theme="dark"] .item-card-compact { background: var(--card); }
-  :root[data-theme="dark"] .icc-title { color: #e8e8ea; }
+  :root[data-theme="dark"] .icc-cito { color: var(--testo-sec); }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -1651,14 +1652,14 @@ function onFabClick() {
     const ymd = agendaPageDayYmd || ymdDaData(new Date());
     fm.innerHTML = '<button onclick="fabMenuNuovaAttivitaConData(\'' + ymd + '\')" title="Nuova attività">' + ico('check',22) + '</button>'
       + '<button onclick="fabMenuNuovoAppuntamento()" title="Nuovo appuntamento">' + ico('calendario',22) + '</button>'
-      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')" title="Cosa libera">' + ico('piu',22) + '</button>';
+      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')" title="Gestione ufficio">' + ico('piu',22) + '</button>';
     toggleFabMenu(); return;
   }
   if (vp && vp.classList.contains('active')) {
     const ymd = planningPageYmd || ymdDaData(new Date());
     fm.innerHTML = '<button onclick="fabMenuNuovaAttivitaConData(\'' + ymd + '\')" title="Nuova attività">' + ico('check',22) + '</button>'
       + '<button onclick="fabMenuNuovoAppuntamento()" title="Nuovo appuntamento">' + ico('calendario',22) + '</button>'
-      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')" title="Cosa libera">' + ico('piu',22) + '</button>';
+      + '<button onclick="fabMenuNuovaLibera(\'' + ymd + '\')" title="Gestione ufficio">' + ico('piu',22) + '</button>';
     toggleFabMenu(); return;
   }
   const t = document.querySelector('.tabbar button.active');
@@ -1772,8 +1773,19 @@ function renderListaImmobili() {
   if (queryRicerca) lista = lista.filter(i => immobileMatchRicerca(i, queryRicerca));
   renderBannerFiltroAttivo();
   if (lista.length === 0) { cont.innerHTML = '<div class="card"><div class="empty"><div class="icon">' + ico('casa',32) + '</div>' + (DB.immobili.length === 0 ? 'Nessun immobile.' : 'Nessun risultato') + '</div></div>'; aggiornaContatori(); return; }
+
+  // === Modalità "in condominio": griglia compatta ===
+  if (condoSelezionato) {
+    let html = '<div class="icc-list" style="margin-left:0;">';
+    for (const imm of lista) html += renderItemCardImmobile(imm, true);
+    html += '</div>';
+    cont.innerHTML = html;
+    aggiornaContatori();
+    return;
+  }
+
   const gC = {}; const ind = [];
-  for (const imm of lista) { const condo = getCondominio(imm); const r = condo && !condoSelezionato && imm.stato !== 'PA' && imm.stato !== 'NT' && imm.stato !== 'INK'; if (r) { if (!gC[condo]) gC[condo] = []; gC[condo].push(imm); } else ind.push(imm); }
+  for (const imm of lista) { const condo = getCondominio(imm); const r = condo && imm.stato !== 'PA' && imm.stato !== 'NT' && imm.stato !== 'INK'; if (r) { if (!gC[condo]) gC[condo] = []; gC[condo].push(imm); } else ind.push(imm); }
   const gF = {}; for (const condo in gC) { if (gC[condo].length >= 2) gF[condo] = gC[condo]; else ind.push(gC[condo][0]); }
   if (queryRicerca) for (const condo in gF) condoListaEspansi[condo] = true;
   const el = [];
@@ -1790,10 +1802,11 @@ function renderListaImmobili() {
 function toggleCondoLista(condo) { condoListaEspansi[condo] = !condoListaEspansi[condo]; renderListaImmobili(); }
 function renderItemCardImmobile(imm, compact) {
   if (compact) {
-    const titolo = titoloImmobile(imm);
+    // Solo citofono (fallback: codice z)
+    const cito = imm.citofono || '';
     let h = '<div class="item-card-compact" onclick="event.stopPropagation();apriScheda(\'' + imm.id + '\')">';
-    h += '<div class="icc-title">' + escapeHtml(titolo) + '</div>';
-    if (imm.stato === 'IMM' && imm.citofono) h += '<div class="icc-cito">' + ico('campanello',10) + ' ' + escapeHtml(imm.citofono) + '</div>';
+    if (cito) h += '<div class="icc-cito">' + ico('campanello',11) + ' ' + escapeHtml(cito) + '</div>';
+    else h += '<div class="icc-cito" style="opacity:0.5;">z' + (imm.z || 1) + '</div>';
     h += '</div>';
     return h;
   }
@@ -3070,7 +3083,7 @@ function apriNuovaPianificazioneLibera(ymd, oraDefault) {
     <div class="form-row"><label class="form-label">Cosa devi fare? *</label><textarea class="form-textarea" id="pl-testo" placeholder="es. Zona Castello, Ufficio, riunione..."></textarea></div>
   </div>
   <div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaPianificazioneLibera()">Salva</button></div>`;
-  apriModal(ico('calendario',18) + ' Nuova cosa da fare', h);
+  apriModal(ico('calendario',18) + ' Gestione ufficio', h);
 }
 function salvaPianificazioneLibera() {
   const data = (document.getElementById('pl-data') || {}).value;
@@ -3091,7 +3104,7 @@ function apriAzioniPianificazione(id) {
   h += '<button class="btn btn-secondary" onclick="modificaPianificazione(\'' + p.id + '\')">' + ico('modifica',16) + ' Modifica</button>';
   h += '<button class="btn btn-danger" onclick="eliminaPianificazione(\'' + p.id + '\')">' + ico('cestino',16) + ' Elimina</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
-  apriModal('Cosa da fare', h);
+  apriModal('Gestione ufficio', h);
 }
 function completaPianificazione(id) { const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return; p.completata = true; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100); }
 function riapriPianificazione(id) { const p = (DB.pianificazioni || []).find(x => x.id === id); if (!p) return; p.completata = false; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planningPageYmd) setTimeout(() => renderPlanningPage(), 100); }
