@@ -47,7 +47,7 @@
     --radius: 12px; --radius-sm: 9px; --radius-pill: 999px;
     --tabbar-h: 60px; --max-w: 640px;
     --imm: #94a3b8; --pa: #c2740c; --nt: #2563eb; --ink: #047857; --vnd: #b91c1c; --rr: #7c3aed; --prof: #0e7490;
-    --ora-h: 60px;
+    --ora-h: 50px;
     --app-val: #e91e8c;
     --app-rival: #f8b4d9;
     --app-gink: #26c6a5;
@@ -541,6 +541,7 @@
     display: flex; padding: 2px 8px 8px; gap: 0;
     flex-shrink: 0;
     margin: 0 6px;
+    touch-action: pan-x pan-y;
   }
   .ag-ws-day {
     flex: 1; display: flex; flex-direction: column; align-items: center;
@@ -570,7 +571,6 @@
     padding-bottom: 90px;
   }
 
-  /* Bottom bar FISSO come il FAB */
   .ag-bottombar {
     position: fixed;
     left: 0; right: 0;
@@ -611,21 +611,28 @@
   .ag-year-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 11px; cursor: pointer; border-radius: 50%; }
   .ag-year-cell.other { opacity: 0.22; }
   .ag-year-cell.today .ag-year-num { background: var(--arancione); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .ag-year-cell.selected .ag-year-num { box-shadow: 0 0 0 2px var(--blu); }
+  .ag-year-cell.selected.today .ag-year-num { box-shadow: 0 0 0 2px var(--arancione); }
   .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 
-  .ag-month { padding: 0 8px 40px; }
-  .ag-month-name { font-size: 28px; font-weight: 700; color: var(--blu); padding: 4px 12px 8px; letter-spacing: -0.03em; }
-  .ag-month-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 8px 0 6px; letter-spacing: 0.06em; }
-  .ag-month-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-  .ag-month-cell { aspect-ratio: 1; padding: 4px 2px 2px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; border-radius: 8px; transition: background 0.15s ease; }
-  .ag-month-cell:active { background: var(--hover-bg); }
-  .ag-month-num { font-size: 17px; font-weight: 500; color: var(--testo); width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
-  .ag-month-cell.other { opacity: 0.28; }
-  .ag-month-cell.today .ag-month-num { background: var(--arancione); color: #fff; font-weight: 600; }
-  .ag-month-cell.selected .ag-month-num { box-shadow: 0 0 0 2px var(--blu); }
-  .ag-month-cell.selected.today .ag-month-num { box-shadow: 0 0 0 2px var(--arancione); }
-  .ag-month-bars { display: flex; gap: 2px; justify-content: center; width: 100%; padding: 0 4px; }
-  .ag-month-bar { flex: 1; max-width: 8px; height: 4px; border-radius: 2px; }
+  /* ============ MULTI-MESE (penultimo zoom out) ============ */
+  .ag-multi-month { padding: 0 8px 40px; }
+  .ag-mm-month { margin-bottom: 26px; }
+  .ag-mm-name { font-size: 22px; font-weight: 700; color: var(--blu); padding: 10px 8px 8px; letter-spacing: -0.025em; }
+  .ag-mm-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 10.5px; font-weight: 600; color: var(--testo-ter); text-align: center; padding: 2px 0 6px; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); }
+  .ag-mm-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .ag-mm-cell { min-height: 74px; padding: 4px 3px 4px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 3px; cursor: pointer; transition: background 0.15s ease; position: relative; }
+  .ag-mm-cell:active { background: var(--hover-bg); }
+  .ag-mm-num { font-size: 13px; font-weight: 500; color: var(--testo); width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; letter-spacing: -0.02em; }
+  .ag-mm-cell.other .ag-mm-num { opacity: 0.3; }
+  .ag-mm-cell.today .ag-mm-num { background: var(--arancione); color: #fff; font-weight: 600; }
+  .ag-mm-cell.selected .ag-mm-num { box-shadow: 0 0 0 2px var(--blu); }
+  .ag-mm-cell.selected.today .ag-mm-num { box-shadow: 0 0 0 2px var(--arancione); }
+  .ag-mm-events { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+  .ag-mm-ev { display: flex; gap: 3px; align-items: center; padding: 1px 4px; border-radius: 3px; overflow: hidden; }
+  .ag-mm-ev-time { font-size: 8.5px; font-weight: 600; color: var(--testo-sec); flex-shrink: 0; }
+  .ag-mm-ev-title { font-size: 9px; font-weight: 600; color: var(--testo); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ag-mm-ev-more { font-size: 9px; color: var(--testo-ter); font-weight: 600; padding-left: 4px; }
 
   .ag-timeline {
     display: flex;
@@ -641,6 +648,7 @@
     background-position: 0 0;
     background-repeat: repeat-y;
     background-size: 100% var(--ora-h);
+    touch-action: pan-y;
   }
   .ag-hours-col {
     width: 52px; flex-shrink: 0;
@@ -650,30 +658,30 @@
   .ag-hour-label {
     height: var(--ora-h);
     display: flex; align-items: flex-start; justify-content: flex-end;
-    padding: 4px 10px 0 0;
-    font-size: 11px; font-weight: 500;
+    padding: 3px 10px 0 0;
+    font-size: 10.5px; font-weight: 500;
     color: var(--testo-ter); line-height: 1;
     background: var(--sfondo);
     letter-spacing: -0.005em;
   }
   .ag-days { flex: 1; display: flex; position: relative; z-index: 1; }
-  .ag-day-col { flex: 1; position: relative; min-width: 0; }
+  .ag-day-col { flex: 1; position: relative; min-width: 0; cursor: pointer; }
   .ag-hour-line { height: var(--ora-h); border: 0; }
 
   .ag-event {
     position: absolute; left: 3px; right: 3px;
-    border-radius: 6px; padding: 4px 6px; overflow: hidden;
+    border-radius: 6px; padding: 3px 6px; overflow: hidden;
     cursor: pointer; z-index: 3;
     transition: opacity 0.15s ease;
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
   }
   .ag-event:active { opacity: 0.75; }
   .ag-event-title {
-    font-size: 10.5px; font-weight: 700; color: #fff;
+    font-size: 10px; font-weight: 700; color: #fff;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     line-height: 1.2; letter-spacing: -0.01em;
   }
-  .ag-event-time { font-size: 9.5px; color: rgba(255,255,255,0.9); margin-top: 1px; line-height: 1.2; font-weight: 500; }
+  .ag-event-time { font-size: 9px; color: rgba(255,255,255,0.9); margin-top: 1px; line-height: 1.2; font-weight: 500; }
 
   .ag-now-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--arancione); z-index: 6; }
   .ag-now-dot { position: absolute; left: 48px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--arancione); box-shadow: 0 0 0 2px var(--sfondo); }
@@ -776,16 +784,17 @@
   :root[data-theme="dark"] .att-count { background: var(--sfondo-2); color: #8ab0d4; }
   :root[data-theme="dark"] .ag-header .ag-nav-btn,
   :root[data-theme="dark"] .ag-header .ag-back-btn { color: #8ab0d4; }
-  :root[data-theme="dark"] .ag-month-name { color: #8ab0d4; }
-  :root[data-theme="dark"] .ag-month-num,
+  :root[data-theme="dark"] .ag-mm-name { color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-mm-num,
   :root[data-theme="dark"] .ag-ws-num,
   :root[data-theme="dark"] .ag-year-name { color: #e8e8ea; }
-  :root[data-theme="dark"] .ag-month-cell.today .ag-month-num,
+  :root[data-theme="dark"] .ag-mm-cell.today .ag-mm-num,
   :root[data-theme="dark"] .ag-ws-day.today .ag-ws-num,
   :root[data-theme="dark"] .ag-year-cell.today .ag-year-num { color: #fff; }
   :root[data-theme="dark"] .ag-hour-label { background: var(--sfondo); }
   :root[data-theme="dark"] .ag-hours-col { background: var(--sfondo); }
   :root[data-theme="dark"] .ag-pill { background: var(--card); color: #8ab0d4; }
+  :root[data-theme="dark"] .ag-mm-ev-title { color: #e8e8ea; }
   :root[data-theme="dark"] .app-header h1,
   :root[data-theme="dark"] .card h2,
   :root[data-theme="dark"] .tabbar button.active,
@@ -957,7 +966,7 @@
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Versione</span><span class="value">3.0</span></div>
+        <div class="info-row"><span class="label">Versione</span><span class="value">3.1</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
         <div class="info-row"><span class="label">Foto</span><span class="value" id="storage-foto">—</span></div>
         <div class="info-row"><span class="label">Cache geocodifiche</span><span class="value" id="storage-cache">—</span></div>
@@ -1112,7 +1121,7 @@ const Storage = {
       return false;
     }
   },
-  default() { return { versione: 48, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], pianificazioni: [], condomini: {}, coordinateCondomini: {} }; }
+  default() { return { versione: 49, nextSeq: 1, cittaPrincipale: CITTA_DEFAULT, immobili: [], persone: [], attivita: [], appuntamenti: [], pianificazioni: [], condomini: {}, coordinateCondomini: {} }; }
 };
 
 let DB = Storage.load();
@@ -1307,6 +1316,8 @@ const TIPO_LIBERO = { sigla: 'UFFICIO', nome: 'Gestione ufficio', chi: 'solo', i
 const STATO_PRIORITY = { 'PA': 1, 'NT': 2, 'INK': 3 };
 const STATO_COLORS = { 'PA': '#c2740c', 'NT': '#2563eb', 'INK': '#047857', 'VND': '#b91c1c' };
 const PIN_NEUTRAL_COLOR = '#1f3a5f';
+
+let _prefillDataOra = null;
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 6); }
 function pad2(n) { return String(n).padStart(2, '0'); }
@@ -1543,7 +1554,7 @@ function onFabClick() {
   toggleFabMenu();
 }
 function fabMenuNuovaLibera(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovaPianificazioneLibera(ymd || ymdDaData(new Date())); }
-function fabMenuNuovaAttivitaConData(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; window._planningYmd = ymd; apriNuovaAttivitaGlobale(); }
+function fabMenuNuovaAttivitaConData(ymd) { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; window._planningYmd = ymd; window._prefillYmd = ymd; apriNuovaAttivitaGlobale(); }
 function fabMenuNuovoImmobile() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovo(); }
 function fabMenuNuovoCondominio() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriFormNuovoCondominio(); }
 function fabMenuNuovaAttivita() { fabMenuAperto = false; document.getElementById('fab-menu').style.display = 'none'; apriNuovaAttivitaGlobale(); }
@@ -2241,7 +2252,9 @@ function apriFormAppuntamento(imm, per, tipo) {
   const isZona = tipo.sigla === 'ZONA';
   const titoloIniziale = costruisciTitoloApp(tipo, imm, per);
   const ad = new Date();
-  const iD = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ad.getHours(), 0);
+  let iD;
+  if (_prefillDataOra) { iD = new Date(_prefillDataOra); _prefillDataOra = null; }
+  else { iD = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ad.getHours(), 0); }
   const fD = new Date(iD.getTime() + 60 * 60 * 1000);
   const lu = imm ? imm.indirizzo : (per && per.indirizzoUff ? per.indirizzoUff : '');
   let h = '';
@@ -2468,7 +2481,7 @@ function aggiornaAgendaSettimanale() {
 }
 
 let calMeseCorrente = new Date();
-let agendaPageState = 'month';
+let agendaPageState = 'month'; // 'year' | 'month' (multi-mese) | 'week' | 'day'
 let agendaPageDayYmd = null;
 let agendaYear = new Date().getFullYear();
 
@@ -2480,8 +2493,12 @@ function apriAgendaPage() {
 }
 function tornaAttivita() { mostraView('view-attivita'); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); }
 function agendaBack() { tornaAttivita(); }
-function cambiaMeseAgenda(delta) { if (delta === 0) calMeseCorrente = new Date(); else { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; } renderAgendaPage(); }
-function clickGiornoAgenda(ymd) { agendaPageDayYmd = ymd; if (agendaPageState === 'year' || agendaPageState === 'month') agendaPageState = 'day'; renderAgendaPage(); }
+function clickGiornoAgenda(ymd) {
+  agendaPageDayYmd = ymd;
+  if (agendaPageState === 'year' || agendaPageState === 'month') { agendaPageState = 'day'; }
+  else if (agendaPageState === 'week') { /* resta in week ma cambia giorno */ }
+  renderAgendaPage();
+}
 
 function zoomAgendaIn() {
   if (agendaPageState === 'year') { agendaPageState = 'month'; }
@@ -2492,12 +2509,19 @@ function zoomAgendaIn() {
 function zoomAgendaOut() {
   if (agendaPageState === 'day') { agendaPageState = 'week'; }
   else if (agendaPageState === 'week') { agendaPageState = 'month'; }
-  else if (agendaPageState === 'month') { agendaPageState = 'year'; agendaYear = calMeseCorrente.getFullYear(); }
+  else if (agendaPageState === 'month') {
+    agendaPageState = 'year';
+    // Centra l'anno del mese corrente
+    agendaYear = calMeseCorrente.getFullYear();
+  }
   renderAgendaPage();
 }
 function shiftAgendaPeriod(delta) {
   if (agendaPageState === 'year') { agendaYear += delta; }
-  else if (agendaPageState === 'month') { const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c; }
+  else if (agendaPageState === 'month') {
+    // Multi-mese: sposto il mese centrale (non necessario con scroll nativo, ma per coerenza)
+    const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c;
+  }
   else {
     const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
     if (agendaPageState === 'week') base.setDate(base.getDate() + delta * 7);
@@ -2517,14 +2541,23 @@ function scrollAgendaToNow() {
   const el = document.getElementById('ag-content-scroll'); if (!el) return;
   if (agendaPageState !== 'week' && agendaPageState !== 'day') return;
   const now = new Date();
-  el.scrollTop = Math.max(0, (now.getHours() - 2) * 60);
+  el.scrollTop = Math.max(0, (now.getHours() - 2) * 50);
+}
+function scrollMultiMonthToCurrent() {
+  const el = document.getElementById('ag-content-scroll'); if (!el) return;
+  if (agendaPageState !== 'month') return;
+  const mm = el.querySelector('.ag-mm-month.current');
+  if (mm) {
+    const offset = mm.offsetTop - 10;
+    el.scrollTop = offset;
+  }
 }
 
 function renderAgendaPage() {
   const cont = document.getElementById('agenda-page-content'); if (!cont) return;
   let inner = '';
   if (agendaPageState === 'year') inner = htmlCalendarioYear();
-  else if (agendaPageState === 'month') inner = htmlCalendarioMonthIPhone();
+  else if (agendaPageState === 'month') inner = htmlCalendarioMultiMonth();
   else if (agendaPageState === 'week') inner = htmlCalendarioWeekIPhone();
   else inner = htmlCalendarioDayIPhone();
 
@@ -2548,6 +2581,7 @@ function renderAgendaPage() {
   cont.innerHTML = '<div class="ag-view">' + headerHtml + strip + '<div class="ag-content" id="ag-content-scroll">' + inner + '</div>' + bottomBarHtml() + '</div>';
   setTimeout(scrollAgendaToNow, 60);
   setTimeout(scrollAgendaToNow, 300);
+  setTimeout(scrollMultiMonthToCurrent, 60);
 }
 
 function weekStripHtml() {
@@ -2583,6 +2617,7 @@ function cycleAgendaView() {
 
 function htmlCalendarioYear() {
   const today = ymdDaData(new Date());
+  const selYmd = agendaPageDayYmd || '';
   let h = '<div class="ag-year">';
   for (let m = 0; m < 12; m++) {
     const firstDay = new Date(agendaYear, m, 1);
@@ -2597,8 +2632,9 @@ function htmlCalendarioYear() {
       const out = d.getMonth() !== m;
       if (out && i >= 35 && d.getDate() > 7) break;
       const isToday = ymd === today;
+      const isSel = ymd === selYmd;
       const items = collectItemsForDay(ymd);
-      h += '<div class="ag-year-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+      h += '<div class="ag-year-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
       h += '<div class="ag-year-num">' + d.getDate() + '</div>';
       if (items.length > 0) h += '<div class="ag-year-dot" style="background:' + items[0].colore + '"></div>';
       h += '</div>';
@@ -2609,36 +2645,56 @@ function htmlCalendarioYear() {
   return h;
 }
 
-function htmlCalendarioMonthIPhone() {
-  const c = calMeseCorrente;
+// ============ MULTI-MESE ============
+function htmlCalendarioMultiMonth() {
   const today = ymdDaData(new Date());
   const selYmd = agendaPageDayYmd || '';
-  const firstDay = new Date(c.getFullYear(), c.getMonth(), 1);
-  let startDow = firstDay.getDay(); startDow = startDow === 0 ? 6 : startDow - 1;
-  const start = new Date(firstDay); start.setDate(firstDay.getDate() - startDow);
-  let h = '<div class="ag-month">';
-  h += '<div class="ag-month-name">' + MESI_LUNGHI[c.getMonth()] + ' ' + c.getFullYear() + '</div>';
-  h += '<div class="ag-month-weekdays">';
-  for (const d of ['L','M','M','G','V','S','D']) h += '<div>' + d + '</div>';
-  h += '</div>';
-  h += '<div class="ag-month-grid">';
-  for (let i = 0; i < 42; i++) {
-    const d = new Date(start); d.setDate(start.getDate() + i);
-    const ymd = ymdDaData(d);
-    const out = d.getMonth() !== c.getMonth();
-    const isToday = ymd === today;
-    const isSel = ymd === selYmd;
-    const items = collectItemsForDay(ymd);
-    h += '<div class="ag-month-cell' + (out ? ' other' : '') + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
-    h += '<div class="ag-month-num">' + d.getDate() + '</div>';
-    if (items.length > 0) {
-      h += '<div class="ag-month-bars">';
-      for (const it of items.slice(0, 3)) h += '<div class="ag-month-bar" style="background:' + it.colore + '"></div>';
+  const curY = calMeseCorrente.getFullYear();
+  const curM = calMeseCorrente.getMonth();
+  let h = '<div class="ag-multi-month">';
+  for (let offset = -2; offset <= 9; offset++) {
+    const absM = curM + offset;
+    const y = curY + Math.floor(absM / 12);
+    const m = ((absM % 12) + 12) % 12;
+    const isCurrent = (offset === 0);
+    const firstDay = new Date(y, m, 1);
+    let startDow = firstDay.getDay(); startDow = startDow === 0 ? 6 : startDow - 1;
+    const start = new Date(firstDay); start.setDate(firstDay.getDate() - startDow);
+    h += '<div class="ag-mm-month' + (isCurrent ? ' current' : '') + '">';
+    h += '<div class="ag-mm-name">' + MESI_LUNGHI[m] + ' ' + y + '</div>';
+    h += '<div class="ag-mm-weekdays">';
+    for (const d of ['L','M','M','G','V','S','D']) h += '<div>' + d + '</div>';
+    h += '</div>';
+    h += '<div class="ag-mm-grid">';
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const ymd = ymdDaData(d);
+      const out = d.getMonth() !== m;
+      if (out && (i < 7 || (i >= 35 && d.getDate() > 7))) {
+        h += '<div class="ag-mm-cell other"></div>';
+        continue;
+      }
+      const isToday = ymd === today;
+      const isSel = ymd === selYmd;
+      const items = collectItemsForDay(ymd);
+      h += '<div class="ag-mm-cell' + (isToday ? ' today' : '') + (isSel ? ' selected' : '') + '" onclick="clickGiornoAgenda(\'' + ymd + '\')">';
+      h += '<div class="ag-mm-num">' + d.getDate() + '</div>';
+      if (items.length > 0) {
+        h += '<div class="ag-mm-events">';
+        for (const it of items.slice(0, 2)) {
+          h += '<div class="ag-mm-ev" style="background:' + it.colore + '22;border-left:2px solid ' + it.colore + ';">';
+          if (it.ora !== '--:--') h += '<div class="ag-mm-ev-time">' + it.ora + '</div>';
+          h += '<div class="ag-mm-ev-title">' + escapeHtml(it.tipo) + '</div>';
+          h += '</div>';
+        }
+        if (items.length > 2) h += '<div class="ag-mm-ev-more">+' + (items.length - 2) + '</div>';
+        h += '</div>';
+      }
       h += '</div>';
     }
-    h += '</div>';
+    h += '</div></div>';
   }
-  h += '</div></div>';
+  h += '</div>';
   return h;
 }
 
@@ -2657,21 +2713,21 @@ function htmlCalendarioWeekIPhone() {
     const d = new Date(start); d.setDate(start.getDate() + i);
     const ymd = ymdDaData(d);
     const isToday = ymd === today;
-    h += '<div class="ag-day-col">';
+    h += '<div class="ag-day-col" data-ymd="' + ymd + '">';
     for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-line"></div>';
     const items = collectItemsForDay(ymd);
     for (const it of items) {
       if (it.ora === '--:--') continue;
       const [hh, mm] = it.ora.split(':').map(Number);
-      const top = (hh * 60 + mm);
-      let dur = 60;
-      if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000);
+      const top = (hh * 60 + mm) * (50/60);
+      let dur = 50;
+      if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000) * (50/60);
       h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + ';border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
       h += '<div class="ag-event-title">' + escapeHtml(it.tipo) + '</div>';
       h += '<div class="ag-event-time">' + it.ora + '</div>';
       h += '</div>';
     }
-    if (isToday) { const lineTop = now.getHours() * 60 + now.getMinutes(); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
+    if (isToday) { const lineTop = (now.getHours() * 60 + now.getMinutes()) * (50/60); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
     h += '</div>';
   }
   h += '</div></div>';
@@ -2688,24 +2744,94 @@ function htmlCalendarioDayIPhone() {
   for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + ':00</div>';
   h += '</div>';
   h += '<div class="ag-days">';
-  h += '<div class="ag-day-col">';
+  h += '<div class="ag-day-col" data-ymd="' + ymd + '">';
   for (let hr = 0; hr < 24; hr++) h += '<div class="ag-hour-line"></div>';
   const items = collectItemsForDay(ymd);
   for (const it of items) {
     if (it.ora === '--:--') continue;
     const [hh, mm] = it.ora.split(':').map(Number);
-    const top = (hh * 60 + mm);
-    let dur = 60;
-    if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000);
+    const top = (hh * 60 + mm) * (50/60);
+    let dur = 50;
+    if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000) * (50/60);
     h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + ';border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
     h += '<div class="ag-event-title">' + escapeHtml(it.tipo) + '</div>';
     h += '<div class="ag-event-time">' + it.ora + ' · ' + escapeHtml(it.testo.slice(0, 32)) + '</div>';
     h += '</div>';
   }
-  if (isToday) { const lineTop = now.getHours() * 60 + now.getMinutes(); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
+  if (isToday) { const lineTop = (now.getHours() * 60 + now.getMinutes()) * (50/60); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
   h += '</div></div>';
   return h;
 }
+
+/* ============ GESTURE: swipe su timeline e weekstrip, tap per creare ============ */
+(function setupAgendaGestures() {
+  let startX = null, startY = null, startTime = 0, gestureTarget = null, moved = false, targetEl = null;
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) { gestureTarget = null; return; }
+    const va = document.getElementById('view-agenda');
+    if (!va || !va.classList.contains('active')) { gestureTarget = null; return; }
+    if (agendaPageState !== 'day' && agendaPageState !== 'week') { gestureTarget = null; return; }
+    const t = e.touches[0];
+    const strip = t.target.closest('.ag-weekstrip');
+    const timeline = t.target.closest('.ag-timeline');
+    if (strip) { gestureTarget = 'strip'; }
+    else if (timeline) { gestureTarget = 'timeline'; }
+    else { gestureTarget = null; return; }
+    startX = t.clientX; startY = t.clientY; startTime = Date.now(); moved = false;
+    targetEl = t.target;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if (!gestureTarget || !startX) return;
+    const t = e.touches[0];
+    const dx = Math.abs(t.clientX - startX);
+    const dy = Math.abs(t.clientY - startY);
+    if (dx > 10 || dy > 10) moved = true;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (!gestureTarget || startX === null) { gestureTarget = null; return; }
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    const dt = Date.now() - startTime;
+    const which = gestureTarget;
+    const wasMoved = moved;
+    const el = targetEl;
+    gestureTarget = null; startX = null; moved = false; targetEl = null;
+    if (dt > 800) return;
+
+    // Swipe orizzontale
+    if (adx > ady && adx > 50) {
+      if (which === 'strip' || agendaPageState === 'day' || agendaPageState === 'week') {
+        if (dx < 0) shiftAgendaPeriod(1); else shiftAgendaPeriod(-1);
+      }
+      return;
+    }
+
+    // Tap (nessun movimento) sulla timeline → crea appuntamento
+    if (!wasMoved && which === 'timeline' && (agendaPageState === 'day' || agendaPageState === 'week')) {
+      if (el && el.closest('.ag-event')) return; // ha toccato un evento
+      const dayCol = el && el.closest('.ag-day-col');
+      if (!dayCol) return;
+      const agContent = document.getElementById('ag-content-scroll');
+      const scrollTop = agContent ? agContent.scrollTop : 0;
+      const rect = dayCol.getBoundingClientRect();
+      const relY = t.clientY - rect.top + scrollTop;
+      const oraH = 50;
+      let ore = Math.floor(relY / oraH);
+      let min = Math.round(((relY % oraH) / oraH) * 60 / 15) * 15;
+      if (ore < 0) ore = 0;
+      if (ore > 23) ore = 23;
+      if (min === 60) { min = 0; ore++; }
+      if (ore > 23) ore = 23;
+      let ymd = dayCol.dataset.ymd || (agendaPageDayYmd || ymdDaData(new Date()));
+      const oraStr = pad2(ore) + ':' + pad2(min);
+      _prefillDataOra = new Date(ymd + 'T' + oraStr + ':00');
+      apriSelezioneTipoApp(null, null);
+    }
+  }, { passive: true });
+  document.addEventListener('touchcancel', () => { gestureTarget = null; startX = null; moved = false; targetEl = null; });
+})();
 
 let planningYmd = null;
 function currentPlanningYmd() { return planningYmd || ymdDaData(new Date()); }
@@ -2737,8 +2863,10 @@ function renderPlanning() {
 }
 function apriNuovaAttivitaPianificata(ymd) { window._planningYmd = ymd; chiudiModal(); setTimeout(() => apriNuovaAttivitaGlobale(), 150); }
 function apriNuovaPianificazioneLibera(ymd, oraDefault) {
+  const ymdUse = ymd || _prefillYmd || ymdDaData(new Date());
+  if (_prefillYmd) _prefillYmd = null;
   const h = `<div class="form-group">
-    <div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="pl-data" value="${ymd || ymdDaData(new Date())}"></div>
+    <div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="pl-data" value="${ymdUse}"></div>
     <div class="form-row"><label class="form-label">Ora (opzionale)</label><input class="form-input" type="time" id="pl-ora" value="${oraDefault || ''}"></div>
     <div class="form-row"><label class="form-label">Cosa devi fare? *</label><textarea class="form-textarea" id="pl-testo" placeholder="es. Zona Castello, Ufficio, riunione..."></textarea></div>
   </div>
