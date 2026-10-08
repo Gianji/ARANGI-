@@ -672,19 +672,64 @@
     position: absolute; left: 3px; right: 3px;
     border-radius: 6px; padding: 3px 6px; overflow: hidden;
     cursor: pointer; z-index: 3;
-    transition: opacity 0.15s ease;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    transition: opacity 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blu);
+    box-sizing: border-box;
   }
   .ag-event:active { opacity: 0.75; }
   .ag-event-title {
-    font-size: 10px; font-weight: 700; color: #fff;
+    font-size: 10px; font-weight: 700; color: var(--testo);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     line-height: 1.2; letter-spacing: -0.01em;
   }
-  .ag-event-time { font-size: 9px; color: rgba(255,255,255,0.9); margin-top: 1px; line-height: 1.2; font-weight: 500; }
+  .ag-event-time { font-size: 9px; color: var(--testo-sec); margin-top: 1px; line-height: 1.2; font-weight: 500; }
 
   .ag-now-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--arancione); z-index: 6; }
   .ag-now-dot { position: absolute; left: 48px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--arancione); box-shadow: 0 0 0 2px var(--sfondo); }
+
+  .ag-preview {
+    position: absolute; left: 3px; right: 3px;
+    background: rgba(217, 96, 26, 0.16);
+    border: 2px dashed var(--arancione);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 2;
+    padding: 3px 6px;
+    box-sizing: border-box;
+    color: var(--arancione-deep);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    transition: top 0.06s linear;
+  }
+  :root[data-theme="dark"] .ag-preview {
+    background: rgba(236, 111, 42, 0.22);
+    color: #fdba74;
+  }
+  .ag-view { animation: agViewFade 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+  @keyframes agViewFade {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+  }
+  .ag-header, .ag-weekstrip, .ag-sep { animation: agHeaderFade 0.22s ease-out; }
+  @keyframes agHeaderFade {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+  }
+
+  input.form-input, textarea.form-textarea, select.form-select {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (min-width: 768px) {
+    input.form-input, textarea.form-textarea, select.form-select {
+      font-size: 14.5px;
+    }
+  }
 
   @media (min-width: 768px) {
     body { background: #f0f0f2; }
@@ -1462,7 +1507,7 @@ tabButtons.forEach(btn => {
     } else {
       if (tab === 'immobili' || tab === 'persone' || tab === 'attivita') fab.style.display = 'flex'; else fab.style.display = 'none';
       fabMenu.style.display = 'none'; fabMenuAperto = false;
-      if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoImmobile()" title="Nuovo immobile">' + ico('casa',22) + '</button><button onclick="fabMenuNuovoCondominio()" title="Nuovo condominio">' + iconaCondo(22) + '</button>';
+      if (tab === 'immobili') fabMenu.innerHTML = '<button onclick="fabMenuNuovoCondominio()" title="Nuovo condominio">' + iconaCondo(22) + '</button><button onclick="fabMenuNuovoImmobile()" title="Nuovo immobile">' + ico('casa',22) + '</button>';
       else if (tab === 'persone') aggiornaFabPersone();
       else if (tab === 'attivita') { fabMenu.innerHTML = '<button onclick="fabMenuNuovaAttivita()" title="Nuova attività">' + ico('check',22) + '</button><button onclick="fabMenuNuovoAppuntamento()" title="Nuovo appuntamento">' + ico('calendario',22) + '</button>'; renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); }
       if (tab === 'altro') aggiornaInfoSistema();
@@ -2511,7 +2556,6 @@ function zoomAgendaOut() {
   else if (agendaPageState === 'week') { agendaPageState = 'month'; }
   else if (agendaPageState === 'month') {
     agendaPageState = 'year';
-    // Centra l'anno del mese corrente
     agendaYear = calMeseCorrente.getFullYear();
   }
   renderAgendaPage();
@@ -2519,7 +2563,6 @@ function zoomAgendaOut() {
 function shiftAgendaPeriod(delta) {
   if (agendaPageState === 'year') { agendaYear += delta; }
   else if (agendaPageState === 'month') {
-    // Multi-mese: sposto il mese centrale (non necessario con scroll nativo, ma per coerenza)
     const c = new Date(calMeseCorrente); c.setMonth(c.getMonth() + delta); calMeseCorrente = c;
   }
   else {
@@ -2552,6 +2595,18 @@ function scrollMultiMonthToCurrent() {
     el.scrollTop = offset;
   }
 }
+function scrollYearToCurrent() {
+  const el = document.getElementById('ag-content-scroll');
+  if (!el || agendaPageState !== 'year') return;
+  const nowY = new Date().getFullYear();
+  const nowM = new Date().getMonth();
+  const months = el.querySelectorAll('.ag-year-month');
+  if (agendaYear === nowY && months[nowM]) {
+    el.scrollTop = months[nowM].offsetTop - 10;
+  } else {
+    el.scrollTop = 0;
+  }
+}
 
 function renderAgendaPage() {
   const cont = document.getElementById('agenda-page-content'); if (!cont) return;
@@ -2582,6 +2637,8 @@ function renderAgendaPage() {
   setTimeout(scrollAgendaToNow, 60);
   setTimeout(scrollAgendaToNow, 300);
   setTimeout(scrollMultiMonthToCurrent, 60);
+  setTimeout(scrollYearToCurrent, 60);
+  setTimeout(scrollYearToCurrent, 300);
 }
 
 function weekStripHtml() {
@@ -2722,7 +2779,7 @@ function htmlCalendarioWeekIPhone() {
       const top = (hh * 60 + mm) * (50/60);
       let dur = 50;
       if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000) * (50/60);
-      h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + ';border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
+      h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
       h += '<div class="ag-event-title">' + escapeHtml(it.tipo) + '</div>';
       h += '<div class="ag-event-time">' + it.ora + '</div>';
       h += '</div>';
@@ -2753,7 +2810,7 @@ function htmlCalendarioDayIPhone() {
     const top = (hh * 60 + mm) * (50/60);
     let dur = 50;
     if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000) * (50/60);
-    h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;background:' + it.colore + ';border-left:3px solid ' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
+    h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')">';
     h += '<div class="ag-event-title">' + escapeHtml(it.tipo) + '</div>';
     h += '<div class="ag-event-time">' + it.ora + ' · ' + escapeHtml(it.testo.slice(0, 32)) + '</div>';
     h += '</div>';
@@ -2763,9 +2820,38 @@ function htmlCalendarioDayIPhone() {
   return h;
 }
 
-/* ============ GESTURE: swipe su timeline e weekstrip, tap per creare ============ */
+/* ============ GESTURE: swipe su timeline e weekstrip, tap/long-press per creare ============ */
 (function setupAgendaGestures() {
   let startX = null, startY = null, startTime = 0, gestureTarget = null, moved = false, targetEl = null;
+  let preview = null;
+
+  function removePreview() {
+    if (preview && preview.el && preview.el.parentNode) preview.el.parentNode.removeChild(preview.el);
+    preview = null;
+  }
+
+  function timeFromClientY(dayCol, clientY) {
+    const rect = dayCol.getBoundingClientRect();
+    const relY = clientY - rect.top;
+    const oraH = 50;
+    let min = Math.round((relY / oraH) * 60 / 15) * 15;
+    if (min < 0) min = 0;
+    if (min > 22 * 60 + 45) min = 22 * 60 + 45;
+    return min;
+  }
+
+  function updatePreview(clientY) {
+    if (!preview) return;
+    const min = timeFromClientY(preview.dayCol, clientY);
+    preview.startMin = min;
+    const top = min * (50 / 60);
+    preview.el.style.top = top + 'px';
+    const endMin = Math.min(min + preview.durationMin, 24 * 60 - 1);
+    const sh = Math.floor(min / 60), sm = min % 60;
+    const eh = Math.floor(endMin / 60), em = endMin % 60;
+    preview.el.textContent = pad2(sh) + ':' + pad2(sm) + ' – ' + pad2(eh) + ':' + pad2(em);
+  }
+
   document.addEventListener('touchstart', (e) => {
     if (e.touches.length !== 1) { gestureTarget = null; return; }
     const va = document.getElementById('view-agenda');
@@ -2774,63 +2860,80 @@ function htmlCalendarioDayIPhone() {
     const t = e.touches[0];
     const strip = t.target.closest('.ag-weekstrip');
     const timeline = t.target.closest('.ag-timeline');
-    if (strip) { gestureTarget = 'strip'; }
-    else if (timeline) { gestureTarget = 'timeline'; }
+    if (strip) gestureTarget = 'strip';
+    else if (timeline) gestureTarget = 'timeline';
     else { gestureTarget = null; return; }
     startX = t.clientX; startY = t.clientY; startTime = Date.now(); moved = false;
     targetEl = t.target;
+
+    if (gestureTarget === 'timeline' && !t.target.closest('.ag-event')) {
+      const dayCol = t.target.closest('.ag-day-col');
+      if (dayCol) {
+        const el = document.createElement('div');
+        el.className = 'ag-preview';
+        dayCol.appendChild(el);
+        preview = { dayCol, startMin: 0, durationMin: 60, el };
+        updatePreview(t.clientY);
+      }
+    }
   }, { passive: true });
+
   document.addEventListener('touchmove', (e) => {
-    if (!gestureTarget || !startX) return;
+    if (!gestureTarget || startX === null) return;
     const t = e.touches[0];
-    const dx = Math.abs(t.clientX - startX);
-    const dy = Math.abs(t.clientY - startY);
-    if (dx > 10 || dy > 10) moved = true;
+    const dx = t.clientX - startX, dy = t.clientY - startY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+    if (adx > 10 || ady > 10) moved = true;
+    if (preview && adx > ady && adx > 20) { removePreview(); return; }
+    if (gestureTarget === 'timeline' && preview) updatePreview(t.clientY);
   }, { passive: true });
+
   document.addEventListener('touchend', (e) => {
-    if (!gestureTarget || startX === null) { gestureTarget = null; return; }
+    if (!gestureTarget || startX === null) { gestureTarget = null; removePreview(); return; }
     const t = e.changedTouches[0];
-    const dx = t.clientX - startX;
-    const dy = t.clientY - startY;
+    const dx = t.clientX - startX, dy = t.clientY - startY;
     const adx = Math.abs(dx), ady = Math.abs(dy);
     const dt = Date.now() - startTime;
     const which = gestureTarget;
-    const wasMoved = moved;
     const el = targetEl;
-    gestureTarget = null; startX = null; moved = false; targetEl = null;
-    if (dt > 800) return;
+
+    if (dt > 900) { gestureTarget = null; startX = null; moved = false; targetEl = null; removePreview(); return; }
 
     // Swipe orizzontale
     if (adx > ady && adx > 50) {
-      if (which === 'strip' || agendaPageState === 'day' || agendaPageState === 'week') {
+      removePreview();
+      if (which === 'strip' && agendaPageState === 'day') {
+        // Punto 2: in vista giorno, swipe sulla riga giorni → una settimana
+        const base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
+        base.setDate(base.getDate() + (dx < 0 ? 7 : -7));
+        agendaPageDayYmd = ymdDaData(base);
+        renderAgendaPage();
+      } else {
         if (dx < 0) shiftAgendaPeriod(1); else shiftAgendaPeriod(-1);
       }
+      gestureTarget = null; startX = null; moved = false; targetEl = null;
       return;
     }
 
-    // Tap (nessun movimento) sulla timeline → crea appuntamento
-    if (!wasMoved && which === 'timeline' && (agendaPageState === 'day' || agendaPageState === 'week')) {
-      if (el && el.closest('.ag-event')) return; // ha toccato un evento
-      const dayCol = el && el.closest('.ag-day-col');
-      if (!dayCol) return;
-      const agContent = document.getElementById('ag-content-scroll');
-      const scrollTop = agContent ? agContent.scrollTop : 0;
-      const rect = dayCol.getBoundingClientRect();
-      const relY = t.clientY - rect.top + scrollTop;
-      const oraH = 50;
-      let ore = Math.floor(relY / oraH);
-      let min = Math.round(((relY % oraH) / oraH) * 60 / 15) * 15;
-      if (ore < 0) ore = 0;
-      if (ore > 23) ore = 23;
-      if (min === 60) { min = 0; ore++; }
-      if (ore > 23) ore = 23;
-      let ymd = dayCol.dataset.ymd || (agendaPageDayYmd || ymdDaData(new Date()));
-      const oraStr = pad2(ore) + ':' + pad2(min);
-      _prefillDataOra = new Date(ymd + 'T' + oraStr + ':00');
+    // Tap sul preview → apre form con data/ora precompilata
+    if (preview && which === 'timeline') {
+      const ymd = preview.dayCol.dataset.ymd || (agendaPageDayYmd || ymdDaData(new Date()));
+      const min = preview.startMin;
+      const sh = Math.floor(min / 60), sm = min % 60;
+      _prefillDataOra = new Date(ymd + 'T' + pad2(sh) + ':' + pad2(sm) + ':00');
+      removePreview();
+      gestureTarget = null; startX = null; moved = false; targetEl = null;
       apriSelezioneTipoApp(null, null);
+      return;
     }
+
+    gestureTarget = null; startX = null; moved = false; targetEl = null;
+    removePreview();
   }, { passive: true });
-  document.addEventListener('touchcancel', () => { gestureTarget = null; startX = null; moved = false; targetEl = null; });
+
+  document.addEventListener('touchcancel', () => {
+    gestureTarget = null; startX = null; moved = false; targetEl = null; removePreview();
+  });
 })();
 
 let planningYmd = null;
