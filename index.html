@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -402,6 +400,21 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
 .alt-shortcut .as-sub { font-size: 11.5px; color: var(--testo-ter); margin-top: 2px; }
 .att-chiamate-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 12px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; font-size: 12.5px; font-weight: 600; color: var(--blu); cursor: pointer; flex-shrink: 0; }
 .att-chiamate-btn .cbadge { background: var(--arancione); color: white; font-size: 10px; padding: 1px 7px; border-radius: 999px; font-weight: 700; }
+
+/* ===== AGENDA — VISTE + GESTURE ===== */
+.ag-views { display: flex; gap: 6px; padding: 4px 14px 10px; flex-shrink: 0; }
+.ag-views button { flex: 1; padding: 8px 6px; border: 1px solid var(--border-strong); background: var(--card); border-radius: var(--radius-pill); font-family: inherit; font-size: 11.5px; font-weight: 600; color: var(--testo-sec); cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.ag-views button:active { opacity: 0.75; }
+.ag-views button.active { background: var(--blu); color: #fff; border-color: var(--blu); }
+.ag-week-header { display: flex; padding-left: 52px; padding-top: 4px; padding-bottom: 4px; background: var(--sfondo); flex-shrink: 0; border-bottom: 1px solid var(--border); }
+.ag-week-header > div { flex: 1; text-align: center; min-width: 0; }
+.ag-week-header .wh-name { font-size: 9px; font-weight: 600; color: var(--testo-ter); text-transform: uppercase; }
+.ag-week-header .wh-num { font-size: 14px; font-weight: 500; color: var(--testo); }
+.ag-week-header > div.today .wh-name,
+.ag-week-header > div.today .wh-num { color: var(--arancione); font-weight: 700; }
+#agenda-page-content { touch-action: pan-y; }
+.ag-pinch-hint { text-align: center; font-size: 10px; color: var(--testo-ter); padding: 4px 0 2px; font-weight: 500; letter-spacing: 0.02em; opacity: 0.7; }
+.ag-pinch-hint svg { width: 11px; height: 11px; vertical-align: -2px; }
 </style>
 </head>
 <body>
@@ -411,7 +424,7 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
       <div style="flex:1;min-width:0;">
         <h1><span>ARAN</span>JO</h1>
-        <div class="sub">Assistente Tecnorete · CRM</div>
+        <div class="sub">Assistente Tecnorete</div>
       </div>
       <div id="header-prossimo-app" style="flex-shrink:0;text-align:right;max-width:44%;cursor:pointer;display:none;" onclick="apriProssimoAppuntamento()">
         <div style="font-size:9px;font-weight:600;color:var(--arancione);text-transform:uppercase;">Prossimo</div>
@@ -692,7 +705,8 @@ var ICON_PATHS = {
   contratto: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 12h6M9 16h6"/>',
   banca: '<path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11"/>',
   nota: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>',
-  barcode: '<path d="M3 5v14M7 5v14M11 5v10M15 5v14M19 5v14M21 5v14"/>'
+  barcode: '<path d="M3 5v14M7 5v14M11 5v10M15 5v14M19 5v14M21 5v14"/>',
+  zoom: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>'
 };
 
 function ico(name, size) {
@@ -1439,7 +1453,7 @@ function toggleZoneFiltro(z) { zonaSelezionata = (zonaSelezionata === z) ? null 
 function azzeraZoneFiltro() { zonaSelezionata = null; apriSelezioneZone(); }
 function confermaZoneFiltro() { chiudiModal(); aggiornaChips(); renderListaImmobili(); }
 
-/* ============ AZIONI BASE (chiamate, email, maps) ============ */
+/* ============ AZIONI BASE ============ */
 function chiamaNumero(tel) { if (tel) window.location.href = 'tel:' + tel.replace(/\s+/g, ''); }
 function scriviEmail(email) { if (email) window.location.href = 'mailto:' + email; }
 function apriWhatsApp(tel) { if (!tel) return; var p = tel.replace(/\D/g, ''); if (!p) return; var n = p.startsWith('39') ? p : '39' + p; window.open('https://wa.me/' + n, '_blank'); }
@@ -1447,6 +1461,7 @@ function apriNavigazioneMaps(lat, lng, nome) { var isIOS = /iPad|iPhone|iPod/.te
 function apriAppleMaps(lat, lng, nome) { var enc = encodeURIComponent(nome || ''); window.open('https://maps.apple.com/?daddr=' + lat + ',' + lng + (enc ? '&q=' + enc : ''), '_blank'); }
 
 /* ============ FUNZIONI STUB (definite in PARTE 2/3/4) ============ */
+/* NOTA: apriModal() NON è uno stub — è definita sopra e funzionante. */
 function apriScheda() {}
 function apriSchedaPersona() {}
 function apriFormNuovo() {}
@@ -1459,7 +1474,6 @@ function apriNuovoAppuntamentoGlobale() {}
 function apriNuovoAppuntamentoImmobile() {}
 function apriNuovoAppuntamentoPersona() {}
 function apriSelezioneTipoApp() {}
-function apriModal() {}
 function apriNotaRapida() {}
 function apriNuovaChiamata() {}
 function apriNuovoArticolo() {}
@@ -1573,43 +1587,10 @@ function applicaIconeFisse() {
   if (content && btn) content.addEventListener('scroll', function() { if (content.scrollTop > 400) btn.classList.add('show'); else btn.classList.remove('show'); }, { passive: true });
 })();
 
-/* ============ BOOT ============ */
-(function boot() {
-  console.log('[ARANJO] Boot avviato');
-  Storage2.open().then(function() {
-    console.log('[ARANJO] IndexedDB aperto');
-    Storage2.requestPersistence().then(function(p) { console.log('[ARANJO] Persistenza:', p); });
-    Storage.loadAsync().then(function(data) {
-      DB = data;
-      if (!DB.coordinateCondomini) DB.coordinateCondomini = {};
-      if (!DB.pianificazioni) DB.pianificazioni = [];
-      if (!Array.isArray(DB.attivita)) DB.attivita = [];
-      if (!Array.isArray(DB.chiamate)) DB.chiamate = [];
-      if (!Array.isArray(DB.magazzino)) DB.magazzino = [];
-      if (!Array.isArray(DB.rapportini)) DB.rapportini = [];
-      console.log('[ARANJO] DB caricato:', DB.immobili.length, 'immobili,', DB.persone.length, 'persone');
-      applicaIconeFisse();
-      updateThemeButtons();
-      aggiornaChips();
-      renderListaImmobili();
-      aggiornaInfoSistema();
-      aggiornaAltroView();
-      console.log('[ARANJO] Boot completato');
-    }).catch(function(err) {
-      console.error('[ARANJO] Errore load:', err);
-      alert('Errore caricamento dati: ' + err.message);
-    });
-  }).catch(function(err) {
-    console.error('[ARANJO] Errore IndexedDB:', err);
-    alert('IndexedDB non disponibile: ' + err.message);
-  });
-})();
-
-console.log('[ARANJO] PARTE 1/4 caricata');
-/* FINE PARTE 1 - NON CHIUDERE LO SCRIPT QUI */
+console.log('[ARANJO] PARTE 1/5 caricata');
 
 /* ============================================================
-   PARTE 2 — PERSONE: lista, scheda, form, richieste, matching
+   PARTE 2 — PERSONE
    ============================================================ */
 
 var pTabAttivo = 'acquirente', pStatoRRFiltro = null, pTipoProfFiltro = null, pQueryRicerca = '';
@@ -1704,7 +1685,6 @@ function renderPersone() {
 }
 function resetFiltroPersone() { if (pTabAttivo === 'acquirente') pStatoRRFiltro = null; if (pTabAttivo === 'professionista') pTipoProfFiltro = null; renderPersone(); }
 
-/* ============ NUOVA PERSONA ============ */
 var _npRuoli = [];
 function toggleRuoloNuovaPersona(r) {
   var i = _npRuoli.indexOf(r);
@@ -1808,7 +1788,6 @@ function salvaNuovaPersona() {
   setTimeout(function() { apriSchedaPersona(p.id); }, 150);
 }
 
-/* ============ SCHEDA PERSONA ============ */
 function apriSchedaPersona(id) {
   var p = trovaPersona(id); if (!p) return;
   personaAperta = id;
@@ -1970,7 +1949,6 @@ function apriChecklistPersona(pId) {
   apriModal('Completamento · ' + cl.pct + '%', h);
 }
 
-/* ============ MODIFICA PERSONA ============ */
 function apriModificaPersonaGenerico(p) {
   if (!p) return;
   var h = '<div class="form-group">';
@@ -2024,7 +2002,6 @@ function eliminaPersona() {
   Storage.save(DB); personaAperta = null; chiudiModal(); renderPersone();
 }
 
-/* ============ RICHIESTA ACQUIRENTE ============ */
 function apriModificaRichiesta(pid) {
   var p = trovaPersona(pid); if (!p) return;
   if (!p.richiesta) p.richiesta = creaRichiestaVuota();
@@ -2070,7 +2047,6 @@ function salvaRichiesta(pid) {
   Storage.save(DB); renderPersone(); apriSchedaPersona(pid);
 }
 
-/* ============ ATTIVITA' SU PERSONA ============ */
 function apriNuovaAttivitaPersona() {
   var h = '<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="pa-tipo" onchange="aggiornaFormAttivitaPersona()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div></div><div id="pa-campi"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + personaAperta + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaAttivitaPersona()">Salva</button></div>';
   apriModal('Nuova attività', h); aggiornaFormAttivitaPersona();
@@ -2128,7 +2104,6 @@ function eliminaAttivitaPersona(idA) {
   Storage.save(DB); renderPersone(); apriSchedaPersona(p.id);
 }
 
-/* ============ MATCHING ============ */
 function parseNumero(s) { if (s === undefined || s === null || s === '') return null; var n = parseFloat(String(s).replace(/[^\d.,-]/g, '').replace(/\./g, '').replace(',', '.')); return isNaN(n) ? null : n; }
 function criterioRequisito(r, key) { return (r.requisiti && r.requisiti[key]) || 'preferito'; }
 function calcolaMatch(imm, per) {
@@ -2177,19 +2152,15 @@ function matchAcquirenteConImmobili(per) {
   return r.sort(function(a, b) { return b.score - a.score; });
 }
 
-/* ============ APPUNTAMENTI SU PERSONA ============ */
 function apriNuovoAppuntamentoPersona(pid) {
   var p = trovaPersona(pid);
   if (typeof apriSelezioneTipoApp === 'function') apriSelezioneTipoApp(null, p);
 }
 
-console.log('[ARANJO] PARTE 2/4 caricata');
-/* FINE PARTE 2 - NON CHIUDERE LO SCRIPT */
-
-
+console.log('[ARANJO] PARTE 2/5 caricata');
 
 /* ============================================================
-   PARTE 3 — ATTIVITÀ, APPUNTAMENTI, AGENDA, PLANNING, NOTE
+   PARTE 3 — ATTIVITÀ, APPUNTAMENTI, AGENDA (viste + pinch), PLANNING
    ============================================================ */
 
 var attTabFiltro = 'oggi', attQueryRicerca = '', attGruppiEspansi = {};
@@ -2779,6 +2750,9 @@ var agendaPageState = 'month';
 var agendaPageDayYmd = null;
 var agendaYear = new Date().getFullYear();
 
+/* Vista corrente per il pinch: year (0) ← month (1) ← week (2) ← day (3) */
+var VIEW_LEVELS = ['year', 'month', 'week', 'day'];
+
 function apriAgendaPage() {
   agendaPageState = 'month';
   calMeseCorrente = new Date();
@@ -2809,6 +2783,14 @@ function shiftAgendaPeriod(delta) {
   }
   renderAgendaPage();
 }
+function setAgendaView(v) {
+  if (VIEW_LEVELS.indexOf(v) < 0) return;
+  if ((v === 'day' || v === 'week') && !agendaPageDayYmd) {
+    agendaPageDayYmd = ymdDaData(new Date());
+  }
+  agendaPageState = v;
+  renderAgendaPage();
+}
 function apriPlanningGiorno(ymd) {
   agendaPageDayYmd = ymd;
   agendaPageState = 'day';
@@ -2837,10 +2819,12 @@ function renderAgendaPage() {
   else if (agendaPageState === 'month') inner = htmlCalendarioMultiMonth();
   else if (agendaPageState === 'week') inner = htmlCalendarioWeekIPhone();
   else inner = htmlCalendarioDayIPhone();
+
   var meseLbl = '';
   if (agendaPageState === 'year') meseLbl = String(agendaYear);
-  else if (agendaPageState === 'month') meseLbl = MESI_LUNGHI[calMeseCorrente.getMonth()];
-  else { var b = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date(); meseLbl = MESI_LUNGHI[b.getMonth()]; }
+  else if (agendaPageState === 'month') meseLbl = MESI_LUNGHI[calMeseCorrente.getMonth()] + ' ' + calMeseCorrente.getFullYear();
+  else { var b = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date(); meseLbl = MESI_LUNGHI[b.getMonth()] + ' ' + b.getFullYear(); }
+
   var headerHtml = '<div class="ag-header">'
     + '<button class="ag-back-btn" onclick="tornaAttivita()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
     + '<div class="ag-nav-group">'
@@ -2848,11 +2832,93 @@ function renderAgendaPage() {
     + '<div class="ag-month-lbl">' + meseLbl + '</div>'
     + '<button class="ag-nav-btn" onclick="shiftAgendaPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>'
     + '</div><div class="ag-spacer"></div></div>';
-  var strip = (agendaPageState === 'week' || agendaPageState === 'day') ? weekStripHtml() + '<div class="ag-sep"></div>' : '';
-  cont.innerHTML = '<div class="ag-view">' + headerHtml + strip + '<div class="ag-content" id="ag-content-scroll">' + inner + '</div>' + bottomBarHtml() + '</div>';
+
+  var viewSwitcher = '<div class="ag-views">'
+    + '<button class="' + (agendaPageState === 'day' ? 'active' : '') + '" onclick="setAgendaView(\'day\')">Giorno</button>'
+    + '<button class="' + (agendaPageState === 'week' ? 'active' : '') + '" onclick="setAgendaView(\'week\')">Settimana</button>'
+    + '<button class="' + (agendaPageState === 'month' ? 'active' : '') + '" onclick="setAgendaView(\'month\')">Mese</button>'
+    + '<button class="' + (agendaPageState === 'year' ? 'active' : '') + '" onclick="setAgendaView(\'year\')">Anno</button>'
+    + '</div>';
+
+  /* Strip settimanale solo in vista Giorno */
+  var strip = (agendaPageState === 'day') ? weekStripHtml() + '<div class="ag-sep"></div>' : '';
+
+  var hintHtml = '<div class="ag-pinch-hint">' + ico('zoom',11) + ' pinch con due dita per cambiare vista</div>';
+
+  cont.innerHTML = '<div class="ag-view">' + headerHtml + viewSwitcher + strip
+    + '<div class="ag-content" id="ag-content-scroll">' + inner + '</div>'
+    + hintHtml + bottomBarHtml() + '</div>';
+
   setTimeout(scrollAgendaToNow, 60); setTimeout(scrollAgendaToNow, 300);
-  setTimeout(scrollMultiMonthToCurrent, 60); setTimeout(scrollYearToCurrent, 60); setTimeout(scrollYearToCurrent, 300);
+  setTimeout(scrollMultiMonthToCurrent, 60);
+  setTimeout(scrollYearToCurrent, 60); setTimeout(scrollYearToCurrent, 300);
 }
+
+/* ============================================================
+   PINCH GESTURE — cambia vista con due dita
+   ============================================================ */
+function attachPinchGesture(el) {
+  if (!el || el._pinchAttached) return;
+  el._pinchAttached = true;
+
+  var startDist = 0;
+  var switched = false;
+
+  function dist(t1, t2) {
+    return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+  }
+
+  el.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) {
+      startDist = dist(e.touches[0], e.touches[1]);
+      switched = false;
+    } else {
+      startDist = 0;
+    }
+  }, { passive: true });
+
+  el.addEventListener('touchmove', function(e) {
+    if (e.touches.length !== 2 || !startDist || switched) return;
+    e.preventDefault();
+    var d = dist(e.touches[0], e.touches[1]);
+    if (startDist <= 0) return;
+    var ratio = d / startDist;
+    var idx = VIEW_LEVELS.indexOf(agendaPageState);
+    if (idx < 0) idx = 1;
+    var TH_IN = 1.30;   /* 30% in più → zoom IN → più dettaglio */
+    var TH_OUT = 0.72;  /* 28% in meno → zoom OUT → meno dettaglio */
+
+    if (ratio > TH_IN && idx < VIEW_LEVELS.length - 1) {
+      /* ZOOM IN: anno → mese → settimana → giorno */
+      switched = true;
+      agendaPageState = VIEW_LEVELS[idx + 1];
+      if (!agendaPageDayYmd) agendaPageDayYmd = ymdDaData(new Date());
+      if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_) {} }
+      startDist = 0;
+      renderAgendaPage();
+    } else if (ratio < TH_OUT && idx > 0) {
+      /* ZOOM OUT: giorno → settimana → mese → anno */
+      switched = true;
+      agendaPageState = VIEW_LEVELS[idx - 1];
+      if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_) {} }
+      startDist = 0;
+      renderAgendaPage();
+    }
+  }, { passive: false });
+
+  el.addEventListener('touchend', function(e) {
+    if (e.touches.length < 2) {
+      startDist = 0;
+      switched = false;
+    }
+  }, { passive: true });
+
+  el.addEventListener('touchcancel', function() {
+    startDist = 0;
+    switched = false;
+  }, { passive: true });
+}
+
 function weekStripHtml() {
   var base = agendaPageDayYmd ? dataDaYmd(agendaPageDayYmd) : new Date();
   var dow = base.getDay(); var diff = dow === 0 ? -6 : 1 - dow;
@@ -2943,28 +3009,43 @@ function htmlCalendarioWeekIPhone() {
   var start = new Date(base); start.setDate(base.getDate() + diff);
   var today = ymdDaData(new Date());
   var now = new Date();
-  var h = '<div class="ag-timeline"><div class="ag-hours-col">';
+
+  var h = '<div class="ag-week-header">';
+  for (var i = 0; i < 7; i++) {
+    var d0 = new Date(start); d0.setDate(start.getDate() + i);
+    var ymd0 = ymdDaData(d0);
+    var isToday0 = ymd0 === today;
+    h += '<div' + (isToday0 ? ' class="today"' : '') + '>'
+      + '<div class="wh-name">' + GIORNI_BREVI[i] + '</div>'
+      + '<div class="wh-num">' + d0.getDate() + '</div>'
+      + '</div>';
+  }
+  h += '</div>';
+
+  h += '<div class="ag-timeline"><div class="ag-hours-col">';
   for (var hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + ':00</div>';
   h += '</div><div class="ag-days">';
-  for (var i = 0; i < 7; i++) {
-    var d = new Date(start); d.setDate(start.getDate() + i);
-    var ymd = ymdDaData(d);
-    var isToday = ymd === today;
-    h += '<div class="ag-day-col" data-ymd="' + ymd + '">';
+
+  for (var i2 = 0; i2 < 7; i2++) {
+    var d2 = new Date(start); d2.setDate(start.getDate() + i2);
+    var ymd2 = ymdDaData(d2);
+    var isToday2 = ymd2 === today;
+    h += '<div class="ag-day-col" data-ymd="' + ymd2 + '" onclick="clickGiornoAgenda(\'' + ymd2 + '\')">';
     for (var hr2 = 0; hr2 < 24; hr2++) h += '<div class="ag-hour-line"></div>';
-    var items = collectItemsForDay(ymd);
+    var items = collectItemsForDay(ymd2);
     items.forEach(function(it) {
       if (it.ora === '--:--') return;
       var pp = it.ora.split(':').map(Number);
-      var top = (pp[0] * 60 + pp[1]) * (50/60);
+      var top = (pp[0] * 60 + pp[1]) * (50 / 60);
       var dur = 50;
-      if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000) * (50/60);
+      if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio)) / 60000) * (50 / 60);
       h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElementoAgenda(\'' + it.kind + '\',\'' + it.id + '\')"><div class="ag-event-title">' + escapeHtml(it.tipo) + '</div><div class="ag-event-time">' + it.ora + '</div></div>';
     });
-    if (isToday) { var lineTop = (now.getHours() * 60 + now.getMinutes()) * (50/60); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
+    if (isToday2) { var lineTop = (now.getHours() * 60 + now.getMinutes()) * (50 / 60); h += '<div class="ag-now-line" style="top:' + lineTop + 'px;"><div class="ag-now-dot"></div></div>'; }
     h += '</div>';
   }
-  h += '</div></div>'; return h;
+  h += '</div></div>';
+  return h;
 }
 
 function htmlCalendarioDayIPhone() {
@@ -3154,17 +3235,12 @@ function salvaNotaRapida() {
   _notaCtx = null; _notaEntita = null;
 }
 
-console.log('[ARANJO] PARTE 3/4 caricata');
-/* FINE PARTE 3 - NON CHIUDERE LO SCRIPT */
-
-
-
+console.log('[ARANJO] PARTE 3/5 caricata');
 
 /* ============================================================
-   PARTE 4 — IMMOBILI COMPLETI: scheda, form, documenti, condominio
+   PARTE 4 — IMMOBILI COMPLETI
    ============================================================ */
 
-/* ============ SCHEDA IMMOBILE ============ */
 function apriScheda(id) {
   var im = DB.immobili.find(function(x) { return x.id === id; });
   if (!im) return;
@@ -3370,7 +3446,6 @@ function apriScheda(id) {
   }, 30);
 }
 
-/* ============ CHECKLIST IMMOBILE ============ */
 function calcolaChecklistImmobile(im) {
   var props = proprietariImmobile(im);
   var pr = props[0];
@@ -3399,7 +3474,6 @@ function apriChecklistImmobile(imId) {
   apriModal('Completamento ' + cl.pct + '%', h);
 }
 
-/* ============ DOCUMENTI ============ */
 function apriGestioneDocumenti(imId) {
   var im = DB.immobili.find(function(x) { return x.id === imId; }); if (!im) return;
   if (!im.documenti) im.documenti = {};
@@ -3463,7 +3537,6 @@ function scaricaDocumento(fileId) {
   });
 }
 
-/* ============ IPOTECA / PROCURA / CATASTO / PREZZO ============ */
 function apriModificaIpoteca(imId) {
   var im = DB.immobili.find(function(x) { return x.id === imId; }); if (!im) return;
   var i = im.ipoteca || {};
@@ -3527,7 +3600,6 @@ function salvaPrezzo(imId) {
   im.prezzo = p; im.updatedAt = new Date().toISOString(); Storage.save(DB); apriScheda(imId);
 }
 
-/* ============ ATTIVITA' SU IMMOBILE ============ */
 function apriNuovaAttivita() {
   var h = '<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="a-tipo" onchange="aggiornaFormAttivita()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div></div><div id="a-campi"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + immobileAperto + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaAttivita()">Salva</button></div>';
   apriModal('Nuova attività', h); aggiornaFormAttivita();
@@ -3586,7 +3658,6 @@ function eliminaAttivita(idA) {
   Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); apriScheda(i.id);
 }
 
-/* ============ CAMBIO STATO ============ */
 function apriCambiaStato() {
   var i = DB.immobili.find(function(x) { return x.id === immobileAperto; }); if (!i) return;
   var o = ['IMM','PA','NT','INK','VND'];
@@ -3607,7 +3678,6 @@ function eseguiCambioStato(ns) {
   Storage.save(DB); renderListaImmobili(); apriScheda(i.id);
 }
 
-/* ============ ELIMINA / ARCHIVIA / DUPLICA ============ */
 function eliminaImmobile() {
   var i = DB.immobili.find(function(x) { return x.id === immobileAperto; }); if (!i) return;
   if (!confirm('Eliminare?\n\n' + titoloImmobile(i))) return;
@@ -3635,7 +3705,6 @@ function duplicaImmobile(id) {
   DB.immobili.push(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id);
 }
 
-/* ============ MODIFICA IMMOBILE ============ */
 function apriModifica() {
   var i = DB.immobili.find(function(x) { return x.id === immobileAperto; }); if (!i) return;
   var ic = i.stato === 'IMM';
@@ -3677,7 +3746,6 @@ function salvaModifica() {
   Storage.save(DB); renderListaImmobili(); apriScheda(i.id);
 }
 
-/* ============ FORM NUOVO IMMOBILE ============ */
 function apriFormNuovo() {
   var dc = !!condoSelezionato;
   var tf = dc ? 'Nuovo immobile in condominio' : 'Nuovo immobile';
@@ -3749,7 +3817,6 @@ function avviaGeocodificaBackground(imm) {
   }).catch(function() {});
 }
 
-/* ============ CONDOMINIO ============ */
 function apriFormNuovoCondominio() {
   var nc = getNomeCittaPrincipale();
   var h = '<div class="form-group">';
@@ -3842,16 +3909,12 @@ function autoGeocodeCondominio(co) {
 }
 
 console.log('[ARANJO] PARTE 4/5 caricata');
-/* FINE PARTE 4 - NON CHIUDERE LO SCRIPT */
-
-
 
 /* ============================================================
    PARTE 5 — MAPPA, ROUND ME, CHIAMATE, MAGAZZINO, RAPPORTINI,
    NOTIFICHE, BACKUP, RICERCA GLOBALE, BOOT FINALE
    ============================================================ */
 
-/* ============ MAPPA (Leaflet) ============ */
 function calcolaInfoIcona(immobili) {
   if (!immobili || immobili.length === 0) return { tipo: 'pin', colore: PIN_NEUTRAL_COLOR, numero: 0 };
   if (immobili.length === 1) {
@@ -3973,7 +4036,7 @@ function geocodificaTutti() {
     }
     var imm = daFare[idx];
     geocodificaIndirizzo(imm.indirizzo).then(function(r) {
-      if (r) { imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.preciso; fatti++; } else falliti++;
+      if (r) { imm.lat = r.lat; imm.lng = r.lng; imm.geoPreciso = r.precise; fatti++; } else falliti++;
       idx++;
       if (btn) btn.textContent = (fatti + falliti) + '/' + daFare.length;
       setTimeout(next, 1100);
@@ -3982,7 +4045,7 @@ function geocodificaTutti() {
   next();
 }
 
-/* ============ ROUND ME ============ */
+/* ROUND ME */
 var _roundMeWatch = null;
 var _roundMeRaggio = 500;
 var _roundMeDati = { persone: [], immobili: [] };
@@ -4055,7 +4118,7 @@ function roundMeCambiaRaggio() {
   });
 }
 
-/* ============ CHIAMATE + DETTATURA ============ */
+/* CHIAMATE + DETTATURA */
 var _recognition = null;
 var _micAttivo = false;
 function avviaDettatura(callback) {
@@ -4199,7 +4262,7 @@ function eliminaChiamata(id) {
   Storage.save(DB); renderChiamateOggi(); aggiornaBadgeAttivita();
 }
 
-/* ============ MAGAZZINO ============ */
+/* MAGAZZINO */
 var magazzinoQuery = '';
 document.getElementById('search-magazzino').addEventListener('input', function(e) { magazzinoQuery = e.target.value.toLowerCase().trim(); renderMagazzino(); });
 function renderMagazzino() {
@@ -4295,7 +4358,7 @@ function fermaScanner() {
   chiudiModal();
 }
 
-/* ============ RAPPORTINI ============ */
+/* RAPPORTINI */
 function renderRapportini() {
   var c = document.getElementById('rapportini-lista'); if (!c) return;
   if (!DB.rapportini) DB.rapportini = [];
@@ -4349,7 +4412,7 @@ function eliminaRapportino(id) {
   Storage.save(DB); chiudiModal(); renderRapportini(); aggiornaAltroView();
 }
 
-/* ============ NOTIFICHE ============ */
+/* NOTIFICHE */
 function richiediPermessoNotifiche(showAlert) {
   if (!('Notification' in window)) { if (showAlert) alert('Notifiche non supportate'); return Promise.resolve(false); }
   if (Notification.permission === 'granted') { if (showAlert) alert('Notifiche già attive'); return Promise.resolve(true); }
@@ -4395,7 +4458,7 @@ function aggiornaBadgeApp() {
   }
 }
 
-/* ============ RICERCA GLOBALE ============ */
+/* RICERCA GLOBALE */
 function apriRicercaGlobale() {
   var h = '<p style="font-size:13px;color:var(--testo-sec);padding:0 4px 12px;">Cerca in persone, immobili, attività, condomini.</p><input type="search" class="search-bar" id="gs-input" placeholder="Cerca..." style="margin-bottom:10px;"><div id="gs-risultati"><div class="empty" style="padding:24px 8px;font-size:12.5px;">Digita almeno 2 caratteri.</div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
   apriModal('Ricerca globale', h);
@@ -4423,7 +4486,7 @@ function eseguiRicercaGlobale(q) {
   c.innerHTML = h;
 }
 
-/* ============ IMPOSTAZIONI CITTÀ ============ */
+/* IMPOSTAZIONI CITTÀ */
 function apriImpostazioniCitta() {
   var c = getCittaPrincipale();
   var h = '<div class="form-group"><div class="form-row"><label class="form-label">Città principale</label><input class="form-input" id="imp-citta" value="' + escapeHtml(c) + '"></div></div>';
@@ -4445,7 +4508,7 @@ function salvaCittaPrincipale() {
   if (map) aggiornaMappa();
 }
 
-/* ============ BACKUP / IMPORT / RESET ============ */
+/* BACKUP / IMPORT / RESET */
 function blobToBase64(blob) {
   return new Promise(function(res, rej) {
     var r = new FileReader();
@@ -4573,8 +4636,6 @@ function pulisciCacheGeocodifica() {
   alert('Cache svuotata');
 }
 
-/* ============ MAPPA - INIT quando si apre la tab ============ */
-
 /* ============ BOOT FINALE ============ */
 function avviaBoot() {
   console.log('[ARANJO] Boot avviato');
@@ -4606,6 +4667,8 @@ function avviaBoot() {
         renderChiamateOggi();
         renderMagazzino();
         renderRapportini();
+        /* Aggancia pinch gesture alla pagina agenda */
+        attachPinchGesture(document.getElementById('agenda-page-content'));
       } catch(e) { console.error('[ARANJO] errore render:', e); }
       richiediPermessoNotifiche(false);
       schedulaNotifiche();
