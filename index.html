@@ -5666,7 +5666,26 @@ function salvaCittaPrincipale() { const v = (document.getElementById('imp-citta'
   <div class="filter-dropdown" id="filter-dd"></div>
 </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+window.addEventListener('error', (e) => {
+  console.error('[ARANJÒ ERROR]', e.error || e.message, 'line', e.lineno);
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#b91c1c;color:white;padding:14px;font-size:12px;z-index:999999;font-family:monospace;white-space:pre-wrap;word-break:break-all;';
+  d.textContent = '⚠️ ERRORE: ' + ((e.error && e.error.message) || e.message) + ' (riga ' + (e.lineno || '?') + ')';
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 20000);
+});
+window.addEventListener('unhandledrejection', (e) => {
+  const err = e.reason;
+  console.error('[ARANJÒ PROMISE]', err);
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:70px;left:0;right:0;background:#92400e;color:white;padding:14px;font-size:12px;z-index:999999;font-family:monospace;white-space:pre-wrap;word-break:break-all;';
+  d.textContent = '⚠️ PROMISE: ' + ((err && err.message) || String(err));
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), 20000);
+});
+console.log('[ARANJÒ] Handler errori attivo');
+</script>
 <script>
 /* =====================================================
    ARANJÒ 3.3 — Ripristino funzionalità + Progressive Disclosure
