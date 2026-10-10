@@ -4020,5 +4020,135 @@ function avviaBoot() {
 }
 avviaBoot();
 </script>
+<!-- ===== ARANJÒ · AGGIORNAMENTO — incolla TUTTO questo blocco subito prima di </body> ===== -->
+<style>
+/* ---------- Palette e raggi ---------- */
+:root{--bg:#f6f7f9;--bg2:#eceef2;--card:#fff;--bd:#eceef1;--bd2:#dfe2e8;--tx:#14171c;--tx2:#667085;--tx3:#98a2b3;--blu:#1b3556;--blu-soft:#eef2f8;--acc:#e0601f;--r:16px;--rs:12px}
+:root[data-theme="dark"]{--imm:#94a3b8;--pa:#e5a04a;--nt:#7aa7ff;--ink:#34d399;--vnd:#f87171;--rr:#b79cff;--prof:#38bdf8}
+:root[data-theme="dark"] .badge-RR-rogitato{--bc:#9db6d6}
+button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line{touch-action:manipulation}
+
+/* ---------- Intestazione ---------- */
+.app-header{padding-bottom:8px}
+.app-header h1{font-size:22px;font-weight:300;letter-spacing:.22em;line-height:1;color:var(--blu)}
+.app-header h1 span{color:var(--acc);font-weight:300}
+.brand-sub{font-size:10.5px;font-weight:400;letter-spacing:.06em;color:var(--tx3);margin-top:5px}
+
+/* ---------- Card e liste ---------- */
+.card,.item-card,.collapsible,.att-box,.scheda-top,.att-gruppo,.agenda-sett,.planning-sett,.form-group,.immobile-line,.att-subtab{border-radius:var(--r)}
+.item-card{padding:14px 16px;transition:transform .12s,background .12s}
+.item-card:active,.item-card-compact:active,.immobile-line:active,.att-item:active{transform:scale(.985);background:var(--bg2)}
+.item-title{font-weight:600;letter-spacing:-.01em}
+.item-meta{border-top-color:var(--bd)}
+.card h2,.att-box h2{font-size:12.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--tx2)}
+.card h2 .dot{display:none}
+.collapsible-header .ch-label{font-size:13.5px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--tx)}
+.form-label{font-size:11.5px;font-weight:500;text-transform:none;letter-spacing:0}
+.info-row .label{color:var(--tx3)}
+.empty{color:var(--tx3);padding:56px 14px}
+
+/* ---------- Ricerca e filtri ---------- */
+.search-bar{background:var(--bg2);border:1px solid transparent;border-radius:14px;padding:11px 16px;transition:background .15s,border-color .15s}
+.search-bar:focus{background:var(--card);border-color:var(--bd2)}
+.chip{border:none;background:var(--bg2);color:var(--tx2);padding:7px 14px;font-weight:500;transition:background .15s,color .15s}
+.chip.active{background:var(--blu);color:var(--bg)}
+.chip.acc.active{background:var(--acc);color:#fff}
+.zone-chip{background:var(--bg2)}
+
+/* ---------- Badge sfumati (fallback: pieni) ---------- */
+.badge{letter-spacing:.05em}
+.badge-IMM{--bc:var(--imm)}.badge-PA{--bc:var(--pa)}.badge-NT{--bc:var(--nt)}.badge-INK{--bc:var(--ink)}.badge-VND{--bc:var(--vnd)}
+.badge-PROP{--bc:var(--blu)}.badge-ACQUIRENTE{--bc:var(--rr)}.badge-PROFESSIONISTA{--bc:var(--prof)}.badge-LOCATORE{--bc:#7c3aed}.badge-CONDUTTORE{--bc:#0e7490}
+.badge-RR-attiva{--bc:var(--rr)}.badge-RR-in-attesa{--bc:var(--pa)}.badge-RR-proposta{--bc:var(--ink)}.badge-RR-ha-comprato{--bc:var(--vnd)}.badge-RR-non-attiva{--bc:var(--tx3)}.badge-RR-rogitato{--bc:#162a47}.badge-collega{--bc:var(--coll)}
+@supports (background:color-mix(in srgb,red 10%,transparent)){
+  .badge[class*="badge-"]{background:color-mix(in srgb,var(--bc) 13%,transparent);color:var(--bc);font-weight:700;padding:3px 9px}
+}
+
+/* ---------- Barra in basso ---------- */
+.tabbar{background:rgba(255,255,255,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-top:1px solid var(--bd)}
+.tabbar button svg{width:23px;height:23px;stroke-width:1.6;transition:color .15s}
+.tabbar button.active svg{stroke-width:2}
+.tabbar button.active::after{content:'';position:absolute;bottom:7px;width:4px;height:4px;border-radius:50%;background:var(--acc)}
+
+/* ---------- Pulsanti, FAB, finestre ---------- */
+.btn{border-radius:14px;padding:13px 16px;transition:opacity .12s,transform .12s}
+.btn:active{transform:scale(.985)}
+.btn-secondary{border-color:var(--bd2)}
+.fab{width:54px;height:54px;box-shadow:0 10px 26px rgba(224,96,31,.3)}
+.fab-menu button{box-shadow:0 6px 18px rgba(20,23,28,.1)}
+.modal-overlay{background:rgba(15,20,30,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.modal-sheet{border-radius:24px 24px 0 0;box-shadow:0 -12px 40px rgba(20,23,28,.14)}
+.modal-header{border-bottom:none;padding-bottom:6px}
+.modal-header h2{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.filter-dropdown{border-radius:20px;padding:10px}
+.filter-dropdown .opt,.ms-opt{border-radius:12px}
+.filter-dropdown .btn-row{position:sticky;bottom:-10px;background:var(--card);padding:10px 0 2px}
+@media(min-width:768px){.modal-sheet{border-radius:24px}}
+
+/* ---------- Agenda ---------- */
+.ag-week-head{position:sticky;top:0;z-index:30}
+.ag-event{border-radius:8px;box-shadow:0 1px 3px rgba(20,23,28,.06)}
+.ag-pill{box-shadow:0 8px 22px rgba(20,23,28,.12)}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<script>
+(function(){
+  var OV = 'filter-dd-overlay';
+
+  /* 1) FIX POPUP: gli id del vecchio codice non esistevano, quindi il popup non si chiudeva */
+  window.chiudiFilterDD = function(){
+    var o = document.getElementById(OV); if (o) o.classList.remove('open');
+    window._filterDDBack = null;
+    var id = window._msOpen; window._msOpen = null;
+    if (id) { var el = document.getElementById('ms-btn-' + id); if (el) el.outerHTML = renderMsBtn(id); }
+  };
+  window.apriMs = function(id){
+    var s = window._msSel[id]; if (!s) return;
+    var dd = document.getElementById('filter-dd'); if (!dd) return;
+    var h = '<h3>Seleziona</h3>';
+    s.opts.forEach(function(o){
+      var a = s.val.indexOf(o) >= 0;
+      h += '<div class="ms-opt' + (a ? ' on' : '') + '" data-mid="' + esc(id) + '" data-mval="' + esc(o) + '">' + esc(o) + (a ? ico('check',12) : '') + '</div>';
+    });
+    h += '<div class="btn-row"><button type="button" class="btn btn-secondary ms-reset-btn" data-mid="' + esc(id) + '">Azzera</button><button type="button" class="btn btn-primary ms-ok-btn" data-mid="' + esc(id) + '">OK</button></div>';
+    dd.innerHTML = h;
+    window._msOpen = id;
+    document.getElementById(OV).classList.add('open');
+  };
+  window.chiudiMs = function(id){ window._msOpen = id; window.chiudiFilterDD(); };
+
+  /* 2) Agenda, visuale settimana: la barra dei giorni resta ferma */
+  var _ra = window.renderAgendaPage;
+  window.renderAgendaPage = function(){
+    _ra.apply(this, arguments);
+    try {
+      if (window.agState === 'week') {
+        var s = document.getElementById('ag-scroll');
+        if (s && s.firstElementChild) s.firstElementChild.classList.add('ag-week-head');
+      }
+    } catch(e) {}
+  };
+
+  /* 3) Intestazione: ARANJÒ + sottotitolo */
+  var h1 = document.querySelector('.app-header h1');
+  if (h1 && !document.querySelector('.brand-sub')) {
+    h1.innerHTML = '<span>ARAN</span>JÒ';
+    var w = document.createElement('div');
+    h1.parentNode.insertBefore(w, h1);
+    w.appendChild(h1);
+    w.insertAdjacentHTML('beforeend', '<div class="brand-sub">Assistente Tecnorete</div>');
+  }
+  document.title = 'ARANJÒ';
+  var m = document.querySelector('meta[name="apple-mobile-web-app-title"]'); if (m) m.content = 'ARANJÒ';
+
+  /* 4) Elimina il filtro GEST */
+  var g = document.getElementById('chip-gest'); if (g) g.remove();
+  window.apriFiltroGestione = function(){};
+  window.gestFil = null;
+})();
+</script>
+<!-- ===== FINE AGGIORNAMENTO ===== -->
 </body>
 </html>
