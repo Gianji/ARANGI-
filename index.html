@@ -4434,5 +4434,117 @@ details.fold>div{padding:0 16px 10px}
   };
 })();
 </script>
+<!-- ===== ARANJÒ · AGGIORNAMENTO 3 — incolla TUTTO subito prima di </body>, DOPO i blocchi 1 e 2 ===== -->
+<style>
+/* Logo: ARAN arancione, JÒ blu */
+.app-header h1 span{color:var(--acc)}
+</style>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ===== 1) Appuntamenti: UFFICIO → GESTIONE UFFICIO (G UFF) + nuovi colori ===== */
+  var COL = { 'VAL':'#E038AD', 'RIVAL':'#F7B2D0', 'G INK':'#057D9F', 'APP':'#FF2300', 'CONS':'#2618B2', 'RIT PROP':'#00A652', 'ACC PROP':'#FF7B40', 'NOT ACC':'#B70094', 'ATTO':'#B70094', 'G UFF':'#000000', 'GENERICO':'#999999', 'PERSONALE':'#666666', 'ZONA':'#333333' };
+  TIPI_APP.forEach(function(t){
+    if (t.sigla === 'UFFICIO') { t.sigla = 'G UFF'; t.nome = 'GESTIONE UFFICIO'; }
+    if (COL[t.sigla]) t.colore = COL[t.sigla];
+  });
+  window.normalizzaSigla = function(s){
+    if (!s) return s;
+    var u = String(s).toUpperCase();
+    return (u === 'LIBERO' || u === 'LIBERA' || u === 'UFFICIO' || u === 'G UFF') ? 'G UFF' : s;
+  };
+  /* aggiorna gli appuntamenti già salvati (una volta, appena i dati sono caricati) */
+  var _ai = window.applicaIcone, migrato = false;
+  window.applicaIcone = function(){
+    if (!migrato && window.DB && Array.isArray(DB.appuntamenti)) {
+      migrato = true;
+      var ch = false;
+      DB.appuntamenti.forEach(function(a){
+        var u = String(a.tipo || '').toUpperCase();
+        if (u === 'UFFICIO' || u === 'LIBERO' || u === 'LIBERA') { a.tipo = 'G UFF'; ch = true; }
+        if (a.tipo === 'G UFF' && /^ufficio$/i.test(a.titolo || '')) { a.titolo = 'GESTIONE UFFICIO'; ch = true; }
+      });
+      if (ch) Storage.save(DB);
+    }
+    return _ai.apply(this, arguments);
+  };
+
+  /* ===== 2) Numero z progressivo nello stesso condominio ===== */
+  function nextZ(im){
+    var m = 0, c = condoDi(im);
+    DB.immobili.forEach(function(x){
+      if (x.id !== im.id && !x.villa && condoDi(x) === c) m = Math.max(m, parseInt(x.z, 10) || 0);
+    });
+    return m + 1;
+  }
+  var _snm = window.salvaNuovoImmobile;
+  window.salvaNuovoImmobile = function(){
+    var n = DB.immobili.length;
+    _snm.apply(this, arguments);
+    if (DB.immobili.length > n) {
+      var im = DB.immobili[DB.immobili.length - 1];
+      if (!im.villa) { im.z = nextZ(im); Storage.save(DB); renderListaImmobili(); }
+    }
+  };
+  var _snr = window.salvaNuovoImmobileRapido;
+  window.salvaNuovoImmobileRapido = function(){
+    _snr.apply(this, arguments);
+    var im = DB.immobili.find(function(x){ return x.id === immobileAperto; });
+    if (im && !im.villa) { im.z = nextZ(im); Storage.save(DB); renderListaImmobili(); }
+  };
+  var _dup = window.duplicaImmobile;
+  window.duplicaImmobile = function(id){
+    var n = DB.immobili.length;
+    _dup.apply(this, arguments);
+    if (DB.immobili.length > n) {
+      var c = DB.immobili[DB.immobili.length - 1];
+      if (!c.villa) { c.z = nextZ(c); Storage.save(DB); renderListaImmobili(); apriScheda(c.id); }
+    }
+  };
+
+  /* ===== 3) Back-gesture =====
+     Il vecchio codice reagiva al "indietro" solo se esisteva una voce di cronologia precedente.
+     Ora ogni schermata oltre la home ne ha una, così il gesto torna sempre indietro. */
+  function deeper(){
+    var a = document.querySelector('.tabbar button.active');
+    return !a || a.dataset.tab !== 'immobili' || $('app-content').classList.contains('agenda-mode');
+  }
+  function guard(){
+    var s = history.state;
+    if (deeper() && (!s || s._base)) { try { history.pushState({ _app: true }, ''); } catch(e) {} }
+  }
+  ['switchTab', 'mostraView'].forEach(function(n){
+    var f = window[n];
+    window[n] = function(){ var r = f.apply(this, arguments); guard(); return r; };
+  });
+  /* chiusura da pulsante: non confonderla con un "indietro" dell'utente */
+  var _cm = window.chiudiModal;
+  window.chiudiModal = function(fromBack){
+    var m = $('modal');
+    window._uiClose = !!(m && m.classList.contains('open') && !fromBack && window._modalStack > 0);
+    return _cm.apply(this, arguments);
+  };
+  /* con un popup di selezione aperto, "indietro" chiude solo quello (listener in cattura, prima del vecchio) */
+  window.addEventListener('popstate', function(e){
+    var o = $('filter-dd-overlay');
+    if (o && o.classList.contains('open')) {
+      e.stopImmediatePropagation();
+      chiudiFilterDD();
+      try { history.pushState($('modal').classList.contains('open') ? { _modal: true } : { _app: true }, ''); } catch(_) {}
+    }
+  }, true);
+  /* dopo il vecchio gestore: schermate che non gestiva + riarmo della cronologia */
+  window.addEventListener('popstate', function(){
+    if (window._uiClose) { window._uiClose = false; guard(); return; }
+    var v = document.querySelector('.view.active');
+    if (v && (v.id === 'view-magazzino' || v.id === 'view-rapportini') && !$('modal').classList.contains('open')) switchTab('altro');
+    guard();
+  });
+})();
+</script>
+<!-- ===== FINE AGGIORNAMENTO 3 ===== -->
+
 </body>
 </html>
