@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -123,7 +121,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .fab-menu.open { display: flex; }
 .fab-menu button { background: var(--card); border: 1px solid var(--bd2); width: 46px; height: 46px; border-radius: 50%; color: var(--blu); box-shadow: 0 2px 10px rgba(20,20,30,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .fab-menu button svg { width: 20px; height: 20px; }
-.modal-overlay { position: fixed; inset: 0; background: rgba(20,20,30,0.35); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9000; display: none; align-items: flex-end; justify-content: center; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(20,20,30,0.55); z-index: 9000; display: none; align-items: flex-end; justify-content: center; }
 .modal-overlay.open { display: flex; }
 @keyframes slideUp { from { transform: translateY(24px); opacity: 0.4; } to { transform: translateY(0); opacity: 1; } }
 .modal-sheet { background: var(--bg); width: 100%; max-width: var(--maxw); max-height: 92dvh; border-radius: 16px 16px 0 0; display: flex; flex-direction: column; animation: slideUp 0.25s cubic-bezier(0.16,1,0.3,1); overflow: hidden; }
@@ -337,7 +335,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; }
 
 /* === Dropdown / Multi-select === */
-.filter-dropdown-overlay { position: fixed; inset: 0; background: rgba(20,20,30,0.4); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 9001; display: none; align-items: center; justify-content: center; padding: 20px; }
+.filter-dropdown-overlay { position: fixed; inset: 0; background: rgba(20,20,30,0.55); z-index: 9001; display: none; align-items: center; justify-content: center; padding: 20px; }
 .filter-dropdown-overlay.open { display: flex; }
 .filter-dropdown { background: var(--card); border-radius: 14px; padding: 8px; max-width: 360px; width: 100%; max-height: 78dvh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.18); }
 .filter-dropdown h3 { font-size: 11px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px 6px; }
@@ -906,6 +904,12 @@ window._modalStack = 0;
 window._aranjoCloseFromUI = false;
 
 function apriModal(titolo, html) {
+  // reset picker state (sicurezza)
+  window._pickerSavedParent = null;
+  window._pickerCb = null;
+  // chiudi eventuali dropdown aperti
+  var _fdo = document.getElementById('filter-dropdown-overlay');
+  if (_fdo) _fdo.classList.remove('open');
   document.getElementById('modal-title').innerHTML = titolo;
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal-body').scrollTop = 0;
@@ -921,6 +925,8 @@ function chiudiModal(fromBack) {
   var wasOpen = document.getElementById('modal').classList.contains('open');
   document.getElementById('modal').classList.remove('open');
   document.getElementById('modal-body').innerHTML = '';
+   window._pickerSavedParent = null;
+  window._pickerCb = null;
   if (wasOpen && !fromBack && window._modalStack > 0) {
     window._modalStack--;
     window._aranjoCloseFromUI = true;
@@ -963,7 +969,7 @@ function renderMsBtn(id) {
 }
 function apriMs(id) {
   var s = window._msSel[id]; if (!s) return;
-  var dd = document.getElementById('filter-dd');
+  var dd = document.getElementById('filter-dd'); if (!dd) return;
   var h = '<h3>Seleziona</h3>';
   s.opts.forEach(function(o) {
     var a = s.val.indexOf(o) >= 0;
@@ -2664,16 +2670,25 @@ function attachGestures() {
   var swipeFired = false, twoF = false;
   var lpTimer = null, lpStart = null, lpFired = false;
   var lpPreview = null, lpSlot = null;
+  var lpLastX = 0, lpLastY = 0;
+  var lpRaf = null;
 
   function dist(t1, t2) { return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY); }
+
+  function clearLpRaf() {
+    if (lpRaf) { try { cancelAnimationFrame(lpRaf); } catch(e) {} lpRaf = null; }
+  }
+
   function cancelLP() {
     if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; }
     if (lpPreview) { try { lpPreview.remove(); } catch(e) {} lpPreview = null; }
     if (lpSlot) { try { lpSlot.remove(); } catch(e) {} lpSlot = null; }
+    clearLpRaf();
     lpCurrentYmd = null; lpCurrentOra = null;
     var tl = el.querySelector('.ag-days');
     if (tl) tl.classList.remove('touching-longpress');
   }
+
   function getDayColAt(x, y) {
     var node = document.elementFromPoint(x, y);
     while (node && node !== document.body) {
@@ -2682,15 +2697,32 @@ function attachGestures() {
     }
     return null;
   }
-  function updateLp(clientX, clientY) {
-    var col = getDayColAt(clientX, clientY);
-    if (!col) return null;
+  // fallback: se il dito è fuori dalla timeline, trova la colonna solo per X
+  function pickColByX(x) {
+    var cols = el.querySelectorAll('.ag-day-col');
+    for (var i = 0; i < cols.length; i++) {
+      var r = cols[i].getBoundingClientRect();
+      if (x >= r.left && x <= r.right) return cols[i];
+    }
+    return null;
+  }
+
+  function computeTime(col, clientY) {
     var rect = col.getBoundingClientRect();
     var yIn = clientY - rect.top;
+    if (yIn < 0) yIn = 0;
+    if (yIn > rect.height) yIn = rect.height;
     var minTot = Math.round((yIn / ORA_H) * 60 / 5) * 5;
     if (minTot < 0) minTot = 0;
     if (minTot > 23 * 60 + 55) minTot = 23 * 60 + 55;
-    var or = { h: Math.floor(minTot / 60), m: minTot % 60, ymd: col.dataset.ymd };
+    return { h: Math.floor(minTot / 60), m: minTot % 60, ymd: col.dataset.ymd };
+  }
+
+  function updateLp(clientX, clientY) {
+    var col = getDayColAt(clientX, clientY);
+    if (!col) col = pickColByX(clientX);
+    if (!col) return null;
+    var or = computeTime(col, clientY);
     if (!lpPreview) {
       lpPreview = document.createElement('div');
       lpPreview.className = 'ag-longpress-preview';
@@ -2715,10 +2747,40 @@ function attachGestures() {
     return or;
   }
 
+  // === AUTO-SCROLL: se il dito è vicino al bordo superiore/inferiore,
+  //     il contenitore scrolla e la preview si aggiorna di conseguenza ===
+  function autoScrollFrame() {
+    if (!lpFired) { lpRaf = null; return; }
+    var scrollEl = document.getElementById('ag-scroll');
+    if (scrollEl) {
+      var sr = scrollEl.getBoundingClientRect();
+      var edge = 60;                 // zona sensibile ai bordi (px)
+      var speed = 0;
+      if (lpLastY < sr.top + edge) {
+        speed = -Math.ceil((sr.top + edge - lpLastY) / 5);
+        if (speed < -18) speed = -18;
+      } else if (lpLastY > sr.bottom - edge) {
+        speed = Math.ceil((lpLastY - (sr.bottom - edge)) / 5);
+        if (speed > 18) speed = 18;
+      }
+      if (speed !== 0) {
+        var before = scrollEl.scrollTop;
+        scrollEl.scrollTop += speed;
+        if (scrollEl.scrollTop !== before) {
+          updateLp(lpLastX, lpLastY);
+        }
+      }
+    }
+    lpRaf = requestAnimationFrame(autoScrollFrame);
+  }
+
   el.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 2) { twoF = true; startDist = dist(e.touches[0], e.touches[1]); pinchSwitch = false; cancelLP(); }
-    else if (e.touches.length === 1) {
-      twoF = false; tSX = e.touches[0].clientX; tSY = e.touches[0].clientY; tST = Date.now(); swipeFired = false;
+    if (e.touches.length === 2) {
+      twoF = true; startDist = dist(e.touches[0], e.touches[1]); pinchSwitch = false; cancelLP();
+    } else if (e.touches.length === 1) {
+      twoF = false;
+      tSX = e.touches[0].clientX; tSY = e.touches[0].clientY;
+      tST = Date.now(); swipeFired = false;
       if (agState === 'day' || agState === 'week') {
         lpFired = false;
         lpStart = { x: tSX, y: tSY };
@@ -2729,10 +2791,13 @@ function attachGestures() {
           var col = getDayColAt(sx0, sy0);
           if (!col) return;
           lpFired = true;
+          lpLastX = sx0; lpLastY = sy0;
           var tl = el.querySelector('.ag-days');
           if (tl) tl.classList.add('touching-longpress');
           updateLp(sx0, sy0);
           if (navigator.vibrate) { try { navigator.vibrate(25); } catch(e) {} }
+          clearLpRaf();
+          lpRaf = requestAnimationFrame(autoScrollFrame);
         }, 420);
       }
     }
@@ -2746,14 +2811,24 @@ function attachGestures() {
     }
     if (lpFired && lpPreview && e.touches.length === 1) {
       if (e.cancelable) e.preventDefault();
-      updateLp(e.touches[0].clientX, e.touches[0].clientY);
+      lpLastX = e.touches[0].clientX;
+      lpLastY = e.touches[0].clientY;
+      updateLp(lpLastX, lpLastY);
       return;
     }
     if (e.touches.length === 2 && twoF && startDist > 0 && !pinchSwitch) {
       var d = dist(e.touches[0], e.touches[1]); var r = d / startDist;
       var idx = VIEW_LVL.indexOf(agState); if (idx < 0) idx = 1;
-      if (r > 1.30 && idx < VIEW_LVL.length - 1) { pinchSwitch = true; agState = VIEW_LVL[idx + 1]; if (!agDayYmd) agDayYmd = ymd(new Date()); if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_) {} } startDist = 0; renderAgendaPage(); }
-      else if (r < 0.72 && idx > 0) { pinchSwitch = true; agState = VIEW_LVL[idx - 1]; if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_) {} } startDist = 0; renderAgendaPage(); }
+      if (r > 1.30 && idx < VIEW_LVL.length - 1) {
+        pinchSwitch = true; agState = VIEW_LVL[idx + 1];
+        if (!agDayYmd) agDayYmd = ymd(new Date());
+        if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_) {} }
+        startDist = 0; renderAgendaPage();
+      } else if (r < 0.72 && idx > 0) {
+        pinchSwitch = true; agState = VIEW_LVL[idx - 1];
+        if (navigator.vibrate) { try { navigator.vibrate(12); } catch(_) {} }
+        startDist = 0; renderAgendaPage();
+      }
       return;
     }
     if (e.touches.length === 1 && !twoF && !swipeFired && !lpFired && (agState === 'day' || agState === 'week')) {
@@ -2788,7 +2863,6 @@ function attachGestures() {
     cancelLP();
   }, { passive: true });
 }
-
 function weekStripHtml() {
   var b = agDayYmd ? daYmd(agDayYmd) : new Date();
   var dw = b.getDay(); var df = dw === 0 ? -6 : 1 - dw;
