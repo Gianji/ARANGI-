@@ -31,7 +31,7 @@ try {
   --tab-h: 58px; --maxw: 640px;
   --imm: #94a3b8; --pa: #c2740c; --nt: #2563eb; --ink: #047857; --vnd: #b91c1c; --rr: #7c3aed; --prof: #0e7490;
   --ok: #047857; --ko: #b91c1c; --warn: #c2740c;
-  --fest: #dc2626;
+  --fest: #dc2626; --coll: #7c3aed;
   --ora-h: 44px;
 }
 html { height: 100%; overflow: hidden; }
@@ -74,7 +74,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .scheda-top { background: var(--card); border-radius: var(--r); padding: 14px 16px; margin-bottom: 8px; border: 1px solid var(--bd); }
 .scheda-top .top-title { font-size: 15px; font-weight: 700; color: var(--tx); line-height: 1.3; word-break: break-word; }
 .scheda-top .top-sub { font-size: 12.5px; color: var(--tx2); margin-top: 3px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-.scheda-top .top-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.scheda-top .top-badges { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; align-items: center; }
 .scheda-top .top-actions { display: flex; gap: 6px; margin-top: 10px; }
 .scheda-top .top-actions .btn { margin-bottom: 0; flex: 1; }
 .scheda-top .top-actions .btn-icon { flex: 0 0 auto; }
@@ -99,7 +99,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .zone-chip.active { background: var(--blu); color: white; }
 .zone-chip.acc.active { background: var(--acc); }
 .item-card { background: var(--card); border-radius: var(--r); padding: 12px 14px; margin-bottom: 6px; border: 1px solid var(--bd); cursor: pointer; }
-.item-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 3px; }
+.item-row { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 3px; flex-wrap: wrap; }
 .item-title { font-size: 14px; font-weight: 600; color: var(--tx); flex: 1; word-break: break-word; line-height: 1.32; }
 .item-sub { font-size: 12px; color: var(--tx2); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
 .item-sub svg { flex-shrink: 0; width: 11px; height: 11px; opacity: 0.55; }
@@ -112,6 +112,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .badge-IMM { background: var(--imm); } .badge-PA { background: var(--pa); } .badge-NT { background: var(--nt); } .badge-INK { background: var(--ink); } .badge-VND { background: var(--vnd); }
 .badge-PROP { background: var(--blu); } .badge-ACQUIRENTE { background: var(--rr); } .badge-PROFESSIONISTA { background: var(--prof); } .badge-LOCATORE { background: #7c3aed; } .badge-CONDUTTORE { background: #0e7490; }
 .badge-RR-attiva { background: var(--rr); } .badge-RR-in-attesa { background: var(--pa); } .badge-RR-proposta { background: var(--ink); } .badge-RR-ha-comprato { background: var(--vnd); } .badge-RR-non-attiva { background: var(--tx3); } .badge-RR-rogitato { background: #162a47; }
+.badge-collega { background: var(--coll); display: inline-flex; align-items: center; gap: 2px; }
 .tag { display: inline-block; background: transparent; color: var(--tx3); padding: 1px 7px; border-radius: var(--rp); border: 1px solid var(--bd2); font-size: 10px; font-weight: 500; }
 .fab { position: fixed; right: 18px; bottom: calc(var(--tab-h) + 20px + env(safe-area-inset-bottom)); width: 50px; height: 50px; border-radius: 50%; background: var(--acc); color: white; border: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(217,96,26,0.28); cursor: pointer; z-index: 50; }
 .fab:active { transform: scale(0.94); }
@@ -318,6 +319,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .ag-year-cell.festivo.today .ag-year-num { color: #fff; }
 .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
 .ag-timeline { display: flex; position: relative; padding-bottom: 30px; background-image: repeating-linear-gradient(to bottom, var(--bd2) 0px, var(--bd2) 1px, transparent 1px, transparent var(--ora-h)); background-repeat: repeat-y; background-size: 100% var(--ora-h); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: pan-y; }
+.ag-days.touching-longpress { touch-action: none; }
 .ag-hours-col { width: 48px; flex-shrink: 0; background: var(--bg); z-index: 2; }
 .ag-hour-label { height: var(--ora-h); display: flex; align-items: flex-start; justify-content: flex-end; padding: 3px 8px 0 0; font-size: 10px; font-weight: 500; color: var(--tx3); background: var(--bg); }
 .ag-days { flex: 1; display: flex; position: relative; z-index: 1; }
@@ -337,14 +339,14 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
 .filter-dropdown-overlay.open { display: flex; }
 .filter-dropdown { background: var(--card); border-radius: 14px; padding: 8px; max-width: 360px; width: 100%; max-height: 78dvh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.18); }
 .filter-dropdown h3 { font-size: 11px; font-weight: 700; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px 6px; }
-.filter-dropdown .opt { padding: 12px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.filter-dropdown .opt { padding: 12px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; touch-action: manipulation; }
 .filter-dropdown .opt.selected { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
 .filter-dropdown .opt:active { background: var(--bg2); }
 .ms-btn { width: 100%; background: var(--bg2); border: none; padding: 11px 12px; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 500; color: var(--tx); text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 8px; cursor: pointer; min-height: 42px; }
 .ms-btn svg { color: var(--tx3); flex-shrink: 0; }
 .ms-btn > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ms-btn > span.ph { color: var(--tx3); font-weight: 400; }
-.ms-opt { padding: 12px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.ms-opt { padding: 12px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; touch-action: manipulation; }
 .ms-opt.on { background: var(--blu-soft); color: var(--blu); font-weight: 600; }
 .ms-opt:active { background: var(--bg2); }
 .ms-opt svg { color: var(--blu); }
@@ -368,7 +370,7 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
   --bg: #0f0f11; --bg2: #1a1a1d; --card: #17171a;
   --tx: #e8e8ea; --tx2: #9a9aa0; --tx3: #6a6a72;
   --bd: #232327; --bd2: #2e2e33;
-  --fest: #f87171;
+  --fest: #f87171; --coll: #a78bfa;
 }
 :root[data-theme="dark"] .tabbar { background: rgba(15,15,17,0.9); }
 :root[data-theme="dark"] .modal-sheet { background: var(--bg); }
@@ -398,6 +400,7 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
         <button class="chip" data-filtro="NT">NT</button>
         <button class="chip" data-filtro="INK">INK</button>
         <button class="chip" data-filtro="VND">VND</button>
+        <button class="chip" data-filtro="GEST" id="chip-gest"></button>
         <button class="chip" data-filtro="COND" id="chip-cond"></button>
         <button class="chip" data-filtro="ZONE" id="chip-zone"></button>
       </div>
@@ -676,7 +679,8 @@ var ICON_PATHS = {
   uploadBox:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
   campanella:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>',
   foto:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
-  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'
 };
 
 function ico(n, s) { var p = ICON_PATHS[n]; if (!p) return ''; s = s || 16; return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;">' + p + '</svg>'; }
@@ -798,13 +802,14 @@ var Storage = {
           if (!d[k]) d[k] = [];
         });
         if (d.camere && !d.locali) d.locali = d.camere;
-        // migra mq: min/max -> due valori singoli calpestabili/commerciali
         if (typeof d.mqCalpestabili === 'undefined') d.mqCalpestabili = d.mq || d.mqMin || '';
         if (typeof d.mqCommerciali === 'undefined') d.mqCommerciali = d.mq || d.mqMax || d.mqMin || '';
       }
       if (!im.zone) im.zone = [];
       if (!Array.isArray(im.proprietari)) im.proprietari = [];
       im.proprietari.forEach(function(pr) { if (!pr.tipo) pr.tipo = 'Proprietà'; });
+      if (!im.gestitoDa) im.gestitoDa = 'me';
+      if (typeof im.collegaNome === 'undefined') im.collegaNome = '';
     });
     return db;
   },
@@ -920,30 +925,26 @@ function chiudiModal(fromBack) {
     try { history.back(); } catch(e) {}
   }
 }
+
+/* === DROPDOWN FILTRO — delegazione eventi globale === */
+window._filterDDBack = null;
 function apriFilterDD(titolo, opzioni, sel, cb) {
   var dd = document.getElementById('filter-dd');
   var h = '<h3>' + esc(titolo) + '</h3>';
-  opzioni.forEach(function(o, i) {
-    var s = o.value === sel ? ' selected' : '';
-    h += '<div class="opt' + s + '" data-idx="' + i + '">' + esc(o.label) + (s ? ' ' + ico('check',12) : '') + '</div>';
+  opzioni.forEach(function(o) {
+    var isSel = o.value === sel;
+    h += '<div class="opt' + (isSel ? ' selected' : '') + '" data-value="' + esc(String(o.value)) + '">' + esc(o.label) + (isSel ? ' ' + ico('check',12) : '') + '</div>';
   });
   dd.innerHTML = h;
   document.getElementById('filter-dd-overlay').classList.add('open');
   window._filterDDBack = cb;
-  dd.querySelectorAll('.opt').forEach(function(el) {
-    el.addEventListener('click', function(ev) {
-      ev.stopPropagation();
-      var idx = parseInt(el.getAttribute('data-idx'), 10);
-      var v = opzioni[idx].value;
-      var cbb = window._filterDDBack;
-      chiudiFilterDD();
-      if (cbb) { try { cbb(v === '' ? null : v); } catch(err) { console.error(err); } }
-    });
-  });
 }
-function chiudiFilterDD() { document.getElementById('filter-dropdown-overlay').classList.remove('open'); window._filterDDBack = null; }
+function chiudiFilterDD() {
+  document.getElementById('filter-dropdown-overlay').classList.remove('open');
+  window._filterDDBack = null;
+}
 
-/* ============ MULTI-SELECT DROPDOWN ============ */
+/* === MULTI-SELECT === */
 window._msSel = {};
 function ms(id, options, selected) {
   if (!Array.isArray(selected)) selected = selected ? [selected] : [];
@@ -961,28 +962,14 @@ function renderMsBtn(id) {
 function apriMs(id) {
   var s = window._msSel[id]; if (!s) return;
   var dd = document.getElementById('filter-dd');
-  var h = '';
-  s.opts.forEach(function(o, i) {
+  var h = '<h3>Seleziona</h3>';
+  s.opts.forEach(function(o) {
     var a = s.val.indexOf(o) >= 0;
-    h += '<div class="ms-opt' + (a ? ' on' : '') + '" data-idx="' + i + '">' + esc(o) + (a ? ico('check',12) : '') + '</div>';
+    h += '<div class="ms-opt' + (a ? ' on' : '') + '" data-mid="' + esc(id) + '" data-mval="' + esc(o) + '">' + esc(o) + (a ? ico('check',12) : '') + '</div>';
   });
-  h += '<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" id="ms-reset">Azzera</button><button class="btn btn-primary" id="ms-ok">OK</button></div>';
+  h += '<div class="btn-row" style="margin-top:12px;"><button type="button" class="btn btn-secondary ms-reset-btn" data-mid="' + esc(id) + '">Azzera</button><button type="button" class="btn btn-primary ms-ok-btn" data-mid="' + esc(id) + '">OK</button></div>';
   dd.innerHTML = h;
-  document.getElementById('filter-dd-overlay').classList.add('open');
-  dd.querySelectorAll('.ms-opt').forEach(function(el) {
-    el.addEventListener('click', function(ev) {
-      ev.stopPropagation();
-      var idx = parseInt(el.getAttribute('data-idx'), 10);
-      var opt = s.opts[idx];
-      var ii = s.val.indexOf(opt);
-      if (ii >= 0) s.val.splice(ii, 1); else s.val.push(opt);
-      apriMs(id);
-    });
-  });
-  var rEl = document.getElementById('ms-reset');
-  if (rEl) rEl.addEventListener('click', function(ev) { ev.stopPropagation(); s.val = []; apriMs(id); });
-  var okEl = document.getElementById('ms-ok');
-  if (okEl) okEl.addEventListener('click', function(ev) { ev.stopPropagation(); chiudiMs(id); });
+  document.getElementById('filter-dropdown-overlay').classList.add('open');
 }
 function chiudiMs(id) {
   document.getElementById('filter-dropdown-overlay').classList.remove('open');
@@ -991,6 +978,57 @@ function chiudiMs(id) {
 }
 function msVal(id) { return (window._msSel[id] && window._msSel[id].val) || []; }
 
+/* === DELEGAZIONE GLOBALE === */
+(function attachDDDelegate() {
+  function bind() {
+    var dd = document.getElementById('filter-dd');
+    if (!dd || dd._delegated) return;
+    dd._delegated = true;
+    dd.addEventListener('click', function(e) {
+      var opt = e.target.closest('.opt');
+      if (opt && opt.dataset.value !== undefined) {
+        e.stopPropagation();
+        var v = opt.dataset.value;
+        var cb = window._filterDDBack;
+        chiudiFilterDD();
+        if (cb) { try { cb(v === '' ? null : v); } catch(err) { console.error(err); } }
+        return;
+      }
+      var msOpt = e.target.closest('.ms-opt');
+      if (msOpt) {
+        e.stopPropagation();
+        var mid = msOpt.dataset.mid;
+        var mval = msOpt.dataset.mval;
+        var s = window._msSel[mid];
+        if (!s) return;
+        var ii = s.val.indexOf(mval);
+        if (ii >= 0) s.val.splice(ii, 1); else s.val.push(mval);
+        var isOn = s.val.indexOf(mval) >= 0;
+        msOpt.classList.toggle('on', isOn);
+        var svg = msOpt.querySelector('svg');
+        if (isOn && !svg) msOpt.insertAdjacentHTML('beforeend', ico('check', 12));
+        else if (!isOn && svg && svg.parentNode) svg.parentNode.removeChild(svg);
+        return;
+      }
+      var rs = e.target.closest('.ms-reset-btn');
+      if (rs) {
+        e.stopPropagation();
+        var rid = rs.dataset.mid;
+        if (window._msSel[rid]) { window._msSel[rid].val = []; apriMs(rid); }
+        return;
+      }
+      var ok = e.target.closest('.ms-ok-btn');
+      if (ok) {
+        e.stopPropagation();
+        chiudiMs(ok.dataset.mid);
+        return;
+      }
+    }, false);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
+
 /* ============ TEMA ============ */
 function getTema() { try { return localStorage.getItem('aranjo_theme') || 'auto'; } catch(e) { return 'auto'; } }
 function risolviTema(t) { if (t === 'dark') return 'dark'; if (t === 'light') return 'light'; return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
@@ -998,7 +1036,7 @@ function setTema(t) { try { localStorage.setItem('aranjo_theme', t); } catch(e) 
 function applyTema(t) { document.documentElement.setAttribute('data-theme', risolviTema(t)); updateTemaBtn(); }
 function updateTemaBtn() { var t = getTema(); ['auto','light','dark'].forEach(function(x) { var b = document.getElementById('th-' + x); if (b) b.classList.toggle('active', x === t); }); }
 
-/* ============ CHIP MULTI-SELECT (legacy) ============ */
+/* ============ CHIP MULTI-SELECT legacy ============ */
 window._chips = {};
 function chipMulti(id, options, selected, acc, cols) {
   if (!Array.isArray(selected)) selected = selected ? [selected] : [];
@@ -1042,7 +1080,6 @@ var RUOLI_LABEL = { 'PROP': 'Venditore', 'ACQUIRENTE': 'Acquirente', 'PROFESSION
 var DOCS_RICH = ['Planimetria','Visura Catastale','Atto di Provenienza','Accesso agli Atti','ACE/APE vecchio','APE nuovo'];
 var STATI_DOC = ['presente','mancante','da-richiedere','non-applicabile'];
 var STATI_DOC_LBL = { 'presente': 'Presente', 'mancante': 'Mancante', 'da-richiedere': 'Da richiedere', 'non-applicabile': 'N/A' };
-var TIPI_ATT = ['CHIAMATA','WHATSAPP','EMAIL','SOPRALLUOGO','VALUTAZIONE','PORTA A PORTA','VISITA','DOCUMENTI','NOTAIO','GEOMETRA','BANCA','RICHIESTA','ALTRO'];
 
 var TIPI_APP = [
   { sigla:'VAL', nome:'Valutazione', chi:'vend', icona:'righello', colore:'var(--pa)', sezione:'immobili', richiede:'NT_nv', esiti:[{id:'val-ok',label:'Valutato',tipo:'ok'},{id:'val-ko',label:'No',tipo:'ko'},{id:'val-richiama',label:'Richiamare',tipo:'neutral'}] },
@@ -1068,7 +1105,6 @@ var _prefillDataOra = null;
 var _prefillYmd = null;
 var immobileAperto = null;
 var personaAperta = null;
-var _notaCtx = null, _notaEntita = null;
 var map = null;
 var markersLayer = null;
 var fabMenuAperto = false;
@@ -1082,7 +1118,6 @@ function propsImmobile(im) { if (!im) return []; if (!Array.isArray(im.proprieta
 function propPrinc(im) { var ps = propsImmobile(im); return ps.find(function(x) { return x.principale; }) || ps[0] || null; }
 function titoloPersona(p) { if (!p) return ''; var n = nomeCogn(p).toUpperCase(); if ((p.ruoli||[]).indexOf('ACQUIRENTE')>=0) { var t = p.telefono ? ' ' + p.telefono : ''; return 'RR - ' + n + t; } if ((p.ruoli||[]).indexOf('PROFESSIONISTA')>=0) { var tp = TIPI_PROFESSIONISTA.find(function(x){return x.id===p.tipoProf;}) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length-1]; return ((tp.abbr ? tp.abbr + ' ' : '') + n).trim(); } return n; }
 function statoRR(p) { if (!p || (p.ruoli||[]).indexOf('ACQUIRENTE')<0) return null; var s = STATI_RR.find(function(s){return s.id===p.statoRR;}); return s || STATI_RR[0]; }
-function labelPersona(p) { if (!p) return ''; var r = p.ruoli||[]; if (r.indexOf('PROP')>=0) return 'Venditore'; if (r.indexOf('ACQUIRENTE')>=0) return 'Acquirente'; if (r.indexOf('PROFESSIONISTA')>=0) { var t = TIPI_PROFESSIONISTA.find(function(x){return x.id===p.tipoProf;}); return t ? t.label : 'Professionista'; } if (r.indexOf('LOCATORE')>=0) return 'Locatore'; if (r.indexOf('CONDUTTORE')>=0) return 'Conduttore'; return ''; }
 function condoDi(im) { if (im.villa) return null; return im.condominio || normInd(im.indirizzo); }
 function zoneEff(im) {
   if (im.villa) return im.zone || [];
@@ -1239,15 +1274,16 @@ function mostraView(id) {
 }
 
 /* ============ CHIPS FILTRI ============ */
-var statoFil = null, zonaFil = null, vistaCond = false, condoFil = null, qRic = '', mapFilStato = null, condoEspansi = {};
+var statoFil = null, zonaFil = null, vistaCond = false, condoFil = null, qRic = '', mapFilStato = null, condoEspansi = {}, gestFil = null;
 
 document.getElementById('search-immobili').addEventListener('input', function(e) { qRic = e.target.value.toLowerCase().trim(); renderListaImmobili(); });
 document.querySelectorAll('#chips-immobili .chip').forEach(function(c) {
   c.addEventListener('click', function() {
     var f = c.dataset.filtro;
-    if (f === 'tutti') { statoFil = null; zonaFil = null; vistaCond = false; condoFil = null; }
+    if (f === 'tutti') { statoFil = null; zonaFil = null; vistaCond = false; condoFil = null; gestFil = null; }
     else if (f === 'COND') { vistaCond = !vistaCond; condoFil = null; }
     else if (f === 'ZONE') { apriZone(); return; }
+    else if (f === 'GEST') { apriFiltroGestione(); return; }
     else statoFil = (statoFil === f) ? null : f;
     aggiornaChips(); renderListaImmobili();
   });
@@ -1260,14 +1296,23 @@ document.querySelectorAll('#map-chips .chip').forEach(function(c) {
     aggiornaMappa();
   });
 });
-function aggiornaChips() { document.querySelectorAll('#chips-immobili .chip').forEach(function(c) { var f = c.dataset.filtro; if (f === 'tutti') c.classList.toggle('active', !statoFil && !zonaFil && !vistaCond && !condoFil); else if (f === 'COND') c.classList.toggle('active', vistaCond); else if (f === 'ZONE') c.classList.toggle('active', !!zonaFil); else c.classList.toggle('active', statoFil === f); }); }
+function aggiornaChips() { document.querySelectorAll('#chips-immobili .chip').forEach(function(c) { var f = c.dataset.filtro; if (f === 'tutti') c.classList.toggle('active', !statoFil && !zonaFil && !vistaCond && !condoFil && !gestFil); else if (f === 'COND') c.classList.toggle('active', vistaCond); else if (f === 'ZONE') c.classList.toggle('active', !!zonaFil); else if (f === 'GEST') c.classList.toggle('active', !!gestFil); else c.classList.toggle('active', statoFil === f); }); }
+
+function apriFiltroGestione() {
+  var opts = [
+    { value:'', label:'Tutti' },
+    { value:'me', label:'Solo miei' },
+    { value:'collega', label:'Solo colleghi' }
+  ];
+  apriFilterDD('Gestione', opts, gestFil || '', function(v) { gestFil = v; aggiornaChips(); renderListaImmobili(); });
+}
 
 function matchRic(im, q) {
   if (!q) return true;
   var co = condoDi(im);
   var det = (co && DB.condomini && DB.condomini[co]) || {};
   var props = propsImmobile(im).map(function(x) { return nomeCogn(x.persona); });
-  var c = [im.indirizzo, im.cognomeNome, im.telefono, im.note, im.condominio, im.citofono, zoneEff(im).join(' '), det.amministratore && det.amministratore.nome, det.amministratore && det.amministratore.telefono].concat(props);
+  var c = [im.indirizzo, im.cognomeNome, im.telefono, im.note, im.condominio, im.citofono, im.collegaNome, zoneEff(im).join(' '), det.amministratore && det.amministratore.nome, det.amministratore && det.amministratore.telefono].concat(props);
   return c.some(function(x) { return (x||'').toLowerCase().indexOf(q) >= 0; });
 }
 function bannerFiltri() {
@@ -1275,10 +1320,12 @@ function bannerFiltri() {
   if (condoFil) p.push(condoFil);
   if (statoFil) p.push(statoFil);
   if (zonaFil) p.push(zonaFil);
+  if (gestFil === 'me') p.push('Miei');
+  if (gestFil === 'collega') p.push('Colleghi');
   if (!p.length) { c.innerHTML = ''; return; }
   c.innerHTML = '<div class="card" style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--blu);font-weight:500;"><span>' + p.join(' · ') + '</span><button style="background:transparent;border:none;color:var(--blu);cursor:pointer;padding:0;" onclick="rimuoviFiltri()">' + ico('x',12) + '</button></div>';
 }
-function rimuoviFiltri() { condoFil = null; zonaFil = null; if (!vistaCond) statoFil = null; aggiornaChips(); renderListaImmobili(); }
+function rimuoviFiltri() { condoFil = null; zonaFil = null; gestFil = null; if (!vistaCond) statoFil = null; aggiornaChips(); renderListaImmobili(); }
 function renderListaImmobili() {
   var c = document.getElementById('lista-immobili'); if (!c) return;
   if (vistaCond) { bannerFiltri(); renderListaCondomini(c); return; }
@@ -1286,6 +1333,8 @@ function renderListaImmobili() {
   if (condoFil) l = l.filter(function(i) { return condoDi(i) === condoFil; });
   if (statoFil) l = l.filter(function(i) { return i.stato === statoFil; });
   if (zonaFil) l = l.filter(function(i) { return zoneEff(i).indexOf(zonaFil) >= 0; });
+  if (gestFil === 'me') l = l.filter(function(i){ return (i.gestitoDa||'me') === 'me'; });
+  if (gestFil === 'collega') l = l.filter(function(i){ return i.gestitoDa === 'collega'; });
   if (qRic) l = l.filter(function(i) { return matchRic(i, qRic); });
   bannerFiltri();
   if (!l.length) { c.innerHTML = '<div class="empty">' + ico('casa',28) + (DB.immobili.length === 0 ? 'Nessun immobile' : 'Nessun risultato') + '</div>'; return; }
@@ -1342,6 +1391,7 @@ function cardImmobile(im, compact) {
   var tel = prop2 && prop2.persona.telefono ? prop2.persona.telefono : im.telefono;
   var h2 = '<div class="item-card" onclick="apriScheda(\'' + im.id + '\')"><div class="item-row"><div class="item-title">' + esc(titoloImmobile(im)) + '</div>';
   if (im.villa) h2 += '<span style="font-size:10px;color:var(--ink);font-weight:600;">VILLA</span>';
+  if (im.gestitoDa === 'collega') h2 += '<span class="badge badge-collega" style="font-size:8px;">COL.</span>';
   h2 += '<span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>';
   if (im.stato === 'IMM' && im.citofono) h2 += '<div class="item-sub">' + ico('campanello',11) + ' ' + esc(im.citofono) + '</div>';
   if (tel && im.stato !== 'IMM') h2 += '<div class="item-sub">' + ico('telefono',11) + ' ' + esc(tel) + '</div>';
@@ -1391,7 +1441,6 @@ function apriNuovoAppuntamentoGlobale() {}
 function apriNuovoAppuntamentoImmobile() {}
 function apriNuovoAppuntamentoPersona() {}
 function apriSelezioneTipoApp() {}
-function apriNotaRapida() {}
 function apriNuovaChiamata() {}
 function apriNuovoArticolo() {}
 function apriNuovoRapportino() {}
@@ -1446,6 +1495,7 @@ function aggiornaInfoSistema() {
 function applicaIcone() {
   var cz = document.getElementById('chip-zone'); if (cz) cz.innerHTML = ico('pin',11) + ' ZONE';
   var cc = document.getElementById('chip-cond'); if (cc) cc.innerHTML = iconaCondo(11) + ' COND';
+  var cg = document.getElementById('chip-gest'); if (cg) cg.innerHTML = ico('briefcase',11) + ' GEST';
   var a1 = document.getElementById('chip-ptab-acq'); if (a1) a1.innerHTML = 'Acquirenti';
   var a2 = document.getElementById('chip-ptab-prop'); if (a2) a2.innerHTML = 'Venditori';
   var a3 = document.getElementById('chip-ptab-loc'); if (a3) a3.innerHTML = 'Locatori';
@@ -1474,7 +1524,7 @@ function applicaIcone() {
 console.log('[ARANJO] P1 ok');
 
 /* ============================================================
-   PARTE 2 — PERSONE + RICHIESTA
+   PARTE 2 — PERSONE + RICHIESTA + MATCHING
    ============================================================ */
 var pTab = 'acquirente', pStatoRR = null, pTipoProf = null, pQ = '';
 
@@ -1608,7 +1658,6 @@ function salvaNuovaPersona() {
 function apriSchedaPersona(id) {
   var p = trovaPersona(id); if (!p) return;
   personaAperta = id;
-  var oggi = new Date(); oggi.setHours(0,0,0,0);
   var tel = p.telefono || p.telefono2;
   var h = '<div class="scheda-top">';
   h += '<div class="top-badges">';
@@ -1642,7 +1691,7 @@ function apriSchedaPersona(id) {
     h += collapsible('p_req', ico('target',13) + ' Richiesta', body + '<button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaRichiesta(\'' + p.id + '\')">' + ico('modifica',14) + ' Modifica</button>', rows.length ? rows.length + ' criteri' : null);
 
     try {
-      var mm = matchAcquirente(p).filter(function(m){ return m.score >= 40; });
+      var mm = matchAcquirente(p).filter(function(m){ return m.score >= 30; });
       if (mm.length) {
         var mb = '';
         mm.slice(0, 10).forEach(function(m) {
@@ -1763,7 +1812,7 @@ function salvaCambiaRuoli() {
   Storage.save(DB); renderPersone(); apriSchedaPersona(p.id);
 }
 
-/* ============ LINK IMMOBILI (persona → immobili) ============ */
+/* ============ LINK IMMOBILI ============ */
 function apriLinkImmobili(pid) {
   var p = trovaPersona(pid); if (!p) return;
   var linked = DB.immobili.filter(function(i){ return (i.proprietari||[]).some(function(pr){ return pr.personaId === pid; }); });
@@ -1788,7 +1837,6 @@ function unlinkImmobile(pid, iid) {
   Storage.save(DB); apriLinkImmobili(pid);
 }
 function apriPickerImmobileLink(pid) {
-  var p = trovaPersona(pid); if (!p) return;
   var linkedIds = {};
   DB.immobili.forEach(function(i){ (i.proprietari||[]).forEach(function(pr){ if (pr.personaId === pid) linkedIds[i.id] = 1; }); });
   var h = '<input type="search" class="search-bar" id="lk-search" placeholder="Cerca..." style="margin-bottom:10px;"><div id="lk-ris"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriLinkImmobili(\'' + pid + '\')">Indietro</button></div>';
@@ -1825,7 +1873,7 @@ function linkImmobile(pid, iid) {
 function apriNuovoImmobilePerPersona(pid) {
   var p = trovaPersona(pid); if (!p) return;
   var ad = new Date().toISOString();
-  var im = { id: uid(), stato: 'IMM', indirizzo: '', z: 1, villa: false, citofono: '', cognomeNome: nomeCogn(p).toUpperCase(), telefono: p.telefono||'', proprietari: [{ personaId: pid, quota: '', principale: true, note: '', tipo: 'Proprietà' }], condominio: '', sottotipo: '', note: '', zone: [], dettagli: {}, catasto: {}, procura: { presente: false }, ipoteca: { presente: false }, storicoPrezzo: [], documenti: {}, attivita: [], foto: [], createdAt: ad, updatedAt: ad };
+  var im = { id: uid(), stato: 'IMM', indirizzo: '', z: 1, villa: false, citofono: '', cognomeNome: nomeCogn(p).toUpperCase(), telefono: p.telefono||'', proprietari: [{ personaId: pid, quota: '', principale: true, note: '', tipo: 'Proprietà' }], condominio: '', sottotipo: '', note: '', zone: [], dettagli: {}, catasto: {}, procura: { presente: false }, ipoteca: { presente: false }, storicoPrezzo: [], documenti: {}, attivita: [], foto: [], gestitoDa: 'me', collegaNome: '', createdAt: ad, updatedAt: ad };
   DB.immobili.push(im);
   Storage.save(DB);
   apriModificaImmobile(im.id);
@@ -1852,7 +1900,7 @@ function salvaNuovoImmobileRapido() {
   if (personaAperta) apriLinkImmobili(personaAperta); else apriScheda(im.id);
 }
 
-/* ============ GESTIONE PROPRIETARI (immobile → persone) ============ */
+/* ============ GESTIONE PROPRIETARI ============ */
 var TIPI_PROPRIETARIO = ['Proprietà','Usufrutto','Nudo proprietario','Comproprietà','Superficie'];
 function apriGestioneProprietari(iid) {
   var im = DB.immobili.find(function(x){return x.id===iid;}); if (!im) return;
@@ -2026,92 +2074,117 @@ function salvaRichiesta(pid) {
   Storage.save(DB); renderPersone(); apriSchedaPersona(pid);
 }
 
-/* ============ MATCHING ============ */
+/* ============ MATCHING (riscritto) ============ */
 function parseNum(s) { if (s === undefined || s === null || s === '') return null; var n = parseFloat(String(s).replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',','.')); return isNaN(n) ? null : n; }
 function critReq(r, k) { return (r.requisiti && r.requisiti[k]) || 'preferito'; }
-function overlapScore(a, b) {
-  if (!a || !a.length) return { ok: true, tot: 0, ok2: 0 };
-  if (!b || !b.length) return { ok: false, tot: a.length, ok2: 0 };
-  var ok = a.filter(function(x) { return b.some(function(y) { return String(y).toLowerCase() === String(x).toLowerCase(); }); });
-  return { ok: ok.length > 0, tot: a.length, ok2: ok.length };
-}
-function numOk(numRichiesti, immVal) {
-  if (!numRichiesti || !numRichiesti.length) return { ok: true, tot: 0, ok2: 0 };
-  var iv = parseNum(immVal); if (iv === null) return { ok: true, tot: 0, ok2: 0 };
-  var ok = numRichiesti.filter(function(x) { var n = parseNum(x); return n !== null && iv >= n; });
-  return { ok: ok.length > 0, tot: numRichiesti.length, ok2: ok.length };
-}
-function siNoOk(richiesto, immVal) {
-  if (!richiesto || richiesto === 'Indifferente') return { ok: true, skip: true };
-  if (richiesto === 'Meglio') return { ok: true, soft: true };
-  var val = String(immVal || '').toLowerCase();
-  if (richiesto === 'Sì') return { ok: val === 'sì' || val === 'si' };
-  if (richiesto === 'No') return { ok: val !== 'sì' && val !== 'si' };
-  return { ok: true, skip: true };
-}
 function calcolaMatch(im, per) {
   var r = per.richiesta || {};
   var d = im.dettagli || {};
-  var totObb = 0, okObb = 0, totPref = 0, okPref = 0;
-  function check(k, val) {
-    var tipo = critReq(r, k);
-    if (tipo === 'indifferente' || val.skip) return;
-    var peso = tipo === 'obbligatorio' ? 'obb' : 'pref';
-    var o = val.ok;
-    if (peso === 'obb') { totObb++; if (o) okObb++; }
-    else { totPref++; if (o) okPref++; }
+  function isArr(v) { return Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []); }
+  function ov(a, b) {
+    if (!a.length) return null;
+    if (!b.length) return null;
+    for (var i = 0; i < a.length; i++)
+      for (var j = 0; j < b.length; j++)
+        if (String(a[i]).toLowerCase().trim() === String(b[j]).toLowerCase().trim()) return true;
+    return false;
   }
+  function reqOf(k) { return (r.requisiti && r.requisiti[k]) || 'preferito'; }
+  var checks = [];
+  function add(label, ok, key, weight) {
+    if (ok === null || ok === undefined) return;
+    var tipo = reqOf(key);
+    if (tipo === 'indifferente') return;
+    checks.push({ label: label, ok: !!ok, obb: tipo === 'obbligatorio', w: weight || 1 });
+  }
+  // Budget
   if (r.budget) {
     var b = parseNum(r.budget);
-    var p = parseNum(im.prezzo || (im.storicoPrezzo && im.storicoPrezzo.length ? im.storicoPrezzo[im.storicoPrezzo.length-1].prezzo : ''));
-    check('budget', { ok: b === null || p === null || p <= b });
+    var p = parseNum(im.prezzo) || parseNum(im.storicoPrezzo && im.storicoPrezzo.length ? im.storicoPrezzo[im.storicoPrezzo.length-1].prezzo : '');
+    add('budget', (b === null || p === null) ? true : p <= b, 'budget', 15);
   }
-  if (r.tipologia && r.tipologia.length) {
-    var imTips = (d.tipologia && (Array.isArray(d.tipologia) ? d.tipologia : [d.tipologia])) || [im.sottotipo||''];
-    check('tipologia', { ok: overlapScore(r.tipologia, imTips).ok });
-  }
-  if (r.statoConservativo && r.statoConservativo.length) {
-    check('statoConservativo', { ok: overlapScore(r.statoConservativo, [d.statoConservativo||'']).ok });
-  }
+  // Tipologia
+  if (r.tipologia && r.tipologia.length) add('tipologia', ov(r.tipologia, isArr(d.tipologia)), 'tipologia', 12);
+  // Zona
+  if (r.zona && r.zona.length) add('zona', ov(r.zona, isArr(zoneEff(im))), 'zona', 12);
+  // Mq commerciali
   if (r.mqMin || r.mqMax) {
-    var propSize = parseNum(d.mqCommerciali) || parseNum(d.mq) || parseNum(d.mqCalpestabili) || parseNum(d.mqMin);
     var mn = parseNum(r.mqMin), mx = parseNum(r.mqMax);
-    var ok = true;
-    if (propSize !== null) {
-      if (mn !== null && propSize < mn) ok = false;
-      if (mx !== null && propSize > mx) ok = false;
+    var v = parseNum(d.mqCommerciali) || parseNum(d.mq) || parseNum(d.mqMin);
+    if (v !== null) {
+      var okMq = true;
+      if (mn !== null && v < mn) okMq = false;
+      if (mx !== null && v > mx) okMq = false;
+      add('mq', okMq, 'mq', 10);
     }
-    check('mq', { ok: ok });
   }
-  if (r.locali && r.locali.length) check('locali', numOk(r.locali, d.locali || d.camere));
-  if (r.bagni && r.bagni.length) check('bagni', numOk(r.bagni, d.bagni));
-  if (r.piano && r.piano.length) check('piano', { ok: overlapScore(r.piano, [d.piano||'']).ok });
-  if (r.pianoTipo && r.pianoTipo.length) check('pianoTipo', { ok: overlapScore(r.pianoTipo, Array.isArray(d.pianoNum) ? d.pianoNum : (d.pianoNum ? [String(d.pianoNum)] : [])).ok });
+  // Locali
+  if (r.locali && r.locali.length) add('locali', ov(r.locali, isArr(d.locali || d.camere)), 'locali', 6);
+  // Bagni
+  if (r.bagni && r.bagni.length) add('bagni', ov(r.bagni, isArr(d.bagni)), 'bagni', 4);
+  // Stato conservativo
+  if (r.statoConservativo && r.statoConservativo.length) add('stato', ov(r.statoConservativo, isArr(d.statoConservativo)), 'statoConservativo', 8);
+  // Piano
+  if (r.piano && r.piano.length) add('piano', ov(r.piano, isArr(d.piano)), 'piano', 3);
+  if (r.pianoTipo && r.pianoTipo.length) add('pianoNum', ov(r.pianoTipo, isArr(d.pianoNum)), 'pianoTipo', 3);
+  // Classe energetica
   if (r.classeEnergetica && r.classeEnergetica.length) {
-    var immCE = String((Array.isArray(d.classeEnergetica) ? d.classeEnergetica[0] : d.classeEnergetica)||'').toUpperCase();
-    var okCE = r.classeEnergetica.some(function(fascia) {
-      if (fascia.indexOf('Alta') >= 0) return ['A4','A3','A2','A1','A'].indexOf(immCE) >= 0;
-      if (fascia.indexOf('Media') >= 0) return ['A','B','C'].indexOf(immCE) >= 0;
-      if (fascia.indexOf('Bassa') >= 0) return ['D','E','F','G'].indexOf(immCE) >= 0;
-      return true;
-    });
-    check('classeEnergetica', { ok: okCE });
+    var imCE = String(isArr(d.classeEnergetica)[0] || '').toUpperCase();
+    if (imCE) {
+      var okCE = r.classeEnergetica.some(function(f) {
+        if (f.indexOf('Alta') >= 0) return ['A4','A3','A2','A1','A'].indexOf(imCE) >= 0;
+        if (f.indexOf('Media') >= 0) return ['A','B','C'].indexOf(imCE) >= 0;
+        if (f.indexOf('Bassa') >= 0) return ['D','E','F','G'].indexOf(imCE) >= 0;
+        return true;
+      });
+      add('classeEnergetica', okCE, 'classeEnergetica', 5);
+    }
   }
+  // Riscaldamento / infissi / vista / zonaCaratt / cucina
+  if (r.riscaldamento && r.riscaldamento !== 'Indifferente' && d.riscaldamento) {
+    add('riscaldamento', String(d.riscaldamento).toLowerCase() === String(r.riscaldamento).toLowerCase(), 'riscaldamento', 2);
+  }
+  if (r.riscaldamentoTipo && r.riscaldamentoTipo.length) add('riscaldamentoTipo', ov(r.riscaldamentoTipo, isArr(d.riscaldamentoTipo)), 'riscaldamentoTipo', 2);
+  if (r.infissi && r.infissi.length) add('infissi', ov(r.infissi, isArr(d.infissi)), 'infissi', 2);
+  if (r.vista && r.vista.length) add('vista', ov(r.vista, isArr(d.vista)), 'vista', 2);
+  if (r.zonaCaratt && r.zonaCaratt.length) add('zonaCaratt', ov(r.zonaCaratt, isArr(d.zonaCaratt)), 'zonaCaratt', 2);
+  if (r.cucina && r.cucina.length) add('cucina', ov(r.cucina, isArr(d.cucina)), 'cucina', 2);
+  // Dotazioni
   ['ascensore','balcone','terrazzo','giardino','box','postoAuto','cantina'].forEach(function(k) {
-    if (r[k]) { var res = siNoOk(r[k], d[k]); if (!res.skip) check(k, res); }
+    var req = r[k];
+    if (!req || req === 'Indifferente') return;
+    var imSi = d[k] === 'Sì';
+    var ok;
+    if (req === 'Meglio') ok = true;
+    else if (req === 'Sì') ok = imSi;
+    else if (req === 'No') ok = !imSi;
+    else ok = true;
+    var w = (k === 'box' || k === 'ascensore') ? 4 : 2;
+    add(k, ok, k, w);
   });
-  if (r.boxTipo && (r.box === 'Sì' || r.box === 'Meglio')) check('boxTipo', { ok: String(d.boxTipo||'').toLowerCase() === String(r.boxTipo).toLowerCase() });
-  if (r.riscaldamento && r.riscaldamento !== 'Indifferente') check('riscaldamento', { ok: String(d.riscaldamento||'').toLowerCase() === String(r.riscaldamento).toLowerCase() });
-  if (r.zona && r.zona.length) check('zona', { ok: overlapScore(r.zona, zoneEff(im)).ok });
-  ['riscaldamentoTipo','infissi','vista','zonaCaratt','cucina'].forEach(function(k) {
-    if (r[k] && r[k].length) check(k, { ok: overlapScore(r[k], d[k]||[]).ok });
-  });
-
+  if (r.boxTipo && (r.box === 'Sì' || r.box === 'Meglio') && d.boxTipo) {
+    add('boxTipo', String(d.boxTipo).toLowerCase() === String(r.boxTipo).toLowerCase(), 'boxTipo', 2);
+  }
+  // Score
+  if (!checks.length) return { score: 0 };
+  var obbAll = checks.filter(function(c){ return c.obb; });
+  var prefAll = checks.filter(function(c){ return !c.obb; });
+  var obbOk = obbAll.filter(function(c){ return c.ok; }).length;
+  var prefOk = prefAll.filter(function(c){ return c.ok; }).length;
   var score;
-  if (totObb > 0 && okObb < totObb) score = Math.round((okObb / totObb) * 40);
-  else { var base = totObb > 0 ? 60 : 40; var parte = totPref > 0 ? (okPref / totPref) * 40 : 20; score = Math.round(base + (totObb > 0 ? 0 : 20) + parte); }
-  if (score > 100) score = 100;
-  return { score: score };
+  if (obbAll.length > 0) {
+    var ratio = obbOk / obbAll.length;
+    if (ratio < 1) {
+      score = Math.round(ratio * 50 * 0.8 + (prefAll.length ? (prefOk / prefAll.length) * 10 : 0));
+    } else {
+      var pr = prefAll.length > 0 ? prefOk / prefAll.length : 1;
+      score = Math.round(60 + pr * 40);
+    }
+  } else {
+    var pr2 = prefAll.length > 0 ? prefOk / prefAll.length : 0.5;
+    score = Math.round(pr2 * 100);
+  }
+  return { score: Math.min(100, Math.max(0, score)) };
 }
 function matchImmobile(im) {
   var acq = DB.persone.filter(function(p){ return (p.ruoli||[]).indexOf('ACQUIRENTE') >= 0; });
@@ -2128,6 +2201,9 @@ function matchAcquirente(per) {
 function apriNuovoAppuntamentoPersona(pid) { var p = trovaPersona(pid); apriSelezioneTipoApp(null, p); }
 
 console.log('[ARANJO] P2 ok');
+  
+<script>
+'use strict';
 
 /* ============================================================
    PARTE 3 — ATTIVITÀ + AGENDA + LONG-PRESS
@@ -2363,7 +2439,7 @@ function apriFormApp(im, per, tipo) {
   if (_prefillDataOra) { iD = new Date(_prefillDataOra); _prefillDataOra = null; }
   else iD = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ad.getHours(), 0);
   var fD = new Date(iD.getTime() + 60 * 60 * 1000);
-  var lu = im ? im.indirizzo : (per && per.indirizzoUff ? per.indirizzoUff : '');
+  var lu = im ? im.indirizzo : '';
   var h = '';
   if (im) h += '<div class="card" style="padding:10px 12px;margin-bottom:8px;"><div style="font-size:13px;font-weight:600;">' + esc(titoloImmobile(im)) + '</div></div>';
   if (per) h += '<div class="card" style="padding:10px 12px;margin-bottom:8px;"><div style="font-size:13px;font-weight:600;">' + esc(titoloPersona(per)) + '</div></div>';
@@ -2497,7 +2573,6 @@ function salvaModApp(id) {
 
 /* ============ AGENDA ============ */
 var GIORNI_B = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-var MESI_B = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
 var MESI_L = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 var GIORNI_L = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
 
@@ -2574,6 +2649,9 @@ function renderAgendaPage() {
   setTimeout(scrollMM, 60); setTimeout(scrollY, 60); setTimeout(scrollY, 300);
   attachGestures();
 }
+
+/* === LONG-PRESS AGENDA — stile Apple, corretto === */
+var lpCurrentYmd = null, lpCurrentOra = null;
 function attachGestures() {
   var el = document.getElementById('agenda-page-content');
   if (!el || el._gesturesAtt) return;
@@ -2582,27 +2660,34 @@ function attachGestures() {
   var tSX = 0, tSY = 0, tST = 0;
   var swipeFired = false, twoF = false;
   var lpTimer = null, lpStart = null, lpFired = false;
-  var lpPreview = null;
-  var lpSlot = null;
+  var lpPreview = null, lpSlot = null;
+
   function dist(t1, t2) { return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY); }
   function cancelLP() {
     if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; }
     if (lpPreview) { try { lpPreview.remove(); } catch(e) {} lpPreview = null; }
     if (lpSlot) { try { lpSlot.remove(); } catch(e) {} lpSlot = null; }
+    lpCurrentYmd = null; lpCurrentOra = null;
+    var tl = el.querySelector('.ag-days');
+    if (tl) tl.classList.remove('touching-longpress');
   }
-  function calcOraDa(clientY) {
-    var col = el.querySelector('.ag-day-col');
+  function getDayColAt(x, y) {
+    var node = document.elementFromPoint(x, y);
+    while (node && node !== document.body) {
+      if (node.classList && node.classList.contains('ag-day-col')) return node;
+      node = node.parentNode;
+    }
+    return null;
+  }
+  function updateLp(clientX, clientY) {
+    var col = getDayColAt(clientX, clientY);
     if (!col) return null;
-    var r = col.getBoundingClientRect();
-    var yIn = clientY - r.top;
+    var rect = col.getBoundingClientRect();
+    var yIn = clientY - rect.top;
     var minTot = Math.round((yIn / ORA_H) * 60 / 5) * 5;
     if (minTot < 0) minTot = 0;
-    if (minTot > 23*60 + 55) minTot = 23*60 + 55;
-    return { h: Math.floor(minTot / 60), m: minTot % 60, yIn: yIn };
-  }
-  function updateLp(clientY) {
-    var or = calcOraDa(clientY);
-    if (!or) return null;
+    if (minTot > 23 * 60 + 55) minTot = 23 * 60 + 55;
+    var or = { h: Math.floor(minTot / 60), m: minTot % 60, ymd: col.dataset.ymd };
     if (!lpPreview) {
       lpPreview = document.createElement('div');
       lpPreview.className = 'ag-longpress-preview';
@@ -2613,16 +2698,20 @@ function attachGestures() {
     endM = endM % 60;
     if (endH > 23) { endH = 23; endM = 59; }
     lpPreview.textContent = pad2(or.h) + ':' + pad2(or.m) + ' – ' + pad2(endH) + ':' + pad2(endM);
-    lpPreview.style.left = '50%';
-    lpPreview.style.top = Math.max(60, clientY - 40) + 'px';
-    var col = el.querySelector('.ag-day-col');
-    if (col) {
-      if (!lpSlot) { lpSlot = document.createElement('div'); lpSlot.className = 'ag-lp-slot'; col.appendChild(lpSlot); }
-      lpSlot.style.top = (or.h * ORA_H + or.m * (ORA_H/60)) + 'px';
-      lpSlot.style.height = ORA_H + 'px';
+    lpPreview.style.left = clientX + 'px';
+    lpPreview.style.top = Math.max(60, clientY - 46) + 'px';
+    if (lpSlot && lpSlot.parentNode !== col) { try { lpSlot.remove(); } catch(e) {} lpSlot = null; }
+    if (!lpSlot) {
+      lpSlot = document.createElement('div');
+      lpSlot.className = 'ag-lp-slot';
+      col.appendChild(lpSlot);
     }
+    lpSlot.style.top = (or.h * ORA_H + or.m * (ORA_H / 60)) + 'px';
+    lpSlot.style.height = ORA_H + 'px';
+    lpCurrentYmd = or.ymd; lpCurrentOra = or;
     return or;
   }
+
   el.addEventListener('touchstart', function(e) {
     if (e.touches.length === 2) { twoF = true; startDist = dist(e.touches[0], e.touches[1]); pinchSwitch = false; cancelLP(); }
     else if (e.touches.length === 1) {
@@ -2630,24 +2719,31 @@ function attachGestures() {
       if (agState === 'day' || agState === 'week') {
         lpFired = false;
         lpStart = { x: tSX, y: tSY };
+        var sx0 = tSX, sy0 = tSY;
         lpTimer = setTimeout(function() {
           lpTimer = null;
           if (swipeFired || twoF || lpFired) return;
+          var col = getDayColAt(sx0, sy0);
+          if (!col) return;
           lpFired = true;
-          updateLp(tSY);
+          var tl = el.querySelector('.ag-days');
+          if (tl) tl.classList.add('touching-longpress');
+          updateLp(sx0, sy0);
           if (navigator.vibrate) { try { navigator.vibrate(25); } catch(e) {} }
-        }, 450);
+        }, 420);
       }
     }
   }, { passive: true });
+
   el.addEventListener('touchmove', function(e) {
     if (lpTimer && lpStart && e.touches.length >= 1) {
       var mdx = Math.abs(e.touches[0].clientX - lpStart.x);
       var mdy = Math.abs(e.touches[0].clientY - lpStart.y);
       if (mdx > 8 || mdy > 8) cancelLP();
     }
-    if (lpPreview && lpFired && e.touches.length === 1) {
-      updateLp(e.touches[0].clientY);
+    if (lpFired && lpPreview && e.touches.length === 1) {
+      if (e.cancelable) e.preventDefault();
+      updateLp(e.touches[0].clientX, e.touches[0].clientY);
       return;
     }
     if (e.touches.length === 2 && twoF && startDist > 0 && !pinchSwitch) {
@@ -2665,19 +2761,15 @@ function attachGestures() {
         setTimeout(function(){ shiftAgPeriod(dx < 0 ? 1 : -1); }, 60);
       }
     }
-  }, { passive: true });
+  }, { passive: false });
+
   el.addEventListener('touchend', function(e) {
     if (e.touches.length < 2) { startDist = 0; pinchSwitch = false; twoF = false; }
     if (e.touches.length === 0) {
       swipeFired = false;
       if (lpFired) {
-        var or = calcOraDa(tSY);
-        var ymd2 = agDayYmd || ymd(new Date());
-        if (!agDayYmd && agState === 'week') {
-          var col = document.elementFromPoint(tSX, tSY);
-          var dc = col ? col.closest('.ag-day-col') : null;
-          if (dc && dc.dataset.ymd) ymd2 = dc.dataset.ymd;
-        }
+        var ymd2 = lpCurrentYmd;
+        var or = lpCurrentOra;
         cancelLP();
         if (ymd2 && or) {
           var dt2 = new Date(ymd2 + 'T' + pad2(or.h) + ':' + pad2(or.m) + ':00');
@@ -2687,8 +2779,13 @@ function attachGestures() {
       } else cancelLP();
     }
   }, { passive: true });
-  el.addEventListener('touchcancel', function() { startDist = 0; pinchSwitch = false; twoF = false; swipeFired = false; cancelLP(); }, { passive: true });
+
+  el.addEventListener('touchcancel', function() {
+    startDist = 0; pinchSwitch = false; twoF = false; swipeFired = false;
+    cancelLP();
+  }, { passive: true });
 }
+
 function weekStripHtml() {
   var b = agDayYmd ? daYmd(agDayYmd) : new Date();
   var dw = b.getDay(); var df = dw === 0 ? -6 : 1 - dw;
@@ -2752,7 +2849,7 @@ function htmlWeek() {
 }
 function htmlDay() {
   var b = agDayYmd ? daYmd(agDayYmd) : new Date();
-  var y = ymd(b); var it_ = y === ymd(new Date()); var now = new Date();
+  var y = ymd(b); var it_ = y === ymd(new Date());
   var h = '<div class="ag-timeline"><div class="ag-hours-col">';
   for (var hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + '</div>';
   h += '</div><div class="ag-days"><div class="ag-day-col" data-ymd="' + y + '">';
@@ -2764,7 +2861,7 @@ function htmlDay() {
 }
 
 /* ============ PLANNING ============ */
-var planYmd = null;
+var planYmd = null, planPageYmd = null;
 function currentPlanYmd() { return planYmd || ymd(new Date()); }
 function cambiaGiornoPlanning(d) { if (d === 0) planYmd = null; else { var c = daYmd(currentPlanYmd()); c.setDate(c.getDate() + d); planYmd = ymd(c); } renderPlanning(); }
 function planPerData(y) {
@@ -2790,23 +2887,6 @@ function renderPlanning() {
   }
   c.innerHTML = h;
 }
-function apriNuovaPianificazioneLibera(y) {
-  var yu = y || _prefillYmd || ymd(new Date()); if (_prefillYmd) _prefillYmd = null;
-  var h = '<div class="form-group">';
-  h += '<div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="pl-data" value="' + yu + '"></div>';
-  h += '<div class="form-row"><label class="form-label">Ora</label><input class="form-input" type="time" id="pl-ora"></div>';
-  h += '<div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="pl-testo"></textarea></div></div>';
-  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaPianLib()">Salva</button></div>';
-  apriModal('Ufficio', h);
-}
-function salvaPianLib() {
-  var d = (document.getElementById('pl-data')||{}).value; var o = (document.getElementById('pl-ora')||{}).value; var t = ((document.getElementById('pl-testo')||{}).value||'').trim();
-  if (!d || !t) { alert('Data e testo obbligatori'); return; }
-  if (!DB.pianificazioni) DB.pianificazioni = [];
-  var ad = new Date().toISOString();
-  DB.pianificazioni.push({ id: uid(), data: d, ora: o || '', testo: t, completata: false, createdAt: ad, updatedAt: ad });
-  Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planPageYmd) setTimeout(renderPlanningPage, 100);
-}
 function apriAzioniPian(id) {
   var p = (DB.pianificazioni||[]).find(function(x){return x.id===id;}); if (!p) return;
   var h = '<div class="card" style="padding:12px;"><div style="font-size:14px;">' + esc(p.testo) + '</div></div>';
@@ -2819,7 +2899,6 @@ function apriAzioniPian(id) {
 function complPian(id) { var p = (DB.pianificazioni||[]).find(function(x){return x.id===id;}); if (!p) return; p.completata = true; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planPageYmd) setTimeout(renderPlanningPage, 100); }
 function riapriPian(id) { var p = (DB.pianificazioni||[]).find(function(x){return x.id===id;}); if (!p) return; p.completata = false; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planPageYmd) setTimeout(renderPlanningPage, 100); }
 function elimPian(id) { var p = (DB.pianificazioni||[]).find(function(x){return x.id===id;}); if (!p) return; if (!confirm('Eliminare?')) return; DB.pianificazioni = DB.pianificazioni.filter(function(x){return x.id!==id;}); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if (planPageYmd) setTimeout(renderPlanningPage, 100); }
-var planPageYmd = null;
 function apriPlanningPage(y) { planPageYmd = y || currentPlanYmd(); mostraView('view-planning'); renderPlanningPage(); }
 function cambiaGiornoPlanningPage(d) { if (d === 0) planPageYmd = ymd(new Date()); else { var c = daYmd(planPageYmd); c.setDate(c.getDate() + d); planPageYmd = ymd(c); } renderPlanningPage(); }
 function renderPlanningPage() {
@@ -2842,11 +2921,12 @@ function renderPlanningPage() {
 
 console.log('[ARANJO] P3 ok');
 </script>
+
 <script>
 'use strict';
 
 /* ============================================================
-   PARTE 4 — IMMOBILI + CONDOMINI + ATTIVITÀ
+   PARTE 4 — IMMOBILI + CONDOMINI + ATTIVITÀ + MAPPA + CHIAMATE + BOOT
    ============================================================ */
 
 function apriScheda(id) {
@@ -2864,6 +2944,7 @@ function apriScheda(id) {
   if (im.villa) h += '<span style="font-size:10px;color:var(--ink);font-weight:700;">VILLA</span>';
   if (im.inTrattativa) h += '<span class="badge" style="background:var(--pa);">TRATTATIVA</span>';
   if (im.z && !im.villa) h += '<span style="font-size:11px;color:var(--tx3);">z' + im.z + '</span>';
+  if (im.gestitoDa === 'collega') h += '<span class="badge badge-collega">' + ico('briefcase',9) + ' ' + esc(im.collegaNome || 'Collega') + '</span>';
   h += '</div>';
   h += '<div class="top-title">' + esc(im.indirizzo || 'Senza indirizzo') + '</div>';
   if (im.citofono) h += '<div class="top-sub">' + ico('campanello',12) + ' ' + esc(im.citofono) + '</div>';
@@ -2883,7 +2964,6 @@ function apriScheda(id) {
     var bodyC = '';
     if (dc.annoCostruzione) bodyC += '<div class="info-row"><span class="label">Anno</span><span class="value">' + esc(dc.annoCostruzione) + '</span></div>';
     if (dc.statoCondominio) bodyC += '<div class="info-row"><span class="label">Stato</span><span class="value">' + esc(dc.statoCondominio) + '</span></div>';
-    if (dc.cappotto) bodyC += '<div class="info-row"><span class="label">Cappotto</span><span class="value">' + esc(dc.cappotto) + '</span></div>';
     if (dc.amministratore && dc.amministratore.nome) { bodyC += '<div class="info-row"><span class="label">Amm.</span><span class="value">' + esc(dc.amministratore.nome) + '</span></div>'; if (dc.amministratore.telefono) bodyC += '<div class="info-row"><span class="label">Tel</span><span class="value">' + esc(dc.amministratore.telefono) + '</span></div>'; }
     bodyC += '<button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + esc(co).replace(/'/g,'') + '\')">' + ico('modifica',14) + ' Condominio</button>';
     h += collapsible('im_condo', ico('condominio',13) + ' Condominio', bodyC);
@@ -3012,7 +3092,6 @@ function apriPickDoc(imId, t) {
 }
 function scaricaDoc(fid) { PhotoDB.getDoc(fid).then(function(r) { if (!r || !r.blob) { alert('No'); return; } var u = URL.createObjectURL(r.blob); var a = document.createElement('a'); a.href = u; a.download = (r.meta && r.meta.nome) || 'doc'; document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(u); }, 1500); }); }
 
-/* ============ IPOTECA / PROCURA / CATASTO / PREZZO ============ */
 function apriModificaIpoteca(imId) {
   var im = DB.immobili.find(function(x){return x.id===imId;}); if (!im) return;
   var i = im.ipoteca || {};
@@ -3121,16 +3200,8 @@ function apriAzioniAttivitaPersona(idA) {
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
   apriModal('Attività', h);
 }
-function confSegnaFatta(idA) {
-  var i = DB.immobili.find(function(x){return x.id===immobileAperto;}); if (!i) return;
-  var a = (i.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
-  apriEsitoEsecuzione('immobile', i.id, idA);
-}
-function confSegnaFattaP(idA) {
-  var p = trovaPersona(personaAperta); if (!p) return;
-  var a = (p.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
-  apriEsitoEsecuzione('persona', p.id, idA);
-}
+function confSegnaFatta(idA) { var i = DB.immobili.find(function(x){return x.id===immobileAperto;}); if (!i) return; apriEsitoEsecuzione('immobile', i.id, idA); }
+function confSegnaFattaP(idA) { var p = trovaPersona(personaAperta); if (!p) return; apriEsitoEsecuzione('persona', p.id, idA); }
 function apriEsitoEsecuzione(tipo, entId, attId) {
   var ent, arr;
   if (tipo === 'immobile') { ent = DB.immobili.find(function(x){return x.id===entId;}); arr = ent && ent.attivita; }
@@ -3164,7 +3235,6 @@ function eseguiAttivitaEntita(tipo, entId, attId, note) {
   var a = arr.find(function(x){return x.id===attId;}); if (!a) return;
   var now = new Date().toISOString();
   var dataPrevistaOrig = a.dataPrevista || a.data;
-  // 1. Marca l'originale come completata (storicizzata), mantenendone la pianificazione
   a.completata = true;
   a.dataEsecuzione = now;
   a.tipo = 'fatta';
@@ -3172,24 +3242,15 @@ function eseguiAttivitaEntita(tipo, entId, attId, note) {
   a.dataPrevistaOriginale = dataPrevistaOrig;
   a.dataPrevista = null;
   a.seq = seq();
-  // aggiorna anche la copia globale
   var g = DB.attivita.find(function(x){ return x.id === attId; });
   if (g) { g.tipo = 'fatta'; g.completata = true; g.data = now; g.dataPrevista = null; g.dataEsecuzione = now; g.dataPrevistaOriginale = dataPrevistaOrig; }
-  // 2. Crea una NUOVA attività "fatta" come traccia dell'esecuzione
   var newId = uid();
   var origLabel = 'attività del ' + fmtDT(dataPrevistaOrig);
   var newText = 'Eseguito: ' + a.testo + ' (' + origLabel + ')' + (note ? ' — ' + note : '');
   var newAtt = { id: newId, seq: seq(), data: now, tipo: 'fatta', testo: newText, completata: true, refAttId: attId };
   arr.push(newAtt);
-  DB.attivita.push(Object.assign({}, newAtt, {
-    immobileId: tipo === 'immobile' ? ent.id : null,
-    personaId: tipo === 'persona' ? ent.id : null,
-    tipoAtt: 'ALTRO'
-  }));
-  if (tipo === 'immobile') {
-    syncAttToPersone(ent.id, attId, 'update');
-    syncAttToPersone(ent.id, newId, 'add');
-  }
+  DB.attivita.push(Object.assign({}, newAtt, { immobileId: tipo === 'immobile' ? ent.id : null, personaId: tipo === 'persona' ? ent.id : null, tipoAtt: 'ALTRO' }));
+  if (tipo === 'immobile') { syncAttToPersone(ent.id, attId, 'update'); syncAttToPersone(ent.id, newId, 'add'); }
   ent.updatedAt = now;
   Storage.save(DB);
 }
@@ -3240,6 +3301,8 @@ function apriModifica() {
   h += '<div style="margin-bottom:8px;"><label class="form-label">Condominio</label><input class="form-input" id="mi-cond" value="' + esc(im.condominio||'') + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Citofono</label><input class="form-input" id="mi-cit" value="' + esc(im.citofono||'') + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Struttura</label><div style="display:flex;gap:6px;"><button type="button" id="mi-cond-btn" class="chip' + (!im.villa ? ' active' : '') + '" onclick="setVillaMod(false)" style="flex:1;">Condominio</button><button type="button" id="mi-villa-btn" class="chip' + (im.villa ? ' active' : '') + '" onclick="setVillaMod(true)" style="flex:1;">Villa</button></div></div>';
+  h += '<div style="margin-bottom:8px;"><label class="form-label">Gestito da</label><select class="form-select" id="mi-gest" style="background:var(--bg2);padding:10px 12px;border-radius:8px;" onchange="var c=document.getElementById(\'mi-gest-coll-wrap\');if(c)c.style.display=this.value===\'collega\'?\'block\':\'none\';"><option value="me"' + ((im.gestitoDa||'me')==='me'?' selected':'') + '>Io</option><option value="collega"' + (im.gestitoDa==='collega'?' selected':'') + '>Collega</option></select></div>';
+  h += '<div id="mi-gest-coll-wrap" style="margin-bottom:8px;display:' + (im.gestitoDa==='collega'?'block':'none') + ';"><label class="form-label">Nome collega</label><input class="form-input" id="mi-coll" value="' + esc(im.collegaNome||'') + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Note</label><textarea class="form-textarea" id="mi-note" style="background:var(--bg2);padding:10px 12px;border-radius:8px;">' + esc(im.note||'') + '</textarea></div>';
   h += '</div>';
 
@@ -3288,6 +3351,8 @@ function salvaModifica() {
   if (!im.villa) im.condominio = g('mi-cond').trim().toUpperCase() || normInd(im.indirizzo);
   im.citofono = g('mi-cit').trim().toUpperCase();
   im.note = g('mi-note');
+  im.gestitoDa = g('mi-gest') || 'me';
+  im.collegaNome = im.gestitoDa === 'collega' ? g('mi-coll').trim().toUpperCase() : '';
   im.dettagli = im.dettagli || {};
   im.dettagli.tipologia = msVal('mi-tipologia');
   im.dettagli.statoConservativo = msVal('mi-statoConservativo');
@@ -3331,6 +3396,8 @@ function aggFormNew() {
     h += '<div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-ind" placeholder="Via Roma 1, ' + esc(nc) + '"></div>';
     h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="f-cit"></div>';
     if (!iv) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-cond"></div>';
+    h += '<div class="form-row"><label class="form-label">Gestito da</label><select class="form-select" id="f-gest"><option value="me">Io</option><option value="collega">Collega</option></select></div>';
+    h += '<div class="form-row" id="f-gest-coll-wrap" style="display:none;"><label class="form-label">Nome collega</label><input class="form-input" id="f-coll"></div>';
     h += '</div>';
     h += '<div class="card"><h2><span class="dot"></span>Proprietario (opzionale)</h2>';
     h += '<div style="margin-bottom:8px;"><label class="form-label">Cognome</label><input class="form-input" id="f-cognome" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
@@ -3342,6 +3409,8 @@ function aggFormNew() {
     h += '<div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-ind" placeholder="Via Roma 1, ' + esc(nc) + '"></div>';
     h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="f-cit"></div>';
     if (!iv) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-cond"></div>';
+    h += '<div class="form-row"><label class="form-label">Gestito da</label><select class="form-select" id="f-gest"><option value="me">Io</option><option value="collega">Collega</option></select></div>';
+    h += '<div class="form-row" id="f-gest-coll-wrap" style="display:none;"><label class="form-label">Nome collega</label><input class="form-input" id="f-coll"></div>';
     h += '</div>';
     h += '<div class="card"><h2><span class="dot"></span>Proprietario</h2>';
     h += '<div style="margin-bottom:8px;"><label class="form-label">Ruolo</label><div style="display:flex;gap:6px;"><button type="button" class="chip active" id="f-rv" onclick="setRuoloNew(\'vend\')" style="flex:1;">Venditore</button><button type="button" class="chip" id="f-rc" onclick="setRuoloNew(\'cond\')" style="flex:1;">Conduttore</button></div></div>';
@@ -3359,6 +3428,11 @@ function aggFormNew() {
   }
   c.innerHTML = h;
   if (t !== 'censito') { window._sellerRuolo = 'vend'; window._sellerMode = 'new'; window._fPickId = null; }
+  var gs = document.getElementById('f-gest');
+  if (gs) gs.addEventListener('change', function() {
+    var cd = document.getElementById('f-gest-coll-wrap');
+    if (cd) cd.style.display = gs.value === 'collega' ? 'block' : 'none';
+  });
 }
 function setRuoloNew(r) { window._sellerRuolo = r; document.getElementById('f-rv').classList.toggle('active', r === 'vend'); document.getElementById('f-rc').classList.toggle('active', r === 'cond'); }
 function setModeNew(m) { window._sellerMode = m; document.getElementById('f-mn').classList.toggle('active', m === 'new'); document.getElementById('f-me').classList.toggle('active', m === 'existing'); document.getElementById('f-new-fields').style.display = m === 'new' ? 'block' : 'none'; document.getElementById('f-existing-fields').style.display = m === 'existing' ? 'block' : 'none'; }
@@ -3371,9 +3445,11 @@ function salvaNuovoImmobile() {
   var co = iv ? '' : (((document.getElementById('f-cond')||{}).value||ind).trim().toUpperCase());
   var zz = iv ? null : 1;
   var cito = ((document.getElementById('f-cit')||{}).value||'').trim().toUpperCase();
+  var gest = ((document.getElementById('f-gest')||{}).value) || 'me';
+  var coll = gest === 'collega' ? ((document.getElementById('f-coll')||{}).value||'').trim().toUpperCase() : '';
   var im;
   if (tf === 'censito') {
-    im = { id: uid(), stato:'IMM', indirizzo:ind, z:zz, citofono:cito, villa:iv, cognomeNome:'', telefono:'', residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{presente:false}, ipoteca:{presente:false}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
+    im = { id: uid(), stato:'IMM', indirizzo:ind, z:zz, citofono:cito, villa:iv, cognomeNome:'', telefono:'', residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{presente:false}, ipoteca:{presente:false}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, createdAt:ad, updatedAt:ad };
     var cog = ((document.getElementById('f-cognome')||{}).value||'').trim().toUpperCase();
     var nom = ((document.getElementById('f-nome')||{}).value||'').trim().toUpperCase();
     var tel = (document.getElementById('f-tel')||{}).value||'';
@@ -3404,7 +3480,7 @@ function salvaNuovoImmobile() {
     if ((per.ruoli||[]).indexOf(ruolo) < 0) per.ruoli.push(ruolo);
     var cn = nomeCogn(per);
     var stato = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK';
-    im = { id:uid(), stato:stato, indirizzo:ind, z:zz, villa:iv, citofono:cito, cognomeNome:cn, telefono:tel2, residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{presente:false}, ipoteca:{presente:false}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
+    im = { id:uid(), stato:stato, indirizzo:ind, z:zz, villa:iv, citofono:cito, cognomeNome:cn, telefono:tel2, residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{presente:false}, ipoteca:{presente:false}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, createdAt:ad, updatedAt:ad };
     im.proprietari.push({ personaId:per.id, quota:'', principale:true, note:'', tipo:'Proprietà' });
   }
   DB.immobili.push(im);
@@ -3481,7 +3557,7 @@ function apriPopCondoIdx(i) { var c = window._popCondo[i]; if (c) apriPopCondo(c
 function apriPopCondo(co) {
   var l = DB.immobili.filter(function(x){ return !x.villa && condoDi(x) === co; });
   var h = '<div style="font-size:12.5px;color:var(--tx2);margin-bottom:10px;">' + esc(co) + '</div>';
-  l.forEach(function(im){ h += '<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + esc(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; });
+  l .forEach(function(im){ h += '<div class="immobile-line" style="0margin-bottom:5px,;" onclick="chiudiModal();setTimeout idx(function(){apriScheda(\'' = + im.id + '\')},100)"><span class="txt">' + esc(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; });
   h += '<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + esc(co).replace(/'/g,'') + '\')">' + ico('modifica',14) + ' Condominio</button>';
   apriModal(co, h);
 }
@@ -3524,7 +3600,7 @@ function fitBoundsImmobili() { if (!map) return; var l = DB.immobili.filter(func
 function geocodificaTutti() {
   var btn = document.getElementById('btn-geocode-all'); if (btn) { btn.disabled = true; btn.textContent = '...'; }
   var daf = DB.immobili.filter(function(i){ return !i.lat || !i.lng; });
-  var fatti = 0, fall = 0, idx = 0;
+  var fatti = 0, fall = 0;
   function next() {
     if (idx >= daf.length) { Storage.save(DB); if (btn) { btn.disabled = false; btn.textContent = 'Geocodifica'; } aggiornaMappa(); alert('Fatti: ' + fatti + '\nNon trovati: ' + fall); return; }
     var im = daf[idx];
@@ -3592,7 +3668,7 @@ function renderChiamateOggi() {
   if (!l.length) { c.innerHTML = '<div class="empty">' + ico('telefono',28) + 'Nessuna chiamata</div>'; return; }
   var oggi = new Date(); oggi.setHours(0,0,0,0);
   var h = '';
-  l.forEach(function(ch){ var p = ch.personaId ? trovaPersona(ch.personaId) : null; var nome = p ? nomeCogn(p) : '(senza)'; var tel = ch.telefono || (p && (p.telefono || p.telefono2)) || ''; var sc = ch.programmataPer && new Date(ch.programmataPer) < oggi; var ora = ch.programmataPer ? (pad2(new Date(ch.programmataPer).getHours()) + ':' + pad2(new Date(ch.programmataPer).getMinutes())) : ''; h += '<div class="item-card" style="border-left:3px solid ' + (sc ? 'var(--vnd)' : 'var(--acc)') + ';"><div class="item-row"><div class="item-title">' + esc(nome) + '</div>' + (sc ? '<span class="badge" style="background:var(--vnd);">SCAD</span>' : '') + '</div>' + (ora ? '<div class="item-sub">' + ora + '</div>' : '') + (tel ? '<div class="item-sub">' + ico('telefono',11) + ' ' + esc(tel) + '</div>' : '') + '<div style="display:flex;gap:6px;margin-top:8px;">' + (tel ? '<button class="btn btn-secondary" style="margin-bottom:0;flex:1;" onclick="chiama(\'' + esc(tel) + '\')">' + ico('telefono',14) + '</button>' : '') + '<button class="btn btn-primary" style="margin-bottom:0;flex:1;" onclick="apriChiusuraChiamata(\'' + ch.id + '\')">' + ico('check',14) + '</button><button class="btn btn-danger" style="margin-bottom:0;flex:0 0 auto;width:44px;" onclick="eliminaChiamata(\'' + ch.id + '\')">' + ico('cestino',14) + '</button></div></div>'; });
+  l.forEach(function(ch){ var p = ch.personaId ? trovaPersona(ch.personaId) : null; var nome = p ? nomeCogn(p) : '(senza)'; var tel = ch.telefono || (p && (p.telefono || p.telefono2)) || ''; var sc = ch.programmataPer && new Date(ch.programmataPer) < oggi; var ora = ch.programmataPer ? (pad2(new Date(ch.programmataPer).getHours()) + ':' + pad2(new Date(ch.programmataPer).getMinutes())) : ''; h += '<div class="item-card" style="border-left:3px solid ' + (sc ? 'var(--vnd)' : 'var(--acc)') + ';"><div class="item-row"><div class="item-title">' + esc(nome) + '</div>' + (sc ? '<span class="badge" style="background:var(--vnd);">SCAD</span>' : '') + '</div>' + (ora ? '<div class="item-sub">' + ora + '</div>' : '') + (tel ? '<div class="item-sub">' + ico('telefono',11) + ' ' + esc(tel) + '</div>' : '') + '<div style="display:flex;gap:6px;margin-top:8px;">' + (tel ? '<button class="btn btn-secondary" style)="margin-bottom:0;flex:1;" onclick="chiama(\'' + esc(tel) + '\')">' + ico('telefono',14) + '</button>' : '') + '<button class="btn btn-primary" style="margin-bottom:0;flex:1;" onclick="apriChiusuraChiamata(\'' + ch.id + '\')">' + ico('check',14) + '</button><button class="btn btn-danger" style="margin-bottom:0;flex:0 0 auto;width:44px;" onclick="eliminaChiamata(\'' + ch.id + '\')">' + ico('cestino',14) + '</button></div></div>'; });
   c.innerHTML = h;
 }
 function apriNuovaChiamata(personaId) {
@@ -3616,7 +3692,7 @@ function salvaNuovaChiamata() {
 function apriChiusuraChiamata(id) {
   var ch = (DB.chiamate||[]).find(function(x){return x.id===id;}); if (!ch) return;
   window._chId = id;
-  var p = ch.personaId ? trovaPersona(ch.personaId) : null;
+  var p = ch.personaId ? trovaPersona(ch.personaId : null;
   var h = '<div class="card" style="padding:10px 12px;"><div style="font-size:13px;font-weight:600;">' + esc(p ? nomeCompleto(p) : (ch.telefono || '')) + '</div></div>';
   h += '<div class="form-group"><div class="form-row"><label class="form-label">Esito</label><select class="form-select" id="ch-e"><option value="">—</option>' + ['risposto','occupato','non-risposto','richiamare','appuntamento','non-interessato','interessato'].map(function(e){ return '<option value="' + e + '">' + e + '</option>'; }).join('') + '</select></div>';
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="ch-t2" rows="4"></textarea></div>';
