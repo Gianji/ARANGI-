@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -3558,7 +3560,7 @@ function apriPopCondoIdx(i) { var c = window._popCondo[i]; if (c) apriPopCondo(c
 function apriPopCondo(co) {
   var l = DB.immobili.filter(function(x){ return !x.villa && condoDi(x) === co; });
   var h = '<div style="font-size:12.5px;color:var(--tx2);margin-bottom:10px;">' + esc(co) + '</div>';
-  l .forEach(function(im){ h += '<div class="immobile-line" style="0margin-bottom:5px,;" onclick="chiudiModal();setTimeout idx(function(){apriScheda(\'' = + im.id + '\')},100)"><span class="txt">' + esc(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; });
+  l.forEach(function(im){ h += '<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(function(){apriScheda(\'' + im.id + '\')},100)"><span class="txt">' + esc(titoloImmobile(im)) + '</span><span class="badge badge-' + im.stato + '">' + im.stato + '</span></div>'; });
   h += '<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio(\'' + esc(co).replace(/'/g,'') + '\')">' + ico('modifica',14) + ' Condominio</button>';
   apriModal(co, h);
 }
@@ -3601,8 +3603,8 @@ function fitBoundsImmobili() { if (!map) return; var l = DB.immobili.filter(func
 function geocodificaTutti() {
   var btn = document.getElementById('btn-geocode-all'); if (btn) { btn.disabled = true; btn.textContent = '...'; }
   var daf = DB.immobili.filter(function(i){ return !i.lat || !i.lng; });
-  var fatti = 0, fall = 0;
-  function next() {
+  var fatti = 0, fall = 0, idx = 0;
+function next() {
     if (idx >= daf.length) { Storage.save(DB); if (btn) { btn.disabled = false; btn.textContent = 'Geocodifica'; } aggiornaMappa(); alert('Fatti: ' + fatti + '\nNon trovati: ' + fall); return; }
     var im = daf[idx];
     geocodifica(im.indirizzo).then(function(r) { if (r) { im.lat = r.lat; im.lng = r.lng; im.geoPreciso = r.preciso; fatti++; } else fall++; idx++; if (btn) btn.textContent = (fatti + fall) + '/' + daf.length; setTimeout(next, 1100); });
@@ -3669,7 +3671,7 @@ function renderChiamateOggi() {
   if (!l.length) { c.innerHTML = '<div class="empty">' + ico('telefono',28) + 'Nessuna chiamata</div>'; return; }
   var oggi = new Date(); oggi.setHours(0,0,0,0);
   var h = '';
-  l.forEach(function(ch){ var p = ch.personaId ? trovaPersona(ch.personaId) : null; var nome = p ? nomeCogn(p) : '(senza)'; var tel = ch.telefono || (p && (p.telefono || p.telefono2)) || ''; var sc = ch.programmataPer && new Date(ch.programmataPer) < oggi; var ora = ch.programmataPer ? (pad2(new Date(ch.programmataPer).getHours()) + ':' + pad2(new Date(ch.programmataPer).getMinutes())) : ''; h += '<div class="item-card" style="border-left:3px solid ' + (sc ? 'var(--vnd)' : 'var(--acc)') + ';"><div class="item-row"><div class="item-title">' + esc(nome) + '</div>' + (sc ? '<span class="badge" style="background:var(--vnd);">SCAD</span>' : '') + '</div>' + (ora ? '<div class="item-sub">' + ora + '</div>' : '') + (tel ? '<div class="item-sub">' + ico('telefono',11) + ' ' + esc(tel) + '</div>' : '') + '<div style="display:flex;gap:6px;margin-top:8px;">' + (tel ? '<button class="btn btn-secondary" style)="margin-bottom:0;flex:1;" onclick="chiama(\'' + esc(tel) + '\')">' + ico('telefono',14) + '</button>' : '') + '<button class="btn btn-primary" style="margin-bottom:0;flex:1;" onclick="apriChiusuraChiamata(\'' + ch.id + '\')">' + ico('check',14) + '</button><button class="btn btn-danger" style="margin-bottom:0;flex:0 0 auto;width:44px;" onclick="eliminaChiamata(\'' + ch.id + '\')">' + ico('cestino',14) + '</button></div></div>'; });
+  l.forEach(function(ch){ var p = ch.personaId ? trovaPersona(ch.personaId) : null; var nome = p ? nomeCogn(p) : '(senza)'; var tel = ch.telefono || (p && (p.telefono || p.telefono2)) || ''; var sc = ch.programmataPer && new Date(ch.programmataPer) < oggi; var ora = ch.programmataPer ? (pad2(new Date(ch.programmataPer).getHours()) + ':' + pad2(new Date(ch.programmataPer).getMinutes())) : ''; h += '<div class="item-card" style="border-left:3px solid ' + (sc ? 'var(--vnd)' : 'var(--acc)') + ';"><div class="item-row"><div class="item-title">' + esc(nome) + '</div>' + (sc ? '<span class="badge" style="background:var(--vnd);">SCAD</span>' : '') + '</div>' + (ora ? '<div class="item-sub">' + ora + '</div>' : '') + (tel ? '<div class="item-sub">' + ico('telefono',11) + ' ' + esc(tel) + '</div>' : '') + '<div style="display:flex;gap:6px;margin-top:8px;">' + (tel ? '<button class="btn btn-secondary" style="margin-bottom:0;flex:1;" onclick="chiama(\'' + esc(tel) + '\')">' + ico('telefono',14) + '</button>' : '') + '<button class="btn btn-primary" style="margin-bottom:0;flex:1;" onclick="apriChiusuraChiamata(\'' + ch.id + '\')">' + ico('check',14) + '</button><button class="btn btn-danger" style="margin-bottom:0;flex:0 0 auto;width:44px;" onclick="eliminaChiamata(\'' + ch.id + '\')">' + ico('cestino',14) + '</button></div></div>'; });
   c.innerHTML = h;
 }
 function apriNuovaChiamata(personaId) {
@@ -3693,7 +3695,7 @@ function salvaNuovaChiamata() {
 function apriChiusuraChiamata(id) {
   var ch = (DB.chiamate||[]).find(function(x){return x.id===id;}); if (!ch) return;
   window._chId = id;
-  var p = ch.personaId ? trovaPersona(ch.personaId : null;
+  var p = ch.personaId ? trovaPersona(ch.personaId) : null;
   var h = '<div class="card" style="padding:10px 12px;"><div style="font-size:13px;font-weight:600;">' + esc(p ? nomeCompleto(p) : (ch.telefono || '')) + '</div></div>';
   h += '<div class="form-group"><div class="form-row"><label class="form-label">Esito</label><select class="form-select" id="ch-e"><option value="">—</option>' + ['risposto','occupato','non-risposto','richiamare','appuntamento','non-interessato','interessato'].map(function(e){ return '<option value="' + e + '">' + e + '</option>'; }).join('') + '</select></div>';
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="ch-t2" rows="4"></textarea></div>';
