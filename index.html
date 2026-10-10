@@ -31,7 +31,8 @@ try {
   --tab-h: 58px; --maxw: 640px;
   --imm: #94a3b8; --pa: #c2740c; --nt: #2563eb; --ink: #047857; --vnd: #b91c1c; --rr: #7c3aed; --prof: #0e7490;
   --ok: #047857; --ko: #b91c1c; --warn: #c2740c;
-  --ora-h: 50px;
+  --fest: #dc2626;
+  --ora-h: 44px;
 }
 html { height: 100%; overflow: hidden; }
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -194,7 +195,9 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .agenda-giorno { background: transparent; border-radius: var(--rs); padding: 3px 1px; min-height: 58px; display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; }
 .agenda-giorno .ag-nome { font-size: 8px; font-weight: 700; color: var(--tx3); text-transform: uppercase; }
 .agenda-giorno.oggi .ag-nome { color: var(--acc); }
+.agenda-giorno.festivo .ag-nome { color: var(--fest); }
 .agenda-giorno .ag-num { font-size: 12px; font-weight: 500; color: var(--tx); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.agenda-giorno.festivo .ag-num { color: var(--fest); }
 .agenda-giorno.oggi .ag-num { background: var(--acc); color: white; font-weight: 700; }
 .agenda-giorno .ag-ev-label { font-size: 7px; font-weight: 700; }
 .agenda-giorno .ag-ev-ora { font-size: 7px; color: var(--tx3); }
@@ -284,6 +287,9 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .ag-ws-day.today .ag-ws-name { color: var(--acc); }
 .ag-ws-day.sel .ag-ws-num { background: var(--blu); color: #fff; font-weight: 700; }
 .ag-ws-day.sel .ag-ws-name { color: var(--blu); }
+.ag-ws-day.festivo .ag-ws-name { color: var(--fest); }
+.ag-ws-day.festivo .ag-ws-num { color: var(--fest); }
+.ag-ws-day.festivo.today .ag-ws-num, .ag-ws-day.festivo.sel .ag-ws-num { color: #fff; }
 .ag-sep { height: 1px; background: var(--bd2); margin: 0 14px; flex-shrink: 0; }
 .ag-content { flex: 1 1 0; min-height: 0; overflow-y: auto; position: relative; padding-bottom: 80px; }
 .ag-bottombar { position: fixed; left: 0; right: 0; bottom: calc(var(--tab-h) + env(safe-area-inset-bottom) + 18px); z-index: 45; pointer-events: none; display: flex; justify-content: flex-start; padding-left: 18px; }
@@ -296,6 +302,8 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .ag-mm-num { font-size: 12.5px; font-weight: 500; color: var(--tx); width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0; }
 .ag-mm-cell.today .ag-mm-num { background: var(--acc); color: #fff; font-weight: 700; }
 .ag-mm-cell.selected .ag-mm-num { box-shadow: 0 0 0 2px var(--blu); }
+.ag-mm-cell.festivo .ag-mm-num { color: var(--fest); }
+.ag-mm-cell.festivo.today .ag-mm-num { color: #fff; }
 .ag-mm-events { display: flex; flex-direction: column; gap: 2px; overflow: hidden; max-height: 40px; }
 .ag-mm-ev { display: flex; gap: 3px; padding: 1px 3px; border-radius: 3px; overflow: hidden; }
 .ag-mm-ev-title { font-size: 8.5px; font-weight: 600; color: var(--tx); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -306,12 +314,14 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .ag-year-cell.other { opacity: 0.22; }
 .ag-year-cell.today .ag-year-num { background: var(--acc); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 .ag-year-cell.selected .ag-year-num { box-shadow: 0 0 0 2px var(--blu); }
+.ag-year-cell.festivo .ag-year-num { color: var(--fest); }
+.ag-year-cell.festivo.today .ag-year-num { color: #fff; }
 .ag-year-dot { width: 4px; height: 4px; border-radius: 50%; }
-.ag-timeline { display: flex; position: relative; padding-bottom: 30px; background-image: repeating-linear-gradient(to bottom, var(--bd2) 0px, var(--bd2) 1px, transparent 1px, transparent var(--ora-h)); background-repeat: repeat-y; background-size: 100% var(--ora-h); }
+.ag-timeline { display: flex; position: relative; padding-bottom: 30px; background-image: repeating-linear-gradient(to bottom, var(--bd2) 0px, var(--bd2) 1px, transparent 1px, transparent var(--ora-h)); background-repeat: repeat-y; background-size: 100% var(--ora-h); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: pan-y; }
 .ag-hours-col { width: 48px; flex-shrink: 0; background: var(--bg); z-index: 2; }
 .ag-hour-label { height: var(--ora-h); display: flex; align-items: flex-start; justify-content: flex-end; padding: 3px 8px 0 0; font-size: 10px; font-weight: 500; color: var(--tx3); background: var(--bg); }
 .ag-days { flex: 1; display: flex; position: relative; z-index: 1; }
-.ag-day-col { flex: 1; position: relative; min-width: 0; cursor: pointer; }
+.ag-day-col { flex: 1; position: relative; min-width: 0; cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .ag-hour-line { height: var(--ora-h); }
 .ag-event { position: absolute; left: 3px; right: 3px; border-radius: 6px; padding: 3px 5px; overflow: hidden; cursor: pointer; z-index: 3; background: var(--card); border: 1px solid var(--bd); border-left: 3px solid var(--blu); }
 .ag-event-title { font-size: 9.5px; font-weight: 700; color: var(--tx); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -319,6 +329,7 @@ body { height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSyste
 .ag-now-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--acc); z-index: 6; }
 .ag-now-dot { position: absolute; left: 44px; top: -5px; width: 12px; height: 12px; border-radius: 50%; background: var(--acc); box-shadow: 0 0 0 2px var(--bg); }
 .ag-longpress-preview { position: fixed; z-index: 8500; background: rgba(217,96,26,0.95); color: white; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 700; pointer-events: none; box-shadow: 0 4px 16px rgba(217,96,26,0.35); transform: translate(-50%, -130%); white-space: nowrap; }
+.ag-lp-slot { position: absolute; left: 2px; right: 2px; background: rgba(217,96,26,0.18); border-left: 3px solid var(--acc); border-radius: 6px; z-index: 5; pointer-events: none; }
 input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; }
 
 /* === Dropdown / Multi-select === */
@@ -357,6 +368,7 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
   --bg: #0f0f11; --bg2: #1a1a1d; --card: #17171a;
   --tx: #e8e8ea; --tx2: #9a9aa0; --tx3: #6a6a72;
   --bd: #232327; --bd2: #2e2e33;
+  --fest: #f87171;
 }
 :root[data-theme="dark"] .tabbar { background: rgba(15,15,17,0.9); }
 :root[data-theme="dark"] .modal-sheet { background: var(--bg); }
@@ -568,15 +580,27 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
 <script>
 'use strict';
 
-var DB_VERSION = 4;
+var DB_VERSION = 5;
 var DB_KEY = 'aranjo_db_v1';
 var GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
 var CITTA_DEFAULT = 'CREMONA, CR, 26100';
 var CREMONA_CENTER = [45.1333, 10.0167];
+var ORA_H = 44;
 
 /* ============ OPZIONI CONDIVISE ============ */
-var OPT_TIPOLOGIA = ['Appartamento','Villa','Casa indipendente','Villetta a schiera','Attico','Loft','Rustico','Terreno','Garage/Box','Locale commerciale','Ufficio','Magazzino','Altro'];
-var OPT_STATO = ['Nuovo','Ristrutturato','Ottimo','Buono','Da ristrutturare','Da demolire'];
+var OPT_TIPOLOGIA = [
+  'Appartamento','Attico','Penthouse','Loft','Mansarda','Soppalco','Monolocale','Bilocale','Trilocale','Quadrilocale',
+  'Villa','Villino','Villa a schiera','Villetta a schiera','Villa bifamiliare',
+  'Bifamiliare','Porzione bifamiliare','Trifamiliare','Quadrifamiliare',
+  'Casa indipendente','Casa di corte','Casa colonica','Casa padronale',
+  'Casale','Cascina','Rustico','Palazzo','Palazzina','Stabile',
+  'Immobile storico','Immobile di pregio',
+  'Terreno','Terreno edificabile','Terreno agricolo',
+  'Box singolo','Box doppio','Garage','Posto auto coperto','Posto auto scoperto',
+  'Locale commerciale','Negozio','Vetrina','Ufficio','Magazzino','Capannone','Laboratorio','Locale artigianale',
+  'Albergo','B&B','Agriturismo','Casa vacanze','Stazione','Altro'
+];
+var OPT_STATO = ['Nuovo','In costruzione','Ristrutturato','Ottimo','Buono','Abitabile','Da ristrutturare','Da riqualificare','Da demolire'];
 var OPT_CLASSE = ['A4','A3','A2','A1','A','B','C','D','E','F','G','Non dichiarata'];
 var OPT_CLASSE_RICERCA = ['Alta (A4-A1)','Media (A-C)','Bassa (D-G)','Indifferente'];
 var OPT_PIANO = ['Seminterrato','Piano terra','Rialzato','Basso (1-2)','Medio (3-4)','Alto (5+)','Attico','Ultimo piano'];
@@ -592,11 +616,11 @@ var OPT_BOX_TIPO = ['Singolo','Doppio'];
 var OPT_LOCALI = ['1','2','3','4','5','6+'];
 var OPT_BAGNI = ['1','2','3','4+'];
 var OPT_ZONE = ['CASTELLO','GHINAGLIA','PIAZZA RISORGIMENTO','VIA DANTE','STAZIONE','SANT AMBROGIO','SAN ZENO','VIA FILZI','VIA BERGAMO','CASTELLEONE','VIA MILANO','SAN PAOLO','CENTRO','BORGO SAN GIACOMO','CAVATIGOZZI','MIGLIARO','SAN FELICE','PERSICO','PORTA ROMANA','VIA GIORDANO','ZONA ZdF','ZONA Libera','ZONA ZdF altrui'];
-var OPT_CARATT_RISC = ['Radiatori','Pavimento','Termoconvettori','Split','Stufa','Camino','Pompa di calore'];
-var OPT_CARATT_INFISSI = ['Vetro singolo','Vetro doppio','Vetro triplo','PVC','Legno','Alluminio'];
-var OPT_CARATT_VISTA = ['Panoramica','Torrazzo','Doppia esposizione','Tripla esposizione','Quadrupla esposizione','Sud','Nord','Est','Ovest'];
-var OPT_CARATT_ZONA = ['Silenzioso','Attivo','Vicino a servizi','Vicino a scuole','Vicino a negozi','Vicino a trasporti'];
-var OPT_CARATT_CUCINA = ['Open space','Abitabile','Semiabitabile','Cucinotto','Angolo cottura'];
+var OPT_CARATT_RISC = ['Radiatori','Pavimento','Termoconvettori','Split','Stufa','Camino','Pompa di calore','Fan coil'];
+var OPT_CARATT_INFISSI = ['Vetro singolo','Vetro doppio','Vetro triplo','PVC','Legno','Alluminio','Legno-alluminio'];
+var OPT_CARATT_VISTA = ['Panoramica','Torrazzo','Doppia esposizione','Tripla esposizione','Quadrupla esposizione','Sud','Nord','Est','Ovest','Luce naturale'];
+var OPT_CARATT_ZONA = ['Silenzioso','Riservato','Vivace','Centrale','Residenziale','Vicino a servizi','Vicino a scuole','Vicino a negozi','Vicino a trasporti','Vicino a parchi','Vicino al centro','Zona verde'];
+var OPT_CARATT_CUCINA = ['Open space','Abitabile','Semiabitabile','Cucinotto','Angolo cottura','Cucina separata'];
 var OPT_CARATTERISTICHE = OPT_CARATT_RISC.concat(OPT_CARATT_INFISSI, OPT_CARATT_VISTA, OPT_CARATT_ZONA, OPT_CARATT_CUCINA);
 
 var ICON_PATHS = {
@@ -668,6 +692,45 @@ function oraLocal() { var d = new Date(); return d.getFullYear() + '-' + pad2(d.
 function isoLocalInput(iso) { var d = new Date(iso); return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()) + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ':' + pad2(d.getSeconds()); }
 function normInd(ind) { return (ind || '').trim().toUpperCase().replace(/\s+/g, ' '); }
 
+/* ============ FESTIVI ============ */
+function pasqua(anno) {
+  var a = anno % 19, b = Math.floor(anno / 100), c = anno % 100;
+  var d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+  var h = (19*a + b - d - g + 15) % 30;
+  var i = Math.floor(c / 4), k = c % 4;
+  var l = (32 + 2*e + 2*i - h - k) % 7;
+  var m = Math.floor((a + 11*h + 22*l) / 451);
+  var mese = Math.floor((h + l - 7*m + 114) / 31);
+  var giorno = ((h + l - 7*m + 114) % 31) + 1;
+  return new Date(anno, mese - 1, giorno);
+}
+var _festCache = {};
+function festiviAnno(anno) {
+  if (_festCache[anno]) return _festCache[anno];
+  var p = pasqua(anno);
+  var pl = new Date(p); pl.setDate(pl.getDate() + 1);
+  var f = {};
+  f[anno + '-01-01'] = 'Capodanno';
+  f[anno + '-01-06'] = 'Epifania';
+  f[ymd(p)] = 'Pasqua';
+  f[ymd(pl)] = 'Lunedì dell\'Angelo';
+  f[anno + '-04-25'] = 'Liberazione';
+  f[anno + '-05-01'] = 'Festa del Lavoro';
+  f[anno + '-06-02'] = 'Festa della Repubblica';
+  f[anno + '-08-15'] = 'Ferragosto';
+  f[anno + '-11-01'] = 'Ognissanti';
+  f[anno + '-12-08'] = 'Immacolata';
+  f[anno + '-12-25'] = 'Natale';
+  f[anno + '-12-26'] = 'Santo Stefano';
+  _festCache[anno] = f;
+  return f;
+}
+function isFestivo(y) {
+  var anno = parseInt(y.split('-')[0], 10);
+  if (isNaN(anno)) return null;
+  return festiviAnno(anno)[y] || null;
+}
+
 /* ============ STORAGE ============ */
 var Storage2 = {
   db: null,
@@ -696,7 +759,7 @@ var Storage = {
   migra: function(p) {
     var def = this.default();
     var db = {
-      versione: p.versione || 1, nextSeq: p.nextSeq || 1, cittaPrincipale: p.cittaPrincipale || def.cittaPrincipale,
+      versione: DB_VERSION, nextSeq: p.nextSeq || 1, cittaPrincipale: p.cittaPrincipale || def.cittaPrincipale,
       immobili: Array.isArray(p.immobili) ? p.immobili : [],
       persone: Array.isArray(p.persone) ? p.persone : [],
       attivita: Array.isArray(p.attivita) ? p.attivita : [],
@@ -735,14 +798,14 @@ var Storage = {
           if (!d[k]) d[k] = [];
         });
         if (d.camere && !d.locali) d.locali = d.camere;
-        if (typeof d.mqMin === 'undefined') d.mqMin = d.mq || '';
-        if (typeof d.mqMax === 'undefined') d.mqMax = '';
+        // migra mq: min/max -> due valori singoli calpestabili/commerciali
+        if (typeof d.mqCalpestabili === 'undefined') d.mqCalpestabili = d.mq || d.mqMin || '';
+        if (typeof d.mqCommerciali === 'undefined') d.mqCommerciali = d.mq || d.mqMax || d.mqMin || '';
       }
       if (!im.zone) im.zone = [];
       if (!Array.isArray(im.proprietari)) im.proprietari = [];
       im.proprietari.forEach(function(pr) { if (!pr.tipo) pr.tipo = 'Proprietà'; });
     });
-    db.versione = DB_VERSION;
     return db;
   },
   save: function(d) { Storage2.set('db_v4', d).catch(function(e) { console.error(e); }); return true; },
@@ -858,13 +921,26 @@ function chiudiModal(fromBack) {
   }
 }
 function apriFilterDD(titolo, opzioni, sel, cb) {
+  var dd = document.getElementById('filter-dd');
   var h = '<h3>' + esc(titolo) + '</h3>';
-  opzioni.forEach(function(o) { var s = o.value === sel ? ' selected' : ''; h += '<div class="opt' + s + '" onclick="selFilterDD(\'' + String(o.value).replace(/'/g,'') + '\')">' + esc(o.label) + (s ? ' ' + ico('check',12) : '') + '</div>'; });
-  document.getElementById('filter-dd').innerHTML = h;
+  opzioni.forEach(function(o, i) {
+    var s = o.value === sel ? ' selected' : '';
+    h += '<div class="opt' + s + '" data-idx="' + i + '">' + esc(o.label) + (s ? ' ' + ico('check',12) : '') + '</div>';
+  });
+  dd.innerHTML = h;
   document.getElementById('filter-dd-overlay').classList.add('open');
   window._filterDDBack = cb;
+  dd.querySelectorAll('.opt').forEach(function(el) {
+    el.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      var idx = parseInt(el.getAttribute('data-idx'), 10);
+      var v = opzioni[idx].value;
+      var cbb = window._filterDDBack;
+      chiudiFilterDD();
+      if (cbb) { try { cbb(v === '' ? null : v); } catch(err) { console.error(err); } }
+    });
+  });
 }
-function selFilterDD(v) { var cb = window._filterDDBack; chiudiFilterDD(); if (cb) cb(v === '' ? null : v); }
 function chiudiFilterDD() { document.getElementById('filter-dropdown-overlay').classList.remove('open'); window._filterDDBack = null; }
 
 /* ============ MULTI-SELECT DROPDOWN ============ */
@@ -884,22 +960,30 @@ function renderMsBtn(id) {
 }
 function apriMs(id) {
   var s = window._msSel[id]; if (!s) return;
+  var dd = document.getElementById('filter-dd');
   var h = '';
-  s.opts.forEach(function(o) {
+  s.opts.forEach(function(o, i) {
     var a = s.val.indexOf(o) >= 0;
-    h += '<div class="ms-opt' + (a ? ' on' : '') + '" onclick="event.stopPropagation();toggleMs(\'' + id + '\',\'' + esc(o).replace(/'/g,'') + '\')">' + esc(o) + (a ? ico('check',12) : '') + '</div>';
+    h += '<div class="ms-opt' + (a ? ' on' : '') + '" data-idx="' + i + '">' + esc(o) + (a ? ico('check',12) : '') + '</div>';
   });
-  h += '<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="event.stopPropagation();resetMs(\'' + id + '\')">Azzera</button><button class="btn btn-primary" onclick="event.stopPropagation();chiudiMs(\'' + id + '\')">OK</button></div>';
-  document.getElementById('filter-dd').innerHTML = h;
+  h += '<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" id="ms-reset">Azzera</button><button class="btn btn-primary" id="ms-ok">OK</button></div>';
+  dd.innerHTML = h;
   document.getElementById('filter-dd-overlay').classList.add('open');
+  dd.querySelectorAll('.ms-opt').forEach(function(el) {
+    el.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      var idx = parseInt(el.getAttribute('data-idx'), 10);
+      var opt = s.opts[idx];
+      var ii = s.val.indexOf(opt);
+      if (ii >= 0) s.val.splice(ii, 1); else s.val.push(opt);
+      apriMs(id);
+    });
+  });
+  var rEl = document.getElementById('ms-reset');
+  if (rEl) rEl.addEventListener('click', function(ev) { ev.stopPropagation(); s.val = []; apriMs(id); });
+  var okEl = document.getElementById('ms-ok');
+  if (okEl) okEl.addEventListener('click', function(ev) { ev.stopPropagation(); chiudiMs(id); });
 }
-function toggleMs(id, opt) {
-  var s = window._msSel[id]; if (!s) return;
-  var i = s.val.indexOf(opt);
-  if (i >= 0) s.val.splice(i, 1); else s.val.push(opt);
-  apriMs(id);
-}
-function resetMs(id) { if (!window._msSel[id]) return; window._msSel[id].val = []; apriMs(id); }
 function chiudiMs(id) {
   document.getElementById('filter-dropdown-overlay').classList.remove('open');
   var el = document.getElementById('ms-btn-' + id);
@@ -914,7 +998,7 @@ function setTema(t) { try { localStorage.setItem('aranjo_theme', t); } catch(e) 
 function applyTema(t) { document.documentElement.setAttribute('data-theme', risolviTema(t)); updateTemaBtn(); }
 function updateTemaBtn() { var t = getTema(); ['auto','light','dark'].forEach(function(x) { var b = document.getElementById('th-' + x); if (b) b.classList.toggle('active', x === t); }); }
 
-/* ============ CHIP MULTI-SELECT (legacy, mantenuto per compat) ============ */
+/* ============ CHIP MULTI-SELECT (legacy) ============ */
 window._chips = {};
 function chipMulti(id, options, selected, acc, cols) {
   if (!Array.isArray(selected)) selected = selected ? [selected] : [];
@@ -1541,10 +1625,8 @@ function apriSchedaPersona(id) {
   h += '<button class="btn btn-secondary btn-icon" onclick="cambiaRuoliPersona()">' + ico('aggiorna',15) + '</button>';
   h += '</div></div>';
 
-  /* Attività unificata */
   h += renderBoxAttivita(p);
 
-  /* Richiesta (solo acquirente) */
   if ((p.ruoli||[]).indexOf('ACQUIRENTE') >= 0) {
     var rq = p.richiesta || richiestaVuota();
     var rows = [];
@@ -1552,7 +1634,7 @@ function apriSchedaPersona(id) {
     if (rq.budget) rows.push(['Budget', rq.budget + ' €']);
     if ((rq.tipologia||[]).length) rows.push(['Tipologie', rq.tipologia.join(', ')]);
     if ((rq.zona||[]).length) rows.push(['Zone', rq.zona.join(', ')]);
-    if (rq.mqMin || rq.mqMax) rows.push(['Mq', (rq.mqMin || '?') + ' – ' + (rq.mqMax || '?')]);
+    if (rq.mqMin || rq.mqMax) rows.push(['Mq commerciali', (rq.mqMin || '?') + ' – ' + (rq.mqMax || '?')]);
     if ((rq.locali||[]).length) rows.push(['Locali', rq.locali.join(', ')]);
     if (rq.mutuo) rows.push(['Mutuo', rq.mutuo]);
     if (rq.cnCv) rows.push(['CN/CV', rq.cnCv]);
@@ -1572,7 +1654,6 @@ function apriSchedaPersona(id) {
     } catch(e) { console.error(e); }
   }
 
-  /* Immobili collegati */
   var bodyI = '';
   if (immP.length) {
     immP.forEach(function(im) {
@@ -1585,7 +1666,6 @@ function apriSchedaPersona(id) {
   bodyI += '<button class="btn btn-primary" style="margin-top:8px;" onclick="apriLinkImmobili(\'' + p.id + '\')">' + ico('piu',14) + ' Aggiungi immobile</button>';
   h += collapsible('p_imm', ico('casa',13) + ' Immobili', bodyI, immP.length || null);
 
-  /* Dati extra */
   if (p.cf || p.note || p.email || p.telefono2) {
     var bodyD = '';
     if (p.cf) bodyD += '<div class="info-row"><span class="label">CF</span><span class="value">' + esc(p.cf) + '</span></div>';
@@ -1852,7 +1932,7 @@ function apriModificaRichiesta(pid) {
 
   h += '<div class="card"><h2><span class="dot"></span>Caratteristiche</h2>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Stato conservativo</label>' + ms('rq-statoConservativo', OPT_STATO, r.statoConservativo) + '</div>';
-  h += '<div style="margin-bottom:8px;"><label class="form-label">Mq</label><div class="mq-row"><div><input id="rq-mqMin" placeholder="Min" inputmode="numeric" value="' + esc(r.mqMin||'') + '"></div><div><input id="rq-mqMax" placeholder="Max" inputmode="numeric" value="' + esc(r.mqMax||'') + '"></div></div></div>';
+  h += '<div style="margin-bottom:8px;"><label class="form-label">Mq commerciali</label><div class="mq-row"><div><input id="rq-mqMin" placeholder="Min" inputmode="numeric" value="' + esc(r.mqMin||'') + '"></div><div><input id="rq-mqMax" placeholder="Max" inputmode="numeric" value="' + esc(r.mqMax||'') + '"></div></div></div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Locali</label>' + ms('rq-locali', OPT_LOCALI, r.locali) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Bagni</label>' + ms('rq-bagni', OPT_BAGNI, r.bagni) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Piano</label>' + ms('rq-piano', OPT_PIANO, r.piano) + '</div>';
@@ -1994,7 +2074,7 @@ function calcolaMatch(im, per) {
     check('statoConservativo', { ok: overlapScore(r.statoConservativo, [d.statoConservativo||'']).ok });
   }
   if (r.mqMin || r.mqMax) {
-    var propSize = parseNum(d.mqMin) || parseNum(d.mq) || parseNum(d.mqMax);
+    var propSize = parseNum(d.mqCommerciali) || parseNum(d.mq) || parseNum(d.mqCalpestabili) || parseNum(d.mqMin);
     var mn = parseNum(r.mqMin), mx = parseNum(r.mqMax);
     var ok = true;
     if (propSize !== null) {
@@ -2202,7 +2282,6 @@ function selTipoApp(s) {
   if (req === 'RR_o_immobile') { if (im) { apriFormApp(im, null, t); return; } if (per) { apriFormApp(null, per, t); return; } apriPicker('persona', function(p){ apriFormApp(null, p, t); }, t.sigla); return; }
   apriFormApp(im, per, t);
 }
-/* Picker con salvataggio modale genitore */
 window._pickerCb = null;
 window._pickerSavedParent = null;
 function apriPicker(te, cb, sigla) {
@@ -2443,8 +2522,9 @@ function aggiornaAgendaSettimanale() {
   for (var i = 0; i < 7; i++) {
     var gi2 = new Date(l); gi2.setDate(l.getDate() + i);
     var y = ymd(gi2); var io = gi2.getTime() === o.getTime();
+    var fest = isFestivo(y);
     var items = itemsGiorno(y);
-    h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + '" onclick="apriPlanningGiorno(\'' + y + '\')">';
+    h += '<div class="agenda-giorno' + (io ? ' oggi' : '') + (fest && !io ? ' festivo' : '') + '" onclick="apriPlanningGiorno(\'' + y + '\')">';
     h += '<div class="ag-nome">' + GIORNI_B[i] + '</div><div class="ag-num">' + gi2.getDate() + '</div>';
     if (!items.length) h += '<div class="ag-empty">·</div>';
     else {
@@ -2477,7 +2557,7 @@ function apriElemAg(kind, id) {
   else if (kind === 'att') { var a = raccogliAtt().find(function(x){ return x.id === id; }); if (a) apriAzioniAttGlob(a.id, a.entTipo, a.entId); }
   else if (kind === 'lib') apriAzioniPian(id);
 }
-function scrollAgoNow() { var el = document.getElementById('ag-scroll'); if (!el) return; if (agState !== 'week' && agState !== 'day') return; var n = new Date(); el.scrollTop = Math.max(0, (n.getHours() - 2) * 50); }
+function scrollAgoNow() { var el = document.getElementById('ag-scroll'); if (!el) return; if (agState !== 'week' && agState !== 'day') return; var n = new Date(); el.scrollTop = Math.max(0, (n.getHours() - 2) * ORA_H); }
 function scrollMM() { var el = document.getElementById('ag-scroll'); if (!el) return; if (agState !== 'month') return; var mm = el.querySelector('.ag-mm-month.current'); if (mm) el.scrollTop = mm.offsetTop - 10; }
 function scrollY() { var el = document.getElementById('ag-scroll'); if (!el || agState !== 'year') return; var nY = new Date().getFullYear(); var nM = new Date().getMonth(); var ms = el.querySelectorAll('.ag-year-month'); if (agYear === nY && ms[nM]) el.scrollTop = ms[nM].offsetTop - 10; else el.scrollTop = 0; }
 function renderAgendaPage() {
@@ -2503,17 +2583,45 @@ function attachGestures() {
   var swipeFired = false, twoF = false;
   var lpTimer = null, lpStart = null, lpFired = false;
   var lpPreview = null;
+  var lpSlot = null;
   function dist(t1, t2) { return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY); }
-  function cancelLP() { if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; } if (lpPreview) { try { lpPreview.remove(); } catch(e) {} lpPreview = null; } }
-  function calcOraDa(y) {
-    var tEl = el.querySelector('.ag-timeline'); if (!tEl) return null;
-    var r = tEl.getBoundingClientRect();
-    var yIn = y - r.top;
-    var hh = 50;
-    var mTot = Math.round((yIn / hh) * 60 / 15) * 15;
-    var h = Math.floor(mTot / 60), m = mTot - h * 60;
-    if (h < 0) { h = 0; m = 0; } if (h > 23) { h = 23; m = 45; }
-    return { h: h, m: m };
+  function cancelLP() {
+    if (lpTimer) { clearTimeout(lpTimer); lpTimer = null; }
+    if (lpPreview) { try { lpPreview.remove(); } catch(e) {} lpPreview = null; }
+    if (lpSlot) { try { lpSlot.remove(); } catch(e) {} lpSlot = null; }
+  }
+  function calcOraDa(clientY) {
+    var col = el.querySelector('.ag-day-col');
+    if (!col) return null;
+    var r = col.getBoundingClientRect();
+    var yIn = clientY - r.top;
+    var minTot = Math.round((yIn / ORA_H) * 60 / 5) * 5;
+    if (minTot < 0) minTot = 0;
+    if (minTot > 23*60 + 55) minTot = 23*60 + 55;
+    return { h: Math.floor(minTot / 60), m: minTot % 60, yIn: yIn };
+  }
+  function updateLp(clientY) {
+    var or = calcOraDa(clientY);
+    if (!or) return null;
+    if (!lpPreview) {
+      lpPreview = document.createElement('div');
+      lpPreview.className = 'ag-longpress-preview';
+      document.body.appendChild(lpPreview);
+    }
+    var endM = or.m + 60;
+    var endH = or.h + Math.floor(endM / 60);
+    endM = endM % 60;
+    if (endH > 23) { endH = 23; endM = 59; }
+    lpPreview.textContent = pad2(or.h) + ':' + pad2(or.m) + ' – ' + pad2(endH) + ':' + pad2(endM);
+    lpPreview.style.left = '50%';
+    lpPreview.style.top = Math.max(60, clientY - 40) + 'px';
+    var col = el.querySelector('.ag-day-col');
+    if (col) {
+      if (!lpSlot) { lpSlot = document.createElement('div'); lpSlot.className = 'ag-lp-slot'; col.appendChild(lpSlot); }
+      lpSlot.style.top = (or.h * ORA_H + or.m * (ORA_H/60)) + 'px';
+      lpSlot.style.height = ORA_H + 'px';
+    }
+    return or;
   }
   el.addEventListener('touchstart', function(e) {
     if (e.touches.length === 2) { twoF = true; startDist = dist(e.touches[0], e.touches[1]); pinchSwitch = false; cancelLP(); }
@@ -2522,25 +2630,13 @@ function attachGestures() {
       if (agState === 'day' || agState === 'week') {
         lpFired = false;
         lpStart = { x: tSX, y: tSY };
-        var sxp = tSX, syp = tSY;
         lpTimer = setTimeout(function() {
           lpTimer = null;
           if (swipeFired || twoF || lpFired) return;
           lpFired = true;
-          var col = document.elementFromPoint(sxp, syp);
-          var dc = col ? col.closest('.ag-day-col') : null;
-          var ymd2 = dc ? dc.dataset.ymd : (agDayYmd || ymd(new Date()));
-          if (!ymd2) return;
-          var or = calcOraDa(syp);
-          if (!or) return;
-          var bg = document.createElement('div');
-          bg.className = 'ag-longpress-preview';
-          bg.style.left = sxp + 'px'; bg.style.top = syp + 'px';
-          bg.textContent = pad2(or.h) + ':' + pad2(or.m);
-          document.body.appendChild(bg);
-          lpPreview = bg;
+          updateLp(tSY);
           if (navigator.vibrate) { try { navigator.vibrate(25); } catch(e) {} }
-        }, 500);
+        }, 450);
       }
     }
   }, { passive: true });
@@ -2548,11 +2644,10 @@ function attachGestures() {
     if (lpTimer && lpStart && e.touches.length >= 1) {
       var mdx = Math.abs(e.touches[0].clientX - lpStart.x);
       var mdy = Math.abs(e.touches[0].clientY - lpStart.y);
-      if (mdx > 10 || mdy > 10) cancelLP();
+      if (mdx > 8 || mdy > 8) cancelLP();
     }
     if (lpPreview && lpFired && e.touches.length === 1) {
-      var or = calcOraDa(e.touches[0].clientY);
-      if (or) { lpPreview.style.left = e.touches[0].clientX + 'px'; lpPreview.style.top = e.touches[0].clientY + 'px'; lpPreview.textContent = pad2(or.h) + ':' + pad2(or.m); }
+      updateLp(e.touches[0].clientY);
       return;
     }
     if (e.touches.length === 2 && twoF && startDist > 0 && !pinchSwitch) {
@@ -2567,8 +2662,7 @@ function attachGestures() {
       if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8 && dt < 600) {
         swipeFired = true; cancelLP();
         if (navigator.vibrate) { try { navigator.vibrate(10); } catch(_) {} }
-        if (agState === 'day') setTimeout(function(){ shiftAgPeriod(dx < 0 ? 1 : -1); }, 60);
-        else if (agState === 'week') setTimeout(function(){ shiftAgPeriod(dx < 0 ? 1 : -1); }, 60);
+        setTimeout(function(){ shiftAgPeriod(dx < 0 ? 1 : -1); }, 60);
       }
     }
   }, { passive: true });
@@ -2576,17 +2670,19 @@ function attachGestures() {
     if (e.touches.length < 2) { startDist = 0; pinchSwitch = false; twoF = false; }
     if (e.touches.length === 0) {
       swipeFired = false;
-      if (lpPreview && lpFired) {
-        var col = document.elementFromPoint(lpPreview.getBoundingClientRect().left, lpPreview.getBoundingClientRect().top);
-        var dc = col ? col.closest('.ag-day-col') : null;
-        var ymd2 = dc ? dc.dataset.ymd : (agDayYmd || ymd(new Date()));
-        var r = lpPreview.getBoundingClientRect();
-        var or = calcOraDa(r.top);
+      if (lpFired) {
+        var or = calcOraDa(tSY);
+        var ymd2 = agDayYmd || ymd(new Date());
+        if (!agDayYmd && agState === 'week') {
+          var col = document.elementFromPoint(tSX, tSY);
+          var dc = col ? col.closest('.ag-day-col') : null;
+          if (dc && dc.dataset.ymd) ymd2 = dc.dataset.ymd;
+        }
         cancelLP();
         if (ymd2 && or) {
           var dt2 = new Date(ymd2 + 'T' + pad2(or.h) + ':' + pad2(or.m) + ':00');
           _prefillDataOra = dt2.toISOString();
-          apriSelezioneTipoApp(null, null);
+          setTimeout(function(){ apriSelezioneTipoApp(null, null); }, 40);
         }
       } else cancelLP();
     }
@@ -2600,7 +2696,7 @@ function weekStripHtml() {
   var t = ymd(new Date());
   var sy = agDayYmd || t;
   var h = '<div class="ag-weekstrip">';
-  for (var i = 0; i < 7; i++) { var d = new Date(s); d.setDate(s.getDate() + i); var y = ymd(d); var c = 'ag-ws-day' + (y === t ? ' today' : '') + (y === sy ? ' sel' : ''); h += '<div class="' + c + '" onclick="clickGiorno(\'' + y + '\')"><div class="ag-ws-name">' + GIORNI_B[i] + '</div><div class="ag-ws-num">' + d.getDate() + '</div></div>'; }
+  for (var i = 0; i < 7; i++) { var d = new Date(s); d.setDate(s.getDate() + i); var y = ymd(d); var fest = isFestivo(y); var c = 'ag-ws-day' + (y === t ? ' today' : '') + (y === sy ? ' sel' : '') + (fest ? ' festivo' : ''); h += '<div class="' + c + '" onclick="clickGiorno(\'' + y + '\')"><div class="ag-ws-name">' + GIORNI_B[i] + '</div><div class="ag-ws-num">' + d.getDate() + '</div></div>'; }
   h += '</div>'; return h;
 }
 function htmlYear() {
@@ -2610,7 +2706,7 @@ function htmlYear() {
     var fd = new Date(agYear, m, 1); var sd = fd.getDay(); sd = sd === 0 ? 6 : sd - 1;
     var s = new Date(fd); s.setDate(fd.getDate() - sd);
     h += '<div class="ag-year-month"><div class="ag-year-name">' + MESI_L[m] + '</div><div class="ag-year-grid">';
-    for (var i = 0; i < 42; i++) { var d = new Date(s); d.setDate(s.getDate() + i); var y = ymd(d); var out = d.getMonth() !== m; if (out && i >= 35 && d.getDate() > 7) break; var items = itemsGiorno(y); h += '<div class="ag-year-cell' + (out ? ' other' : '') + (y === t ? ' today' : '') + (y === sy ? ' selected' : '') + '" onclick="clickGiorno(\'' + y + '\')"><div class="ag-year-num">' + d.getDate() + '</div>'; if (items.length) h += '<div class="ag-year-dot" style="background:' + items[0].colore + '"></div>'; h += '</div>'; }
+    for (var i = 0; i < 42; i++) { var d = new Date(s); d.setDate(s.getDate() + i); var y = ymd(d); var out = d.getMonth() !== m; if (out && i >= 35 && d.getDate() > 7) break; var items = itemsGiorno(y); var fest = isFestivo(y); h += '<div class="ag-year-cell' + (out ? ' other' : '') + (y === t ? ' today' : '') + (y === sy ? ' selected' : '') + (fest && !out ? ' festivo' : '') + '" onclick="clickGiorno(\'' + y + '\')"><div class="ag-year-num">' + d.getDate() + '</div>'; if (items.length) h += '<div class="ag-year-dot" style="background:' + items[0].colore + '"></div>'; h += '</div>'; }
     h += '</div></div>';
   }
   h += '</div>'; return h;
@@ -2627,7 +2723,7 @@ function htmlMM() {
     h += '<div class="ag-mm-month' + (ic ? ' current' : '') + '"><div class="ag-mm-name">' + MESI_L[m] + ' ' + y + '</div><div class="ag-mm-weekdays">';
     ['L','M','M','G','V','S','D'].forEach(function(x){ h += '<div>' + x + '</div>'; });
     h += '</div><div class="ag-mm-grid">';
-    for (var i = 0; i < 42; i++) { var d = new Date(s); d.setDate(s.getDate() + i); var y2 = ymd(d); var out = d.getMonth() !== m; if (out && (i < 7 || (i >= 35 && d.getDate() > 7))) { h += '<div class="ag-mm-cell" style="opacity:0.15;"></div>'; continue; } var items = itemsGiorno(y2); h += '<div class="ag-mm-cell' + (y2 === t ? ' today' : '') + (y2 === sy ? ' selected' : '') + '" onclick="clickGiorno(\'' + y2 + '\')"><div class="ag-mm-num">' + d.getDate() + '</div>'; if (items.length) { var it = items[0]; var ts = (it.ora && it.ora !== '--:--') ? it.ora : ''; h += '<div class="ag-mm-events"><div class="ag-mm-ev" style="background:' + it.colore + '22;border-left:2px solid ' + it.colore + ';"><div class="ag-mm-ev-title">' + esc((ts ? ts + ' ' : '') + it.tipo) + '</div></div></div>'; } h += '</div>'; }
+    for (var i = 0; i < 42; i++) { var d = new Date(s); d.setDate(s.getDate() + i); var y2 = ymd(d); var out = d.getMonth() !== m; if (out && (i < 7 || (i >= 35 && d.getDate() > 7))) { h += '<div class="ag-mm-cell" style="opacity:0.15;"></div>'; continue; } var items = itemsGiorno(y2); var fest = isFestivo(y2); h += '<div class="ag-mm-cell' + (y2 === t ? ' today' : '') + (y2 === sy ? ' selected' : '') + (fest ? ' festivo' : '') + '" onclick="clickGiorno(\'' + y2 + '\')"><div class="ag-mm-num">' + d.getDate() + '</div>'; if (items.length) { var it = items[0]; var ts = (it.ora && it.ora !== '--:--') ? it.ora : ''; h += '<div class="ag-mm-events"><div class="ag-mm-ev" style="background:' + it.colore + '22;border-left:2px solid ' + it.colore + ';"><div class="ag-mm-ev-title">' + esc((ts ? ts + ' ' : '') + it.tipo) + '</div></div></div>'; } h += '</div>'; }
     h += '</div></div>';
   }
   h += '</div>'; return h;
@@ -2638,7 +2734,7 @@ function htmlWeek() {
   var s = new Date(b); s.setDate(b.getDate() + df);
   var t = ymd(new Date()); var now = new Date();
   var h = '<div style="display:flex;padding-left:48px;padding-top:4px;padding-bottom:4px;background:var(--bg);flex-shrink:0;border-bottom:1px solid var(--bd);">';
-  for (var i = 0; i < 7; i++) { var d0 = new Date(s); d0.setDate(s.getDate() + i); var y0 = ymd(d0); h += '<div style="flex:1;text-align:center;min-width:0;' + (y0 === t ? 'color:var(--acc);font-weight:700;' : '') + '"><div style="font-size:9px;font-weight:700;text-transform:uppercase;' + (y0 === t ? 'color:var(--acc);' : 'color:var(--tx3);') + '">' + GIORNI_B[i] + '</div><div style="font-size:14px;font-weight:500;">' + d0.getDate() + '</div></div>'; }
+  for (var i = 0; i < 7; i++) { var d0 = new Date(s); d0.setDate(s.getDate() + i); var y0 = ymd(d0); var fest = isFestivo(y0); var stcol = y0 === t ? 'color:var(--acc);' : fest ? 'color:var(--fest);' : 'color:var(--tx3);'; h += '<div style="flex:1;text-align:center;min-width:0;' + (y0 === t ? 'color:var(--acc);font-weight:700;' : '') + '"><div style="font-size:9px;font-weight:700;text-transform:uppercase;' + stcol + '">' + GIORNI_B[i] + '</div><div style="font-size:14px;font-weight:500;">' + d0.getDate() + '</div></div>'; }
   h += '</div>';
   h += '<div class="ag-timeline"><div class="ag-hours-col">';
   for (var hr = 0; hr < 24; hr++) h += '<div class="ag-hour-label">' + pad2(hr) + '</div>';
@@ -2648,8 +2744,8 @@ function htmlWeek() {
     h += '<div class="ag-day-col" data-ymd="' + y2 + '" onclick="clickGiorno(\'' + y2 + '\')">';
     for (var hr2 = 0; hr2 < 24; hr2++) h += '<div class="ag-hour-line"></div>';
     var items = itemsGiorno(y2);
-    items.forEach(function(it){ if (it.ora === '--:--') return; var pp = it.ora.split(':').map(Number); var top = (pp[0]*60 + pp[1]) * (50/60); var dur = 50; if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio))/60000) * (50/60); h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElemAg(\'' + it.kind + '\',\'' + it.id + '\')"><div class="ag-event-title">' + esc(it.tipo) + '</div><div class="ag-event-time">' + it.ora + '</div></div>'; });
-    if (y2 === t) { var lt = (now.getHours()*60 + now.getMinutes()) * (50/60); h += '<div class="ag-now-line" style="top:' + lt + 'px;"><div class="ag-now-dot"></div></div>'; }
+    items.forEach(function(it){ if (it.ora === '--:--') return; var pp = it.ora.split(':').map(Number); var top = (pp[0]*60 + pp[1]) * (ORA_H/60); var dur = ORA_H; if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio))/60000) * (ORA_H/60); h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElemAg(\'' + it.kind + '\',\'' + it.id + '\')"><div class="ag-event-title">' + esc(it.tipo) + '</div><div class="ag-event-time">' + it.ora + '</div></div>'; });
+    if (y2 === t) { var lt = (now.getHours()*60 + now.getMinutes()) * (ORA_H/60); h += '<div class="ag-now-line" style="top:' + lt + 'px;"><div class="ag-now-dot"></div></div>'; }
     h += '</div>';
   }
   h += '</div></div>'; return h;
@@ -2662,8 +2758,8 @@ function htmlDay() {
   h += '</div><div class="ag-days"><div class="ag-day-col" data-ymd="' + y + '">';
   for (var hr2 = 0; hr2 < 24; hr2++) h += '<div class="ag-hour-line"></div>';
   var items = itemsGiorno(y);
-  items.forEach(function(it){ if (it.ora === '--:--') return; var pp = it.ora.split(':').map(Number); var top = (pp[0]*60 + pp[1]) * (50/60); var dur = 50; if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio))/60000) * (50/60); h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElemAg(\'' + it.kind + '\',\'' + it.id + '\')"><div class="ag-event-title">' + esc(it.tipo) + '</div><div class="ag-event-time">' + it.ora + ' · ' + esc(it.testo.slice(0,32)) + '</div></div>'; });
-  if (it_) { var lt = (new Date().getHours()*60 + new Date().getMinutes()) * (50/60); h += '<div class="ag-now-line" style="top:' + lt + 'px;"><div class="ag-now-dot"></div></div>'; }
+  items.forEach(function(it){ if (it.ora === '--:--') return; var pp = it.ora.split(':').map(Number); var top = (pp[0]*60 + pp[1]) * (ORA_H/60); var dur = ORA_H; if (it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine) - new Date(it.dataInizio))/60000) * (ORA_H/60); h += '<div class="ag-event" style="top:' + top + 'px;height:' + dur + 'px;border-left-color:' + it.colore + ';" onclick="event.stopPropagation();apriElemAg(\'' + it.kind + '\',\'' + it.id + '\')"><div class="ag-event-title">' + esc(it.tipo) + '</div><div class="ag-event-time">' + it.ora + ' · ' + esc(it.testo.slice(0,32)) + '</div></div>'; });
+  if (it_) { var lt = (new Date().getHours()*60 + new Date().getMinutes()) * (ORA_H/60); h += '<div class="ag-now-line" style="top:' + lt + 'px;"><div class="ag-now-dot"></div></div>'; }
   h += '</div></div></div>'; return h;
 }
 
@@ -2750,7 +2846,7 @@ console.log('[ARANJO] P3 ok');
 'use strict';
 
 /* ============================================================
-   PARTE 4 — IMMOBILI + CONDOMINI
+   PARTE 4 — IMMOBILI + CONDOMINI + ATTIVITÀ
    ============================================================ */
 
 function apriScheda(id) {
@@ -2781,10 +2877,8 @@ function apriScheda(id) {
   h += '<button class="btn btn-secondary btn-icon" onclick="apriCambiaStato()">' + ico('aggiorna',15) + '</button>';
   h += '</div></div>';
 
-  /* Attività */
   h += renderBoxAttivita(im, true);
 
-  /* Condominio */
   if (!im.villa && co) {
     var bodyC = '';
     if (dc.annoCostruzione) bodyC += '<div class="info-row"><span class="label">Anno</span><span class="value">' + esc(dc.annoCostruzione) + '</span></div>';
@@ -2795,12 +2889,12 @@ function apriScheda(id) {
     h += collapsible('im_condo', ico('condominio',13) + ' Condominio', bodyC);
   }
 
-  /* Caratteristiche */
   var d = im.dettagli || {};
   var righe = [];
   var tip = Array.isArray(d.tipologia) ? d.tipologia.join(', ') : (d.tipologia || '');
   if (tip) righe.push(['Tipo', tip]);
-  if (d.mqMin || d.mq) righe.push(['Mq', (d.mqMin || d.mq) + (d.mqMax ? ' – ' + d.mqMax : '')]);
+  if (d.mqCalpestabili) righe.push(['Mq calpestabili', d.mqCalpestabili]);
+  if (d.mqCommerciali) righe.push(['Mq commerciali', d.mqCommerciali]);
   if (d.locali || d.camere) righe.push(['Locali', d.locali || d.camere]);
   if (d.bagni) righe.push(['Bagni', d.bagni]);
   if (d.piano || d.pianoNum) righe.push(['Piano', [Array.isArray(d.piano) ? d.piano.join(', ') : d.piano, Array.isArray(d.pianoNum) ? d.pianoNum.join(', ') : d.pianoNum].filter(Boolean).join(' ')]);
@@ -2819,7 +2913,6 @@ function apriScheda(id) {
     var bodyD = righe.map(function(x){ return '<div class="info-row"><span class="label">' + x[0] + '</span><span class="value">' + esc(x[1]) + '</span></div>'; }).join('');
     h += collapsible('im_det', ico('righello',13) + ' Caratteristiche', bodyD);
   }
-  /* Extra */
   var extraRows = [];
   [['riscaldamentoTipo','Riscaldamento'],['infissi','Infissi'],['vista','Vista'],['zonaCaratt','Zona'],['cucina','Cucina']].forEach(function(kv) {
     var k = kv[0], lbl = kv[1];
@@ -2830,7 +2923,6 @@ function apriScheda(id) {
     h += collapsible('im_car', ico('checkCerchio',13) + ' Extra', bch);
   }
 
-  /* Proprietari */
   var bp = '';
   if (props.length) {
     props.forEach(function(pp){ var meta = [pp.tipo || 'Proprietà', pp.quota ? pp.quota + '%' : ''].filter(Boolean).join(' · '); bp += '<div class="info-row"><span class="label">' + (pp.principale ? '★ ' : '') + esc(nomeCogn(pp.persona)) + '</span><span class="value">' + esc(meta) + '</span></div>'; });
@@ -2838,18 +2930,15 @@ function apriScheda(id) {
   bp += '<button class="btn btn-primary" style="margin-top:8px;" onclick="apriGestioneProprietari(\'' + im.id + '\')">' + ico('modifica',14) + ' Gestisci proprietari</button>';
   h += collapsible('im_prop', ico('utenti',13) + ' Proprietari', bp, props.length || null);
 
-  /* Zone */
   var ze = zoneEff(im);
   if (ze.length) h += collapsible('im_zone', ico('pin',13) + ' Zone', '<div class="zone-chips">' + ze.map(function(z){ return '<span class="zone-chip active">' + esc(z) + '</span>'; }).join('') + '</div>');
 
-  /* Documenti */
   if (im.stato === 'NT' || im.stato === 'INK' || im.stato === 'VND') {
     var dOk = 0;
     DOCS_RICH.forEach(function(t){ if (im.documenti && im.documenti[t] && im.documenti[t].stato === 'presente') dOk++; });
     h += '<div class="card" style="padding:0 14px;"><div class="doc-summary-row" onclick="apriGestioneDoc(\'' + im.id + '\')"><div class="ds-left">' + ico('documento',14) + ' Documenti</div><div class="ds-right ' + (dOk === DOCS_RICH.length ? 'ok' : dOk > 0 ? 'warn' : '') + '">' + dOk + '/' + DOCS_RICH.length + '</div></div></div>';
   }
 
-  /* Azioni */
   var bodyAz = '';
   bodyAz += '<button class="btn btn-secondary" onclick="apriModificaIpoteca(\'' + im.id + '\')">' + ico('banca',14) + ' Ipoteca</button>';
   bodyAz += '<button class="btn btn-secondary" onclick="apriModificaProcura(\'' + im.id + '\')">' + ico('contratto',14) + ' Procura</button>';
@@ -2858,7 +2947,6 @@ function apriScheda(id) {
   bodyAz += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + im.id + '\')">' + ico('file',14) + ' Duplica</button>';
   h += collapsible('im_az', ico('ingranaggio',13) + ' Azioni', bodyAz);
 
-  /* Foto */
   var bodyF = '';
   if (!im.villa && co) { bodyF += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin-bottom:4px;">Condominio</div><div id="fg-condo-' + im.id + '"></div>'; }
   bodyF += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:8px 0 4px;">Immobile</div><div id="fg-imm-' + im.id + '"></div>';
@@ -2866,7 +2954,6 @@ function apriScheda(id) {
   bodyF += '<button class="add-btn" onclick="apriPickerFoto(\'immobile\',\'' + im.id + '\',false)">' + ico('foto',13) + ' Galleria</button>';
   h += collapsible('im_foto', ico('camera',13) + ' Foto', bodyF, (im.foto||[]).length || null);
 
-  /* Note */
   if (im.note) h += collapsible('im_note', ico('nota',13) + ' Note', '<div style="font-size:13px;white-space:pre-wrap;">' + esc(im.note) + '</div>');
 
   h += '<button class="btn btn-danger" style="margin-top:6px;" onclick="eliminaImmobile()">' + ico('cestino',15) + ' Elimina</button>';
@@ -3009,7 +3096,6 @@ function salvaAtt() {
   var p = propPrinc(i);
   DB.attivita.push(Object.assign({}, ad, { immobileId:i.id, personaId:p ? p.persona.id : null, tipoAtt:'ALTRO' }));
   i.updatedAt = new Date().toISOString();
-  /* Sync ai proprietari */
   syncAttToPersone(i.id, ad.id, 'add');
   Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); renderPersone(); apriScheda(i.id);
 }
@@ -3019,20 +3105,96 @@ function apriAzioniAttivita(idA) {
   var a = (i.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
   var df = a.tipo === 'da_fare' && !a.completata;
   var h = '<div class="card" style="padding:12px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + fmtDT(dataAtt(a)) + '</div><div style="font-size:14px;">' + esc(a.testo) + '</div></div>';
-  if (df) h += '<button class="btn btn-primary" onclick="confSegnaFatta(\'' + idA + '\')">' + ico('check',15) + ' Fatta</button>';
+  if (df) h += '<button class="btn btn-primary" onclick="confSegnaFatta(\'' + idA + '\')">' + ico('check',15) + ' Eseguita</button>';
   h += '<button class="btn btn-danger" onclick="elimAtt(\'' + idA + '\')">' + ico('cestino',15) + ' Elimina</button>';
   h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + i.id + '\')">Chiudi</button></div>';
+  apriModal('Attività', h);
+}
+function apriAzioniAttivitaPersona(idA) {
+  var p = trovaPersona(personaAperta); if (!p) return;
+  if (!idA) { apriModal('Attività', '<div class="empty">Nessuna</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>'); return; }
+  var a = (p.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
+  var df = a.tipo === 'da_fare' && !a.completata;
+  var h = '<div class="card" style="padding:12px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + fmtDT(dataAtt(a)) + '</div><div style="font-size:14px;">' + esc(a.testo) + '</div></div>';
+  if (df) h += '<button class="btn btn-primary" onclick="confSegnaFattaP(\'' + idA + '\')">' + ico('check',15) + ' Eseguita</button>';
+  h += '<button class="btn btn-danger" onclick="elimAttP(\'' + idA + '\')">' + ico('cestino',15) + ' Elimina</button>';
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
   apriModal('Attività', h);
 }
 function confSegnaFatta(idA) {
   var i = DB.immobili.find(function(x){return x.id===immobileAperto;}); if (!i) return;
   var a = (i.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
-  a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date().toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.seq = seq();
-  i.updatedAt = new Date().toISOString();
-  syncAttToPersone(i.id, idA, 'update');
-  Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); renderPersone(); apriScheda(i.id);
+  apriEsitoEsecuzione('immobile', i.id, idA);
 }
-function elimAtt(idA) { var i = DB.immobili.find(function(x){return x.id===immobileAperto;}); if (!i) return; if (!confirm('Eliminare?')) return; i.attivita = (i.attivita||[]).filter(function(x){return x.id!==idA;}); i.updatedAt = new Date().toISOString(); syncAttToPersone(i.id, idA, 'delete'); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); renderPersone(); apriScheda(i.id); }
+function confSegnaFattaP(idA) {
+  var p = trovaPersona(personaAperta); if (!p) return;
+  var a = (p.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
+  apriEsitoEsecuzione('persona', p.id, idA);
+}
+function apriEsitoEsecuzione(tipo, entId, attId) {
+  var ent, arr;
+  if (tipo === 'immobile') { ent = DB.immobili.find(function(x){return x.id===entId;}); arr = ent && ent.attivita; }
+  else { ent = trovaPersona(entId); arr = ent && ent.attivita; }
+  if (!arr) return;
+  var a = arr.find(function(x){return x.id===attId;}); if (!a) return;
+  window._esecCtx = { tipo: tipo, entId: entId, attId: attId };
+  var dataOrig = a.dataPrevista || a.data;
+  var h = '<div class="card" style="padding:12px;margin-bottom:8px;">';
+  h += '<div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Pianificata per ' + fmtDT(dataOrig) + '</div>';
+  h += '<div style="font-size:13.5px;">' + esc(a.testo) + '</div></div>';
+  h += '<div class="form-group"><div class="form-row"><label class="form-label">Esito / Note</label><textarea class="form-textarea" id="es-x" rows="3" placeholder="Es. richiamare, interessato, ecc."></textarea></div></div>';
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="esecuzioneAnnulla()">Annulla</button><button class="btn btn-primary" onclick="esecuzioneConferma()">Eseguita</button></div>';
+  apriModal('Esegui', h);
+}
+function esecuzioneAnnulla() { window._esecCtx = null; chiudiModal(); }
+function esecuzioneConferma() {
+  var ctx = window._esecCtx; if (!ctx) { chiudiModal(); return; }
+  var note = ((document.getElementById('es-x')||{}).value||'').trim();
+  window._esecCtx = null;
+  eseguiAttivitaEntita(ctx.tipo, ctx.entId, ctx.attId, note);
+  chiudiModal();
+  renderListaImmobili(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning();
+  if (ctx.tipo === 'immobile') apriScheda(ctx.entId); else apriSchedaPersona(ctx.entId);
+}
+function eseguiAttivitaEntita(tipo, entId, attId, note) {
+  var ent, arr;
+  if (tipo === 'immobile') { ent = DB.immobili.find(function(x){return x.id===entId;}); arr = ent && ent.attivita; }
+  else { ent = trovaPersona(entId); arr = ent && ent.attivita; }
+  if (!arr) return;
+  var a = arr.find(function(x){return x.id===attId;}); if (!a) return;
+  var now = new Date().toISOString();
+  var dataPrevistaOrig = a.dataPrevista || a.data;
+  // 1. Marca l'originale come completata (storicizzata), mantenendone la pianificazione
+  a.completata = true;
+  a.dataEsecuzione = now;
+  a.tipo = 'fatta';
+  a.data = now;
+  a.dataPrevistaOriginale = dataPrevistaOrig;
+  a.dataPrevista = null;
+  a.seq = seq();
+  // aggiorna anche la copia globale
+  var g = DB.attivita.find(function(x){ return x.id === attId; });
+  if (g) { g.tipo = 'fatta'; g.completata = true; g.data = now; g.dataPrevista = null; g.dataEsecuzione = now; g.dataPrevistaOriginale = dataPrevistaOrig; }
+  // 2. Crea una NUOVA attività "fatta" come traccia dell'esecuzione
+  var newId = uid();
+  var origLabel = 'attività del ' + fmtDT(dataPrevistaOrig);
+  var newText = 'Eseguito: ' + a.testo + ' (' + origLabel + ')' + (note ? ' — ' + note : '');
+  var newAtt = { id: newId, seq: seq(), data: now, tipo: 'fatta', testo: newText, completata: true, refAttId: attId };
+  arr.push(newAtt);
+  DB.attivita.push(Object.assign({}, newAtt, {
+    immobileId: tipo === 'immobile' ? ent.id : null,
+    personaId: tipo === 'persona' ? ent.id : null,
+    tipoAtt: 'ALTRO'
+  }));
+  if (tipo === 'immobile') {
+    syncAttToPersone(ent.id, attId, 'update');
+    syncAttToPersone(ent.id, newId, 'add');
+  }
+  ent.updatedAt = now;
+  Storage.save(DB);
+}
+function elimAtt(idA) { var i = DB.immobili.find(function(x){return x.id===immobileAperto;}); if (!i) return; if (!confirm('Eliminare?')) return; i.attivita = (i.attivita||[]).filter(function(x){return x.id!==idA;}); i.updatedAt = new Date().toISOString(); var g = DB.attivita.find(function(x){return x.id===idA;}); if (g) DB.attivita = DB.attivita.filter(function(x){return x.id!==idA;}); syncAttToPersone(i.id, idA, 'delete'); Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); renderPersone(); apriScheda(i.id); }
+function elimAttP(idA) { var p = trovaPersona(personaAperta); if (!p) return; if (!confirm('Eliminare?')) return; p.attivita = (p.attivita||[]).filter(function(x){return x.id!==idA;}); p.updatedAt = new Date().toISOString(); var g = DB.attivita.find(function(x){return x.id===idA;}); if (g) DB.attivita = DB.attivita.filter(function(x){return x.id!==idA;}); Storage.save(DB); renderPersone(); aggiornaBadgeAttivita(); apriSchedaPersona(p.id); }
 
 function apriNuovaAttivitaPersona() {
   var h = '<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="pa-t" onchange="aggFormAttP()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div></div><div id="pa-c"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + personaAperta + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaAttP()">Salva</button></div>';
@@ -3052,19 +3214,6 @@ function salvaAttP() {
   p.updatedAt = new Date().toISOString();
   Storage.save(DB); renderPersone(); aggiornaBadgeAttivita(); apriSchedaPersona(p.id);
 }
-function apriAzioniAttivitaPersona(idA) {
-  var p = trovaPersona(personaAperta); if (!p) return;
-  if (!idA) { apriModal('Attività', '<div class="empty">Nessuna</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>'); return; }
-  var a = (p.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return;
-  var df = a.tipo === 'da_fare' && !a.completata;
-  var h = '<div class="card" style="padding:12px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">' + (df ? 'Da fare' : 'Fatta') + ' · ' + fmtDT(dataAtt(a)) + '</div><div style="font-size:14px;">' + esc(a.testo) + '</div></div>';
-  if (df) h += '<button class="btn btn-primary" onclick="confSegnaFattaP(\'' + idA + '\')">' + ico('check',15) + ' Fatta</button>';
-  h += '<button class="btn btn-danger" onclick="elimAttP(\'' + idA + '\')">' + ico('cestino',15) + ' Elimina</button>';
-  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona(\'' + p.id + '\')">Chiudi</button></div>';
-  apriModal('Attività', h);
-}
-function confSegnaFattaP(idA) { var p = trovaPersona(personaAperta); if (!p) return; var a = (p.attivita||[]).find(function(x){return x.id===idA;}); if (!a) return; a.dataPrevistaOriginale = a.dataPrevista; a.dataEsecuzione = new Date().toISOString(); a.data = a.dataEsecuzione; a.dataPrevista = null; a.tipo = 'fatta'; a.completata = true; a.seq = seq(); p.updatedAt = new Date().toISOString(); Storage.save(DB); renderPersone(); aggiornaBadgeAttivita(); apriSchedaPersona(p.id); }
-function elimAttP(idA) { var p = trovaPersona(personaAperta); if (!p) return; if (!confirm('Eliminare?')) return; p.attivita = (p.attivita||[]).filter(function(x){return x.id!==idA;}); p.updatedAt = new Date().toISOString(); Storage.save(DB); renderPersone(); apriSchedaPersona(p.id); }
 
 function apriCambiaStato() {
   var i = DB.immobili.find(function(x){return x.id===immobileAperto;}); if (!i) return;
@@ -3098,7 +3247,8 @@ function apriModifica() {
 
   h += '<div class="card"><h2><span class="dot"></span>Caratteristiche</h2>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Stato conservativo</label>' + ms('mi-statoConservativo', OPT_STATO, d.statoConservativo) + '</div>';
-  h += '<div style="margin-bottom:8px;"><label class="form-label">Mq</label><div class="mq-row"><div><input id="mi-mqMin" placeholder="Min" inputmode="numeric" value="' + esc(d.mqMin || d.mq || '') + '"></div><div><input id="mi-mqMax" placeholder="Max" inputmode="numeric" value="' + esc(d.mqMax||'') + '"></div></div></div>';
+  h += '<div style="margin-bottom:8px;"><label class="form-label">Mq calpestabili</label><input class="form-input" id="mi-mqCalp" inputmode="numeric" value="' + esc(d.mqCalpestabili || '') + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
+  h += '<div style="margin-bottom:8px;"><label class="form-label">Mq commerciali</label><input class="form-input" id="mi-mqComm" inputmode="numeric" value="' + esc(d.mqCommerciali || '') + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Locali</label>' + ms('mi-locali', OPT_LOCALI, d.locali || d.camere) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Bagni</label>' + ms('mi-bagni', OPT_BAGNI, d.bagni) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Piano</label>' + ms('mi-piano', OPT_PIANO, d.piano) + '</div>';
@@ -3141,8 +3291,8 @@ function salvaModifica() {
   im.dettagli = im.dettagli || {};
   im.dettagli.tipologia = msVal('mi-tipologia');
   im.dettagli.statoConservativo = msVal('mi-statoConservativo');
-  im.dettagli.mqMin = g('mi-mqMin').trim();
-  im.dettagli.mqMax = g('mi-mqMax').trim();
+  im.dettagli.mqCalpestabili = g('mi-mqCalp').trim();
+  im.dettagli.mqCommerciali = g('mi-mqComm').trim();
   im.dettagli.locali = msVal('mi-locali');
   im.dettagli.bagni = msVal('mi-bagni');
   im.dettagli.piano = msVal('mi-piano');
@@ -3419,7 +3569,15 @@ function roundMeRender() {
   c.innerHTML = h;
 }
 function roundMeCambiaRaggio() {
-  apriFilterDD('Raggio', [{value:'100',label:'100 m'},{value:'300',label:'300 m'},{value:'500',label:'500 m'},{value:'1000',label:'1 km'},{value:'2000',label:'2 km'},{value:'5000',label:'5 km'}], String(_roundRag), function(v) { if (v) { _roundRag = parseInt(v, 10); roundMeRender(); if (_roundDati.lat) roundMeAggiorna(_roundDati.lat, _roundDati.lng); } });
+  apriFilterDD('Raggio', [{value:'100',label:'100 m'},{value:'300',label:'300 m'},{value:'500',label:'500 m'},{value:'1000',label:'1 km'},{value:'2000',label:'2 km'},{value:'5000',label:'5 km'}], String(_roundRag), function(v) {
+    if (!v) return;
+    _roundRag = parseInt(v, 10);
+    setTimeout(function() {
+      var lat = _roundDati.lat, lng = _roundDati.lng;
+      if (lat && lng) roundMeAggiorna(lat, lng);
+      else roundMeRender();
+    }, 30);
+  });
 }
 
 /* ============ CHIAMATE ============ */
