@@ -4150,5 +4150,289 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 })();
 </script>
 <!-- ===== FINE AGGIORNAMENTO ===== -->
+<style>
+/* Marchio: più pulito, niente spaziatura larga */
+.app-header h1{font-size:26px;font-weight:300;letter-spacing:-.01em;color:var(--blu)}
+.app-header h1 span{color:inherit;font-weight:300}
+.brand-sub{font-size:11px;letter-spacing:.01em;margin-top:3px}
+
+/* FIX icone minuscole: il padding del primo blocco le schiacciava */
+.btn svg{flex:none}
+.btn-icon{padding:0;width:42px;height:42px}
+.btn-icon svg{width:19px;height:19px}
+.scheda-top{padding:18px;border-radius:20px}
+.scheda-top .top-title{font-size:19px;font-weight:600;letter-spacing:-.02em}
+.scheda-top .top-actions{gap:8px}
+.scheda-top .top-actions .btn-icon{flex:0 0 42px;background:var(--bg2);border-color:transparent;color:var(--blu)}
+
+/* Tendina proprietario, box attività, NS/NR */
+details.fold{padding:0}
+details.fold>summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;font-size:13.5px;font-weight:600;cursor:pointer}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after{content:'';width:7px;height:7px;border-right:2px solid var(--tx3);border-bottom:2px solid var(--tx3);transform:rotate(45deg);transition:transform .2s}
+details.fold[open]>summary::after{transform:rotate(-135deg)}
+details.fold>div{padding:0 16px 10px}
+.opt-note{font-weight:400;color:var(--tx3);font-size:12px;margin-left:8px}
+.quick-row{display:flex;gap:8px;margin-bottom:10px}
+.quick-btn{flex:1;padding:11px;border:none;border-radius:12px;background:var(--bg2);color:var(--tx2);font:600 14px inherit;font-family:inherit;cursor:pointer;transition:background .15s,color .15s}
+.quick-btn.on{background:var(--blu);color:var(--bg)}
+
+/* Matching */
+.ml-name{white-space:normal!important}
+.ml-name small{display:block;font-size:11px;color:var(--tx3);margin-top:2px;font-weight:400}
+.req-tog{float:right;border:none;border-radius:99px;padding:2px 10px;font:600 10.5px inherit;font-family:inherit;cursor:pointer;background:var(--bg2);color:var(--tx2)}
+.req-tog.obbligatorio{background:rgba(224,96,31,.14);color:var(--acc)}
+.req-tog.indifferente{opacity:.55;text-decoration:line-through}
+</style>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var DOT = ['ascensore','balcone','terrazzo','giardino','box','postoAuto','cantina'];
+
+  /* ===== 1) Titolo immobile: "[stato] - COGNOME NOME TEL x INDIRIZZO" ===== */
+  window.titoloImmobile = function(im){
+    if (!im) return '';
+    var ind = (im.indirizzo || '').toUpperCase();
+    if (im.stato === 'IMM') return im.villa ? ind : ind + ' z' + (im.z || 1);
+    var p = propPrinc(im), n = p ? nomeCogn(p.persona) : (im.cognomeNome || '');
+    var tel = p ? (p.persona.telefono || p.persona.telefono2 || '') : (im.telefono || '');
+    var chi = [n.toUpperCase(), tel].filter(Boolean).join(' ');
+    return im.stato + ' - ' + (chi ? chi + ' x ' : '') + ind;
+  };
+
+  /* ===== 2) Tema: solo icone, ordine Chiaro · Auto · Scuro ===== */
+  var IC = {
+    light: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    auto:  '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>',
+    dark:  '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+  };
+  var NOMI = { light:'Chiaro', auto:'Auto', dark:'Scuro' };
+  ['light','auto','dark'].forEach(function(k){
+    var b = $('th-' + k); if (!b) return;
+    b.parentNode.appendChild(b);
+    b.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + IC[k] + '</svg>';
+    b.title = NOMI[k]; b.setAttribute('aria-label', NOMI[k]);
+    b.style.cssText = 'flex:1;justify-content:center;padding:10px';
+  });
+
+  /* ===== 3) Nuovo immobile censito: proprietario a tendina + attività NS/NR + indirizzo condominio ===== */
+  function prefillCondo(){
+    if (!window.condoFil) return;
+    var i = $('f-ind'); if (!i || i.value) return;
+    var ref = DB.immobili.find(function(x){ return !x.villa && condoDi(x) === window.condoFil && x.indirizzo; });
+    i.value = ref ? ref.indirizzo : window.condoFil;
+    var c = $('f-cond'); if (c && !c.value) c.value = window.condoFil;
+    var ci = $('f-cit'); if (ci) setTimeout(function(){ ci.focus(); }, 150);
+  }
+  var _agn = window.aggFormNew;
+  window.aggFormNew = function(){
+    _agn();
+    var cog = $('f-cognome');
+    if ((($('f-t') || {}).value) === 'censito' && cog) {
+      var card = cog.closest('.card');
+      if (card) {
+        var d = document.createElement('details');
+        d.className = 'card fold';
+        d.innerHTML = '<summary><span>Proprietario<span class="opt-note">opzionale</span></span></summary>';
+        while (card.children.length > 1) d.appendChild(card.children[1]);
+        card.replaceWith(d);
+        d.insertAdjacentHTML('afterend',
+          '<div class="card" id="f-attbox"><h2>Attività</h2>' +
+          '<div class="quick-row"><button type="button" class="quick-btn" data-t="ha detto che non sa nulla">NS</button><button type="button" class="quick-btn" data-t="no risp">NR</button></div>' +
+          '<textarea class="form-textarea" id="f-attx" placeholder="Nota (opzionale)" style="background:var(--bg2);padding:10px 12px;border-radius:12px"></textarea></div>');
+        $('f-attbox').addEventListener('click', function(e){
+          var b = e.target.closest('.quick-btn'); if (!b) return;
+          var ta = $('f-attx'), on = !b.classList.contains('on');
+          this.querySelectorAll('.quick-btn').forEach(function(x){ x.classList.remove('on'); });
+          if (on) b.classList.add('on');
+          ta.value = on ? b.dataset.t : '';
+        });
+      }
+    }
+    prefillCondo();
+  };
+  var _snm = window.salvaNuovoImmobile;
+  window.salvaNuovoImmobile = function(){
+    var tx = (($('f-attx') || {}).value || '').trim(), n = DB.immobili.length;
+    _snm();
+    if (!tx || DB.immobili.length <= n) return;
+    var im = DB.immobili[DB.immobili.length - 1], aid = uid();
+    var ad = { id: aid, seq: seq(), data: new Date().toISOString(), tipo: 'fatta', testo: tx, completata: true };
+    (im.attivita = im.attivita || []).push(ad);
+    var p = propPrinc(im);
+    DB.attivita.push(Object.assign({}, ad, { immobileId: im.id, personaId: p ? p.persona.id : null, tipoAtt: 'ALTRO' }));
+    syncAttToPersone(im.id, aid, 'add');
+    Storage.save(DB); renderListaImmobili(); aggiornaBadgeAttivita(); renderPersone();
+  };
+
+  /* ===== 4) Proprietari: crea una nuova persona direttamente da qui ===== */
+  var _aep = window.apriEditProprietario;
+  window.apriEditProprietario = function(iid, idx){
+    _aep(iid, idx);
+    if (idx >= 0) return;
+    var g = document.querySelector('#modal-body .form-group'); if (!g) return;
+    var inp = 'class="form-input" style="background:var(--bg2);padding:10px 12px;border-radius:8px;margin-bottom:6px"';
+    g.insertAdjacentHTML('afterbegin',
+      '<div class="form-row"><button type="button" class="add-btn" id="ep-newbtn" style="margin:0">＋ Nuova persona</button>' +
+      '<div id="ep-newbox" style="display:none"><label class="form-label">Cognome</label><input ' + inp + ' id="ep-nc">' +
+      '<label class="form-label">Nome</label><input ' + inp + ' id="ep-nn"><label class="form-label">Telefono</label><input ' + inp + ' id="ep-nt" type="tel">' +
+      '<button type="button" class="add-btn" id="ep-oldbtn" style="margin:0">Scegli tra le esistenti</button></div></div>');
+    var pick = $('ep-p') && $('ep-p').closest('.form-row');
+    $('ep-newbtn').onclick = function(){ window._epPid = null; $('ep-newbox').style.display = 'block'; this.style.display = 'none'; if (pick) pick.style.display = 'none'; $('ep-nc').focus(); };
+    $('ep-oldbtn').onclick = function(){ $('ep-newbox').style.display = 'none'; $('ep-newbtn').style.display = ''; if (pick) pick.style.display = ''; };
+  };
+  var _sp = window.salvaProprietario;
+  window.salvaProprietario = function(iid, idx){
+    var box = $('ep-newbox');
+    if (box && box.style.display !== 'none') {
+      var c = $('ep-nc').value.trim().toUpperCase(), n = $('ep-nn').value.trim().toUpperCase(), t = $('ep-nt').value.trim();
+      if (!c || !n) { alert('Cognome e Nome obbligatori'); return; }
+      var per = t && DB.persone.find(function(x){ return x.telefono === t; });
+      if (!per) {
+        var ad = new Date().toISOString();
+        per = { id: uid(), cognome: c, nome: n, ruoli: ['PROP'], telefono: t, attivita: [], foto: [], createdAt: ad, updatedAt: ad };
+        DB.persone.push(per);
+      }
+      window._epPid = per.id;
+    }
+    _sp(iid, idx);
+    renderListaImmobili(); renderPersone();
+  };
+
+  /* ===== 5) MATCHING richieste ↔ immobili ===== */
+  var LBL = { budget:'prezzo', tipologia:'tipologia', zona:'zona', mq:'mq', locali:'locali', bagni:'bagni', statoConservativo:'stato', piano:'piano', pianoTipo:'n° piano', classeEnergetica:'classe energ.', riscaldamento:'riscaldamento', riscaldamentoTipo:'tipo riscald.', infissi:'infissi', vista:'vista', zonaCaratt:'zona (caratt.)', cucina:'cucina', ascensore:'ascensore', balcone:'balcone', terrazzo:'terrazzo', giardino:'giardino', box:'box', postoAuto:'posto auto', cantina:'cantina', boxTipo:'tipo box' };
+  window.calcolaMatch = function(im, per){
+    var r = per.richiesta || {}, d = im.dettagli || {}, ck = [];
+    var A = function(v){ return Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []); };
+    var lw = function(x){ return String(x).toLowerCase().trim(); };
+    var ov = function(a, b){ return (!a.length || !b.length) ? null : a.some(function(x){ return b.some(function(y){ return lw(x) === lw(y); }); }); };
+    var req = function(k){
+      var v = r.requisiti && r.requisiti[k]; if (v) return v;
+      if (k === 'budget') return 'obbligatorio';
+      if (DOT.indexOf(k) >= 0) return (r[k] === 'Sì' || r[k] === 'No') ? 'obbligatorio' : 'preferito';
+      return 'preferito';
+    };
+    var add = function(k, ok, w){ if (ok === null || ok === undefined) return; var t = req(k); if (t === 'indifferente') return; ck.push({ k:k, ok:!!ok, obb:t === 'obbligatorio', w:w || 2 }); };
+    var arr = function(k, imv, w){ if (r[k] && r[k].length) add(k, ov(A(r[k]), A(imv)), w); };
+
+    var b = parseNum(r.budget);
+    if (b !== null) {
+      var sp = im.storicoPrezzo || [];
+      var pr = parseNum(im.prezzo) || (sp.length ? parseNum(sp[sp.length - 1].prezzo) : null);
+      if (pr !== null) add('budget', pr <= b * 1.05, 15);
+    }
+    arr('tipologia', d.tipologia, 12);
+    arr('zona', zoneEff(im), 12);
+    var mn = parseNum(r.mqMin), mx = parseNum(r.mqMax);
+    var v = parseNum(d.mqCommerciali) || parseNum(d.mqCalpestabili) || parseNum(d.mq);
+    if ((mn !== null || mx !== null) && v !== null) add('mq', !(mn !== null && v < mn) && !(mx !== null && v > mx), 10);
+    arr('locali', d.locali || d.camere, 6);
+    arr('bagni', d.bagni, 4);
+    arr('statoConservativo', d.statoConservativo, 8);
+    arr('piano', d.piano, 3);
+    arr('pianoTipo', d.pianoNum, 3);
+    var sel = A(r.classeEnergetica), ce = String(A(d.classeEnergetica)[0] || '').toUpperCase();
+    if (sel.length && sel.indexOf('Indifferente') < 0 && /^[A-G]/.test(ce)) {
+      add('classeEnergetica', sel.some(function(f){
+        if (f.indexOf('Alta') >= 0) return ['A4','A3','A2','A1','A'].indexOf(ce) >= 0;
+        if (f.indexOf('Media') >= 0) return ['A','B','C'].indexOf(ce) >= 0;
+        return ['D','E','F','G'].indexOf(ce) >= 0;
+      }), 5);
+    }
+    if (r.riscaldamento && r.riscaldamento !== 'Indifferente' && d.riscaldamento && d.riscaldamento !== 'Indifferente') add('riscaldamento', lw(d.riscaldamento) === lw(r.riscaldamento), 2);
+    ['riscaldamentoTipo','infissi','vista','zonaCaratt','cucina'].forEach(function(k){ arr(k, d[k], 2); });
+    DOT.forEach(function(k){
+      var q = r[k]; if (!q || q === 'Indifferente' || !d[k]) return;
+      var has = d[k] === 'Sì';
+      add(k, q === 'No' ? !has : has, (k === 'box' || k === 'ascensore') ? 4 : 2);
+    });
+    if (r.boxTipo && (r.box === 'Sì' || r.box === 'Meglio') && d.boxTipo) add('boxTipo', lw(d.boxTipo) === lw(r.boxTipo), 2);
+
+    if (!ck.length) return { score: 0, ko: [] };
+    var wr = function(a){ var t = 0, g = 0; a.forEach(function(c){ t += c.w; if (c.ok) g += c.w; }); return t ? g / t : 1; };
+    var ob = ck.filter(function(c){ return c.obb; }), pf = ck.filter(function(c){ return !c.obb; });
+    var s;
+    if (!ob.length) s = wr(pf) * 100;
+    else { var ro = wr(ob); s = ro < 1 ? ro * 40 + (pf.length ? wr(pf) * 10 : 0) : 60 + (pf.length ? wr(pf) : 1) * 40; }
+    return {
+      score: Math.min(100, Math.max(0, Math.round(s))),
+      ko: ck.filter(function(c){ return !c.ok; }).map(function(c){ return c.obb ? '<b>' + LBL[c.k] + '</b>' : LBL[c.k]; })
+    };
+  };
+
+  function riga(titolo, m, click){
+    var cls = m.score >= 70 ? 'high' : m.score >= 40 ? 'mid' : 'low';
+    return '<div class="match-line" onclick="' + click + '"><div class="ml-name">' + esc(titolo) + (m.ko.length ? '<small>manca: ' + m.ko.join(', ') + '</small>' : '') + '</div><div class="ml-score ' + cls + '">' + m.score + '%</div></div>';
+  }
+
+  /* scheda persona: elenco compatibili con dettagli */
+  var _asp = window.apriSchedaPersona;
+  window.apriSchedaPersona = function(id){
+    _asp(id);
+    try {
+      var p = trovaPersona(id), b = document.querySelector('[data-coll-id="p_match"] .collapsible-body');
+      if (!p || !b) return;
+      b.innerHTML = matchAcquirente(p).filter(function(m){ return m.score >= 30; }).slice(0, 10).map(function(m){
+        return riga(m.immobile.indirizzo || titoloImmobile(m.immobile), m, "chiudiModal();setTimeout(function(){apriScheda('" + m.immobile.id + "')},100)");
+      }).join('');
+    } catch(e) { console.error(e); }
+  };
+
+  /* scheda immobile (NT/INK): acquirenti compatibili */
+  var _as = window.apriScheda;
+  window.apriScheda = function(id){
+    _as(id);
+    try {
+      var im = DB.immobili.find(function(x){ return x.id === id; });
+      if (!im || (im.stato !== 'NT' && im.stato !== 'INK')) return;
+      var mm = matchImmobile(im).filter(function(m){
+        return m.score >= 30 && ['ha-comprato','non-attiva','rogitato'].indexOf(m.persona.statoRR) < 0;
+      }).slice(0, 10);
+      if (!mm.length) return;
+      var html = collapsible('im_match', ico('target', 13) + ' Acquirenti compatibili', mm.map(function(m){
+        return riga(nomeCogn(m.persona) + (m.persona.telefono ? ' · ' + m.persona.telefono : ''), m, "chiudiModal();setTimeout(function(){apriSchedaPersona('" + m.persona.id + "')},100)");
+      }).join(''), mm.length);
+      var bt = document.querySelectorAll('#modal-body > .btn-danger');
+      if (bt.length) bt[bt.length - 1].insertAdjacentHTML('beforebegin', html);
+    } catch(e) { console.error(e); }
+  };
+
+  /* form richiesta: ogni criterio può essere Preferito / Obbligatorio / Indifferente */
+  var KEYS = [['budget','rq-budget'],['mq','rq-mqMin'],['riscaldamento','rq-riscaldamento']];
+  ['tipologia','zona','locali','bagni','statoConservativo','piano','pianoTipo','classeEnergetica','riscaldamentoTipo','infissi','vista','zonaCaratt','cucina'].forEach(function(k){ KEYS.push([k, 'ms-btn-rq-' + k]); });
+  DOT.forEach(function(k){ KEYS.push([k, 'rq-' + k]); });
+  var NEXT = { preferito:'obbligatorio', obbligatorio:'indifferente', indifferente:'preferito' };
+  var TXT = { preferito:'Preferito', obbligatorio:'Obbligatorio', indifferente:'Indifferente' };
+  function def(k){
+    if (k === 'budget') return 'obbligatorio';
+    if (DOT.indexOf(k) >= 0) { var s = $('rq-' + k); return s && (s.value === 'Sì' || s.value === 'No') ? 'obbligatorio' : 'preferito'; }
+    return 'preferito';
+  }
+  var _am = window.apriModificaRichiesta;
+  window.apriModificaRichiesta = function(pid){
+    _am(pid);
+    var p = trovaPersona(pid); if (!p) return;
+    var tmp = window._reqTmp = JSON.parse(JSON.stringify((p.richiesta && p.richiesta.requisiti) || {}));
+    KEYS.forEach(function(kv){
+      var el = $(kv[1]); if (!el) return;
+      var box = el.closest('div[style*="margin-bottom"]'), lbl = box && box.querySelector('.form-label');
+      if (!lbl) { var cd = el.closest('.card'); lbl = cd && cd.querySelector('h2'); }
+      if (!lbl) return;
+      var b = document.createElement('button'); b.type = 'button';
+      var paint = function(){ var v = tmp[kv[0]] || def(kv[0]); b.className = 'req-tog ' + v; b.textContent = TXT[v]; };
+      b.onclick = function(e){ e.preventDefault(); tmp[kv[0]] = NEXT[tmp[kv[0]] || def(kv[0])]; paint(); };
+      paint(); lbl.appendChild(b);
+    });
+  };
+  var _sr = window.salvaRichiesta;
+  window.salvaRichiesta = function(pid){
+    var p = trovaPersona(pid);
+    if (p && p.richiesta && window._reqTmp) p.richiesta.requisiti = window._reqTmp;
+    window._reqTmp = null;
+    _sr(pid);
+  };
+})();
+</script>
 </body>
 </html>
