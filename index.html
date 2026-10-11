@@ -403,6 +403,22 @@ details.fold>div{padding:0 16px 10px}
   .form-input,.form-select,.form-textarea{font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* === MATCHING v4 — dossier compatto a 2 colonne === */
+.cx-campo{margin-bottom:9px;}
+.cx-row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px;}
+.cx-row2 > .cx-campo{margin-bottom:0;}
+details.fold>div{padding:2px 14px 10px;}
+details.fold .cx-campo label,
+details.fold .cx-campo .form-label{font-size:10.5px;margin-bottom:3px;}
+details.fold .cx-campo select,
+details.fold .cx-campo input,
+details.fold .cx-campo textarea{font-size:14px;padding:8px 10px;border-radius:8px;background:var(--bg2);}
+details.fold .cx-campo textarea{min-height:44px;}
+details.fold .ms-btn{font-size:13.5px;padding:9px 11px;min-height:38px;border-radius:8px;}
+details.fold .ms-btn svg{width:11px;height:11px;}
+details.fold .box2{gap:6px;}
+@media (max-width: 340px){ .cx-row2{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -1155,7 +1171,7 @@ function parseNum(s){
 <script>
 'use strict';
 /* ==========================================================================
-   NAVIGAZIONE + LISTE + MATCHING
+   NAVIGAZIONE + LISTE + MATCHING (legacy, verrà sovrascritto in fondo)
    ========================================================================== */
 const tabBtns = document.querySelectorAll('.tabbar button');
 const views = document.querySelectorAll('.view');
@@ -1326,7 +1342,6 @@ function cardImmobile(im, compact){
   if(im.villa) h2 += '<span style="font-size:10px;color:var(--ink);font-weight:600;">VILLA</span>';
   if(im.gestitoDa === 'collega') h2 += '<span class="badge badge-collega" style="font-size:8px;">COL.</span>';
   h2 += `<span class="badge badge-${im.stato}">${im.stato}</span></div>`;
-  /* --- Badge dossier documentale (solo per immobili non censiti) --- */
   if(['NT','INK','VND'].includes(im.stato) && typeof window.dossierIm === 'function'){
     const dz = window.dossierIm(im);
     if(dz.tot){
@@ -1441,131 +1456,11 @@ function renderPersone(){
 }
 function resetFiltroPersone(){ if(pTab === 'acquirente') pStatoRR = null; if(pTab === 'professionista') pTipoProf = null; renderPersone(); }
 
-/* ==========================================================================
-   MATCHING legacy — sostituito dal blocco v3 in fondo
-   Le funzioni calcolaMatch/matchImmobile/matchAcquirente vengono ridefinite lì.
-   ========================================================================== */
-const MATCH_LBL = {
-  budget:'prezzo', budgetMin:'prezzo minimo', tipologia:'tipologia', sottotipologia:'sotto-tipologia',
-  zona:'zona', mq:'mq', locali:'locali', bagni:'bagni', statoConservativo:'stato', piano:'piano',
-  pianoTipo:'n° piano', classeEnergetica:'classe energ.', riscaldamento:'riscaldamento',
-  riscaldamentoTipo:'tipo riscald.', raffrescamento:'raffrescamento', raffTipo:'tipo raffresc.',
-  infissi:'infissi', vista:'vista', zonaCaratt:'zona (caratt.)', cucina:'cucina',
-  ascensore:'ascensore', balcone:'balcone', terrazzo:'terrazzo', giardino:'giardino',
-  box:'box', postoAuto:'posto auto', cantina:'cantina', boxTipo:'tipo box', arredamento:'arredamento'
-};
-function calcolaMatch(im, per){
-  const r = per.richiesta || {}, d = im.dettagli || {};
-  const ck = [];
-  const A = v => Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
-  const lw = x => String(x).toLowerCase().trim();
-  const ov = (a,b) => (!a.length || !b.length) ? null : a.some(x => b.some(y => lw(x) === lw(y)));
-  const req = k => {
-    const v = r.requisiti && r.requisiti[k];
-    if(v) return v;
-    if(k === 'budget' || k === 'budgetMin') return 'obbligatorio';
-    if(['ascensore','balcone','terrazzo','giardino','box','postoAuto','cantina','arredamento'].includes(k))
-      return (r[k] === 'Sì' || r[k] === 'No') ? 'obbligatorio' : 'preferito';
-    return 'preferito';
-  };
-  const add = (k, ok, w) => { if(ok === null || ok === undefined) return; const t = req(k); if(t === 'indifferente') return; ck.push({ k, ok:!!ok, obb:t === 'obbligatorio', w:w||2 }); };
-  const arr = (k, imv, w) => { if(r[k] && r[k].length) add(k, ov(A(r[k]), A(imv)), w); };
-
-  const z = im.prezzi || {};
-  const max = parseNum(r.budget), min = parseNum(r.budgetMin);
-  const ric = parseNum(z.richiesto), mer = parseNum(z.mercato), ult = parseNum(z.ultimo), ven = parseNum(z.venduto);
-  let price = null;
-  if(im.stato === 'VND' && ven !== null) price = ven;
-  else if(ult !== null) price = ult;
-  else if(ric !== null && mer !== null) price = Math.min(ric, mer);
-  else price = ric !== null ? ric : mer;
-  if(price !== null && max !== null){
-    let ok = price <= max * 1.05;
-    if(min !== null && price < min * 0.85) ok = false;
-    add('budget', ok, 18);
-  }
-
-  arr('tipologia', d.tipologia, 12);
-  arr('sottotipologia', d.sottotipologia, 10);
-  arr('zona', zoneEff(im), 12);
-
-  const mn = parseNum(r.mqMin), mx = parseNum(r.mqMax);
-  const v = parseNum(d.mqCommerciali) || parseNum(d.mqCalpestabili) || parseNum(d.mq);
-  if((mn !== null || mx !== null) && v !== null) add('mq', !(mn !== null && v < mn) && !(mx !== null && v > mx), 10);
-  arr('locali', d.locali || d.camere, 6);
-  arr('bagni', d.bagni, 4);
-  arr('statoConservativo', d.statoConservativo, 8);
-  arr('piano', d.piano, 3);
-  arr('pianoTipo', d.pianoNum, 3);
-
-  const sel = A(r.classeEnergetica), ce = String(A(d.classeEnergetica)[0] || '').toUpperCase();
-  if(sel.length && sel.indexOf('Indifferente') < 0 && /^[A-G]/.test(ce)){
-    add('classeEnergetica', sel.some(f => {
-      if(f.indexOf('Alta') >= 0) return ['A4','A3','A2','A1','A'].indexOf(ce) >= 0;
-      if(f.indexOf('Media') >= 0) return ['A','B','C'].indexOf(ce) >= 0;
-      return ['D','E','F','G'].indexOf(ce) >= 0;
-    }), 5);
-  }
-
-  if(r.riscaldamento && r.riscaldamento !== 'Indifferente' && d.riscaldamento && d.riscaldamento !== 'Indifferente')
-    add('riscaldamento', lw(d.riscaldamento) === lw(r.riscaldamento), 2);
-
-  if(r.arredamento && r.arredamento !== 'Indifferente' && d.arredamento){
-    const mat = r.arredamento === 'Sì' ? ['Sì','Parzialmente','Su richiesta']
-              : r.arredamento === 'No' ? ['No']
-              : ['Sì','Parzialmente','Su richiesta'];
-    add('arredamento', mat.includes(d.arredamento), 4);
-  }
-
-  ['riscaldamentoTipo','raffTipo','infissi','vista','zonaCaratt','cucina'].forEach(k => arr(k, d[k], 2));
-
-  const DOT = ['ascensore','balcone','terrazzo','giardino','box','postoAuto','cantina'];
-  DOT.forEach(k => {
-    const q = r[k]; if(!q || q === 'Indifferente' || !d[k]) return;
-    const has = d[k] === 'Sì';
-    add(k, q === 'No' ? !has : has, (k === 'box' || k === 'ascensore') ? 4 : 2);
-  });
-  if(r.boxTipo && (r.box === 'Sì' || r.box === 'Meglio') && d.boxTipo) add('boxTipo', lw(d.boxTipo) === lw(r.boxTipo), 2);
-
-  if(!ck.length) return { score:0, ko:[] };
-  if(ck.some(c => c.obb && !c.ok)){
-    return { score:0, ko: ck.filter(c => !c.ok).map(c => c.obb ? `<b>${MATCH_LBL[c.k]||c.k}</b>` : (MATCH_LBL[c.k]||c.k)) };
-  }
-  const wr = a => { let t = 0, g = 0; a.forEach(c => { t += c.w; if(c.ok) g += c.w; }); return t ? g / t : 1; };
-  const ob = ck.filter(c => c.obb), pf = ck.filter(c => !c.obb);
-  let s;
-  if(!ob.length) s = wr(pf) * 100;
-  else { const ro = wr(ob); s = ro < 1 ? ro * 40 + (pf.length ? wr(pf) * 10 : 0) : 60 + (pf.length ? wr(pf) : 1) * 40; }
-  return {
-    score: Math.min(100, Math.max(0, Math.round(s))),
-    ko: ck.filter(c => !c.ok).map(c => c.obb ? `<b>${MATCH_LBL[c.k]||c.k}</b>` : (MATCH_LBL[c.k]||c.k))
-  };
-}
-
-function matchImmobile(im){
-  const acq = DB.persone.filter(p => (p.ruoli||[]).indexOf('ACQUIRENTE') >= 0);
-  const r = [];
-  acq.forEach(p => { const m = calcolaMatch(im, p); if(m.score > 0){ m.persona = p; r.push(m); } });
-  return r.sort((a,b) => b.score - a.score);
-}
-function matchAcquirente(per){
-  const l = DB.immobili.filter(i => ['NT','INK'].includes(i.stato));
-  const r = [];
-  l.forEach(i => { const m = calcolaMatch(i, per); if(m.score > 0){ m.immobile = i; r.push(m); } });
-  const ids = new Set(r.map(m => m.immobile.id));
-  DB.immobili.forEach(im => {
-    if(ids.has(im.id)) return;
-    if(!haAppuntamentoInCorso(im.id)) return;
-    const m = calcolaMatch(im, per);
-    m.immobile = im; m.score = Math.max(30, m.score);
-    r.push(m);
-  });
-  return r.sort((a,b) => b.score - a.score);
-}
-function haAppuntamentoInCorso(imId){
-  if(!DB.appuntamenti) return false;
-  return DB.appuntamenti.some(a => a.immobileId === imId && a.stato === 'programmato' && !a.esito);
-}
+/* MATCHING legacy — verrà sovrascritto in fondo */
+function calcolaMatch(im, per){ return { score:0, ko:[] }; }
+function matchImmobile(im){ return []; }
+function matchAcquirente(per){ return []; }
+function haAppuntamentoInCorso(imId){ if(!DB.appuntamenti) return false; return DB.appuntamenti.some(a => a.immobileId === imId && a.stato === 'programmato' && !a.esito); }
 </script>
 
 <script>
@@ -4226,13 +4121,9 @@ avviaBoot();
 
 <script>
 /* ==========================================================================
-   ARANJÒ — MATCHING v3 (espanso, acquirenti uniformi)
-   - Dossier documentale completo sull'immobile (sempre).
-   - Tutti gli acquirenti sono trattati allo stesso modo: contano solo i campi
-     della loro richiesta + l'importanza relativa (indispensabile/importante/
-     normale/se capita/indifferente).
-   - Nessuna classificazione tipo-cliente.
-   - Il dossier documentale è un criterio di match valido per tutti.
+   ARANJÒ — MATCHING v4
+   Dossier immobile completo · layout compatto 2 colonne · zero duplicati
+   Acquirenti tutti uguali: conta solo cosa chiedono e con quale importanza.
    ========================================================================== */
 (function(){
 'use strict';
@@ -4254,29 +4145,40 @@ const A  = v => Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
 const lw = x => String(x).toLowerCase().trim();
 const CLASSI = ['A4','A3','A2','A1','A+','A','B','C','D','E','F','G'];
 const SOGLIA_CE = { 'Alta (A4-A1)':'A', 'Media (A-C)':'C', 'Bassa (D-G)':'G' };
-const OPT_TEMP = (typeof OPT_TEMPISTICA !== 'undefined') ? OPT_TEMPISTICA : ['Immediata','Entro 3 mesi','Entro 6 mesi','Oltre 6 mesi'];
 const OPT_SN   = ['Sì','No'];
 const OPT_ORD_ST = ['Ottimo','Buono','Da sistemare'];
 const DIST = ['< 5 min','5-10 min','10-20 min','> 20 min'];
 const OPT_STRUTTURA = ['In linea','Torre','Ballatoio','Villino','Schiera','Isolato','Rurale','Signorile','Popolare'];
+const OPT_STRUTTURA_PORTANTE = ['Muratura','Cemento armato','Legno','Acciaio','Misto'];
+const OPT_COPERTURA = ['A falde','Piana','A volta','Mansardata','Mista'];
 const OPT_ESP = ['Nord','Sud','Est','Ovest','Doppia esposizione','Tripla esposizione','Quadrupla esposizione'];
 const OPT_LUM = ['Molto luminoso','Luminoso','Poco luminoso'];
 const OPT_APERT = ['Battente','Scorrevole','Vasistas','A libro','Bilanciata'];
 const OPT_OSCUR = ['Persiane','Tapparelle','Ante','Scuri','Nessuno'];
 const OPT_PAV = ['Parquet','Gres','Marmo','Cotto','Laminato','Resina','Seminato'];
-const OPT_CALDAIA = ['Autonoma a gas','Centralizzata a gas','A pellets','A legna','Pompa di calore','Teleriscaldamento'];
+const OPT_COMBUST = ['Gas metano','GPL','Gasolio','Pellet','Legna','Elettrico','Pompa di calore','Teleriscaldamento'];
+const OPT_VETRO = ['Singolo','Doppio (vetrocamera)','Triplo','Temprato','Stratificato','Basso emissivo','Antisfondamento'];
+const OPT_TRATT_VETRO = ['Basso emissivo','Controllo solare','Antiriflesso','Sicurezza','Nessuno'];
+const OPT_ANTENNA = ['DTT','Satellite','Cavo','Nessuna'];
+const OPT_TIPO_GIARDINO = ['Piantumato','Prato','Ghiaia','Terrazzato','Orto','Misto'];
+const OPT_RECINZIONE = ['Muro','Rete','Siepe','Cancello','Nessuna'];
 const OPT_DEST_USO = ['Abitativa','Ufficio','Negozio','Magazzino','Artigianale','Ricettiva','Agricola','Mista'];
+const OPT_USO_REALE = ['Residenziale','Ufficio','Commerciale','Misto','Altro'];
+const OPT_TIPO_PROP = ['Piena proprietà','Nuda proprietà','Usufrutto','Superficie','Comproprietà'];
 const OPT_CAT_CAT = ['A/1','A/2','A/3','A/4','A/5','A/7','A/8','A/9','A/10','A/11','B/1','B/2','C/1','C/2','C/3','C/6','C/7','D/1','D/7','D/8'];
 const OPT_PROVEN = ['Acquisto','Successione','Donazione','Asta','Costruzione diretta'];
 const OPT_VEND = ['Privato','Impresa / costruttore','Società','Ente pubblico'];
 const OPT_IPOT = ['No','Sì','Da cancellare al rogito'];
 const OPT_OCCUP = ['Libero','Abitato dal proprietario','Locato','Occupato abusivamente'];
 const OPT_TRATT = ['Sì','Poco','No'];
+const OPT_CONF = ['Conforme','Non conforme','Da verificare'];
+const OPT_BARRIERE = ['Assenti','Presenti','Parziali'];
 const OPT_SIC_ZONA = ['Molto sicura','Sicura','Da valutare'];
 const OPT_RUM = ['Silenzioso','Normale','Rumoroso'];
 const OPT_PRIV = ['Riservato','Normale','Esposto'];
 const OPT_TRAFF = ['Poco trafficata','Media','Molto trafficata'];
 const OPT_LAVORI = ['Nessuno','Tinteggiatura','Bagno','Cucina','Impianti','Tetto','Facciata','Completa','Demolizione/ricostruzione'];
+const OPT_BAGNI_FIN = ['Tutti finestrati','Alcuni','Nessuno'];
 const testoIm = (im,d) => [d.tagLiberi, d.noteVicinato, d.chiHaAbitato, d.motivoVendita, im.note].filter(Boolean).join(' ').toLowerCase() || null;
 
 function prezzoRef(im){
@@ -4290,13 +4192,12 @@ function prezzoRef(im){
 
 /* ============ GRUPPI ============ */
 const GRUPPI = [
-  ['Base','Base — già in app'],
   ['ED','Edificio e struttura'],
   ['DI','Dimensioni e spazi'],
-  ['IN','Interni'],
+  ['IN','Interni e servizi'],
   ['IP','Impianti e tecnologia'],
-  ['IF','Infissi e oscuranti'],
-  ['ES','Esterni e dotazioni'],
+  ['IF','Infissi e serramenti'],
+  ['ES','Esterni e pertinenze'],
   ['CM','Commerciale / aziendale'],
   ['LG','Legale e catastale'],
   ['MT','Manutenzione e stato'],
@@ -4306,7 +4207,7 @@ const GRUPPI = [
   ['CL','Dati cliente (solo richiesta)']
 ];
 
-/* ============ BASE — non ridisegnati ============ */
+/* ============ BASE (per il motore) ============ */
 F('budget','Base','Prezzo','num',{ w:10, def:'indispensabile', tol:.10, rqMin:'budgetMin', rqMax:'budget',
    hiFb:r => { const a = parseNum(r.anticipo), m = parseNum(r.mutuoImporto); return (a !== null || m !== null) ? (a || 0) + (m || 0) : null; },
    imv:(im,d,r) => { const p = prezzoRef(im); return p === null ? null : p + (r.lavoriNelBudget === 'Sì' ? (parseNum(d.costoLavori) || 0) : 0); } });
@@ -4325,7 +4226,7 @@ F('classeEnergetica','Base','Classe energetica','ord',{ w:5, opts:CLASSI, tol:3,
 F('riscaldamento','Base','Impianto riscaldamento','multi',{ w:2 });
 F('riscaldamentoTipo','Base','Tipo riscaldamento','multi',{ w:3 });
 F('raffTipo','Base','Tipo raffrescamento','multi',{ w:2 });
-F('infissi','Base','Infissi','multi',{ w:2 });
+F('infissi','Base','Materiale infissi','multi',{ w:2 });
 F('vista','Base','Vista','multi',{ w:3 });
 F('zonaCaratt','Base','Zona (caratteristiche)','multi',{ w:3 });
 F('cucina','Base','Cucina','multi',{ w:1 });
@@ -4335,180 +4236,207 @@ F('arredamento','Base','Arredamento','custom',{ w:4,
 [['ascensore','Ascensore',5],['balcone','Balcone',4],['terrazzo','Terrazzo',4],['giardino','Giardino',5],['box','Box',6],['postoAuto','Posto auto',5],['cantina','Cantina',3]]
   .forEach(x => F(x[0],'Base',x[1],'sn',{ w:x[2], leg:true }));
 
-/* ============ ED ============ */
-F('tipoStruttura','ED','Tipo struttura','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA });
-F('nPianiEdificio','ED','N° piani edificio','num',{ w:2, ui:'both', tolAbs:3 });
-F('unitaPerPiano','ED','Unità per piano','num',{ w:1, ui:'both', tolAbs:2 });
-F('annoCostruzione','ED','Anno costruzione','num',{ w:3, ui:'both', tolAbs:10,
+/* ============ ED — Edificio e struttura ============ */
+F('tipoStruttura','ED','Tipo struttura','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA, pair:'ed1' });
+F('strutturaPortante','ED','Struttura portante','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA_PORTANTE, pair:'ed1' });
+F('tipoCopertura','ED','Tipo copertura','ord',{ w:2, ui:'both', opts:OPT_COPERTURA, tol:1.5, pair:'ed2' });
+F('nPianiEdificio','ED','N° piani edificio','num',{ w:2, ui:'both', tolAbs:3, pair:'ed2' });
+F('unitaPerPiano','ED','Unità per piano','num',{ w:1, ui:'both', tolAbs:2, pair:'ed3' });
+F('nAscensori','ED','N° ascensori','num',{ w:2, ui:'both', tolAbs:1, pair:'ed3' });
+F('annoCostruzione','ED','Anno costruzione','num',{ w:3, ui:'both', tolAbs:10, pair:'ed4',
    imv:(im,d) => parseNum(d.annoCostruzione) || parseNum(((DB.condomini || {})[condoDi(im)] || {}).annoCostruzione) });
-F('annoRistrutturazione','ED','Anno ultima ristrutturazione','num',{ w:3, ui:'both', tolAbs:10 });
-F('cappotto','ED','Cappotto termico','sn',{ w:3, ui:'both' });
-F('statoFacciata','ED','Stato facciata','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5 });
-F('statoTetto','ED','Stato tetto','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5 });
-F('montacarichi','ED','Montacarichi','sn',{ w:2, ui:'both' });
-F('ballatoio','ED','Ballatoio','sn',{ w:1, ui:'both' });
-F('portineria','ED','Portineria','sn',{ w:2, ui:'both' });
-F('androne','ED','Androne / atrio','ord',{ w:1, ui:'both', opts:['Signorile','Normale','Modesto'], tol:1.5 });
-F('accessoCarrabile','ED','Accesso carrabile diretto','sn',{ w:3, ui:'both' });
+F('annoRistrutturazione','ED','Anno ultima ristrutturazione','num',{ w:3, ui:'both', tolAbs:10, pair:'ed4' });
+F('cappotto','ED','Cappotto termico','sn',{ w:3, ui:'both', pair:'ed5' });
+F('isolamentoAcustico','ED','Isolamento acustico','sn',{ w:2, ui:'both', pair:'ed5' });
+F('statoFacciata','ED','Stato facciata','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5, pair:'ed6' });
+F('statoTetto','ED','Stato tetto','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5, pair:'ed6' });
+F('portineria','ED','Portineria','sn',{ w:2, ui:'both', pair:'ed7' });
+F('montacarichi','ED','Montacarichi','sn',{ w:2, ui:'both', pair:'ed7' });
+F('androne','ED','Androne / atrio','ord',{ w:1, ui:'both', opts:['Signorile','Normale','Modesto'], tol:1.5, pair:'ed8' });
+F('accessoCarrabile','ED','Accesso carrabile diretto','sn',{ w:3, ui:'both', pair:'ed8' });
 
-/* ============ DI ============ */
-F('mqLordi','DI','Mq lordi','num',{ w:3, ui:'both', tol:.15 });
-F('mqBalcone','DI','Mq balcone','num',{ w:2, ui:'both', tol:.3 });
-F('mqTerrazzo','DI','Mq terrazzo','num',{ w:3, ui:'both', tol:.3 });
-F('mqGiardino','DI','Mq giardino','num',{ w:4, ui:'both', tol:.3 });
-F('mqBox','DI','Mq box','num',{ w:2, ui:'both', tol:.3 });
-F('mqCantina','DI','Mq cantina','num',{ w:1, ui:'both', tol:.3 });
-F('altezzaSoffitti','DI','Altezza soffitti (m)','num',{ w:3, ui:'both', tolAbs:.4 });
-F('esposizione','DI','Esposizione','multi',{ w:4, ui:'both', opts:OPT_ESP });
-F('luminosita','DI','Luminosità','ord',{ w:3, ui:'both', opts:OPT_LUM, tol:1.5 });
-F('soppalco','DI','Soppalco','sn',{ w:2, ui:'both' });
-F('privacy','DI','Privacy / affaccio','ord',{ w:3, ui:'both', opts:OPT_PRIV, tol:1.5 });
+/* ============ DI — Dimensioni e spazi ============ */
+F('mqLordi','DI','Mq lordi','num',{ w:3, ui:'both', tol:.15, pair:'di1' });
+F('altezzaSoffitti','DI','Altezza soffitti (m)','num',{ w:3, ui:'both', tolAbs:.4, pair:'di1' });
+F('mqBalcone','DI','Mq balcone','num',{ w:2, ui:'both', tol:.3, pair:'di2' });
+F('mqTerrazzo','DI','Mq terrazzo','num',{ w:3, ui:'both', tol:.3, pair:'di2' });
+F('mqGiardino','DI','Mq giardino','num',{ w:4, ui:'both', tol:.3, pair:'di3' });
+F('mqBox','DI','Mq box','num',{ w:2, ui:'both', tol:.3, pair:'di3' });
+F('mqCantina','DI','Mq cantina','num',{ w:1, ui:'both', tol:.3, pair:'di4' });
+F('mqSoppalco','DI','Mq soppalco','num',{ w:2, ui:'both', tol:.3, pair:'di4' });
+F('esposizione','DI','Esposizione','multi',{ w:4, ui:'both', opts:OPT_ESP, pair:'di5' });
+F('luminosita','DI','Luminosità','ord',{ w:3, ui:'both', opts:OPT_LUM, tol:1.5, pair:'di5' });
+F('privacy','DI','Privacy / affaccio','ord',{ w:3, ui:'both', opts:OPT_PRIV, tol:1.5, pair:'di6' });
+F('soppalco','DI','Soppalco presente','sn',{ w:2, ui:'both', pair:'di6' });
 
-/* ============ IN ============ */
-F('camere','IN','Camere da letto','multi',{ w:6, ui:'both', opts:['1','2','3','4','5+'] });
-F('doppiServizi','IN','Doppi servizi','sn',{ w:3, ui:'both' });
-F('soggiorno','IN','Soggiorno','ord',{ w:2, ui:'both', opts:['Ampio','Normale','Piccolo'], tol:1.5 });
-F('studio','IN','Studio / stanza in più','sn',{ w:3, ui:'both' });
-F('taverna','IN','Taverna','sn',{ w:2, ui:'both' });
-F('soffitta','IN','Soffitta / mansarda','sn',{ w:2, ui:'both' });
-F('ripostiglio','IN','Ripostiglio','sn',{ w:2, ui:'both' });
-F('lavanderia','IN','Lavanderia','sn',{ w:2, ui:'both' });
-F('camino','IN','Camino / stufa','multi',{ w:2, ui:'both', opts:['Camino aperto','Camino chiuso','Stufa a legna','Stufa a pellets','Stufa a gas'] });
-F('pavimenti','IN','Pavimenti','multi',{ w:1, ui:'both', opts:OPT_PAV });
-F('soffittiAlti','IN','Soffitti alti (>3 m)','sn',{ w:2, ui:'both' });
-F('accessibile','IN','Senza barriere architettoniche','sn',{ w:5, ui:'both' });
-F('cucinaInclusa','IN','Cucina arredata inclusa','sn',{ w:2, ui:'both' });
+/* ============ IN — Interni e servizi ============ */
+F('camere','IN','Camere da letto','multi',{ w:6, ui:'both', opts:['1','2','3','4','5+'], pair:'in1' });
+F('tipoBagniFinestrati','IN','Bagni finestrati','ord',{ w:3, ui:'both', opts:OPT_BAGNI_FIN, tol:1.5, pair:'in1' });
+F('doppiServizi','IN','Doppi servizi','sn',{ w:3, ui:'both', pair:'in2' });
+F('cucinaInclusa','IN','Cucina arredata inclusa','sn',{ w:2, ui:'both', pair:'in2' });
+F('soggiorno','IN','Soggiorno','ord',{ w:2, ui:'both', opts:['Ampio','Normale','Piccolo'], tol:1.5, pair:'in3' });
+F('studio','IN','Studio / stanza in più','sn',{ w:3, ui:'both', pair:'in3' });
+F('taverna','IN','Taverna','sn',{ w:2, ui:'both', pair:'in4' });
+F('soffitta','IN','Soffitta / mansarda','sn',{ w:2, ui:'both', pair:'in4' });
+F('ripostiglio','IN','Ripostiglio','sn',{ w:2, ui:'both', pair:'in5' });
+F('lavanderia','IN','Lavanderia','sn',{ w:2, ui:'both', pair:'in5' });
+F('accessibile','IN','Senza barriere architettoniche','sn',{ w:5, ui:'both', pair:'in6' });
+F('soffittiAlti','IN','Soffitti alti (> 3 m)','sn',{ w:2, ui:'both', pair:'in6' });
+F('camino','IN','Camino / stufa','multi',{ w:2, ui:'both', opts:['Camino aperto','Camino chiuso','Stufa a legna','Stufa a pellets','Stufa a gas'], pair:'in7' });
+F('pavimenti','IN','Pavimenti','multi',{ w:1, ui:'both', opts:OPT_PAV, pair:'in7' });
 
-/* ============ IP ============ */
-F('tipoCaldaia','IP','Tipo caldaia / riscaldamento','multi',{ w:4, ui:'both', opts:OPT_CALDAIA });
-F('annoCaldaia','IP','Anno caldaia','num',{ w:2, ui:'both', tolAbs:8 });
-F('gasMetano','IP','Gas metano','sn',{ w:3, ui:'both' });
-F('teleriscaldamento','IP','Teleriscaldamento','sn',{ w:2, ui:'both' });
-F('fvImpiantoSN','IP','Fotovoltaico presente','sn',{ w:3, ui:'rq', imK:'fvImpianto',
-   imv:(im,d) => !d.fvImpianto ? null : (d.fvImpianto === 'Assente' ? 'No' : 'Sì') });
-F('solareTermico','IP','Solare termico','sn',{ w:2, ui:'both' });
-F('vmc','IP','VMC (ventilazione meccanica)','sn',{ w:2, ui:'both' });
-F('allarme','IP','Allarme / antifurto','sn',{ w:3, ui:'both' });
-F('videosorveglianza','IP','Videosorveglianza','sn',{ w:2, ui:'both' });
-F('domotica','IP','Domotica','sn',{ w:3, ui:'both' });
-F('fibra','IP','Fibra ottica','sn',{ w:4, ui:'both' });
-F('portaBlindata','IP','Porta blindata','sn',{ w:2, ui:'both' });
-F('videocitofono','IP','Videocitofono','sn',{ w:1, ui:'both' });
-F('tapparelleElettriche','IP','Tapparelle elettriche','sn',{ w:2, ui:'both' });
-F('zanzariere','IP','Zanzariere','sn',{ w:1, ui:'both' });
-F('impiantiANorma','IP','Impianti a norma (cert.)','sn',{ w:4, ui:'both' });
-F('trifase','IP','Corrente trifase','sn',{ w:3, ui:'both' });
-F('cabinaElettrica','IP','Cabina elettrica','sn',{ w:2, ui:'both' });
-F('kwhMqAnno','IP','Consumo kWh/mq/anno','num',{ w:4, ui:'both', tol:.25 });
-F('speseRiscaldamento','IP','Spese riscaldamento (€/anno)','num',{ w:3, ui:'both', tol:.3 });
+/* ============ IP — Impianti e tecnologia ============ */
+F('combustibile','IP','Combustibile / fonte','multi',{ w:3, ui:'both', opts:OPT_COMBUST });
+F('annoCaldaia','IP','Anno caldaia','num',{ w:2, ui:'both', tolAbs:8, pair:'ip1' });
+F('ultimaRevCaldaia','IP','Ultima revisione caldaia','text',{ ui:'both', pair:'ip1' });
+F('solareTermico','IP','Solare termico','sn',{ w:2, ui:'both', pair:'ip2' });
+F('vmc','IP','VMC (ventilazione mecc.)','sn',{ w:2, ui:'both', pair:'ip2' });
+F('trifase','IP','Corrente trifase','sn',{ w:3, ui:'both', pair:'ip3' });
+F('cabinaElettrica','IP','Cabina elettrica','sn',{ w:2, ui:'both', pair:'ip3' });
+F('annoImpiantoElettrico','IP','Anno impianto elettrico','num',{ w:3, ui:'both', tolAbs:10, pair:'ip4' });
+F('statImpiantoElettrico','IP','Stato impianto elettrico','ord',{ w:4, ui:'both', opts:['A norma','Da verificare','Vecchio'], tol:1.5, pair:'ip4' });
+F('annoImpiantoIdrico','IP','Anno impianto idrico','num',{ w:3, ui:'both', tolAbs:10, pair:'ip5' });
+F('statImpiantoIdrico','IP','Stato impianto idrico','ord',{ w:3, ui:'both', opts:['Rifatto','Buono','Vecchio'], tol:1.5, pair:'ip5' });
+F('contatoriSeparati','IP','Contatori separati','sn',{ w:4, ui:'both', pair:'ip6' });
+F('impiantiANorma','IP','Impianti a norma (cert.)','sn',{ w:4, ui:'both', pair:'ip6' });
+F('allarme','IP','Allarme / antifurto','sn',{ w:3, ui:'both', pair:'ip7' });
+F('videosorveglianza','IP','Videosorveglianza','sn',{ w:2, ui:'both', pair:'ip7' });
+F('domotica','IP','Domotica','sn',{ w:3, ui:'both', pair:'ip8' });
+F('fibra','IP','Fibra ottica','sn',{ w:4, ui:'both', pair:'ip8' });
+F('portaBlindata','IP','Porta blindata','sn',{ w:2, ui:'both', pair:'ip9' });
+F('videocitofono','IP','Videocitofono','sn',{ w:1, ui:'both', pair:'ip9' });
+F('tapparelleElettriche','IP','Tapparelle elettriche','sn',{ w:2, ui:'both', pair:'ip10' });
+F('zanzariere','IP','Zanzariere','sn',{ w:1, ui:'both', pair:'ip10' });
+F('antennaTV','IP','Antenna TV','multi',{ w:1, ui:'both', opts:OPT_ANTENNA, pair:'ip11' });
+F('climatizzatoreFisso','IP','Climatizzatore fisso','sn',{ w:3, ui:'both', pair:'ip11' });
+F('kwhMqAnno','IP','Consumo kWh/mq/anno','num',{ w:4, ui:'both', tol:.25, pair:'ip12' });
+F('speseRiscaldamento','IP','Spese riscaldamento (€/anno)','num',{ w:3, ui:'both', tol:.3, pair:'ip12' });
 
-/* ============ IF ============ */
-F('tipoAperturaInfissi','IF','Tipo apertura infissi','multi',{ w:1, ui:'both', opts:OPT_APERT });
-F('oscuranti','IF','Oscuranti','multi',{ w:2, ui:'both', opts:OPT_OSCUR });
+/* ============ IF — Infissi e serramenti ============ */
+F('tipoAperturaInfissi','IF','Tipo apertura infissi','multi',{ w:1, ui:'both', opts:OPT_APERT, pair:'if1' });
+F('oscuranti','IF','Oscuranti','multi',{ w:2, ui:'both', opts:OPT_OSCUR, pair:'if1' });
+F('annoSostituzioneInfissi','IF','Anno sostituzione infissi','num',{ w:3, ui:'both', tolAbs:8, pair:'if2' });
+F('tipoVetro','IF','Tipo vetro','multi',{ w:2, ui:'both', opts:OPT_VETRO, pair:'if2' });
+F('trattamentoVetro','IF','Trattamento vetro','multi',{ w:1, ui:'both', opts:OPT_TRATT_VETRO });
 
-/* ============ ES ============ */
-F('portico','ES','Portico','sn',{ w:3, ui:'both' });
-F('loggia','ES','Loggia','sn',{ w:2, ui:'both' });
-F('veranda','ES','Veranda','sn',{ w:3, ui:'both' });
-F('gazebo','ES','Gazebo / pergolato','sn',{ w:1, ui:'both' });
-F('piscina','ES','Piscina','multi',{ w:3, ui:'both', opts:['Condominiale','Privata'] });
-F('cancelloElettrico','ES','Cancello elettrico','sn',{ w:2, ui:'both' });
-F('irrigazione','ES','Impianto irrigazione','sn',{ w:1, ui:'both' });
-F('colonninaEV','ES','Colonnina auto elettrica','sn',{ w:2, ui:'both' });
-F('parcheggioFacile','ES','Parcheggio facile in strada','sn',{ w:3, ui:'both' });
-F('animaliAmmessi','ES','Animali ammessi dal regolamento','sn',{ w:4, ui:'both' });
-F('giardinoCondo','ES','Giardino condominiale','sn',{ w:2, ui:'both' });
-F('cortile','ES','Cortile interno','sn',{ w:2, ui:'both' });
-F('vistaPanoramica','ES','Vista panoramica / aperta','sn',{ w:2, ui:'both' });
+/* ============ ES — Esterni e pertinenze ============ */
+F('portico','ES','Portico','sn',{ w:3, ui:'both', pair:'es1' });
+F('loggia','ES','Loggia','sn',{ w:2, ui:'both', pair:'es1' });
+F('veranda','ES','Veranda','sn',{ w:3, ui:'both', pair:'es2' });
+F('gazebo','ES','Gazebo / pergolato','sn',{ w:1, ui:'both', pair:'es2' });
+F('piscina','ES','Piscina','multi',{ w:3, ui:'both', opts:['Condominiale','Privata'], pair:'es3' });
+F('cancelloElettrico','ES','Cancello elettrico','sn',{ w:2, ui:'both', pair:'es3' });
+F('tipoGiardino','ES','Tipo giardino','multi',{ w:2, ui:'both', opts:OPT_TIPO_GIARDINO, pair:'es4' });
+F('recinzione','ES','Recinzione','multi',{ w:2, ui:'both', opts:OPT_RECINZIONE, pair:'es4' });
+F('pozzo','ES','Pozzo','sn',{ w:2, ui:'both', pair:'es5' });
+F('cisterna','ES','Cisterna / serbatoio','sn',{ w:1, ui:'both', pair:'es5' });
+F('irrigazione','ES','Impianto irrigazione','sn',{ w:1, ui:'both', pair:'es6' });
+F('colonninaEV','ES','Colonnina auto elettrica','sn',{ w:2, ui:'both', pair:'es6' });
+F('cortile','ES','Cortile interno','sn',{ w:2, ui:'both', pair:'es7' });
+F('giardinoCondo','ES','Giardino condominiale','sn',{ w:2, ui:'both', pair:'es7' });
+F('animaliAmmessi','ES','Animali ammessi dal regolamento','sn',{ w:4, ui:'both', pair:'es8' });
+F('parcheggioFacile','ES','Parcheggio facile in strada','sn',{ w:3, ui:'both', pair:'es8' });
 
-/* ============ CM ============ */
-F('destinazioneUso','CM','Destinazione d\'uso','multi',{ w:6, ui:'both', opts:OPT_DEST_USO });
-F('vetrina','CM','Vetrina su strada','sn',{ w:4, ui:'both' });
-F('caricoScarico','CM','Carico / scarico merci','sn',{ w:3, ui:'both' });
-F('cannaFumaria','CM','Canna fumaria','sn',{ w:3, ui:'both' });
-F('antincendio','CM','Impianto antincendio a norma','sn',{ w:2, ui:'both' });
-F('portataSolaio','CM','Portata solaio (kg/mq)','num',{ w:3, ui:'both', tolAbs:200 });
-F('abbattimentoBarriere','CM','Abbattimento barriere','sn',{ w:4, ui:'both' });
-F('parcheggiClienti','CM','N° parcheggi clienti','num',{ w:2, ui:'both', tolAbs:3 });
-F('affaccioStrada','CM','Affaccio su strada principale','sn',{ w:2, ui:'both' });
+/* ============ CM — Commerciale / aziendale ============ */
+F('destinazioneUso','CM','Destinazione d\'uso','multi',{ w:6, ui:'both', opts:OPT_DEST_USO, pair:'cm1' });
+F('altezzaLocale','CM','Altezza locale (m)','num',{ w:3, ui:'both', tolAbs:.4, pair:'cm1' });
+F('vetrina','CM','Vetrina su strada','sn',{ w:4, ui:'both', pair:'cm2' });
+F('affaccioStrada','CM','Affaccio su strada principale','sn',{ w:2, ui:'both', pair:'cm2' });
+F('caricoScarico','CM','Carico / scarico merci','sn',{ w:3, ui:'both', pair:'cm3' });
+F('cannaFumaria','CM','Canna fumaria','sn',{ w:3, ui:'both', pair:'cm3' });
+F('antincendio','CM','Impianto antincendio a norma','sn',{ w:2, ui:'both', pair:'cm4' });
+F('nIngressi','CM','N° ingressi','num',{ w:2, ui:'both', tolAbs:2, pair:'cm4' });
+F('portataSolaio','CM','Portata solaio (kg/mq)','num',{ w:3, ui:'both', tolAbs:200, pair:'cm5' });
+F('parcheggiClienti','CM','N° parcheggi clienti','num',{ w:2, ui:'both', tolAbs:3, pair:'cm5' });
 
-/* ============ LG — dato (solo im) ============ */
-F('categoriaCatastale','LG','Categoria catastale','dato',{ ui:'im', opts:OPT_CAT_CAT });
-F('rendita','LG','Rendita catastale (€)','dato',{ ui:'im' });
-F('provenienza','LG','Provenienza','dato',{ ui:'im', opts:OPT_PROVEN });
-F('annoAcquisto','LG','Anno acquisto del proprietario','dato',{ ui:'im' });
-F('venditoreTipo','LG','Venditore','dato',{ ui:'im', opts:OPT_VEND });
-F('ipotecaPresente','LG','Ipoteca','dato',{ ui:'im', opts:OPT_IPOT });
-F('vincoli','LG','Vincoli / servitù / usufrutto','dato',{ ui:'im', long:true });
-F('sanatoria','LG','Sanatoria / condono','dato',{ ui:'im', opts:OPT_SN });
-F('detrazioni','LG','Bonus edilizi in corso','dato',{ ui:'im', opts:OPT_SN });
-F('occupazione','LG','Occupazione','dato',{ ui:'im', opts:OPT_OCCUP });
-F('scadenzaLocazione','LG','Scadenza contratto locazione','dato',{ ui:'im' });
-F('canoneMensile','LG','Canone mensile (€)','dato',{ ui:'im' });
-F('costoLavori','LG','Costo lavori stimato (€)','dato',{ ui:'im' });
-F('trattabile','LG','Prezzo trattabile','dato',{ ui:'im', opts:OPT_TRATT });
-F('umidita','LG','Umidità / infiltrazioni','dato',{ ui:'im', opts:OPT_SN });
-F('amianto','LG','Amianto / eternit','dato',{ ui:'im', opts:OPT_SN });
-F('difformita','LG','Difformità urbanistiche/catastali','dato',{ ui:'im', opts:OPT_SN });
-F('scadenzaAPE','LG','Scadenza APE','dato',{ ui:'im' });
-F('ultimaRevCaldaia','LG','Ultima revisione caldaia','dato',{ ui:'im' });
-F('catastaleConforme','LG','Planimetria catastale conforme','dato',{ ui:'im', opts:OPT_SN });
-F('inAsta','LG','Provenienza asta','dato',{ ui:'im', opts:OPT_SN });
-F('saldoStralcio','LG','Saldo e stralcio possibile','dato',{ ui:'im', opts:OPT_SN });
-F('rentToBuy','LG','Disponibile rent to buy','dato',{ ui:'im', opts:OPT_SN });
+/* ============ LG — Legale e catastale ============ */
+F('usoReale','LG','Uso reale','ord',{ ui:'im', opts:OPT_USO_REALE, pair:'lg1' });
+F('tipoProprieta','LG','Tipo di proprietà','ord',{ ui:'im', opts:OPT_TIPO_PROP, pair:'lg1' });
+F('categoriaCatastale','LG','Categoria catastale','ord',{ ui:'im', opts:OPT_CAT_CAT, pair:'lg2' });
+F('rendita','LG','Rendita catastale (€)','text',{ ui:'im', pair:'lg2' });
+F('provenienza','LG','Provenienza','ord',{ ui:'im', opts:OPT_PROVEN, pair:'lg3' });
+F('annoAcquisto','LG','Anno acquisto proprietario','num',{ ui:'im', pair:'lg3' });
+F('venditoreTipo','LG','Venditore','ord',{ ui:'im', opts:OPT_VEND, pair:'lg4' });
+F('trattabile','LG','Prezzo trattabile','ord',{ ui:'im', opts:OPT_TRATT, pair:'lg4' });
+F('ipotecaPresente','LG','Ipoteca','ord',{ ui:'im', opts:OPT_IPOT, pair:'lg5' });
+F('occupazione','LG','Occupazione','ord',{ ui:'im', opts:OPT_OCCUP, pair:'lg5' });
+F('canoneMensile','LG','Canone mensile (€)','text',{ ui:'im', pair:'lg6' });
+F('scadenzaLocazione','LG','Scadenza contratto locazione','text',{ ui:'im', pair:'lg6' });
+F('difformita','LG','Difformità urbanistiche','ord',{ ui:'im', opts:OPT_SN, pair:'lg7' });
+F('catastaleConforme','LG','Planimetria catastale','ord',{ ui:'im', opts:['Conforme','Non conforme','Da depositare'], pair:'lg7' });
+F('conformitaUrbanistica','LG','Conformità urbanistica','ord',{ ui:'im', opts:OPT_CONF, pair:'lg8' });
+F('conformitaImpianti','LG','Conformità impianti','ord',{ ui:'im', opts:OPT_CONF, pair:'lg8' });
+F('sanatoria','LG','Sanatoria / condono','ord',{ ui:'im', opts:OPT_SN, pair:'lg9' });
+F('barriereArchitettoniche','LG','Barriere architettoniche','ord',{ ui:'im', opts:OPT_BARRIERE, pair:'lg9' });
+F('detrazioni','LG','Bonus edilizi in corso','ord',{ ui:'im', opts:OPT_SN, pair:'lg10' });
+F('inAsta','LG','Provenienza asta','ord',{ ui:'im', opts:OPT_SN, pair:'lg10' });
+F('saldoStralcio','LG','Saldo e stralcio possibile','ord',{ ui:'im', opts:OPT_SN, pair:'lg11' });
+F('rentToBuy','LG','Disponibile rent to buy','ord',{ ui:'im', opts:OPT_SN, pair:'lg11' });
+F('esenteAPE','LG','Esente APE','ord',{ ui:'im', opts:OPT_SN, pair:'lg12' });
+F('scadenzaAPE','LG','Scadenza APE','text',{ ui:'im', pair:'lg12' });
+F('costoLavori','LG','Costo lavori stimato (€)','text',{ ui:'im', pair:'lg13' });
+F('presenzaPertinenze','LG','Presenza pertinenze','ord',{ ui:'im', opts:['Sì','No'], pair:'lg13' });
+F('umidita','LG','Umidità / infiltrazioni','ord',{ ui:'im', opts:OPT_SN, pair:'lg14' });
+F('amianto','LG','Amianto / eternit','ord',{ ui:'im', opts:OPT_SN, pair:'lg14' });
+F('vincoli','LG','Vincoli / servitù / usufrutto','long',{ ui:'im' });
 
-/* ============ MT ============ */
-F('muffa','MT','Muffa / condensa','dato',{ ui:'im', opts:OPT_SN });
-F('crepe','MT','Crepe strutturali','dato',{ ui:'im', opts:OPT_SN });
-F('ultimaManutenzione','MT','Ultima manutenzione straordinaria','dato',{ ui:'im' });
+/* ============ MT — Manutenzione e stato ============ */
+F('muffa','MT','Muffa / condensa','ord',{ ui:'both', opts:OPT_SN, pair:'mt1' });
+F('crepe','MT','Crepe strutturali','ord',{ ui:'both', opts:OPT_SN, pair:'mt1' });
+F('infiltrazioni','MT','Infiltrazioni','ord',{ ui:'both', opts:OPT_SN, pair:'mt2' });
+F('problemiStrutturali','MT','Problemi strutturali','ord',{ ui:'both', opts:OPT_SN, pair:'mt2' });
+F('statoSerrature','MT','Stato serramenti','ord',{ ui:'both', opts:['Ottimo','Buono','Da sostituire'], tol:1.5, pair:'mt3' });
+F('statoPavimenti','MT','Stato pavimenti','ord',{ ui:'both', opts:['Ottimo','Buono','Da rifare'], tol:1.5, pair:'mt3' });
+F('ultimaTinteggiatura','MT','Ultima tinteggiatura','text',{ ui:'both', pair:'mt4' });
+F('ultimaManutenzione','MT','Ultima manutenzione straordinaria','text',{ ui:'both', pair:'mt4' });
 
-/* ============ ZO ============ */
-[['distScuole','Scuole (a piedi)',4],['distSupermercato','Supermercato (a piedi)',3],['distStazione','Stazione / mezzi (a piedi)',4],
- ['distCentro','Centro (a piedi)',3],['distParco','Parco / verde (a piedi)',2],['distCasello','Tangenziale / casello',3],
- ['distOspedale','Ospedale',2],['distFarmacia','Farmacia (a piedi)',2]]
-  .forEach(x => F(x[0],'ZO',x[1],'ord',{ w:x[2], ui:'both', opts:DIST, tol:1.5 }));
-F('sicurezzaZona','ZO','Sicurezza della zona','ord',{ w:3, ui:'both', opts:OPT_SIC_ZONA, tol:1.5 });
-F('rumorosita','ZO','Rumorosità','ord',{ w:4, ui:'both', opts:OPT_RUM, tol:1.5 });
-F('traffico','ZO','Traffico','ord',{ w:2, ui:'both', opts:OPT_TRAFF, tol:1.5 });
-F('zonaCommercio','ZO','Servizi commerciali vicini','sn',{ w:2, ui:'both' });
-F('zonaVerde','ZO','Zona verde / alberata','sn',{ w:2, ui:'both' });
+/* ============ ZO — Zona e contesto ============ */
+[['distScuole','Scuole',4],['distSupermercato','Supermercato',3],['distStazione','Stazione',4],['distCentro','Centro',3],
+ ['distParco','Parco / verde',2],['distCasello','Tangenziale / casello',3],['distOspedale','Ospedale',2],['distFarmacia','Farmacia',2],
+ ['distChiesa','Chiesa',1],['distBanca','Banca',1],['distCentroCommerciale','Centro commerciale',2],['fermataBus','Fermata bus',3]]
+  .forEach((x,i) => F(x[0],'ZO',x[1],'ord',{ w:x[2], ui:'both', opts:DIST, tol:1.5, pair:'zo'+Math.floor(i/2) }));
+F('sicurezzaZona','ZO','Sicurezza della zona','ord',{ w:3, ui:'both', opts:OPT_SIC_ZONA, tol:1.5, pair:'zo6' });
+F('rumorosita','ZO','Rumorosità','ord',{ w:4, ui:'both', opts:OPT_RUM, tol:1.5, pair:'zo6' });
+F('traffico','ZO','Traffico','ord',{ w:2, ui:'both', opts:OPT_TRAFF, tol:1.5, pair:'zo7' });
+F('zonaPedonale','ZO','Zona pedonale','sn',{ w:2, ui:'both', pair:'zo7' });
+F('ztl','ZO','ZTL','sn',{ w:2, ui:'both', pair:'zo8' });
+F('zonaCommercio','ZO','Servizi commerciali vicini','sn',{ w:2, ui:'both', pair:'zo8' });
+F('zonaVerde','ZO','Zona verde / alberata','sn',{ w:2, ui:'both', pair:'zo9' });
 
-/* ============ SP ============ */
-F('speseCond','SP','Spese condominiali (€/mese)','num',{ w:5, ui:'both', tol:.25 });
-F('speseStraord','SP','Spese straordinarie deliberate','sn',{ w:5, ui:'both' });
+/* ============ SP — Spese ============ */
+F('speseCond','SP','Spese condominiali (€/mese)','num',{ w:5, ui:'both', tol:.25, pair:'sp1' });
+F('speseStraord','SP','Spese straordinarie deliberate','sn',{ w:5, ui:'both', pair:'sp1' });
 F('speseStraordImporto','SP','Importo spese straordinarie (€)','num',{ w:3, ui:'both', tol:.25 });
 
-/* ============ NT ============ */
-F('motivoVendita','NT','Perché vende / urgenza','dato',{ ui:'im', long:true });
-F('chiHaAbitato','NT','Chi ha abitato / abita','dato',{ ui:'im', long:true });
-F('noteVicinato','NT','Note vicinato','dato',{ ui:'im', long:true });
+/* ============ NT — Note libere ============ */
+F('motivoVendita','NT','Perché vende / urgenza','long',{ ui:'im' });
+F('chiHaAbitato','NT','Chi ha abitato / abita','long',{ ui:'im' });
+F('noteVicinato','NT','Note vicinato','long',{ ui:'im' });
 F('tagLiberi','NT','Parole chiave (virgola)','tag',{ w:3, def:'bassa', ui:'both', imv:(im,d) => testoIm(im,d) });
 
-/* ============ CL — solo richiesta (nessun "tipo cliente") ============ */
-F('lavoriDaFare','CL','Lavori previsti','multi',{ w:5, def:'alta', ui:'rq', opts:OPT_LAVORI });
-F('budgetLavori','CL','Budget lavori (€)','dato',{ ui:'rq' });
-F('rendimentoMin','CL','Investimento: rendimento lordo min. (%)','custom',{ w:6, ui:'rq',
+/* ============ CL — Dati cliente (solo richiesta) ============ */
+F('lavoriDaFare','CL','Lavori previsti','multi',{ w:5, def:'alta', ui:'rq', opts:OPT_LAVORI, pair:'cl1' });
+F('budgetLavori','CL','Budget lavori (€)','text',{ ui:'rq', pair:'cl1' });
+F('rendimentoMin','CL','Rendimento lordo min. (%)','custom',{ w:6, ui:'rq', pair:'cl2',
    rqv:r => parseNum(r.rendimentoMin),
    imv:(im,d) => { const c = parseNum(d.canoneMensile), p = prezzoRef(im); return (c && p) ? c * 12 / p * 100 : null; },
    fn:(rv,iv) => iv === null ? null : Math.min(1, iv / rv) });
-F('anticipo','CL','Anticipo disponibile (€)','dato',{ ui:'rq' });
-F('mutuoImporto','CL','Mutuo richiesto (€)','dato',{ ui:'rq' });
-F('lavoriNelBudget','CL','Il budget include i lavori','dato',{ ui:'rq', opts:OPT_SN });
-F('accettaAste','CL','Accetta immobili da asta','dato',{ ui:'rq', opts:OPT_SN });
-F('accettaSaldoStralcio','CL','Accetta saldo e stralcio','dato',{ ui:'rq', opts:OPT_SN });
-F('accettaRentToBuy','CL','Interessato a rent to buy','dato',{ ui:'rq', opts:OPT_SN });
-F('deveVendere','CL','Deve prima vendere la sua casa','dato',{ ui:'rq', opts:OPT_SN });
-F('numPersone','CL','Componenti nucleo','dato',{ ui:'rq' });
-F('haBambini','CL','Ha bambini','dato',{ ui:'rq', opts:OPT_SN });
-F('haAnimali','CL','Ha animali domestici','dato',{ ui:'rq', opts:OPT_SN });
-F('mobilitaRidotta','CL','Anziani / mobilità ridotta','dato',{ ui:'rq', opts:OPT_SN });
-F('smartWorking','CL','Lavora da casa','dato',{ ui:'rq', opts:OPT_SN });
-F('numAuto','CL','Numero auto','dato',{ ui:'rq' });
-F('luogoLavoro','CL','Indirizzo di lavoro','dato',{ ui:'rq' });
-F('raggioLavoroKm','CL','Distanza max dal lavoro (km)','dato',{ ui:'rq' });
-
-/* Esclusioni */
-F('pianoEscluso','CL','Piani da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'piano', opts:OPT_PIANO });
+F('anticipo','CL','Anticipo disponibile (€)','text',{ ui:'rq', pair:'cl2' });
+F('mutuoImporto','CL','Mutuo richiesto (€)','text',{ ui:'rq', pair:'cl3' });
+F('deveVendere','CL','Deve prima vendere la sua casa','ord',{ ui:'rq', opts:OPT_SN, pair:'cl3' });
+F('lavoriNelBudget','CL','Il budget include i lavori','ord',{ ui:'rq', opts:OPT_SN, pair:'cl4' });
+F('numPersone','CL','Componenti nucleo','text',{ ui:'rq', pair:'cl4' });
+F('haBambini','CL','Ha bambini','ord',{ ui:'rq', opts:OPT_SN, pair:'cl5' });
+F('haAnimali','CL','Ha animali domestici','ord',{ ui:'rq', opts:OPT_SN, pair:'cl5' });
+F('mobilitaRidotta','CL','Anziani / mobilità ridotta','ord',{ ui:'rq', opts:OPT_SN, pair:'cl6' });
+F('smartWorking','CL','Lavora da casa','ord',{ ui:'rq', opts:OPT_SN, pair:'cl6' });
+F('numAuto','CL','Numero auto','text',{ ui:'rq', pair:'cl7' });
+F('raggioLavoroKm','CL','Distanza max dal lavoro (km)','text',{ ui:'rq', pair:'cl7' });
+F('luogoLavoro','CL','Indirizzo di lavoro','text',{ ui:'rq' });
+F('accettaAste','CL','Accetta immobili da asta','ord',{ ui:'rq', opts:OPT_SN, pair:'cl8' });
+F('accettaSaldoStralcio','CL','Accetta saldo e stralcio','ord',{ ui:'rq', opts:OPT_SN, pair:'cl8' });
+F('accettaRentToBuy','CL','Interessato a rent to buy','ord',{ ui:'rq', opts:OPT_SN, pair:'cl9' });
+F('pianoEscluso','CL','Piani da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'piano', opts:OPT_PIANO, pair:'cl9' });
 F('zoneEscluse','CL','Zone da escludere','multiNo',{ w:7, def:'alta', ui:'rq', opts:OPT_ZONE, imv:im => zoneEff(im) });
 F('statoEscluso','CL','Stati da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'statoConservativo', opts:OPT_STATO_IMMOBILE.concat(OPT_STATO_TERRENO) });
 F('tagEsclusi','CL','Parole da escludere','tagNo',{ w:5, def:'alta', ui:'rq', imv:(im,d) => testoIm(im,d) });
@@ -4520,7 +4448,6 @@ const pianoBasso = d => A(d.piano).some(p => ['Terra','Terra con giardino','Rial
 const kmTra = (a,b,c,e) => { const R = 6371, q = x => x * Math.PI / 180, h = Math.pow(Math.sin(q(c-a)/2),2) + Math.cos(q(a)) * Math.cos(q(c)) * Math.pow(Math.sin(q(e-b)/2),2); return 2 * R * Math.asin(Math.sqrt(h)); };
 const snv = (v,si,no) => v === 'Sì' ? si : v === 'No' ? no : null;
 
-/* DOSSIER — sempre attiva, uguale per tutti gli acquirenti */
 function dossierPct(im){
   const doc = im.documenti || {};
   const app = Object.keys(doc).filter(t => (doc[t] || {}).stato !== 'non-applicabile');
@@ -4656,7 +4583,7 @@ window.matchAcquirente = per => {
 };
 
 /* ---------- 5. UI GENERATA ---------- */
-const ST = 'background:var(--bg2);padding:10px 12px;border-radius:10px;';
+const ST = 'background:var(--bg2);padding:8px 10px;border-radius:8px;';
 const opt = (arr,sel,vuoto) => (vuoto !== undefined ? `<option value="">${vuoto}</option>` : '') + arr.map(o => `<option value="${esc(o)}"${o === sel ? ' selected' : ''}>${esc(o)}</option>`).join('');
 
 function impSel(f,r){
@@ -4664,7 +4591,7 @@ function impSel(f,r){
   const auto = impEff(f, Object.assign({}, r, { requisiti:{} }));
   let o = `<option value="">Auto · ${IMP[auto].l}</option>`;
   Object.keys(IMP).forEach(k => o += `<option value="${k}"${k === salvato ? ' selected' : ''}>${IMP[k].l}</option>`);
-  return `<select class="form-select" id="cx-rq-${f.k}-imp" style="${ST}margin-top:6px;font-size:13px;color:var(--tx2);">${o}</select>`;
+  return `<select class="form-select" id="cx-rq-${f.k}-imp" style="${ST}margin-top:5px;font-size:12.5px;color:var(--tx2);">${o}</select>`;
 }
 function campo(f,ctx,src){
   const id = `cx-${ctx}-${f.k}`, rq = ctx === 'rq', val = src[rq ? rk(f) : ik(f)];
@@ -4672,27 +4599,41 @@ function campo(f,ctx,src){
   if(f.t === 'multi' || f.t === 'multiNo') c = ms(id, f.opts || [], val);
   else if(f.t === 'sn') c = `<select class="form-select" id="${id}" style="${ST}">${opt(OPT_SN, val === 'Meglio' ? 'Sì' : val, rq ? 'Indifferente' : '—')}</select>`;
   else if(f.t === 'ord') c = `<select class="form-select" id="${id}" style="${ST}">${opt(f.opts, val, rq ? 'Indifferente' : '—')}</select>`;
-  else if(f.t === 'dato' && f.opts) c = `<select class="form-select" id="${id}" style="${ST}">${opt(f.opts, val, '—')}</select>`;
   else if(f.t === 'num' && rq) c = `<div class="box2"><div><input class="form-input" id="${id}-min" inputmode="numeric" placeholder="Min" value="${esc(src[f.rqMin || f.k+'Min'] || '')}" style="${ST}"></div><div><input class="form-input" id="${id}-max" inputmode="numeric" placeholder="Max" value="${esc(src[f.rqMax || f.k+'Max'] || '')}" style="${ST}"></div></div>`;
   else if(f.long) c = `<textarea class="form-textarea" id="${id}" style="${ST}">${esc(val || '')}</textarea>`;
   else c = `<input class="form-input" id="${id}" value="${esc(val || '')}" style="${ST}"${f.t === 'num' ? ' inputmode="numeric"' : ''}>`;
   const imp = (rq && f.t !== 'dato' && f.ui === 'both') ? impSel(f,src) : '';
-  return `<div style="margin-bottom:10px;"><label class="form-label">${f.l}</label>${c}${imp}</div>`;
+  return `<label class="form-label">${f.l}</label>${c}${imp}`;
 }
 function sezione(ctx,src){
   let h = '';
   GRUPPI.forEach(g => {
     const code = g[0];
-    if(code === 'Base') return;
     const l = CAT.filter(f => f.g === code && usa(f,ctx));
     if(!l.length) return;
-    h += `<details class="fold"><summary>${g[1]}</summary><div>${l.map(f => campo(f,ctx,src)).join('')}</div></details>`;
+    const rows = [];
+    let curPair = null, curRow = [];
+    l.forEach(f => {
+      if(f.pair){
+        if(f.pair === curPair && curRow.length < 2){ curRow.push(f); }
+        else { if(curRow.length) rows.push(curRow); curPair = f.pair; curRow = [f]; }
+      } else {
+        if(curRow.length){ rows.push(curRow); curRow = []; curPair = null; }
+        rows.push([f]);
+      }
+    });
+    if(curRow.length) rows.push(curRow);
+    const body = rows.map(row => {
+      if(row.length === 1) return `<div class="cx-campo">${campo(row[0], ctx, src)}</div>`;
+      return `<div class="cx-row2">${row.map(f => `<div class="cx-campo">${campo(f, ctx, src)}</div>`).join('')}</div>`;
+    }).join('');
+    h += `<details class="fold"><summary>${g[1]}</summary><div>${body}</div></details>`;
   });
   if(ctx === 'rq'){
     const leg = CAT.filter(f => !usa(f,'rq') && f.t !== 'dato' && f.ui !== 'rq' && reqVal(f,src) !== null);
     const rg = REGOLE.filter(g => g.on(src));
     if(leg.length || rg.length)
-      h += `<details class="fold"><summary>Importanza dei criteri già compilati</summary><div>${leg.concat(rg).map(f => `<div style="margin-bottom:8px;"><label class="form-label">${f.l}</label>${impSel(f,src)}</div>`).join('')}</div></details>`;
+      h += `<details class="fold"><summary>Importanza dei criteri già compilati</summary><div>${leg.concat(rg).map(f => `<div class="cx-campo"><label class="form-label">${f.l}</label>${impSel(f,src)}</div>`).join('')}</div></details>`;
   }
   return h;
 }
