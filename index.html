@@ -4217,5 +4217,414 @@ function avviaBoot(){
 }
 avviaBoot();
 </script>
+
+  /* =========================================================================
+   ARANJÒ — MATCHING v2
+   Come installarlo: incolla TUTTO questo file in un nuovo <script>…</script>
+   subito prima di </body> (dopo l'ultimo script). Non tocca i dati esistenti.
+   Poi, in apriScheda() e apriSchedaPersona(), sostituisci le DUE righe
+       const ko = m.ko && m.ko.length ? `<small>manca: ${m.ko.join(', ')}</small>` : '';
+   con
+       const ko = matchNote(m);
+   ========================================================================= */
+(function(){
+'use strict';
+
+/* ---------- 1. IMPORTANZA (i moltiplicatori) ---------- */
+const IMP = {
+  indispensabile:{ l:'Indispensabile', m:2 },   // se manca → il match è scartato
+  alta:          { l:'Importante',     m:3 },
+  media:         { l:'Normale',        m:1 },
+  bassa:         { l:'Se capita',      m:.35 },
+  indifferente:  { l:'Indifferente',   m:0 }
+};
+const LEG = { obbligatorio:'indispensabile', preferito:'media' };   // vecchi valori già salvati
+
+/* ---------- 2. CATALOGO CARATTERISTICHE (unica fonte di verità) ----------
+   t: multi | sn | ord | num | tag | custom | dato
+   w: peso base 1-10 (quanto conta quel criterio in generale)
+   def: importanza di default se l'agente non la sceglie
+   ui: dove compare il campo nuovo → both | im | rq | none (già esistente nell'app)
+   ord: opts ordinati dal MIGLIORE al peggiore; il cliente chiede "almeno questo"      */
+const CAT = [];
+const F = (k,g,l,t,o) => CAT.push(Object.assign({ k, g, l, t, w:5, def:'media', ui:'none' }, o || {}));
+const A  = v => Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
+const lw = x => String(x).toLowerCase().trim();
+const CLASSI = ['A4','A3','A2','A1','A+','A','B','C','D','E','F','G'];
+const SOGLIA_CE = { 'Alta (A4-A1)':'A', 'Media (A-C)':'C', 'Bassa (D-G)':'G' };
+
+function prezzoRef(im){
+  const z = im.prezzi || {};
+  const ric = parseNum(z.richiesto), mer = parseNum(z.mercato), ult = parseNum(z.ultimo), ven = parseNum(z.venduto);
+  if(im.stato === 'VND' && ven !== null) return ven;
+  if(ult !== null) return ult;
+  if(ric !== null && mer !== null) return Math.min(ric, mer);
+  return ric !== null ? ric : mer;
+}
+
+/* --- già presenti nell'app (solo matching, con pesi) --- */
+F('budget','Base','Prezzo','num',{ w:10, def:'indispensabile', tol:.10, rqMin:'budgetMin', rqMax:'budget',
+   hiFb:r => { const a = parseNum(r.anticipo), m = parseNum(r.mutuoImporto); return (a !== null || m !== null) ? (a || 0) + (m || 0) : null; },
+   imv:(im,d,r) => { const p = prezzoRef(im); return p === null ? null : p + (r.lavoriNelBudget === 'Sì' ? (parseNum(d.costoLavori) || 0) : 0); } });
+F('zona','Base','Zona','multi',{ w:9, def:'alta', imv:im => zoneEff(im) });
+F('tipologia','Base','Tipologia','multi',{ w:9, def:'alta' });
+F('mq','Base','Superficie','num',{ w:8, def:'alta', tol:.15, rqMin:'mqMin', rqMax:'mqMax', imv:(im,d) => parseNum(d.mqCommerciali) || parseNum(d.mqCalpestabili) || parseNum(d.mq) });
+F('sottotipologia','Base','Sotto-tipologia','multi',{ w:6 });
+F('statoConservativo','Base','Stato','multi',{ w:6 });
+F('locali','Base','Locali','multi',{ w:6, imv:(im,d) => d.locali });
+F('bagni','Base','Bagni','multi',{ w:4 });
+F('piano','Base','Piano','multi',{ w:3 });
+F('pianoTipo','Base','N° piano','multi',{ w:3, imK:'pianoNum' });
+F('classeEnergetica','Base','Classe energetica','ord',{ w:5, opts:CLASSI, tol:3,
+   rqv:r => { const s = A(r.classeEnergetica).map(x => SOGLIA_CE[x]).filter(Boolean); return s.length ? s.sort((a,b) => CLASSI.indexOf(b)-CLASSI.indexOf(a))[0] : null; },
+   imv:(im,d) => String(A(d.classeEnergetica)[0] || '').toUpperCase() });
+F('riscaldamento','Base','Impianto riscaldamento','multi',{ w:2 });
+F('riscaldamentoTipo','Base','Tipo riscaldamento','multi',{ w:3 });
+F('raffTipo','Base','Tipo raffrescamento','multi',{ w:2 });
+F('infissi','Base','Infissi','multi',{ w:2 });
+F('vista','Base','Vista/esposizione','multi',{ w:3 });
+F('zonaCaratt','Base','Caratteristiche zona','multi',{ w:3 });
+F('cucina','Base','Cucina','multi',{ w:1 });
+F('arredamento','Base','Arredamento','custom',{ w:4,
+   rqv:r => (r.arredamento && r.arredamento !== 'Indifferente') ? r.arredamento : null,
+   fn:(rv,iv) => !iv ? null : rv === 'No' ? (iv === 'No' ? 1 : 0) : rv === 'Sì' ? (['Sì','Parzialmente','Su richiesta'].includes(iv) ? 1 : 0) : (['Sì','Parzialmente'].includes(iv) ? 1 : .5) });
+[['ascensore','Ascensore',5],['balcone','Balcone',4],['terrazzo','Terrazzo',4],['giardino','Giardino',5],['box','Box',6],['postoAuto','Posto auto',5],['cantina','Cantina',3]]
+  .forEach(x => F(x[0],'Base',x[1],'sn',{ w:x[2], leg:true }));
+
+/* --- NUOVI: compaiono nei form di immobile e richiesta --- */
+const TC='Tecnologia e comfort', ES='Edificio e spese', CT='Contesto', DP='Disponibilità e pratica', AL='Altro';
+F('fibra',TC,'Fibra ottica','sn',{ w:4, ui:'both' });
+F('domotica',TC,'Domotica','sn',{ w:3, ui:'both' });
+F('allarme',TC,'Allarme / antifurto','sn',{ w:3, ui:'both' });
+F('portaBlindata',TC,'Porta blindata','sn',{ w:2, ui:'both' });
+F('fotovoltaico',TC,'Fotovoltaico','sn',{ w:3, ui:'rq', imv:(im,d) => !d.fvImpianto ? null : (d.fvImpianto === 'Assente' ? 'No' : 'Sì') });
+F('climatizzazione',TC,'Climatizzazione','sn',{ w:4, ui:'rq', imv:(im,d) => !d.raffrescamento ? null : (d.raffrescamento === 'Assente' ? 'No' : 'Sì') });
+F('annoCostruzione',ES,'Anno costruzione','num',{ w:3, ui:'both', tolAbs:10,
+   imv:(im,d) => parseNum(d.annoCostruzione) || parseNum(((DB.condomini || {})[condoDi(im)] || {}).annoCostruzione) });
+F('annoRistrutturazione',ES,'Anno ultima ristrutturazione','num',{ w:3, ui:'both', tolAbs:10 });
+F('cappotto',ES,'Cappotto termico','sn',{ w:3, ui:'both' });
+F('portineria',ES,'Portineria','sn',{ w:2, ui:'both' });
+F('speseCond',ES,'Spese condominiali (€/mese)','num',{ w:5, ui:'both', tol:.25 });
+F('speseStraord',ES,'Spese straordinarie deliberate','sn',{ w:5, ui:'both' });
+F('rumorosita',CT,'Rumorosità','ord',{ w:4, ui:'both', opts:['Silenzioso','Normale','Rumoroso'], tol:1.5 });
+F('luminosita',CT,'Luminosità','ord',{ w:3, ui:'both', opts:['Molto luminoso','Luminoso','Poco luminoso'], tol:1.5 });
+F('parcheggioFacile',CT,'Parcheggio facile in strada','sn',{ w:3, ui:'both' });
+F('disponibilita',DP,'Disponibilità al rogito','ord',{ w:6, ui:'im', rqK:'tempistica', opts:OPT_TEMPISTICA, tol:1.5 });
+F('difformita',DP,'Difformità urbanistiche/catastali note','dato',{ ui:'im', opts:['Sì','No'] });
+F('noteVicinato',DP,'Vicinato / chi abita (lavoro, abitudini…)','dato',{ ui:'im', long:true });
+F('tagLiberi',AL,'Parole chiave libere (separate da virgola)','tag',{ w:3, def:'bassa', ui:'both',
+   imv:(im,d) => testoIm(im,d) });
+
+/* ===================== CATALOGO ESTESO ===================== */
+const IL='Interni e layout', ED='Esterni e dotazioni', IC='Impianti e consumi', LG='Aspetti economici e legali', FS='Famiglia e stile di vita (cliente)', XX='Cosa NON vuole (cliente)';
+const DIST = ['< 5 min','5-10 min','10-20 min','> 20 min'];
+const testoIm = (im,d) => [d.tagLiberi, d.noteVicinato, d.chiHaAbitato, d.motivoVendita, im.note].filter(Boolean).join(' ').toLowerCase() || null;
+
+/* Interni e layout */
+F('camere',IL,'Camere da letto','multi',{ w:6, ui:'both', opts:['1','2','3','4','5+'] });
+F('studio',IL,'Studio / stanza in più','sn',{ w:3, ui:'both' });
+F('doppiServizi',IL,'Doppi servizi','sn',{ w:3, ui:'both' });
+F('lavanderia',IL,'Lavanderia / ripostiglio','sn',{ w:2, ui:'both' });
+F('soffittiAlti',IL,'Soffitti alti','sn',{ w:2, ui:'both' });
+F('cucinaInclusa',IL,'Cucina arredata inclusa','sn',{ w:2, ui:'both' });
+F('pavimenti',IL,'Pavimenti','multi',{ w:1, ui:'both', opts:['Parquet','Gres','Marmo','Cotto','Laminato','Resina'] });
+F('accessibile',IL,'Senza barriere architettoniche','sn',{ w:5, ui:'both' });
+/* Esterni e dotazioni */
+F('giardinoMq',ED,'Giardino (mq)','num',{ w:3, ui:'both', tol:.3 });
+F('piscina',ED,'Piscina','multi',{ w:3, ui:'both', opts:['Condominiale','Privata'] });
+F('colonninaEV',ED,'Predisposizione auto elettrica','sn',{ w:2, ui:'both' });
+F('giardinoCondo',ED,'Giardino condominiale','sn',{ w:2, ui:'both' });
+F('animaliAmmessi',ED,'Animali ammessi dal regolamento','sn',{ w:4, ui:'im' });
+/* Impianti e consumi */
+F('impiantiANorma',IC,'Impianti a norma','sn',{ w:4, ui:'both' });
+F('annoCaldaia',IC,'Anno caldaia','num',{ w:2, ui:'both', tolAbs:8 });
+F('gasMetano',IC,'Gas metano','sn',{ w:3, ui:'both' });
+F('teleriscaldamento',IC,'Teleriscaldamento','sn',{ w:2, ui:'both' });
+F('solareTermico',IC,'Solare termico','sn',{ w:2, ui:'both' });
+F('tapparelleElettriche',IC,'Tapparelle elettriche','sn',{ w:2, ui:'both' });
+F('videocitofono',IC,'Videocitofono','sn',{ w:1, ui:'both' });
+F('speseRiscaldamento',IC,'Spese riscaldamento (€/anno)','num',{ w:3, ui:'both', tol:.3 });
+/* Edificio e contesto */
+F('statoParti',ES,'Stato parti comuni / facciata','ord',{ w:3, ui:'both', opts:['Ottimo','Buono','Da sistemare'], tol:1.5 });
+[['distScuole','Scuole (a piedi)',4],['distSupermercato','Supermercato (a piedi)',3],['distStazione','Stazione / mezzi pubblici (a piedi)',4],
+ ['distCentro','Centro (a piedi)',3],['distParco','Parco / verde (a piedi)',2],['distCasello','Tangenziale / casello (in auto)',3],['distOspedale','Ospedale (in auto)',2]]
+  .forEach(x => F(x[0],CT,x[1],'ord',{ w:x[2], ui:'both', opts:DIST, tol:1.5 }));
+F('sicurezzaZona',CT,'Sicurezza della zona','ord',{ w:3, ui:'both', opts:['Molto sicura','Sicura','Da valutare'], tol:1.5 });
+/* Aspetti economici e legali — dati dell'immobile (non matchati direttamente, usati da regole e controlli) */
+F('categoriaCatastale',LG,'Categoria catastale','dato',{ ui:'im', opts:['A/2','A/3','A/4','A/5','A/7','A/1','A/8','A/9','A/10','C/1','C/2','C/6','D'] });
+F('rendita',LG,'Rendita catastale (€)','dato',{ ui:'im' });
+F('provenienza',LG,'Provenienza','dato',{ ui:'im', opts:['Acquisto','Successione','Donazione','Asta','Costruzione diretta'] });
+F('annoAcquisto',LG,'Anno acquisto del proprietario','dato',{ ui:'im' });
+F('venditoreTipo',LG,'Venditore','dato',{ ui:'im', opts:['Privato','Impresa / costruttore'] });
+F('ipotecaPresente',LG,'Ipoteca','dato',{ ui:'im', opts:['Sì','No','Da cancellare al rogito'] });
+F('vincoli',LG,'Vincoli / servitù / usufrutto','dato',{ ui:'im' });
+F('sanatoria',LG,'Sanatoria / condono','dato',{ ui:'im', opts:['Sì','No'] });
+F('detrazioni',LG,'Bonus edilizi / cessione credito in corso','dato',{ ui:'im', opts:['Sì','No'] });
+F('occupazione',LG,'Occupazione','dato',{ ui:'im', opts:['Libero','Abitato dal proprietario','Locato'] });
+F('scadenzaLocazione',LG,'Scadenza contratto di locazione','dato',{ ui:'im' });
+F('canoneMensile',LG,'Canone mensile (€)','dato',{ ui:'im' });
+F('costoLavori',LG,'Costo lavori stimato (€)','dato',{ ui:'im' });
+F('trattabile',LG,'Prezzo trattabile','dato',{ ui:'im', opts:['Sì','Poco','No'] });
+F('umidita',LG,'Umidità / infiltrazioni note','dato',{ ui:'im', opts:['Sì','No'] });
+F('amianto',LG,'Amianto / eternit','dato',{ ui:'im', opts:['Sì','No'] });
+F('ultimaRevisioneCaldaia',LG,'Ultima revisione caldaia (mese/anno)','dato',{ ui:'im' });
+F('scadenzaAPE',LG,'Scadenza APE','dato',{ ui:'im' });
+F('motivoVendita',LG,'Perché vende / urgenza','dato',{ ui:'im', long:true });
+F('chiHaAbitato',LG,'Chi ha abitato / abita (lavoro, famiglia…)','dato',{ ui:'im', long:true });
+/* Aspetti economici — lato cliente */
+F('rendimento',LG,'Investimento: rendimento lordo minimo (%)','custom',{ w:6, ui:'rq', rqK:'rendimentoMin',
+   rqv:r => parseNum(r.rendimentoMin),
+   imv:(im,d) => { const c = parseNum(d.canoneMensile), p = prezzoRef(im); return (c && p) ? c * 12 / p * 100 : null; },
+   fn:(rv,iv) => iv === null ? null : Math.min(1, iv / rv) });
+F('anticipo',LG,'Anticipo disponibile (€)','dato',{ ui:'rq' });
+F('mutuoImporto',LG,'Mutuo richiesto (€)','dato',{ ui:'rq' });
+F('lavoriNelBudget',LG,'Il budget include i lavori di ristrutturazione','dato',{ ui:'rq', opts:['Sì','No'] });
+/* Famiglia e stile di vita (cliente) */
+F('numPersone',FS,'Componenti del nucleo','dato',{ ui:'rq' });
+F('haBambini',FS,'Ha bambini','dato',{ ui:'rq', opts:['Sì','No'] });
+F('haAnimali',FS,'Ha animali domestici','dato',{ ui:'rq', opts:['Sì','No'] });
+F('mobilitaRidotta',FS,'Anziani / mobilità ridotta','dato',{ ui:'rq', opts:['Sì','No'] });
+F('smartWorking',FS,'Lavora da casa','dato',{ ui:'rq', opts:['Sì','No'] });
+F('numAuto',FS,'Numero auto','dato',{ ui:'rq' });
+F('deveVendere',FS,'Deve prima vendere la sua casa','dato',{ ui:'rq', opts:['Sì','No'] });
+F('luogoLavoro',FS,'Indirizzo di lavoro (per calcolare la distanza)','dato',{ ui:'rq' });
+F('raggioLavoroKm',FS,'Distanza massima dal lavoro (km)','dato',{ ui:'rq' });
+/* Cosa NON vuole (cliente) */
+F('pianoEscluso',XX,'Piani da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'piano', opts:OPT_PIANO });
+F('zoneEscluse',XX,'Zone da escludere','multiNo',{ w:7, def:'alta', ui:'rq', opts:OPT_ZONE, imv:im => zoneEff(im) });
+F('statoEscluso',XX,'Stati da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'statoConservativo', opts:OPT_STATO_IMMOBILE.concat(OPT_STATO_TERRENO) });
+F('tagEsclusi',XX,'Parole da escludere (virgola)','tagNo',{ w:5, def:'alta', ui:'rq', imv:(im,d) => testoIm(im,d) });
+
+/* ---------- 3. REGOLE INCROCIATE (derivate dai documenti) ---------- */
+['Abitabilità/Agibilità','Conformità urbanistica','Conformità catastale','Conf. impianto elettrico','Conf. impianto gas',
+ 'Libretto caldaia / revisione','Regolamento condominio','Spese condominiali','Verbali assemblea','Visura ipotecaria','Tabelle millesimali','Titoli edilizi (CILA/SCIA/permesso)','Conf. impianto idrico','Fascicolo del fabbricato','Contratto locazione registrato','Delibere lavori straordinari','Documentazione bonus edilizi','Procura','Documenti identità proprietari','Cert. destinazione urbanistica (terreni)']
+  .forEach(t => { if(DOCS_RICH.indexOf(t) < 0) DOCS_RICH.push(t); });
+const DOC_CHIAVE = ['Visura Catastale','Planimetria','Atto di Provenienza','Abitabilità/Agibilità','Conformità urbanistica','Conformità catastale'];
+window.dossierIm = im => {
+  const doc = im.documenti || {};
+  const app = DOCS_RICH.filter(t => (doc[t] || {}).stato !== 'non-applicabile');
+  const ok = app.filter(t => (doc[t] || {}).stato === 'presente').length;
+  return { ok, tot:app.length, pct:app.length ? Math.round(ok / app.length * 100) : 0 };
+};
+const REGOLE = [{
+  k:'mutuabile', l:'pratica pronta per il mutuo', w:6, def:'alta', on:r => r.mutuo === 'Sì',
+  val:(im,d) => d.difformita === 'Sì' ? 0
+    : d.provenienza === 'Donazione' ? null
+    : DOC_CHIAVE.every(t => { const s = (im.documenti || {})[t]; return s && (s.stato === 'presente' || s.stato === 'non-applicabile'); }) ? 1 : null
+}];
+
+const media = a => { const k = a.filter(x => x !== null); return k.length ? k.reduce((t,x) => t + x, 0) / k.length : null; };
+const pianoBasso = d => A(d.piano).some(p => ['Terra','Terra con giardino','Rialzato','Ammezzato','Basso'].indexOf(p) >= 0) || A(d.pianoNum).some(p => ['T','R','1'].indexOf(p) >= 0);
+const kmTra = (a,b,c,e) => { const R = 6371, q = x => x * Math.PI / 180, h = Math.pow(Math.sin(q(c-a)/2),2) + Math.cos(q(a)) * Math.cos(q(c)) * Math.pow(Math.sin(q(e-b)/2),2); return 2 * R * Math.asin(Math.sqrt(h)); };
+const snv = (v,si,no) => v === 'Sì' ? si : v === 'No' ? no : null;
+REGOLE.push(
+ { k:'primaCasa', l:'agevolazioni prima casa', w:3, def:'media', on:r => A(r.scopo).indexOf('Abitazione principale') >= 0,
+   val:(im,d) => !d.categoriaCatastale ? null : (['A/1','A/8','A/9'].indexOf(d.categoriaCatastale) >= 0 ? 0 : 1) },
+ { k:'animali', l:'animali ammessi', w:4, def:'alta', on:r => r.haAnimali === 'Sì', val:(im,d) => snv(d.animaliAmmessi,1,0) },
+ { k:'bambini', l:'scuole vicine (bambini)', w:3, def:'media', on:r => r.haBambini === 'Sì' && !r.distScuole,
+   val:(im,d) => { const i = DIST.indexOf(d.distScuole); return i < 0 ? null : [1,1,.5,0][i]; } },
+ { k:'mobilita', l:'accessibilità (mobilità ridotta)', w:6, def:'alta', on:r => r.mobilitaRidotta === 'Sì',
+   val:(im,d) => media([snv(d.accessibile,1,0), (d.ascensore === 'Sì' || pianoBasso(d)) ? 1 : (d.ascensore === 'No' && A(d.piano).length) ? 0 : null]) },
+ { k:'smart', l:'smart working (fibra/studio)', w:4, def:'media', on:r => r.smartWorking === 'Sì',
+   val:(im,d) => media([snv(d.fibra,1,0), snv(d.studio,1,.3)]) },
+ { k:'nucleo', l:'camere per il nucleo', w:4, def:'media', on:r => parseNum(r.numPersone) && !A(r.camere).length,
+   val:(im,d,r) => { const c = A(d.camere).map(x => parseNum(x)).filter(x => x !== null); if(!c.length) return null; const need = Math.max(1, Math.ceil(parseNum(r.numPersone) / 2)), m = Math.max.apply(null, c); return m >= need ? 1 : m / need; } },
+ { k:'auto', l:'posti auto per il nucleo', w:4, def:'media', on:r => parseNum(r.numAuto),
+   val:(im,d,r) => { if(!d.box && !d.postoAuto) return null; const n = parseNum(r.numAuto), posti = (d.box === 'Sì' ? (d.boxTipo === 'Doppio' ? 2 : 1) : 0) + (d.postoAuto === 'Sì' ? 1 : 0); return posti >= n ? 1 : posti ? posti / n : (d.parcheggioFacile === 'Sì' ? .5 : 0); } },
+ { k:'deveVendere', l:'tempi compatibili (deve vendere)', w:2, def:'bassa', on:r => r.deveVendere === 'Sì',
+   val:(im,d) => d.disponibilita ? (d.disponibilita === 'Immediata' ? .6 : 1) : null },
+ { k:'lavoro', l:'distanza dal lavoro', w:5, def:'alta', on:r => !!(r.lavoroLat && r.lavoroLng),
+   val:(im,d,r) => { if(!im.lat || !im.lng) return null; const raggio = parseNum(r.raggioLavoroKm) || 10, k = kmTra(im.lat, im.lng, r.lavoroLat, r.lavoroLng); return k <= raggio ? 1 : Math.max(0, 1 - (k - raggio) / raggio); } }
+);
+
+/* ---------- 4. MOTORE ---------- */
+const usa = (f,ctx) => f.ui === 'both' || f.ui === ctx;
+const rk  = f => f.rqK || f.k;
+const ik  = f => f.imK || f.k;
+
+function reqVal(f,r){
+  switch(f.t){
+    case 'multi': case 'multiNo': { const a = A(r[rk(f)]).filter(x => x !== 'Indifferente'); return a.length ? a : null; }
+    case 'sn':    { const v = r[rk(f)]; return v === 'Meglio' ? 'Sì' : (v === 'Sì' || v === 'No') ? v : null; }
+    case 'ord':   { if(f.rqv) return f.rqv(r); const v = r[rk(f)]; return f.opts.indexOf(v) >= 0 ? v : null; }
+    case 'num':   { const lo = parseNum(r[f.rqMin || f.k+'Min']); let hi = parseNum(r[f.rqMax || f.k+'Max']); if(hi === null && f.hiFb) hi = f.hiFb(r); return (lo === null && hi === null) ? null : { lo, hi }; }
+    case 'tag': case 'tagNo': { const a = String(r[f.k] || '').split(',').map(lw).filter(Boolean); return a.length ? a : null; }
+    case 'custom':return f.rqv(r);
+  }
+  return null;
+}
+function impEff(f,r){
+  let v = r.requisiti && r.requisiti[f.k]; v = LEG[v] || v;
+  if(IMP[v]) return v;
+  if(f.leg){ const raw = r[f.k]; return (raw === 'Sì' || raw === 'No') ? 'indispensabile' : 'media'; }
+  return f.def;
+}
+function sc(f,rv,iv){
+  switch(f.t){
+    case 'multiNo': { const b = A(iv); if(!b.length) return null; return rv.some(x => b.some(y => lw(x) === lw(y))) ? 0 : 1; }
+    case 'multi': { const b = A(iv); if(!b.length) return null; return rv.some(x => b.some(y => lw(x) === lw(y))) ? 1 : 0; }
+    case 'sn':    { if(iv !== 'Sì' && iv !== 'No') return null; return iv === rv ? 1 : 0; }
+    case 'ord':   { const ii = f.opts.indexOf(iv); if(ii < 0) return null; const d = ii - f.opts.indexOf(rv); return d <= 0 ? 1 : Math.max(0, 1 - d / (f.tol || 2)); }
+    case 'num':   { if(iv === null || iv === undefined) return null; let gap = 0, ref = 1;
+                    if(rv.hi !== null && iv > rv.hi){ gap = iv - rv.hi; ref = rv.hi; }
+                    else if(rv.lo !== null && iv < rv.lo){ gap = rv.lo - iv; ref = rv.lo; }
+                    if(!gap) return 1;
+                    return Math.max(0, 1 - (f.tolAbs ? gap / f.tolAbs : gap / ref / (f.tol || .1))); }
+    case 'tagNo': { if(!iv) return null; return rv.some(t => iv.indexOf(t) >= 0) ? 0 : 1; }
+    case 'tag':   { if(!iv) return null; return rv.filter(t => iv.indexOf(t) >= 0).length / rv.length; }
+    case 'custom':return f.fn(rv,iv);
+  }
+  return null;
+}
+function imVal(f,im,d,r){
+  if(f.imv) return f.imv(im,d,r);
+  const v = d[ik(f)];
+  if(f.t === 'num') return parseNum(v);
+  return (v === '' || v === undefined) ? null : v;
+}
+
+function match(im,per){
+  const r = per.richiesta || {}, d = im.dettagli || {}, righe = [];
+  CAT.forEach(f => {
+    if(f.t === 'dato') return;
+    const rv = reqVal(f,r); if(rv === null || rv === undefined) return;
+    const imp = impEff(f,r); if(imp === 'indifferente') return;
+    righe.push({ f, imp, s:sc(f,rv,imVal(f,im,d,r)) });
+  });
+  REGOLE.forEach(g => { if(g.on(r)){ const imp = impEff(g,r); if(imp !== 'indifferente') righe.push({ f:g, imp, s:g.val(im,d,r) }); } });
+  if(!righe.length) return { score:0, rank:0, conf:0, ko:[], verifica:[] };
+
+  let tot = 0, noto = 0, tutto = 0, veto = false, cap = 100;
+  const ko = [], ver = [];
+  righe.forEach(x => {
+    const w = x.f.w * IMP[x.imp].m;
+    const nome = x.imp === 'indispensabile' ? `<b>${x.f.l}</b>` : x.f.l;
+    tutto += w;
+    if(x.s === null){ ver.push(nome); if(x.imp === 'indispensabile') cap = Math.min(cap, 80); return; }
+    noto += w; tot += w * x.s;
+    if(x.imp === 'indispensabile' && x.s < .5) veto = true;
+    if(x.s < .7) ko.push(nome);
+  });
+  const conf = tutto ? noto / tutto : 0;
+  let score = (veto || !noto) ? 0 : Math.min(cap, Math.round(tot / noto * 100));
+  return { score, conf, rank:score * (.75 + .25 * conf), ko, verifica:ver };
+}
+window.calcolaMatch = match;
+window.matchNote = m => {
+  let h = '';
+  if(m.ko && m.ko.length) h += `<small>manca: ${m.ko.join(', ')}</small>`;
+  if(m.verifica && m.verifica.length) h += `<small style="color:var(--warn);">da verificare: ${m.verifica.join(', ')}</small>`;
+  return h;
+};
+window.matchImmobile = im => DB.persone.filter(p => (p.ruoli || []).indexOf('ACQUIRENTE') >= 0)
+  .map(p => { const m = match(im,p); m.persona = p; return m; }).filter(m => m.score > 0).sort((a,b) => b.rank - a.rank);
+window.matchAcquirente = per => {
+  const out = [];
+  DB.immobili.forEach(i => {
+    const attivo = i.stato === 'NT' || i.stato === 'INK', inCorso = haAppuntamentoInCorso(i.id);
+    if(!attivo && !inCorso) return;
+    const m = match(i,per);
+    if(inCorso){ m.score = Math.max(30, m.score); m.rank = Math.max(30, m.rank); }
+    if(m.score > 0){ m.immobile = i; out.push(m); }
+  });
+  return out.sort((a,b) => b.rank - a.rank);
+};
+
+/* ---------- 5. INTERFACCIA GENERATA DAL CATALOGO ---------- */
+const GRUPPI = [IL, ED, IC, TC, ES, CT, DP, LG, FS, XX, AL];
+const ST = 'background:var(--bg2);padding:10px 12px;border-radius:10px;';
+const opt = (arr,sel,vuoto) => (vuoto !== undefined ? `<option value="">${vuoto}</option>` : '') + arr.map(o => `<option value="${esc(o)}"${o === sel ? ' selected' : ''}>${esc(o)}</option>`).join('');
+
+function impSel(f,r){
+  const salvato = LEG[r.requisiti && r.requisiti[f.k]] || (r.requisiti && r.requisiti[f.k]) || '';
+  const auto = impEff(f, Object.assign({}, r, { requisiti:{} }));
+  let o = `<option value="">Auto · ${IMP[auto].l}</option>`;
+  Object.keys(IMP).forEach(k => o += `<option value="${k}"${k === salvato ? ' selected' : ''}>${IMP[k].l}</option>`);
+  return `<select class="form-select" id="cx-rq-${f.k}-imp" style="${ST}margin-top:6px;font-size:13px;color:var(--tx2);">${o}</select>`;
+}
+function campo(f,ctx,src){
+  const id = `cx-${ctx}-${f.k}`, rq = ctx === 'rq', val = src[rq ? rk(f) : ik(f)];
+  let c = '';
+  if(f.t === 'multi' || f.t === 'multiNo') c = ms(id, f.opts || [], val);
+  else if(f.t === 'sn') c = `<select class="form-select" id="${id}" style="${ST}">${opt(['Sì','No'], val === 'Meglio' ? 'Sì' : val, rq ? 'Indifferente' : '—')}</select>`;
+  else if(f.t === 'ord') c = `<select class="form-select" id="${id}" style="${ST}">${opt(f.opts, val, rq ? 'Indifferente' : '—')}</select>`;
+  else if(f.t === 'dato' && f.opts) c = `<select class="form-select" id="${id}" style="${ST}">${opt(f.opts, val, '—')}</select>`;
+  else if(f.t === 'num' && rq) c = `<div class="box2"><div><input class="form-input" id="${id}-min" inputmode="numeric" placeholder="Min" value="${esc(src[f.rqMin || f.k+'Min'] || '')}" style="${ST}"></div><div><input class="form-input" id="${id}-max" inputmode="numeric" placeholder="Max" value="${esc(src[f.rqMax || f.k+'Max'] || '')}" style="${ST}"></div></div>`;
+  else if(f.long) c = `<textarea class="form-textarea" id="${id}" style="${ST}">${esc(val || '')}</textarea>`;
+  else c = `<input class="form-input" id="${id}" value="${esc(val || '')}" style="${ST}"${f.t === 'num' ? ' inputmode="numeric"' : ''}>`;
+  const imp = (rq && f.t !== 'dato') ? impSel(f,src) : '';
+  return `<div style="margin-bottom:10px;"><label class="form-label">${f.l}</label>${c}${imp}</div>`;
+}
+function sezione(ctx,src){
+  let h = '';
+  GRUPPI.forEach(g => {
+    const l = CAT.filter(f => f.g === g && usa(f,ctx));
+    if(l.length) h += `<details class="fold"><summary>${g}</summary><div>${l.map(f => campo(f,ctx,src)).join('')}</div></details>`;
+  });
+  if(ctx === 'rq'){
+    const leg = CAT.filter(f => !usa(f,'rq') && f.t !== 'dato' && reqVal(f,src) !== null);
+    const rg = REGOLE.filter(g => g.on(src));
+    if(leg.length || rg.length)
+      h += `<details class="fold"><summary>Importanza dei criteri già compilati</summary><div>${leg.concat(rg).map(f => `<div style="margin-bottom:8px;"><label class="form-label">${f.l}</label>${impSel(f,src)}</div>`).join('')}</div></details>`;
+  }
+  return h;
+}
+function leggi(ctx){
+  const dati = {}, imp = {}, gv = id => { const e = document.getElementById(id); return e ? e.value : undefined; };
+  CAT.forEach(f => {
+    const id = `cx-${ctx}-${f.k}`;
+    if(usa(f,ctx)){
+      if(f.t === 'multi' || f.t === 'multiNo') dati[ctx === 'rq' ? rk(f) : ik(f)] = msVal(id);
+      else if(f.t === 'num' && ctx === 'rq'){ dati[f.rqMin || f.k+'Min'] = (gv(id+'-min') || '').trim(); dati[f.rqMax || f.k+'Max'] = (gv(id+'-max') || '').trim(); }
+      else dati[ctx === 'rq' ? rk(f) : ik(f)] = (gv(id) || '').trim();
+    }
+    const v = gv(id+'-imp'); if(v !== undefined) imp[f.k] = v;
+  });
+  REGOLE.forEach(g => { const v = gv(`cx-rq-${g.k}-imp`); if(v !== undefined) imp[g.k] = v; });
+  return { dati, imp };
+}
+const ultimaRiga = () => { const l = document.querySelectorAll('#modal-body .btn-row'); return l[l.length-1]; };
+
+/* innesto nei form esistenti, senza riscriverli */
+const _am = window.apriModifica;
+window.apriModifica = function(){
+  _am();
+  const im = DB.immobili.find(x => x.id === immobileAperto), row = ultimaRiga();
+  if(im && row) row.insertAdjacentHTML('beforebegin', sezione('im', im.dettagli || {}));
+  /* le dotazioni non ancora compilate diventano "Non so" invece di "No" */
+  if(im) ['ascensore','balcone','terrazzo','giardino','box','postoAuto','cantina'].forEach(k => {
+    const s = document.getElementById('mi-' + k); if(!s) return;
+    s.insertAdjacentHTML('afterbegin', '<option value="">Non so</option>');
+    if(!(im.dettagli || {})[k]) s.value = '';
+  });
+};
+const _sm = window.salvaModifica;
+window.salvaModifica = function(){
+  const im = DB.immobili.find(x => x.id === immobileAperto);
+  if(im){ im.dettagli = im.dettagli || {}; Object.assign(im.dettagli, leggi('im').dati); }
+  _sm();
+};
+const _amr = window.apriModificaRichiesta;
+window.apriModificaRichiesta = function(pid){
+  _amr(pid);
+  const p = trovaPersona(pid), row = ultimaRiga();
+  if(p && row) row.insertAdjacentHTML('beforebegin', sezione('rq', p.richiesta || {}));
+};
+const _sr = window.salvaRichiesta;
+window.salvaRichiesta = function(pid){
+  const p = trovaPersona(pid), v = leggi('rq'), vecchio = (p && p.richiesta) || {};
+  _sr(pid);
+  if(!p || !p.richiesta) return;
+  Object.assign(p.richiesta, v.dati);
+  const req = p.richiesta.requisiti = p.richiesta.requisiti || {};
+  Object.keys(v.imp).forEach(k => { if(v.imp[k]) req[k] = v.imp[k]; else delete req[k]; });
+  const lav = (p.richiesta.luogoLavoro || '').trim();
+  if(!lav){ delete p.richiesta.lavoroLat; delete p.richiesta.lavoroLng; }
+  else if(vecchio.luogoLavoro === lav && vecchio.lavoroLat){ p.richiesta.lavoroLat = vecchio.lavoroLat; p.richiesta.lavoroLng = vecchio.lavoroLng; }
+  else geocodifica(lav).then(res => { if(res){ p.richiesta.lavoroLat = res.lat; p.richiesta.lavoroLng = res.lng; Storage.save(DB); } });
+  Storage.save(DB);
+};
+
+})();
 </body>
 </html>
