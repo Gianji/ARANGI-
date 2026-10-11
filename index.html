@@ -4545,6 +4545,264 @@ details.fold>div{padding:0 16px 10px}
 })();
 </script>
 <!-- ===== FINE AGGIORNAMENTO 3 ===== -->
+<!-- ===== ARANJÒ · AGGIORNAMENTO 4 — incolla TUTTO subito prima di </body>, DOPO i blocchi 1, 2 e 3 ===== -->
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var findIm = function(id){ return DB.immobili.find(function(x){ return x.id === id; }); };
+  function everywhere(fn){
+    DB.attivita.forEach(fn);
+    DB.immobili.forEach(function(i){ (i.attivita || []).forEach(fn); });
+    DB.persone.forEach(function(p){ (p.attivita || []).forEach(fn); });
+  }
+
+  /* ===== 1) Agenda: "+" usa il giorno selezionato ===== */
+  function agendaAperta(){ var v = $('view-agenda'); return v && v.classList.contains('active') && window.agDayYmd; }
+  var _fa = window.fabMenuApp;
+  window.fabMenuApp = function(){
+    var g = agendaAperta();
+    window._prefillDataOra = g ? new Date(daYmd(g).getFullYear(), daYmd(g).getMonth(), daYmd(g).getDate(), new Date().getHours(), 0).toISOString() : null;
+    return _fa.apply(this, arguments);
+  };
+  var _fat = window.fabMenuAttivita;
+  window.fabMenuAttivita = function(){ window._agPref = agendaAperta() || null; return _fat.apply(this, arguments); };
+  [['aggFormAtt','a-dp'], ['aggFormAttP','pa-dp']].forEach(function(x){
+    var f = window[x[0]];
+    window[x[0]] = function(){ f.apply(this, arguments); var el = $(x[1]); if (el && window._agPref) el.value = window._agPref + 'T' + oraLocal().slice(11); };
+  });
+  var _cmod = window.chiudiModal;
+  window.chiudiModal = function(){ window._agPref = null; return _cmod.apply(this, arguments); };
+
+  /* ===== 2) Modifica attività (+ elenco completo, "altre…") ===== */
+  window.apriModificaAtt = function(tipo, idA){
+    var ent = tipo === 'immobile' ? findIm(immobileAperto) : trovaPersona(personaAperta);
+    var a = ent && (ent.attivita || []).find(function(x){ return x.id === idA; }); if (!a) return;
+    var df = a.tipo === 'da_fare' && !a.completata;
+    var back = (tipo === 'immobile' ? 'apriAzioniAttivita' : 'apriAzioniAttivitaPersona') + "('" + idA + "')";
+    apriModal('Modifica attività',
+      '<div class="form-group"><div class="form-row"><label class="form-label">' + (df ? 'Data prevista' : 'Data') + '</label><input class="form-input" type="datetime-local" step="1" id="ea-d" value="' + isoLocalInput(dataAtt(a)) + '"></div>' +
+      '<div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ea-x">' + esc(a.testo) + '</textarea></div></div>' +
+      '<div class="btn-row"><button class="btn btn-secondary" onclick="' + back + '">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAtt(\'' + tipo + "','" + idA + '\')">Salva</button></div>');
+  };
+  window.salvaModificaAtt = function(tipo, idA){
+    var tx = ($('ea-x').value || '').trim(), d = $('ea-d').value;
+    if (!tx || !d) { alert('Testo e data obbligatori'); return; }
+    var iso = new Date(d).toISOString(), ent = tipo === 'immobile' ? findIm(immobileAperto) : trovaPersona(personaAperta);
+    var src = ent && (ent.attivita || []).find(function(x){ return x.id === idA; });
+    var df = src && src.tipo === 'da_fare' && !src.completata;
+    everywhere(function(x){ if (x.id === idA) { x.testo = tx; if (df) x.dataPrevista = iso; else x.data = iso; } });
+    Storage.save(DB);
+    renderPersone(); renderListaImmobili(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderAgendaPage();
+    if (tipo === 'immobile') apriScheda(immobileAperto); else apriSchedaPersona(personaAperta);
+  };
+  function elencoAtt(tipo){
+    var ent = tipo === 'immobile' ? findIm(immobileAperto) : trovaPersona(personaAperta); if (!ent) return;
+    var o = new Date(); o.setHours(0,0,0,0);
+    var fn = tipo === 'immobile' ? 'apriAzioniAttivita' : 'apriAzioniAttivitaPersona';
+    var l = (ent.attivita || []).slice().sort(cmpAttDesc).map(function(a){
+      var df = a.tipo === 'da_fare' && !a.completata, dc = !df ? 'fatta' : (new Date(a.dataPrevista) < o ? 'scaduta' : 'prossima');
+      return '<div class="att-item" onclick="' + fn + "('" + a.id + '\')"><span class="att-dot ' + dc + '"></span><div class="att-body"><div class="att-data ' + (dc === 'scaduta' ? 'scaduta' : '') + '">' + fmtDT(dataAtt(a)) + '</div><div class="att-testo">' + esc(a.testo) + '</div></div></div>';
+    }).join('') || '<div class="empty">Nessuna</div>';
+    apriModal('Tutte le attività', '<div class="form-group" style="padding:4px 0">' + l + '</div><div class="btn-row"><button class="btn btn-secondary" onclick="' + (tipo === 'immobile' ? "apriScheda('" + ent.id + "')" : "apriSchedaPersona('" + ent.id + "')") + '">Chiudi</button></div>');
+  }
+  [['apriAzioniAttivita','immobile'], ['apriAzioniAttivitaPersona','persona']].forEach(function(x){
+    var f = window[x[0]];
+    window[x[0]] = function(idA){
+      if (!idA) return elencoAtt(x[1]);
+      f.apply(this, arguments);
+      var b = document.querySelector('#modal-body > .btn-danger');
+      if (b) b.insertAdjacentHTML('beforebegin', '<button class="btn btn-secondary" onclick="apriModificaAtt(\'' + x[1] + "','" + idA + '\')">' + ico('modifica', 15) + ' Modifica</button>');
+    };
+  });
+
+  /* ===== 3) Agenda: eventi simultanei affiancati ===== */
+  function affianca(){
+    document.querySelectorAll('.ag-day-col').forEach(function(col){
+      var ev = [].slice.call(col.children).filter(function(e){ return e.classList.contains('ag-event'); }).map(function(e){
+        return { e: e, s: parseFloat(e.style.top) || 0, h: parseFloat(e.style.height) || 44 };
+      }).sort(function(a, b){ return a.s - b.s || b.h - a.h; });
+      var cl = [], cols = [], cend = -1;
+      function flush(){
+        cl.forEach(function(x){ x.e.style.left = 'calc(' + (x.c * 100 / cols.length) + '% + 2px)'; x.e.style.width = 'calc(' + (100 / cols.length) + '% - 4px)'; x.e.style.right = 'auto'; });
+        cl = []; cols = [];
+      }
+      ev.forEach(function(x){
+        if (cl.length && x.s >= cend) flush();
+        var c = 0; while (cols[c] !== undefined && cols[c] > x.s) c++;
+        cols[c] = x.s + x.h; x.c = c; cl.push(x);
+        cend = cl.length === 1 ? x.s + x.h : Math.max(cend, x.s + x.h);
+      });
+      flush();
+    });
+  }
+  var _ra = window.renderAgendaPage;
+  window.renderAgendaPage = function(){ _ra.apply(this, arguments); try { affianca(); } catch(e) {} };
+
+  /* ===== 4) Attività eseguite fuori dalle "scadute" ===== */
+  var _rc = window.raccogliAtt;
+  window.raccogliAtt = function(){
+    var l = _rc.apply(this, arguments), done = {}, seen = {}, out = [];
+    l.forEach(function(a){ if (a.tipo !== 'da_fare' || a.completata) done[a.id] = 1; });
+    l.forEach(function(a){
+      if (seen[a.id]) return; seen[a.id] = 1;
+      out.push(done[a.id] && a.tipo === 'da_fare' ? Object.assign({}, a, { tipo: 'fatta', completata: true }) : a);
+    });
+    return out;
+  };
+  var _ee = window.eseguiAttivitaEntita;
+  window.eseguiAttivitaEntita = function(tipo, entId, attId){
+    _ee.apply(this, arguments);
+    var ent = tipo === 'immobile' ? findIm(entId) : trovaPersona(entId);
+    var src = ent && (ent.attivita || []).find(function(x){ return x.id === attId; }); if (!src) return;
+    everywhere(function(x){ if (x.id === attId && x !== src) ['tipo','completata','data','dataPrevista','dataEsecuzione','dataPrevistaOriginale','seq'].forEach(function(k){ x[k] = src[k]; }); });
+    Storage.save(DB);
+  };
+  var _ep = window.elimAttP;
+  window.elimAttP = function(idA){
+    var p = trovaPersona(personaAperta), had = p && (p.attivita || []).some(function(x){ return x.id === idA; });
+    _ep.apply(this, arguments);
+    if (had && !(p.attivita || []).some(function(x){ return x.id === idA; })) {
+      DB.immobili.forEach(function(i){ i.attivita = (i.attivita || []).filter(function(x){ return x.id !== idA; }); });
+      DB.persone.forEach(function(q){ q.attivita = (q.attivita || []).filter(function(x){ return x.id !== idA; }); });
+      Storage.save(DB);
+    }
+  };
+
+  /* ===== 5-7) Prezzi per NT / INK / VND ===== */
+  var PF = { NT:['richiesto','valutato','omi'], INK:['richiesto','valutato','mercato','omi','ultimo'], VND:['richiesto','valutato','mercato','venduto','omi'] };
+  var PL = { richiesto:'Prezzo richiesto', valutato:'Prezzo valutato', mercato:'Prezzo al mercato', omi:'Prezzo OMI', ultimo:'Ultimo prezzo (accettato dal venditore)', venduto:'Prezzo venduto' };
+  var PC = {
+    NT:  [['richiesto','valutato','Richiesto / valutato']],
+    INK: [['richiesto','valutato','Richiesto / valutato'], ['richiesto','ultimo','Trattativa (richiesto / ultimo)']],
+    VND: [['richiesto','valutato','Richiesto / valutato'], ['richiesto','venduto','Richiesto / venduto'], ['valutato','venduto','Valutato / venduto'], ['mercato','venduto','Mercato / venduto']]
+  };
+  function pct(a, b){
+    a = parseNum(a); b = parseNum(b); if (a === null || b === null || !a) return null;
+    var v = (a - b) / a * 100;
+    return (v > 0 ? '+' : '') + v.toFixed(1).replace('.', ',') + '%';
+  }
+  function eur(v){ var n = parseNum(v); return n === null ? String(v) : n.toLocaleString('it-IT') + ' €'; }
+  function riga(l, v){ return '<div class="info-row"><span class="label">' + l + '</span><span class="value">' + esc(v) + '</span></div>'; }
+
+  window.prezziLive = function(){
+    var im = findIm(window._prezziId); if (!im || !PF[im.stato]) return;
+    var v = {}; PF[im.stato].forEach(function(k){ v[k] = ($('pr-' + k) || {}).value; });
+    var el = $('pr-calc');
+    if (el) el.innerHTML = PC[im.stato].map(function(c){ return riga(c[2], pct(v[c[0]], v[c[1]]) || '—'); }).join('') +
+      '<div style="font-size:11px;color:var(--tx3);margin-top:6px">Differenza % calcolata sul primo prezzo.</div>';
+  };
+  window.apriPrezzi = function(id){
+    var im = findIm(id); if (!im || !PF[im.stato]) return;
+    var z = im.prezzi || {}, h = '<div class="form-group">';
+    PF[im.stato].forEach(function(k){
+      h += '<div class="form-row"><label class="form-label">' + PL[k] + ' €</label><input class="form-input" id="pr-' + k + '" inputmode="numeric" value="' + esc(z[k] || '') + '" oninput="prezziLive()"></div>';
+    });
+    h += '</div><div class="card" id="pr-calc" style="padding:12px 14px"></div>';
+    if (im.stato === 'INK') {
+      h += '<div class="form-group"><div class="form-row"><label class="form-label">Provvigione</label><div style="display:flex;gap:8px"><select class="form-select" id="pr-pvt" style="flex:0 0 90px"><option value="%"' + (z.provvTipo !== '€' ? ' selected' : '') + '>%</option><option value="€"' + (z.provvTipo === '€' ? ' selected' : '') + '>€ fissa</option></select><input class="form-input" id="pr-pvv" inputmode="decimal" value="' + esc(z.provvValore || '') + '"></div></div>' +
+        '<div class="form-row"><label class="form-label">Note provvigione</label><textarea class="form-textarea" id="pr-pvn">' + esc(z.provvNote || '') + '</textarea></div></div>';
+    }
+    h += '<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda(\'' + id + '\')">Annulla</button><button class="btn btn-primary" onclick="salvaPrezzi(\'' + id + '\')">Salva</button></div>';
+    window._prezziId = id;
+    apriModal('Prezzi ' + im.stato, h);
+    prezziLive();
+  };
+  window.salvaPrezzi = function(id){
+    var im = findIm(id); if (!im || !PF[im.stato]) return;
+    var z = im.prezzi = im.prezzi || {};
+    PF[im.stato].forEach(function(k){ z[k] = ($('pr-' + k).value || '').trim(); });
+    if (im.stato === 'INK') { z.provvTipo = $('pr-pvt').value; z.provvValore = ($('pr-pvv').value || '').trim(); z.provvNote = $('pr-pvn').value; }
+    if (z.richiesto && z.richiesto !== String(im.prezzo || '')) {
+      im.prezzo = z.richiesto;
+      (im.storicoPrezzo = im.storicoPrezzo || []).push({ prezzo: z.richiesto, data: new Date().toISOString(), nota: 'Prezzo richiesto' });
+    }
+    im.updatedAt = new Date().toISOString();
+    Storage.save(DB); apriScheda(id);
+  };
+
+  var _as = window.apriScheda;
+  window.apriScheda = function(id){
+    window._agPref = null;
+    _as.apply(this, arguments);
+    try {
+      var im = findIm(id); if (!im || !PF[im.stato]) return;
+      var z = im.prezzi || {}, rows = '';
+      PF[im.stato].forEach(function(k){ if (z[k]) rows += riga(PL[k], eur(z[k])); });
+      PC[im.stato].forEach(function(c){ var p = pct(z[c[0]], z[c[1]]); if (p) rows += riga(c[2], p); });
+      if (im.stato === 'INK' && z.provvValore) {
+        var base = parseNum(z.ultimo) || parseNum(z.richiesto), v = parseNum(z.provvValore), t = z.provvTipo === '€' ? eur(z.provvValore) : z.provvValore + '%';
+        if (z.provvTipo !== '€' && base && v !== null) t += ' ≈ ' + Math.round(base * v / 100).toLocaleString('it-IT') + ' €';
+        rows += riga('Provvigione', t);
+        if (z.provvNote) rows += riga('Note provv.', z.provvNote);
+      }
+      var html = collapsible('im_prezzi', ico('moneta', 13) + ' Prezzi',
+        (rows || '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0">Da compilare</div>') +
+        '<button class="btn btn-primary" style="margin-top:8px" onclick="apriPrezzi(\'' + id + '\')">' + ico('modifica', 14) + ' Modifica prezzi</button>');
+      var az = document.querySelector('#modal-body [data-coll-id="im_az"]');
+      if (az) az.insertAdjacentHTML('beforebegin', html);
+    } catch(e) { console.error(e); }
+  };
+  /* te li chiede quando cambi stato o crei un NT/INK */
+  var _ecs = window.eseguiCambioStato;
+  window.eseguiCambioStato = function(ns){
+    _ecs.apply(this, arguments);
+    if (PF[ns]) apriPrezzi(immobileAperto);
+  };
+  var _snm = window.salvaNuovoImmobile;
+  window.salvaNuovoImmobile = function(){
+    var n = DB.immobili.length;
+    _snm.apply(this, arguments);
+    if (DB.immobili.length > n) {
+      var im = DB.immobili[DB.immobili.length - 1];
+      if (PF[im.stato]) setTimeout(function(){ apriPrezzi(im.id); }, 450);
+    }
+  };
+
+  /* ===== 8) Matching: prezzo al mercato + forbice di budget ===== */
+  var _cm = window.calcolaMatch;
+  window.calcolaMatch = function(im, per){
+    var r = per.richiesta || {}, z = im.prezzi || {};
+    var max = parseNum(r.budget), min = parseNum(r.budgetMin);
+    var ric = parseNum(z.richiesto), mer = parseNum(z.mercato), ult = parseNum(z.ultimo);
+    var pr = ult !== null ? ult : (ric !== null && mer !== null ? Math.min(ric, mer) : (ric !== null ? ric : mer));
+    if (pr === null || max === null) return _cm(im, per);
+    var eff = pr;
+    if (min !== null && pr < min * 0.85) eff = max * 10;   /* troppo sotto la forbice: non è il target */
+    return _cm(Object.assign({}, im, { prezzo: String(Math.round(eff)) }), per);
+  };
+
+  var _am = window.apriModificaRichiesta;
+  window.apriModificaRichiesta = function(pid){
+    _am.apply(this, arguments);
+    var p = trovaPersona(pid), b = $('rq-budget'); if (!p || !b) return;
+    var box = b.closest('div[style*="margin-bottom"]'), lbl = box && box.querySelector('.form-label');
+    if (lbl && lbl.firstChild && lbl.firstChild.nodeType === 3) lbl.firstChild.textContent = 'Budget massimo €';
+    if (box) box.insertAdjacentHTML('afterend', '<div style="margin-bottom:8px;"><label class="form-label">Budget minimo € (forbice)</label><input class="form-input" id="rq-budgetMin" inputmode="numeric" value="' + esc((p.richiesta && p.richiesta.budgetMin) || '') + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>');
+  };
+  var _sr = window.salvaRichiesta;
+  window.salvaRichiesta = function(pid){
+    var el = $('rq-budgetMin'), v = el ? el.value.trim() : null;
+    _sr.apply(this, arguments);
+    var p = trovaPersona(pid);
+    if (p && p.richiesta && v !== null) { p.richiesta.budgetMin = v; Storage.save(DB); apriSchedaPersona(pid); }
+  };
+  var _asp = window.apriSchedaPersona;
+  window.apriSchedaPersona = function(id){
+    window._agPref = null;
+    _asp.apply(this, arguments);
+    try {
+      var p = trovaPersona(id);
+      if (p && p.richiesta && p.richiesta.budgetMin && p.richiesta.budget) {
+        document.querySelectorAll('#modal-body .info-row').forEach(function(r){
+          var l = r.querySelector('.label'), v = r.querySelector('.value');
+          if (l && v && l.textContent === 'Budget') v.textContent = p.richiesta.budgetMin + ' – ' + p.richiesta.budget + ' €';
+        });
+      }
+    } catch(e) {}
+  };
+})();
+</script>
+<!-- ===== FINE AGGIORNAMENTO 4 ===== -->
 
 </body>
 </html>
