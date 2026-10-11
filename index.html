@@ -12,18 +12,14 @@
 <link rel="icon" type="image/png" sizes="32x32" href="./android-chrome-192x192.png">
 <title>ARANJÒ</title>
 <script>
-try {
+try{
   var _t = localStorage.getItem('aranjo_theme') || 'auto';
-  var _r = (_t === 'dark') ? 'dark' : (_t === 'light') ? 'light'
-    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  var _r = (_t==='dark')?'dark':(_t==='light')?'light':(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
   document.documentElement.setAttribute('data-theme', _r);
-} catch(e) {}
+}catch(e){}
 </script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-/* ==========================================================================
-   VARIABILI E RESET
-   ========================================================================== */
 :root{
   --blu:#1b3556; --blu-soft:#eef2f8;
   --acc:#e0601f; --acc-soft:#fdf3ec;
@@ -53,9 +49,6 @@ html{height:100%;overflow:hidden}
 body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line,.quick-btn{touch-action:manipulation}
 
-/* ==========================================================================
-   LAYOUT APP
-   ========================================================================== */
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .app-header{padding:14px 20px 10px;padding-top:calc(14px + env(safe-area-inset-top));flex-shrink:0;background:var(--bg);padding-bottom:8px}
 .app-header h1{font-size:26px;font-weight:300;letter-spacing:-.01em;color:var(--blu);line-height:1}
@@ -68,9 +61,6 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .app-content.attivita-active{padding:2px 14px calc(60px + env(safe-area-inset-bottom))}
 .app-content.agenda-mode{display:flex !important;flex-direction:column;padding:0 0 calc(var(--tab-h) + env(safe-area-inset-bottom)) 0 !important;overflow:hidden !important}
 
-/* ==========================================================================
-   VIEWS E CARD
-   ========================================================================== */
 .view{display:none}
 .view.active{display:block}
 .card,.item-card,.collapsible,.att-box,.scheda-top,.att-gruppo,.agenda-sett,.planning-sett,.form-group,.att-subtab{border-radius:var(--r)}
@@ -80,9 +70,6 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .empty{text-align:center;padding:56px 14px;color:var(--tx3);font-size:13px;font-weight:500}
 .empty svg{width:28px;height:28px;opacity:.35;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto}
 
-/* ==========================================================================
-   BOTTONI
-   ========================================================================== */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:13px 16px;border:1px solid transparent;border-radius:14px;font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:6px;background:transparent;color:inherit;transition:opacity .12s,transform .12s}
 .btn:active{opacity:.7;transform:scale(.985)}
 .btn-primary{background:var(--acc);color:#fff}
@@ -99,9 +86,6 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .add-btn{background:transparent;border:1px dashed var(--bd2);border-radius:var(--rs);padding:9px 11px;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--blu);cursor:pointer;width:100%;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:5px}
 .add-btn svg{width:13px;height:13px}
 
-/* ==========================================================================
-   CHIPS
-   ========================================================================== */
 .chips{display:flex;gap:5px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chips::-webkit-scrollbar{display:none}
 .chip{border:none;background:var(--bg2);color:var(--tx2);padding:7px 14px;border-radius:var(--rp);font-family:inherit;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:4px;transition:background .15s,color .15s}
@@ -113,17 +97,11 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .zone-chip.active{background:var(--blu);color:#fff}
 .zone-chip.acc.active{background:var(--acc)}
 
-/* ==========================================================================
-   SEARCH
-   ========================================================================== */
 .search-sticky{position:sticky;top:-2px;z-index:20;background:var(--bg);padding:6px 0 8px}
 .search-bar{width:100%;background:var(--bg2);border:1px solid transparent;border-radius:14px;padding:11px 16px;font-family:inherit;font-size:14px;font-weight:500;color:var(--tx);outline:none;transition:background .15s,border-color .15s}
 .search-bar:focus{background:var(--card);border-color:var(--bd2)}
 .search-bar::placeholder{color:var(--tx3);font-weight:400;font-size:13px}
 
-/* ==========================================================================
-   ITEM CARD / BADGE / TAG
-   ========================================================================== */
 .item-card{background:var(--card);padding:14px 16px;margin-bottom:6px;border:1px solid var(--bd);cursor:pointer;transition:transform .12s,background .12s}
 .item-card:active{transform:scale(.985);background:var(--bg2)}
 .item-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:3px;flex-wrap:wrap}
@@ -144,11 +122,7 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .badge-PROP{--bc:var(--blu)} .badge-ACQUIRENTE{--bc:var(--rr)} .badge-PROFESSIONISTA{--bc:var(--prof)} .badge-LOCATORE{--bc:#7c3aed} .badge-CONDUTTORE{--bc:#0e7490}
 .badge-RR-attiva{--bc:var(--rr)} .badge-RR-in-attesa{--bc:var(--pa)} .badge-RR-proposta{--bc:var(--ink)} .badge-RR-ha-comprato{--bc:var(--vnd)} .badge-RR-non-attiva{--bc:var(--tx3)} .badge-RR-rogitato{--bc:#162a47}
 .badge-collega{--bc:var(--coll)}
-.tag{display:inline-block;background:transparent;color:var(--tx3);padding:1px 7px;border-radius:var(--rp);border:1px solid var(--bd2);font-size:10px;font-weight:500}
 
-/* ==========================================================================
-   TABBAR / FAB
-   ========================================================================== */
 .tabbar{position:fixed;bottom:0;left:0;right:0;height:calc(var(--tab-h) + env(safe-area-inset-bottom));background:rgba(255,255,255,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-top:1px solid var(--bd);display:flex;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom);padding-top:4px;z-index:100}
 :root[data-theme="dark"] .tabbar{background:rgba(15,15,17,.9)}
 .tabbar button{background:none;border:none;display:flex;align-items:center;justify-content:center;flex:1;height:100%;color:var(--tx3);font-family:inherit;cursor:pointer;position:relative;padding:0}
@@ -166,9 +140,6 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .fab-menu button{background:var(--card);border:1px solid var(--bd2);width:46px;height:46px;border-radius:50%;color:var(--blu);box-shadow:0 6px 18px rgba(20,23,28,.1);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .fab-menu button svg{width:20px;height:20px}
 
-/* ==========================================================================
-   MODAL
-   ========================================================================== */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,20,30,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:9000;display:none;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex}
 @keyframes slideUp{from{transform:translateY(24px);opacity:.4}to{transform:translateY(0);opacity:1}}
@@ -181,24 +152,18 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .modal-close svg{width:15px;height:15px}
 .modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 20px;padding-bottom:calc(20px + env(safe-area-inset-bottom))}
 
-/* ==========================================================================
-   FORM
-   ========================================================================== */
 .form-group{background:var(--card);padding:0 14px;margin-bottom:8px;border:1px solid var(--bd)}
 .form-row{padding:11px 0;border-bottom:1px solid var(--bd)}
 .form-row:last-child{border-bottom:none}
 .form-label{font-size:11.5px;font-weight:500;color:var(--tx3);margin-bottom:4px;display:block}
-.form-input,.form-select,.form-textarea{width:100%;border:none;background:transparent;font-family:inherit;font-size:14px;font-weight:500;color:var(--tx);outline:none;padding:0}
+.form-input,.form-select,.form-textarea{width:100%;border:none;background:transparent;font-family:inherit;font-size:16px;font-weight:500;color:var(--tx);outline:none;padding:0}
 .form-input::placeholder{color:var(--tx3);font-weight:400}
 .form-textarea{resize:vertical;min-height:50px;line-height:1.5}
 .form-select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 2px center;padding-right:20px}
 .box2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .box2 > div{min-width:0}
-.box2 input,.box2 select{width:100%;background:var(--bg2);padding:11px 12px;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:500;color:var(--tx);outline:none}
+.box2 input,.box2 select{width:100%;background:var(--bg2);padding:11px 12px;border:none;border-radius:10px;font-family:inherit;font-size:16px;font-weight:500;color:var(--tx);outline:none}
 
-/* ==========================================================================
-   SCHEDA TOP
-   ========================================================================== */
 .scheda-top{background:var(--card);padding:18px;margin-bottom:8px;border:1px solid var(--bd);border-radius:20px}
 .scheda-top .top-title{font-size:19px;font-weight:600;color:var(--tx);line-height:1.3;letter-spacing:-.02em;word-break:break-word}
 .scheda-top .top-sub{font-size:12.5px;color:var(--tx2);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
@@ -207,9 +172,6 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .scheda-top .top-actions .btn{margin-bottom:0;flex:1}
 .scheda-top .top-actions .btn-icon{flex:0 0 42px;background:var(--bg2);border-color:transparent;color:var(--blu)}
 
-/* ==========================================================================
-   INFO ROW
-   ========================================================================== */
 .info-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;gap:10px}
 .info-row + .info-row{border-top:1px solid var(--bd)}
 .info-row .label{color:var(--tx3);flex-shrink:0}
@@ -219,9 +181,6 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .immobile-line .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:5px}
 .immobile-line svg{width:13px;height:13px}
 
-/* ==========================================================================
-   COLLAPSIBLE / DETAILS
-   ========================================================================== */
 .collapsible{background:var(--card);margin-bottom:6px;border:1px solid var(--bd);overflow:hidden}
 .collapsible-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;cursor:pointer}
 .collapsible-header .ch-label{font-size:13.5px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px}
@@ -239,9 +198,6 @@ details.fold[open]>summary::after{transform:rotate(-135deg)}
 details.fold>div{padding:0 16px 10px}
 .opt-note{font-weight:400;color:var(--tx3);font-size:12px;margin-left:8px}
 
-/* ==========================================================================
-   ATTIVITÀ
-   ========================================================================== */
 .att-box{background:var(--card);padding:14px 16px;margin-bottom:8px;border:1px solid var(--bd)}
 .att-box h2{font-size:12.5px;font-weight:600;color:var(--tx2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .att-line{display:flex;gap:8px;padding:7px 0;font-size:12.5px;align-items:flex-start;cursor:pointer}
@@ -285,9 +241,6 @@ details.fold>div{padding:0 16px 10px}
 .att-data.scaduta{color:var(--vnd)}
 .att-testo{font-size:12.5px;color:var(--tx);line-height:1.35;word-break:break-word}
 
-/* ==========================================================================
-   AGENDA / PLANNING
-   ========================================================================== */
 .agenda-sett,.planning-sett{background:var(--card);padding:12px 10px;border:1px solid var(--bd);flex:1 1 0;min-height:0;display:flex;flex-direction:column}
 .agenda-sett h3,.planning-sett h3{font-size:11px;font-weight:700;color:var(--blu);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .agenda-sett h3 .nav-sett button,.planning-sett h3 .nav-sett button{background:transparent;border:none;width:22px;height:22px;color:var(--blu);cursor:pointer;font-size:14px}
@@ -350,10 +303,30 @@ details.fold>div{padding:0 16px 10px}
 .ag-now-dot{position:absolute;left:44px;top:-5px;width:12px;height:12px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 2px var(--bg)}
 .ag-longpress-preview{position:fixed;z-index:8500;background:rgba(224,96,31,.95);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;pointer-events:none;box-shadow:0 4px 16px rgba(224,96,31,.35);transform:translate(-50%,-130%);white-space:nowrap}
 .ag-lp-slot{position:absolute;left:2px;right:2px;background:rgba(224,96,31,.18);border-left:3px solid var(--acc);border-radius:6px;z-index:5;pointer-events:none}
+.ag-year-month{margin-bottom:18px}
+.ag-year-name{font-size:15px;font-weight:800;color:var(--blu);margin-bottom:4px;padding-left:4px}
+.ag-year-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.ag-year-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border-radius:50%}
+.ag-year-cell.other{opacity:.22}
+.ag-year-cell.today .ag-year-num{background:var(--acc);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.ag-year-cell.selected .ag-year-num{box-shadow:0 0 0 2px var(--blu)}
+.ag-year-cell.festivo .ag-year-num{color:var(--fest)}
+.ag-year-cell.festivo.today .ag-year-num{color:#fff}
+.ag-year-dot{width:4px;height:4px;border-radius:50%}
+.ag-mm-month{margin-bottom:22px}
+.ag-mm-name{font-size:20px;font-weight:800;color:var(--blu);padding:8px 8px 6px}
+.ag-mm-weekdays{display:grid;grid-template-columns:repeat(7,1fr);font-size:10px;font-weight:700;color:var(--tx3);text-align:center;padding:2px 0 5px;border-bottom:1px solid var(--bd)}
+.ag-mm-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.ag-mm-cell{height:70px;padding:3px 2px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px;cursor:pointer;overflow:hidden}
+.ag-mm-num{font-size:12.5px;font-weight:500;color:var(--tx);width:20px;height:20px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex-shrink:0}
+.ag-mm-cell.today .ag-mm-num{background:var(--acc);color:#fff;font-weight:700}
+.ag-mm-cell.selected .ag-mm-num{box-shadow:0 0 0 2px var(--blu)}
+.ag-mm-cell.festivo .ag-mm-num{color:var(--fest)}
+.ag-mm-cell.festivo.today .ag-mm-num{color:#fff}
+.ag-mm-events{display:flex;flex-direction:column;gap:2px;overflow:hidden;max-height:40px}
+.ag-mm-ev{display:flex;gap:3px;padding:1px 3px;border-radius:3px;overflow:hidden}
+.ag-mm-ev-title{font-size:8.5px;font-weight:600;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ==========================================================================
-   MAPPA
-   ========================================================================== */
 #map-container{position:relative;width:100%;height:calc(100dvh - var(--tab-h) - env(safe-area-inset-bottom));overflow:hidden;background:#e5e7eb}
 #map{width:100%;height:100%}
 .map-overlay-top{position:absolute;top:12px;left:12px;right:12px;z-index:500;display:flex;flex-direction:column;gap:8px;pointer-events:none}
@@ -376,9 +349,6 @@ details.fold>div{padding:0 16px 10px}
 .aranjo-popup .pop-btn.btn-nav{background:var(--blu)}
 :root[data-theme="dark"] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.88) contrast(.92) saturate(.7)}
 
-/* ==========================================================================
-   MULTI-SELECT / DROPDOWN
-   ========================================================================== */
 .filter-dropdown-overlay{position:fixed;inset:0;background:rgba(20,20,30,.55);z-index:9001;display:none;align-items:center;justify-content:center;padding:20px}
 .filter-dropdown-overlay.open{display:flex}
 .filter-dropdown{background:var(--card);border-radius:20px;padding:10px;max-width:360px;width:100%;max-height:78dvh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.18)}
@@ -387,30 +357,21 @@ details.fold>div{padding:0 16px 10px}
 .filter-dropdown .opt.selected,.ms-opt.on{background:var(--blu-soft);color:var(--blu);font-weight:600}
 .filter-dropdown .opt:active,.ms-opt:active{background:var(--bg2)}
 .filter-dropdown .btn-row{position:sticky;bottom:-10px;background:var(--card);padding:10px 0 2px;margin-top:0}
-.ms-btn{width:100%;background:var(--bg2);border:none;padding:11px 12px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:500;color:var(--tx);text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;min-height:42px}
+.ms-btn{width:100%;background:var(--bg2);border:none;padding:11px 12px;border-radius:10px;font-family:inherit;font-size:16px;font-weight:500;color:var(--tx);text-align:left;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;min-height:42px}
 .ms-btn svg{color:var(--tx3);flex-shrink:0}
 .ms-btn > span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ms-btn > span.ph{color:var(--tx3);font-weight:400}
 .mq-row{display:flex;gap:8px}
 .mq-row > div{flex:1;min-width:0}
-.mq-row input{width:100%;background:var(--bg2);padding:11px 12px;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:500;color:var(--tx);outline:none}
+.mq-row input{width:100%;background:var(--bg2);padding:11px 12px;border:none;border-radius:10px;font-family:inherit;font-size:16px;font-weight:500;color:var(--tx);outline:none}
 
-/* ==========================================================================
-   MATCHING
-   ========================================================================== */
 .match-line{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;border-bottom:1px solid var(--bd);cursor:pointer;gap:8px}
-.match-line .ml-name{flex:1;min-width:0;font-weight:500}
+.match-line .ml-name{flex:1;min-width:0;font-weight:500;white-space:normal!important}
 .match-line .ml-name small{display:block;font-size:11px;color:var(--tx3);margin-top:2px;font-weight:400}
 .match-line .ml-score.high{color:var(--ok);font-weight:700}
 .match-line .ml-score.mid{color:var(--warn);font-weight:700}
 .match-line .ml-score.low{color:var(--tx3);font-weight:700}
-.req-tog{float:right;border:none;border-radius:99px;padding:2px 10px;font:600 10.5px inherit;font-family:inherit;cursor:pointer;background:var(--bg2);color:var(--tx2)}
-.req-tog.obbligatorio{background:rgba(224,96,31,.14);color:var(--acc)}
-.req-tog.indifferente{opacity:.55;text-decoration:line-through}
 
-/* ==========================================================================
-   APPUNTAMENTI
-   ========================================================================== */
 .app-item-card{background:var(--card);border-radius:var(--r);padding:11px 13px;margin-bottom:6px;border:1px solid var(--bd);border-left:3px solid var(--blu);cursor:pointer}
 .app-item-card .app-titolo{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:4px;line-height:1.3}
 .app-item-card .app-data{font-size:11.5px;color:var(--tx2);display:flex;align-items:center;gap:4px}
@@ -425,18 +386,12 @@ details.fold>div{padding:0 16px 10px}
 .tipo-app-btn .sigla svg{width:14px;height:14px}
 .tipo-app-btn .desc{font-size:10px;color:var(--tx3);line-height:1.35}
 
-/* ==========================================================================
-   DOC SUMMARY
-   ========================================================================== */
 .doc-summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:12.5px;cursor:pointer;gap:8px}
 .doc-summary-row .ds-left{display:flex;align-items:center;gap:7px;color:var(--tx2)}
 .doc-summary-row .ds-left svg{width:14px;height:14px}
 .doc-summary-row .ds-right.ok{color:var(--ok);font-weight:700}
 .doc-summary-row .ds-right.warn{color:var(--warn);font-weight:700}
 
-/* ==========================================================================
-   DESKTOP
-   ========================================================================== */
 @media (min-width:768px){
   body{background:#ececec}
   .app{max-width:var(--maxw);margin:0 auto;background:var(--bg);border-left:1px solid var(--bd);border-right:1px solid var(--bd)}
@@ -445,12 +400,9 @@ details.fold>div{padding:0 16px 10px}
   .fab-menu{right:calc(50% - (var(--maxw)/2) + 18px)}
   .modal-overlay{align-items:center;padding:20px}
   .modal-sheet{border-radius:24px;max-height:88dvh}
-  input.form-input,textarea.form-textarea,select.form-select{font-size:14px}
+  .form-input,.form-select,.form-textarea{font-size:14px}
 }
-
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-
-input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
 </style>
 </head>
 <body>
@@ -470,7 +422,7 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
   </header>
 
   <main class="app-content" id="app-content">
-    <!-- VIEW IMMOBILI -->
+    <!-- IMMOBILI -->
     <section id="view-immobili" class="view active">
       <div class="search-sticky"><input type="search" class="search-bar" id="search-immobili" placeholder="Cerca immobili..."></div>
       <div class="chips" id="chips-immobili">
@@ -487,21 +439,21 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
       <div id="lista-immobili"></div>
     </section>
 
-    <!-- VIEW PERSONE -->
+    <!-- PERSONE -->
     <section id="view-persone" class="view">
       <div class="chips" id="persone-tabs" style="padding-bottom:8px;">
-        <button class="chip acc active" data-ptab="acquirente" id="chip-ptab-acq">Acquirenti</button>
-        <button class="chip acc" data-ptab="prop" id="chip-ptab-prop">Venditori</button>
-        <button class="chip acc" data-ptab="locatore" id="chip-ptab-loc">Locatori</button>
-        <button class="chip acc" data-ptab="conduttore" id="chip-ptab-cond">Conduttori</button>
-        <button class="chip acc" data-ptab="professionista" id="chip-ptab-prof">Professionisti</button>
+        <button class="chip acc active" data-ptab="acquirente">Acquirenti</button>
+        <button class="chip acc" data-ptab="prop">Venditori</button>
+        <button class="chip acc" data-ptab="locatore">Locatori</button>
+        <button class="chip acc" data-ptab="conduttore">Conduttori</button>
+        <button class="chip acc" data-ptab="professionista">Professionisti</button>
       </div>
       <div class="search-sticky"><input type="search" class="search-bar" id="search-persone" placeholder="Cerca contatti..."></div>
       <div id="filtro-persone-attivo" style="margin-bottom:6px;"></div>
       <div id="lista-persone"></div>
     </section>
 
-    <!-- VIEW ATTIVITÀ -->
+    <!-- ATTIVITÀ -->
     <section id="view-attivita" class="view">
       <div class="att-col">
         <div class="att-subtabs" id="att-subtabs">
@@ -540,7 +492,7 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
     <section id="view-agenda" class="view"><div id="agenda-page-content"></div></section>
     <section id="view-planning" class="view"><div id="planning-page-content"></div></section>
 
-    <!-- VIEW CHIAMATE -->
+    <!-- CHIAMATE -->
     <section id="view-chiamate" class="view">
       <div class="search-sticky" style="display:flex;gap:6px;align-items:center;">
         <button class="btn btn-secondary btn-icon" onclick="tornaAttivita()" id="btn-back-chiamate"></button>
@@ -550,7 +502,7 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
       <div id="chiamate-lista"></div>
     </section>
 
-    <!-- VIEW MAPPA -->
+    <!-- MAPPA -->
     <section id="view-mappa" class="view" style="padding:0;margin:0;">
       <div id="map-container">
         <div id="map"></div>
@@ -575,13 +527,13 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
       </div>
     </section>
 
-    <!-- VIEW ROUNDME -->
+    <!-- ROUNDME -->
     <section id="view-roundme" class="view">
       <button class="btn btn-primary" onclick="roundMeToggle()" id="btn-roundme-start" style="margin-bottom:10px;">▶ GPS</button>
       <div id="roundme-contenuto"></div>
     </section>
 
-    <!-- VIEW MAGAZZINO -->
+    <!-- MAGAZZINO -->
     <section id="view-magazzino" class="view">
       <div class="search-sticky" style="display:flex;gap:6px;">
         <input type="search" class="search-bar" id="search-magazzino" placeholder="Cerca articolo..." style="flex:1;">
@@ -591,13 +543,13 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
       <div id="magazzino-lista"></div>
     </section>
 
-    <!-- VIEW RAPPORTINI -->
+    <!-- RAPPORTINI -->
     <section id="view-rapportini" class="view">
       <button class="btn btn-primary" onclick="apriNuovoRapportino()" id="btn-new-rapportino" style="margin-bottom:10px;"></button>
       <div id="rapportini-lista"></div>
     </section>
 
-    <!-- VIEW ALTRO -->
+    <!-- ALTRO -->
     <section id="view-altro" class="view">
       <div class="card">
         <h2>Strumenti</h2>
@@ -651,7 +603,6 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
   </nav>
 </div>
 
-<!-- MODAL PRINCIPALE -->
 <div class="modal-overlay" id="modal" onclick="if(event.target===this)chiudiModal()">
   <div class="modal-sheet">
     <div class="modal-header">
@@ -662,7 +613,6 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
   </div>
 </div>
 
-<!-- DROPDOWN FILTRI -->
 <div class="filter-dropdown-overlay" id="filter-dd-overlay" onclick="if(event.target===this)chiudiFilterDD()">
   <div class="filter-dropdown" id="filter-dd"></div>
 </div>
@@ -672,10 +622,8 @@ input.form-input,textarea.form-textarea,select.form-select{font-size:16px}
 <script>
 'use strict';
 /* ==========================================================================
-   ARANJÒ — CORE
-   Database, storage, costanti, utility
+   CORE — DB, storage, costanti, utility
    ========================================================================== */
-
 const DB_VERSION = 6;
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
@@ -683,7 +631,6 @@ const CITTA_DEFAULT = 'CREMONA, CR, 26100';
 const CREMONA_CENTER = [45.1333, 10.0167];
 const ORA_H = 44;
 
-/* ---------- OPZIONI CONDIVISE ---------- */
 const TIPOLOGIE = {
   'Appartamento': ['Monolocale','Bilocale','Trilocale','Quadrilocale','Pentalocale','Esalocale','Multi locali','Attico','Mansarda','Loft','Palazzina','Palazzo'],
   'Villa': ['Villa singola','Porzione bifamiliare','Porzione trifamiliare','Porzione quadrifamiliare','La schiera','Bifamiliare','Trifamiliare','Quadrifamiliare',"Villa schiera d'angolo",'Villa schiera centrale','Villa schiera di testa'],
@@ -693,6 +640,7 @@ const TIPOLOGIE = {
   'Locale Commerciale': ['Negozio','Ufficio','Capannone','Laboratorio','Magazzino','Albergo','B&B','Agriturismo']
 };
 const TIPOLOGIE_KEYS = Object.keys(TIPOLOGIE);
+const SOTTOTIPOLOGIE_ALL = (() => { const a = []; TIPOLOGIE_KEYS.forEach(k => TIPOLOGIE[k].forEach(s => { if(!a.includes(s)) a.push(s); })); return a; })();
 
 const OPT_STATO_IMMOBILE = ['Nuovo','Ristrutturato','Ottimo','Pronto','Abitabile','Buono','Scarso','Da ristrutturare','In costruzione'];
 const OPT_STATO_TERRENO = ['Da costruire','Da bonificare','Da riqualificare'];
@@ -727,7 +675,6 @@ const OPT_TEMPISTICA = ['Immediata','Entro 3 mesi','Entro 6 mesi','Oltre 6 mesi'
 const OPT_CNCV = ['CN','CV'];
 const OPT_ZONE = ['CASTELLO','GHINAGLIA','PIAZZA RISORGIMENTO','VIA DANTE','STAZIONE','SANT AMBROGIO','SAN ZENO','VIA FILZI','VIA BERGAMO','CASTELLEONE','VIA MILANO','SAN PAOLO','CENTRO','BORGO SAN GIACOMO','CAVATIGOZZI','MIGLIARO','SAN FELICE','PERSICO','PORTA ROMANA','VIA GIORDANO','ZONA ZdF','ZONA Libera','ZONA ZdF altrui'];
 
-/* ---------- ICONE SVG ---------- */
 const ICON_PATHS = {
   calendario:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
   clipboard:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/>',
@@ -778,31 +725,30 @@ const ICON_PATHS = {
   briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
   camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>'
 };
+const ico = (n,s) => { const p = ICON_PATHS[n]; if(!p) return ''; s = s||16; return `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;">${p}</svg>`; };
 
-const ico = (n, s) => { const p = ICON_PATHS[n]; if (!p) return ''; s = s || 16; return `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;">${p}</svg>`; };
-const esc = s => s === undefined || s === null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const esc = s => s===undefined||s===null ? '' : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const escapeHtml = esc;
-const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
-const pad2 = n => String(n).padStart(2, '0');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).substr(2,6);
+const pad2 = n => String(n).padStart(2,'0');
 const ymd = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
 const daYmd = s => { const a = s.split('-').map(Number); return new Date(a[0], a[1]-1, a[2]); };
 const fmtDT = iso => { const d = new Date(iso); return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${String(d.getFullYear()).slice(-2)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
 const fmtD = iso => { const d = new Date(iso); return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${String(d.getFullYear()).slice(-2)}`; };
 const oraLocal = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`; };
 const isoLocalInput = iso => { const d = new Date(iso); return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`; };
-const normInd = ind => (ind || '').trim().toUpperCase().replace(/\s+/g, ' ');
+const normInd = ind => (ind||'').trim().toUpperCase().replace(/\s+/g,' ');
 
-/* ---------- FESTIVI ---------- */
 const _festCache = {};
 function pasqua(anno){
   const a=anno%19,b=Math.floor(anno/100),c=anno%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
-  return new Date(anno,Math.floor((h+l-7*m+114)/31)-1,((h+l-7*m+114)%31)+1);
+  return new Date(anno, Math.floor((h+l-7*m+114)/31)-1, ((h+l-7*m+114)%31)+1);
 }
 function festiviAnno(anno){
   if(_festCache[anno]) return _festCache[anno];
-  const p=pasqua(anno),pl=new Date(p); pl.setDate(pl.getDate()+1);
-  const f={}; f[`${anno}-01-01`]='Capodanno'; f[`${anno}-01-06`]='Epifania';
-  f[ymd(p)]='Pasqua'; f[ymd(pl)]="Lunedì dell'Angelo";
+  const p=pasqua(anno), pl=new Date(p); pl.setDate(pl.getDate()+1);
+  const f = {};
+  f[`${anno}-01-01`]='Capodanno'; f[`${anno}-01-06`]='Epifania'; f[ymd(p)]='Pasqua'; f[ymd(pl)]="Lunedì dell'Angelo";
   f[`${anno}-04-25`]='Liberazione'; f[`${anno}-05-01`]='Festa del Lavoro'; f[`${anno}-06-02`]='Festa della Repubblica';
   f[`${anno}-08-15`]='Ferragosto'; f[`${anno}-11-01`]='Ognissanti'; f[`${anno}-12-08`]='Immacolata';
   f[`${anno}-12-25`]='Natale'; f[`${anno}-12-26`]='Santo Stefano';
@@ -810,12 +756,11 @@ function festiviAnno(anno){
 }
 const isFestivo = y => { const a = parseInt(y.split('-')[0],10); return isNaN(a) ? null : (festiviAnno(a)[y] || null); };
 
-/* ---------- STORAGE ---------- */
 const Storage2 = {
   db:null,
   open(){
     if(this.db) return Promise.resolve(this.db);
-    return new Promise((res,rej)=>{
+    return new Promise((res,rej) => {
       const req = indexedDB.open('aranjo_db',1);
       req.onupgradeneeded = e => {
         const db = e.target.result;
@@ -827,13 +772,13 @@ const Storage2 = {
       req.onerror = () => rej(req.error);
     });
   },
-  get(k){ return this.open().then(db => new Promise((res,rej)=>{ const r = db.transaction('kv','readonly').objectStore('kv').get(k); r.onsuccess=()=>res(r.result?r.result.v:null); r.onerror=()=>rej(r.error); })); },
-  set(k,v){ return this.open().then(db => new Promise((res,rej)=>{ const tx = db.transaction('kv','readwrite'); tx.objectStore('kv').put({k,v,updatedAt:Date.now()}); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); })); },
-  persist(){ try{ if(!navigator.storage||!navigator.storage.persist) return Promise.resolve(false); return navigator.storage.persisted().then(a=>a?true:navigator.storage.persist()); }catch(e){ return Promise.resolve(false); } }
+  get(k){ return this.open().then(db => new Promise((res,rej) => { const r = db.transaction('kv','readonly').objectStore('kv').get(k); r.onsuccess=() => res(r.result?r.result.v:null); r.onerror=() => rej(r.error); })); },
+  set(k,v){ return this.open().then(db => new Promise((res,rej) => { const tx = db.transaction('kv','readwrite'); tx.objectStore('kv').put({k,v,updatedAt:Date.now()}); tx.oncomplete=() => res(); tx.onerror=() => rej(tx.error); })); },
+  persist(){ try{ if(!navigator.storage||!navigator.storage.persist) return Promise.resolve(false); return navigator.storage.persisted().then(a => a?true:navigator.storage.persist()); }catch(e){ return Promise.resolve(false); } }
 };
 
 const Storage = {
-  default(){ return { versione:DB_VERSION,nextSeq:1,cittaPrincipale:CITTA_DEFAULT,immobili:[],persone:[],attivita:[],appuntamenti:[],pianificazioni:[],condomini:{},coordinateCondomini:{},chiamate:[],magazzino:[],rapportini:[] }; },
+  default(){ return { versione:DB_VERSION, nextSeq:1, cittaPrincipale:CITTA_DEFAULT, immobili:[], persone:[], attivita:[], appuntamenti:[], pianificazioni:[], condomini:{}, coordinateCondomini:{}, chiamate:[], magazzino:[], rapportini:[] }; },
   migra(p){
     const def = this.default();
     const db = {
@@ -845,37 +790,36 @@ const Storage = {
       chiamate:Array.isArray(p.chiamate)?p.chiamate:[], magazzino:Array.isArray(p.magazzino)?p.magazzino:[],
       rapportini:Array.isArray(p.rapportini)?p.rapportini:[]
     };
-    const A_FIELDS = ['tipologia','sottotipologia','piano','zona','classeEnergetica','riscaldamentoTipo','raffTipo','infissi','vista','zonaCaratt','cucina','caratteristiche'];
-    db.immobili.forEach(im=>{
+    const A = ['tipologia','sottotipologia','piano','zona','classeEnergetica','riscaldamentoTipo','raffTipo','infissi','vista','zonaCaratt','cucina','caratteristiche'];
+    db.immobili.forEach(im => {
       im.dettagli = im.dettagli || {};
-      A_FIELDS.forEach(k=>{ if(im.dettagli[k]&&!Array.isArray(im.dettagli[k])) im.dettagli[k]=[im.dettagli[k]]; if(!im.dettagli[k]) im.dettagli[k]=[]; });
+      A.forEach(k => { if(im.dettagli[k] && !Array.isArray(im.dettagli[k])) im.dettagli[k]=[im.dettagli[k]]; if(!im.dettagli[k]) im.dettagli[k]=[]; });
       if(!im.zone) im.zone = [];
       if(!Array.isArray(im.proprietari)) im.proprietari = [];
-      im.proprietari.forEach(pr=>{ if(!pr.tipo) pr.tipo='Proprietà'; });
+      im.proprietari.forEach(pr => { if(!pr.tipo) pr.tipo='Proprietà'; });
       if(!im.gestitoDa) im.gestitoDa = 'me';
       if(typeof im.collegaNome === 'undefined') im.collegaNome = '';
       if(!im.prezzi) im.prezzi = {};
     });
-    const AR = ['tipologia','sottotipologia','piano','classeEnergetica','riscaldamentoTipo','raffTipo','infissi','vista','zonaCaratt','cucina','caratteristiche'];
-    db.persone.forEach(per=>{
+    db.persone.forEach(per => {
       if(per.richiesta){
-        AR.forEach(k=>{ if(per.richiesta[k]&&!Array.isArray(per.richiesta[k])) per.richiesta[k]=[per.richiesta[k]]; if(!per.richiesta[k]) per.richiesta[k]=[]; });
+        A.forEach(k => { if(per.richiesta[k] && !Array.isArray(per.richiesta[k])) per.richiesta[k]=[per.richiesta[k]]; if(!per.richiesta[k]) per.richiesta[k]=[]; });
         if(!per.richiesta.requisiti) per.richiesta.requisiti = {};
       }
     });
-    Object.keys(db.condomini).forEach(k=>{
+    Object.keys(db.condomini).forEach(k => {
       if(!Array.isArray(db.condomini[k].foto)) db.condomini[k].foto = [];
       if(!Array.isArray(db.condomini[k].zone)) db.condomini[k].zone = [];
     });
     return db;
   },
-  save(d){ Storage2.set('db_v4',d).catch(e=>console.error(e)); return true; },
+  save(d){ Storage2.set('db_v4',d).catch(e => console.error(e)); return true; },
   loadAsync(){
-    return Storage2.get('db_v4').then(d=>{
+    return Storage2.get('db_v4').then(d => {
       if(!d){
         let raw = null;
         try{ raw = localStorage.getItem(DB_KEY); }catch(e){}
-        if(raw){ try{ d = JSON.parse(raw); return Storage2.set('db_v4',d).then(()=>this.migra(d)); }catch(e){} }
+        if(raw){ try{ d = JSON.parse(raw); return Storage2.set('db_v4',d).then(() => this.migra(d)); }catch(e){} }
       }
       return d ? this.migra(d) : this.default();
     });
@@ -883,25 +827,24 @@ const Storage = {
 };
 let DB = Storage.default();
 
-/* ---------- PHOTODB ---------- */
 const PhotoDB = {
-  save(id,b,m){ return Storage2.open().then(db=>new Promise((r,j)=>{ const tx = db.transaction('foto','readwrite'); tx.objectStore('foto').put({id,blob:b,meta:m||{},createdAt:Date.now()}); tx.oncomplete=()=>r(); tx.onerror=()=>j(tx.error); })); },
-  get(id){ return Storage2.open().then(db=>new Promise((r,j)=>{ const q = db.transaction('foto','readonly').objectStore('foto').get(id); q.onsuccess=()=>r(q.result||null); q.onerror=()=>j(q.error); })); },
-  del(id){ return Storage2.open().then(db=>new Promise((r,j)=>{ const tx = db.transaction('foto','readwrite'); tx.objectStore('foto').delete(id); tx.oncomplete=()=>r(); tx.onerror=()=>j(tx.error); })); },
-  keys(){ return Storage2.open().then(db=>new Promise((r,j)=>{ const q = db.transaction('foto','readonly').objectStore('foto').getAllKeys(); q.onsuccess=()=>r(q.result||[]); q.onerror=()=>j(q.error); })); },
-  saveDoc(id,b,m){ return Storage2.open().then(db=>new Promise((r,j)=>{ const tx = db.transaction('documenti','readwrite'); tx.objectStore('documenti').put({id,blob:b,meta:m||{},createdAt:Date.now()}); tx.oncomplete=()=>r(); tx.onerror=()=>j(tx.error); })); },
-  getDoc(id){ return Storage2.open().then(db=>new Promise((r,j)=>{ const q = db.transaction('documenti','readonly').objectStore('documenti').get(id); q.onsuccess=()=>r(q.result||null); q.onerror=()=>j(q.error); })); },
-  delDoc(id){ return Storage2.open().then(db=>new Promise((r,j)=>{ const tx = db.transaction('documenti','readwrite'); tx.objectStore('documenti').delete(id); tx.oncomplete=()=>r(); tx.onerror=()=>j(tx.error); })); },
-  docKeys(){ return Storage2.open().then(db=>new Promise((r,j)=>{ const q = db.transaction('documenti','readonly').objectStore('documenti').getAllKeys(); q.onsuccess=()=>r(q.result||[]); q.onerror=()=>j(q.error); })); }
+  save(id,b,m){ return Storage2.open().then(db => new Promise((r,j) => { const tx = db.transaction('foto','readwrite'); tx.objectStore('foto').put({id,blob:b,meta:m||{},createdAt:Date.now()}); tx.oncomplete=() => r(); tx.onerror=() => j(tx.error); })); },
+  get(id){ return Storage2.open().then(db => new Promise((r,j) => { const q = db.transaction('foto','readonly').objectStore('foto').get(id); q.onsuccess=() => r(q.result||null); q.onerror=() => j(q.error); })); },
+  del(id){ return Storage2.open().then(db => new Promise((r,j) => { const tx = db.transaction('foto','readwrite'); tx.objectStore('foto').delete(id); tx.oncomplete=() => r(); tx.onerror=() => j(tx.error); })); },
+  keys(){ return Storage2.open().then(db => new Promise((r,j) => { const q = db.transaction('foto','readonly').objectStore('foto').getAllKeys(); q.onsuccess=() => r(q.result||[]); q.onerror=() => j(q.error); })); },
+  saveDoc(id,b,m){ return Storage2.open().then(db => new Promise((r,j) => { const tx = db.transaction('documenti','readwrite'); tx.objectStore('documenti').put({id,blob:b,meta:m||{},createdAt:Date.now()}); tx.oncomplete=() => r(); tx.onerror=() => j(tx.error); })); },
+  getDoc(id){ return Storage2.open().then(db => new Promise((r,j) => { const q = db.transaction('documenti','readonly').objectStore('documenti').get(id); q.onsuccess=() => r(q.result||null); q.onerror=() => j(q.error); })); },
+  delDoc(id){ return Storage2.open().then(db => new Promise((r,j) => { const tx = db.transaction('documenti','readwrite'); tx.objectStore('documenti').delete(id); tx.oncomplete=() => r(); tx.onerror=() => j(tx.error); })); },
+  docKeys(){ return Storage2.open().then(db => new Promise((r,j) => { const q = db.transaction('documenti','readonly').objectStore('documenti').getAllKeys(); q.onsuccess=() => r(q.result||[]); q.onerror=() => j(q.error); })); }
 };
 
 const photoCache = {};
 function getPhotoURL(id){
   if(photoCache[id]) return Promise.resolve(photoCache[id]);
-  return PhotoDB.get(id).then(r=>{ if(!r||!r.blob) return null; const u = URL.createObjectURL(r.blob); photoCache[id]=u; return u; }).catch(()=>null);
+  return PhotoDB.get(id).then(r => { if(!r||!r.blob) return null; const u = URL.createObjectURL(r.blob); photoCache[id]=u; return u; }).catch(() => null);
 }
 function processImg(f){
-  return new Promise((res,rej)=>{
+  return new Promise((res,rej) => {
     const rd = new FileReader();
     rd.onload = e => {
       const im = new Image();
@@ -910,7 +853,7 @@ function processImg(f){
         if(w>MAX||h>MAX){ if(w>=h){ h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
         const c = document.createElement('canvas'); c.width = w; c.height = h;
         c.getContext('2d').drawImage(im,0,0,w,h);
-        c.toBlob(b => b ? res(b) : rej(new Error('Errore')),'image/jpeg',.85);
+        c.toBlob(b => b ? res(b) : rej(new Error('Errore')), 'image/jpeg', .85);
       };
       im.onerror = () => rej(new Error('Immagine non valida'));
       im.src = e.target.result;
@@ -920,7 +863,6 @@ function processImg(f){
   });
 }
 
-/* ---------- MODAL ---------- */
 window._modalStack = 0;
 window._aranjoCloseFromUI = false;
 function apriModal(titolo, html){
@@ -929,20 +871,14 @@ function apriModal(titolo, html){
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal-body').scrollTop = 0;
   mo.classList.add('open');
-  try{
-    if(!history.state || !history.state._modal){
-      history.pushState({ _modal:true },'');
-      window._modalStack++;
-    }
-  }catch(e){}
+  try{ if(!history.state || !history.state._modal){ history.pushState({ _modal:true },''); window._modalStack++; } }catch(e){}
 }
 function chiudiModal(fromBack){
   const mo = document.getElementById('modal');
   const wasOpen = mo.classList.contains('open');
   mo.classList.remove('open');
   document.getElementById('modal-body').innerHTML = '';
-  window._pickerSavedParent = null;
-  window._pickerCb = null;
+  window._pickerSavedParent = null; window._pickerCb = null;
   if(wasOpen && !fromBack && window._modalStack > 0){
     window._modalStack--;
     window._aranjoCloseFromUI = true;
@@ -950,7 +886,6 @@ function chiudiModal(fromBack){
   }
 }
 
-/* ---------- DROPDOWN FILTRI ---------- */
 window._filterDDBack = null;
 function apriFilterDD(titolo, opzioni, sel, cb){
   const dd = document.getElementById('filter-dd');
@@ -969,7 +904,6 @@ function chiudiFilterDD(){
   window._msOpen = null;
 }
 
-/* ---------- MULTI-SELECT ---------- */
 window._msSel = {};
 function ms(id, options, selected){
   if(!Array.isArray(selected)) selected = selected ? [selected] : [];
@@ -1004,7 +938,6 @@ function chiudiMs(id){
 }
 const msVal = id => (window._msSel[id] && window._msSel[id].val) || [];
 
-/* Delegazione dropdown */
 (function(){
   const dd = document.getElementById('filter-dd');
   if(!dd) return;
@@ -1044,17 +977,12 @@ const msVal = id => (window._msSel[id] && window._msSel[id].val) || [];
   }, false);
 })();
 
-/* ---------- TEMA ---------- */
 const getTema = () => { try{ return localStorage.getItem('aranjo_theme')||'auto'; }catch(e){ return 'auto'; } };
-const risolviTema = t => t === 'dark' ? 'dark' : t === 'light' ? 'light' : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const risolviTema = t => t === 'dark' ? 'dark' : t === 'light' ? 'light' : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 function setTema(t){ try{ localStorage.setItem('aranjo_theme',t); }catch(e){} applyTema(t); }
 function applyTema(t){ document.documentElement.setAttribute('data-theme', risolviTema(t)); updateTemaBtn(); }
-function updateTemaBtn(){
-  const t = getTema();
-  ['auto','light','dark'].forEach(x => { const b = document.getElementById('th-'+x); if(b) b.classList.toggle('active', x === t); });
-}
+function updateTemaBtn(){ const t = getTema(); ['auto','light','dark'].forEach(x => { const b = document.getElementById('th-'+x); if(b) b.classList.toggle('active', x === t); }); }
 
-/* ---------- COSTANTI DOMINIO ---------- */
 const TIPI_PROFESSIONISTA = [
   {id:'notaio',label:'Notaio',abbr:'NOT.'},{id:'geom',label:'Geometra',abbr:'GEOM.'},{id:'arch',label:'Architetto',abbr:'ARCH.'},
   {id:'ing',label:'Ingegnere',abbr:'ING.'},{id:'avv',label:'Avvocato',abbr:'AVV.'},{id:'comm',label:'Commercialista',abbr:'DOTT.'},
@@ -1089,7 +1017,6 @@ const STATO_PRIO = { PA:1, NT:2, INK:3 };
 const STATO_COL = { PA:'#c2740c', NT:'#2563eb', INK:'#047857', VND:'#b91c1c' };
 const PIN_NEUTRAL = '#1b3556';
 
-/* ---------- VARIABILI GLOBALI ---------- */
 let _prefillDataOra = null;
 let immobileAperto = null;
 let personaAperta = null;
@@ -1097,16 +1024,21 @@ let map = null;
 let markersLayer = null;
 let fabMenuAperto = false;
 
-const seq = () => { if(typeof DB.nextSeq !== 'number') DB.nextSeq = 1; const s = DB.nextSeq; DB.nextSeq = s + 1; return s; };
+const seq = () => { if(typeof DB.nextSeq !== 'number') DB.nextSeq = 1; const s = DB.nextSeq; DB.nextSeq = s+1; return s; };
 
-/* ---------- UTILITY ENTITÀ ---------- */
 const nomeCompleto = p => !p ? '' : (p.nome || p.cognome) ? `${p.nome||''} ${p.cognome||''}`.trim() : (p.cognomeNome || '');
 const nomeCogn = p => !p ? '' : (p.cognome || p.nome) ? `${p.cognome||''} ${p.nome||''}`.trim() : (p.cognomeNome || '');
 const trovaPersona = id => DB.persone.find(p => p.id === id);
 const propsImmobile = im => { if(!im) return []; if(!Array.isArray(im.proprietari)) im.proprietari = []; return im.proprietari.map(pr => ({ personaId:pr.personaId, quota:pr.quota, principale:pr.principale, note:pr.note, tipo:pr.tipo||'Proprietà', persona:trovaPersona(pr.personaId) })).filter(x => x.persona); };
 const propPrinc = im => { const ps = propsImmobile(im); return ps.find(x => x.principale) || ps[0] || null; };
-const titoloPersona = p => { if(!p) return ''; const n = nomeCogn(p).toUpperCase(); const r = p.ruoli||[]; if(r.indexOf('ACQUIRENTE')>=0) return `RR - ${n}${p.telefono?' '+p.telefono:''}`; if(r.indexOf('PROFESSIONISTA')>=0){ const tp = TIPI_PROFESSIONISTA.find(x=>x.id===p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length-1]; return ((tp.abbr ? tp.abbr+' ' : '')+n).trim(); } return n; };
-const statoRR = p => { if(!p || (p.ruoli||[]).indexOf('ACQUIRENTE')<0) return null; return STATI_RR.find(s=>s.id===p.statoRR) || STATI_RR[0]; };
+const titoloPersona = p => {
+  if(!p) return '';
+  const n = nomeCogn(p).toUpperCase(); const r = p.ruoli||[];
+  if(r.indexOf('ACQUIRENTE')>=0) return `RR - ${n}${p.telefono?' '+p.telefono:''}`;
+  if(r.indexOf('PROFESSIONISTA')>=0){ const tp = TIPI_PROFESSIONISTA.find(x => x.id === p.tipoProf) || TIPI_PROFESSIONISTA[TIPI_PROFESSIONISTA.length-1]; return ((tp.abbr?tp.abbr+' ':'')+n).trim(); }
+  return n;
+};
+const statoRR = p => { if(!p || (p.ruoli||[]).indexOf('ACQUIRENTE')<0) return null; return STATI_RR.find(s => s.id === p.statoRR) || STATI_RR[0]; };
 const condoDi = im => im.villa ? null : (im.condominio || normInd(im.indirizzo));
 function zoneEff(im){
   if(im.villa) return im.zone || [];
@@ -1118,12 +1050,11 @@ function dettagliCondo(c){ if(!DB.condomini) DB.condomini = {}; if(!DB.condomini
 const citta = () => DB.cittaPrincipale || CITTA_DEFAULT;
 const nomeCitta = () => citta().split(',')[0].trim();
 const iconaCondo = s => ico('condominio', s||15);
-function fmtBytes(b){ if(!b || b < 1024) return (b||0)+' B'; if(b < 1024*1024) return (b/1024).toFixed(1)+' KB'; if(b < 1024*1024*1024) return (b/(1024*1024)).toFixed(2)+' MB'; return (b/(1024*1024*1024)).toFixed(2)+' GB'; }
+function fmtBytes(b){ if(!b||b<1024) return (b||0)+' B'; if(b<1024*1024) return (b/1024).toFixed(1)+' KB'; if(b<1024*1024*1024) return (b/(1024*1024)).toFixed(2)+' MB'; return (b/(1024*1024*1024)).toFixed(2)+' GB'; }
 
-/* titolo immobile aggiornato: STATO - COGNOME NOME TEL x INDIRIZZO */
 function titoloImmobile(im){
   if(!im) return '';
-  const ind = (im.indirizzo || '').toUpperCase();
+  const ind = (im.indirizzo||'').toUpperCase();
   if(im.stato === 'IMM') return im.villa ? ind : `${ind} z${im.z||1}`;
   const p = propPrinc(im);
   const n = p ? nomeCogn(p.persona) : (im.cognomeNome || '');
@@ -1133,11 +1064,11 @@ function titoloImmobile(im){
 }
 
 const normalizzaSigla = s => { if(!s) return s; const u = String(s).toUpperCase(); return (u==='LIBERO'||u==='LIBERA'||u==='UFFICIO') ? 'G UFF' : s; };
-const getTipoApp = s => { const n = normalizzaSigla(s); return TIPI_APP.find(t=>t.sigla===n) || TIPI_APP[TIPI_APP.length-1]; };
+const getTipoApp = s => { const n = normalizzaSigla(s); return TIPI_APP.find(t => t.sigla === n) || TIPI_APP[TIPI_APP.length-1]; };
 function immobileValidoPerTipo(sigla, im){
   if(!im) return false;
-  const t = TIPI_APP.find(x=>x.sigla===sigla); if(!t) return true;
-  const tv = (im.sottotipo||'').toLowerCase().indexOf('valutata')>=0 && (im.sottotipo||'').toLowerCase().indexOf('non')<0;
+  const t = TIPI_APP.find(x => x.sigla === sigla); if(!t) return true;
+  const tv = (im.sottotipo||'').toLowerCase().indexOf('valutata') >= 0 && (im.sottotipo||'').toLowerCase().indexOf('non') < 0;
   switch(t.richiede){
     case 'NT_nv': return im.stato === 'NT' && !tv;
     case 'NT_v': return im.stato === 'NT' && tv;
@@ -1151,9 +1082,9 @@ function immobileValidoPerTipo(sigla, im){
 }
 function personaValidaPerTipo(sigla, per){
   if(!per) return false;
-  const t = TIPI_APP.find(x=>x.sigla===sigla); if(!t) return true;
+  const t = TIPI_APP.find(x => x.sigla === sigla); if(!t) return true;
   const r = t.richiede;
-  if(r==='RR'||r==='RR_e_immobile'||r==='RR_ha_visto_INK'||r==='RR_proposta_acc'||r==='RR_o_immobile'||r==='RR_INK_proposta_acc') return (per.ruoli||[]).indexOf('ACQUIRENTE')>=0;
+  if(r === 'RR' || r === 'RR_e_immobile' || r === 'RR_ha_visto_INK' || r === 'RR_proposta_acc' || r === 'RR_o_immobile' || r === 'RR_INK_proposta_acc') return (per.ruoli||[]).indexOf('ACQUIRENTE') >= 0;
   return true;
 }
 const dataAtt = a => a.tipo === 'da_fare' && a.dataPrevista ? a.dataPrevista : a.data;
@@ -1171,7 +1102,6 @@ function richiestaVuota(){
     cnCv:'', krKvKn:'', caratteristiche:[], esigenze:'', note:'', requisiti:{} };
 }
 
-/* ---------- COLLAPSIBLE ---------- */
 window._collState = {};
 function toggleColl(id){ window._collState[id] = !window._collState[id]; const el = document.querySelector(`[data-coll-id="${id}"]`); if(el) el.classList.toggle('open', window._collState[id]); }
 function collapsible(id, label, contenuto, meta){
@@ -1179,14 +1109,13 @@ function collapsible(id, label, contenuto, meta){
   return `<div class="collapsible${open}" data-coll-id="${id}"><div class="collapsible-header" onclick="toggleColl('${id}')"><div class="ch-label">${label}</div><div style="display:flex;align-items:center;gap:6px;">${meta?`<span class="ch-meta">${meta}</span>`:''}<span class="chev">${ico('freccia',14)}</span></div></div><div class="collapsible-body">${contenuto}</div></div>`;
 }
 
-/* ---------- GEOCODIFICA ---------- */
 let geocodeCache = {};
 try{ geocodeCache = JSON.parse(localStorage.getItem(GEOCODE_CACHE_KEY) || '{}'); }catch(e){ geocodeCache = {}; }
 const salvaGeocodeCache = () => { try{ localStorage.setItem(GEOCODE_CACHE_KEY, JSON.stringify(geocodeCache)); }catch(e){} };
 function parseInd(ind){
   const i = normInd(ind); if(!i) return null;
-  const parti = i.split(',').map(s=>s.trim()).filter(s=>s.length);
-  const cp = citta().split(',').map(s=>s.trim());
+  const parti = i.split(',').map(s => s.trim()).filter(s => s.length);
+  const cp = citta().split(',').map(s => s.trim());
   let via = parti[0]||'', cit = parti[1]||cp[0]||'', prov = parti[2]||cp[1]||'', cap = parti[3]||cp[2]||'';
   if(/^\d{5}$/.test(cit)){ cap = cit; cit = cp[0]||''; prov = cp[1]||''; }
   return { via, citta:cit, provincia:prov, cap };
@@ -1216,16 +1145,18 @@ function geocodificaCitta(){
   return geocodifica(citta()).then(r => { _coordsCitta = r ? [r.lat, r.lng] : CREMONA_CENTER; return _coordsCitta; });
 }
 
-console.log('[ARANJÒ] Core ready');
+function parseNum(s){
+  if(s === undefined || s === null || s === '') return null;
+  const n = parseFloat(String(s).replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',','.'));
+  return isNaN(n) ? null : n;
+}
 </script>
 
 <script>
 'use strict';
 /* ==========================================================================
-   ARANJÒ — NAVIGAZIONE + LISTE + MATCHING
+   NAVIGAZIONE + LISTE + MATCHING
    ========================================================================== */
-
-/* ---------- NAVIGAZIONE ---------- */
 const tabBtns = document.querySelectorAll('.tabbar button');
 const views = document.querySelectorAll('.view');
 
@@ -1272,7 +1203,6 @@ function mostraView(id){
   else if(id === 'view-attivita'){ ac.style.overflow = 'hidden'; ac.classList.add('attivita-active'); }
 }
 
-/* ---------- FILTRI ---------- */
 let statoFil = null, zonaFil = null, vistaCond = false, condoFil = null, qRic = '', mapFilStato = null, condoEspansi = {}, gestFil = null;
 
 document.getElementById('search-immobili').addEventListener('input', e => { qRic = e.target.value.toLowerCase().trim(); renderListaImmobili(); });
@@ -1316,7 +1246,6 @@ function matchRic(im, q){
   const c = [im.indirizzo, im.cognomeNome, im.telefono, im.note, im.condominio, im.citofono, im.collegaNome, zoneEff(im).join(' '), det.amministratore && det.amministratore.nome, det.amministratore && det.amministratore.telefono].concat(props);
   return c.some(x => (x||'').toLowerCase().indexOf(q) >= 0);
 }
-
 function bannerFiltri(){
   const c = document.getElementById('filtro-attivo'); const p = [];
   if(condoFil) p.push(condoFil);
@@ -1377,7 +1306,6 @@ function renderListaImmobili(){
   c.innerHTML = h2;
 }
 function toggleCondoEsp(c){ condoEspansi[c] = !condoEspansi[c]; renderListaImmobili(); }
-
 function cardImmobile(im, compact){
   if(compact){
     const cito = im.citofono || '';
@@ -1389,7 +1317,7 @@ function cardImmobile(im, compact){
     if(pn) h += `<div class="icc-owner">${esc(pn)}</div>`;
     h += '</div>'; return h;
   }
-  const att = (im.attivita || []).slice().sort(cmpAttDesc); const ult = att[0];
+  const att = (im.attivita||[]).slice().sort(cmpAttDesc); const ult = att[0];
   const co = condoDi(im); const ze = zoneEff(im);
   const prop2 = propPrinc(im);
   const tel = prop2 && prop2.persona.telefono ? prop2.persona.telefono : im.telefono;
@@ -1429,13 +1357,11 @@ function apriZone(){
 function selZona(z){ zonaFil = (zonaFil === z) ? null : z; apriZone(); }
 function azzeraZone(){ zonaFil = null; apriZone(); }
 
-/* ---------- AZIONI CONTATTO ---------- */
-const chiama = tel => { if(tel) window.location.href = 'tel:' + tel.replace(/\s+/g, ''); };
+const chiama = tel => { if(tel) window.location.href = 'tel:' + tel.replace(/\s+/g,''); };
 const scriviEmail = e => { if(e) window.location.href = 'mailto:' + e; };
-function wa(tel){ if(!tel) return; const p = tel.replace(/\D/g, ''); if(!p) return; const n = p.startsWith('39') ? p : '39' + p; window.open('https://wa.me/' + n, '_blank'); }
+function wa(tel){ if(!tel) return; const p = tel.replace(/\D/g,''); if(!p) return; const n = p.startsWith('39') ? p : '39'+p; window.open('https://wa.me/' + n, '_blank'); }
 function navMaps(lat, lng, nome){ const ios = /iPad|iPhone|iPod/.test(navigator.userAgent); const enc = encodeURIComponent(nome||''); const u = ios ? `https://maps.apple.com/?daddr=${lat},${lng}${enc?'&q='+enc:''}` : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`; window.open(u, '_blank'); }
 
-/* ---------- PERSONE ---------- */
 let pTab = 'acquirente', pStatoRR = null, pTipoProf = null, pQ = '';
 document.querySelectorAll('#persone-tabs .chip').forEach(c => {
   c.addEventListener('click', () => {
@@ -1448,8 +1374,8 @@ document.querySelectorAll('#persone-tabs .chip').forEach(c => {
 document.getElementById('search-persone').addEventListener('input', e => { pQ = e.target.value.toLowerCase().trim(); renderPersone(); });
 
 function filtroLabel(){
-  if(pTab === 'acquirente'){ if(!pStatoRR) return 'Stato'; const s = STATI_RR.find(x=>x.id===pStatoRR); return s ? s.label : 'Stato'; }
-  if(pTab === 'professionista'){ if(!pTipoProf) return 'Tipo'; const t = TIPI_PROFESSIONISTA.find(x=>x.id===pTipoProf); return t ? t.label : 'Tipo'; }
+  if(pTab === 'acquirente'){ if(!pStatoRR) return 'Stato'; const s = STATI_RR.find(x => x.id === pStatoRR); return s ? s.label : 'Stato'; }
+  if(pTab === 'professionista'){ if(!pTipoProf) return 'Tipo'; const t = TIPI_PROFESSIONISTA.find(x => x.id === pTipoProf); return t ? t.label : 'Tipo'; }
   return 'Filtro';
 }
 function apriFiltroPersone(){
@@ -1462,10 +1388,7 @@ function apriFiltroPersone(){
   }
 }
 function personePerTab(tab){
-  const filters = {
-    acquirente:['ACQUIRENTE'], prop:['PROP'], professionista:['PROFESSIONISTA'],
-    locatore:['LOCATORE'], conduttore:['CONDUTTORE']
-  };
+  const filters = { acquirente:['ACQUIRENTE'], prop:['PROP'], professionista:['PROFESSIONISTA'], locatore:['LOCATORE'], conduttore:['CONDUTTORE'] };
   return DB.persone.filter(p => (p.ruoli||[]).some(r => (filters[tab]||[]).includes(r)));
 }
 function renderPersone(){
@@ -1510,15 +1433,8 @@ function renderPersone(){
 }
 function resetFiltroPersone(){ if(pTab === 'acquirente') pStatoRR = null; if(pTab === 'professionista') pTipoProf = null; renderPersone(); }
 
-/* ---------- PARSE NUMERI ---------- */
-function parseNum(s){
-  if(s === undefined || s === null || s === '') return null;
-  const n = parseFloat(String(s).replace(/[^\d.,-]/g,'').replace(/\./g,'').replace(',','.'));
-  return isNaN(n) ? null : n;
-}
-
 /* ==========================================================================
-   MATCHING — versione migliorata
+   MATCHING migliorato
    ========================================================================== */
 const MATCH_LBL = {
   budget:'prezzo', budgetMin:'prezzo minimo', tipologia:'tipologia', sottotipologia:'sotto-tipologia',
@@ -1535,7 +1451,7 @@ function calcolaMatch(im, per){
   const ck = [];
   const A = v => Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
   const lw = x => String(x).toLowerCase().trim();
-  const ov = (a, b) => (!a.length || !b.length) ? null : a.some(x => b.some(y => lw(x) === lw(y)));
+  const ov = (a,b) => (!a.length || !b.length) ? null : a.some(x => b.some(y => lw(x) === lw(y)));
   const req = k => {
     const v = r.requisiti && r.requisiti[k];
     if(v) return v;
@@ -1547,21 +1463,16 @@ function calcolaMatch(im, per){
   const add = (k, ok, w) => { if(ok === null || ok === undefined) return; const t = req(k); if(t === 'indifferente') return; ck.push({ k, ok:!!ok, obb:t === 'obbligatorio', w:w||2 }); };
   const arr = (k, imv, w) => { if(r[k] && r[k].length) add(k, ov(A(r[k]), A(imv)), w); };
 
-  /* ---------- PREZZO (reale o al mercato) ---------- */
+  /* PREZZO */
   const z = im.prezzi || {};
-  const max = parseNum(r.budget);
-  const min = parseNum(r.budgetMin);
-  const ric = parseNum(z.richiesto);
-  const mer = parseNum(z.mercato);
-  const ult = parseNum(z.ultimo);
-  const ven = parseNum(z.venduto);
+  const max = parseNum(r.budget), min = parseNum(r.budgetMin);
+  const ric = parseNum(z.richiesto), mer = parseNum(z.mercato), ult = parseNum(z.ultimo), ven = parseNum(z.venduto);
   let price = null;
   if(im.stato === 'VND' && ven !== null) price = ven;
   else if(ult !== null) price = ult;
   else if(ric !== null && mer !== null) price = Math.min(ric, mer);
   else price = ric !== null ? ric : mer;
   if(price !== null && max !== null){
-    /* forbice: max con tolleranza +5%, min con tolleranza -15% (sotto il min è "troppo sotto") */
     let ok = price <= max * 1.05;
     if(min !== null && price < min * 0.85) ok = false;
     add('budget', ok, 18);
@@ -1573,16 +1484,13 @@ function calcolaMatch(im, per){
 
   const mn = parseNum(r.mqMin), mx = parseNum(r.mqMax);
   const v = parseNum(d.mqCommerciali) || parseNum(d.mqCalpestabili) || parseNum(d.mq);
-  if((mn !== null || mx !== null) && v !== null){
-    add('mq', !(mn !== null && v < mn) && !(mx !== null && v > mx), 10);
-  }
+  if((mn !== null || mx !== null) && v !== null) add('mq', !(mn !== null && v < mn) && !(mx !== null && v > mx), 10);
   arr('locali', d.locali || d.camere, 6);
   arr('bagni', d.bagni, 4);
   arr('statoConservativo', d.statoConservativo, 8);
   arr('piano', d.piano, 3);
   arr('pianoTipo', d.pianoNum, 3);
 
-  /* Classe energetica */
   const sel = A(r.classeEnergetica), ce = String(A(d.classeEnergetica)[0] || '').toUpperCase();
   if(sel.length && sel.indexOf('Indifferente') < 0 && /^[A-G]/.test(ce)){
     add('classeEnergetica', sel.some(f => {
@@ -1595,7 +1503,6 @@ function calcolaMatch(im, per){
   if(r.riscaldamento && r.riscaldamento !== 'Indifferente' && d.riscaldamento && d.riscaldamento !== 'Indifferente')
     add('riscaldamento', lw(d.riscaldamento) === lw(r.riscaldamento), 2);
 
-  /* Arredamento */
   if(r.arredamento && r.arredamento !== 'Indifferente' && d.arredamento){
     const mat = r.arredamento === 'Sì' ? ['Sì','Parzialmente','Su richiesta']
               : r.arredamento === 'No' ? ['No']
@@ -1614,7 +1521,6 @@ function calcolaMatch(im, per){
   if(r.boxTipo && (r.box === 'Sì' || r.box === 'Meglio') && d.boxTipo) add('boxTipo', lw(d.boxTipo) === lw(r.boxTipo), 2);
 
   if(!ck.length) return { score:0, ko:[] };
-  /* Blocco totale se un obbligatorio non è soddisfatto */
   if(ck.some(c => c.obb && !c.ok)){
     return { score:0, ko: ck.filter(c => !c.ok).map(c => c.obb ? `<b>${MATCH_LBL[c.k]||c.k}</b>` : (MATCH_LBL[c.k]||c.k)) };
   }
@@ -1635,51 +1541,39 @@ function matchImmobile(im){
   acq.forEach(p => { const m = calcolaMatch(im, p); if(m.score > 0){ m.persona = p; r.push(m); } });
   return r.sort((a,b) => b.score - a.score);
 }
-
 function matchAcquirente(per){
-  /* include immobili NT, INK e anche quelli in trattativa avanzata (VND no) */
   const l = DB.immobili.filter(i => ['NT','INK'].includes(i.stato));
   const r = [];
   l.forEach(i => { const m = calcolaMatch(i, per); if(m.score > 0){ m.immobile = i; r.push(m); } });
-  return r.sort((a,b) => b.score - a.score);
-}
-
-/* ---------- FIX punto 6: mantieni in compatibili anche con appuntamento fissato in corso */
-function haAppuntamentoInCorso(imId){
-  if(!DB.appuntamenti) return false;
-  return DB.appuntamenti.some(a =>
-    a.immobileId === imId &&
-    ['programmato'].includes(a.stato) &&
-    !a.esito
-  );
-}
-/* arricchisce il matchAcquirente con gli immobili che hanno un appuntamento in corso, anche se lo score è basso */
-const _origMatchAcquirente = matchAcquirente;
-window.matchAcquirente = function(per){
-  const res = _origMatchAcquirente(per);
-  const ids = new Set(res.map(m => m.immobile.id));
+  /* includi immobili con appuntamento in corso anche se score basso */
+  const ids = new Set(r.map(m => m.immobile.id));
   DB.immobili.forEach(im => {
     if(ids.has(im.id)) return;
     if(!haAppuntamentoInCorso(im.id)) return;
     const m = calcolaMatch(im, per);
     m.immobile = im; m.score = Math.max(30, m.score);
-    res.push(m);
+    r.push(m);
   });
-  return res.sort((a,b) => b.score - a.score);
-};
-
-console.log('[ARANJÒ] Navigazione + matching ready');
+  return r.sort((a,b) => b.score - a.score);
+}
+function haAppuntamentoInCorso(imId){
+  if(!DB.appuntamenti) return false;
+  return DB.appuntamenti.some(a => a.immobileId === imId && a.stato === 'programmato' && !a.esito);
+}
 </script>
 
 <script>
 'use strict';
 /* ==========================================================================
-   ARANJÒ — ATTIVITÀ, AGENDA, PLANNING
+   ATTIVITÀ + APPUNTAMENTI + AGENDA + PLANNING
    ========================================================================== */
 let attTab = 'oggi', attQ = '', attEsp = {};
 
-function setAttTab(t){ attTab = t; document.querySelectorAll('.att-subtab').forEach(s => s.classList.toggle('active', s.dataset.att === t)); renderAttivita(); }
-
+function setAttTab(t){
+  attTab = t;
+  document.querySelectorAll('.att-subtab').forEach(s => s.classList.toggle('active', s.dataset.att === t));
+  renderAttivita();
+}
 function raccogliAtt(){
   const t = [], seen = {};
   const push = (a, extra) => { if(seen[a.id]) return; seen[a.id] = 1; t.push(Object.assign({}, a, extra)); };
@@ -1706,25 +1600,18 @@ function raccogliAtt(){
     const r = p.ruoli||[];
     push(a, { entTipo:'persona', entId:p.id, entTitolo:titoloPersona(p), entStatoRR:r.indexOf('ACQUIRENTE')>=0?p.statoRR:null, entTipoPersona:r.indexOf('ACQUIRENTE')>=0?'acquirente':r.indexOf('PROFESSIONISTA')>=0?'professionista':'prop' });
   }));
-  /* punto 4: attività eseguite non devono restare in "scadute" */
   const done = new Set();
   t.forEach(a => { if(a.tipo === 'da_fare' && a.completata) done.add(a.id); });
   return t.map(a => done.has(a.id) && a.tipo === 'da_fare' ? Object.assign({}, a, { tipo:'fatta', completata:true }) : a);
 }
-
 function contaAtt(){
   const t = raccogliAtt();
   const o = new Date(); o.setHours(0,0,0,0);
   const d = new Date(o); d.setDate(d.getDate()+1);
   let co = 0, cs = 0, cp = 0;
-  t.forEach(a => {
-    if(a.tipo !== 'da_fare' || a.completata) return;
-    const x = new Date(a.dataPrevista);
-    if(x < o) cs++; else if(x < d) co++; else cp++;
-  });
+  t.forEach(a => { if(a.tipo !== 'da_fare' || a.completata) return; const x = new Date(a.dataPrevista); if(x < o) cs++; else if(x < d) co++; else cp++; });
   return { oggi:co, scadute:cs, prossime:cp };
 }
-
 function aggiornaBadgeAttivita(){
   const c = contaAtt();
   ['oggi','scadute','prossime'].forEach(k => { const e = document.getElementById('att-num-'+k); if(e) e.textContent = c[k]; });
@@ -1733,7 +1620,6 @@ function aggiornaBadgeAttivita(){
   if(b){ if(u > 0){ b.textContent = u; b.classList.add('show'); } else b.classList.remove('show'); }
   document.querySelectorAll('.att-subtab').forEach(s => s.classList.toggle('active', s.dataset.att === attTab));
 }
-
 function renderAttivita(){
   const c = document.getElementById('lista-attivita'); if(!c) return;
   aggiornaBadgeAttivita();
@@ -1747,12 +1633,12 @@ function renderAttivita(){
   t.sort(cmpAtt);
   if(!t.length){ c.innerHTML = `<div class="empty">${ico('check',28)}Nessuna attività</div>`; return; }
   const g = {};
-  t.forEach(a => { const k = a.entTipo + ':' + a.entId; if(!g[k]) g[k] = { entTipo:a.entTipo, entId:a.entId, entTitolo:a.entTitolo, entStato:a.entStato, entVilla:a.entVilla, entStatoRR:a.entStatoRR, entTipoPersona:a.entTipoPersona, items:[] }; g[k].items.push(a); });
+  t.forEach(a => { const k = a.entTipo+':'+a.entId; if(!g[k]) g[k] = { entTipo:a.entTipo, entId:a.entId, entTitolo:a.entTitolo, entStato:a.entStato, entVilla:a.entVilla, entStatoRR:a.entStatoRR, entTipoPersona:a.entTipoPersona, items:[] }; g[k].items.push(a); });
   const ga = Object.keys(g).map(k => g[k]);
   ga.sort((a,b) => Math.min.apply(null, a.items.map(x => new Date(dataAtt(x)).getTime())) - Math.min.apply(null, b.items.map(x => new Date(dataAtt(x)).getTime())));
   let h = '';
   ga.forEach(gg => {
-    const k = gg.entTipo + ':' + gg.entId, e = !!attEsp[k];
+    const k = gg.entTipo+':'+gg.entId, e = !!attEsp[k];
     const ic = gg.entTipo === 'immobile' ? (gg.entVilla ? ico('villa',17) : iconaCondo(17)) : ico('utente',17);
     let be = '';
     if(gg.entTipo === 'immobile') be = `<span class="badge badge-${gg.entStato}">${gg.entStato}</span>`;
@@ -1805,7 +1691,7 @@ function selEntAtt(t, id){
   else { personaAperta = id; setTimeout(apriNuovaAttivitaPersona, 80); }
 }
 
-/* ---------- APPUNTAMENTI ---------- */
+/* --- APPUNTAMENTI --- */
 const fmtDTCompleto = iso => { const d = new Date(iso); const g = ['Dom','Lun','Mar','Mer','Gio','Ven','Sab']; const m = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic']; return `${g[d.getDay()]} ${d.getDate()} ${m[d.getMonth()]} · ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
 const coloreTipo = t => t && t.colore ? t.colore : 'var(--blu)';
 const prossimoApp = () => { const ad = new Date().toISOString(); return (DB.appuntamenti||[]).filter(a => a.dataInizio >= ad && a.stato !== 'annullato').sort((a,b) => a.dataInizio.localeCompare(b.dataInizio))[0] || null; };
@@ -1837,7 +1723,6 @@ function googleCal(a){
 function apriNuovoAppuntamentoGlobale(){ apriSelezioneTipoApp(null, null); }
 function apriNuovoAppuntamentoImmobile(iid){ const i = DB.immobili.find(x => x.id === iid); apriSelezioneTipoApp(i, null); }
 function apriNuovoAppuntamentoPersona(pid){ const p = trovaPersona(pid); apriSelezioneTipoApp(null, p); }
-
 function tipiValidi(im, per){
   return TIPI_APP.filter(t => {
     if(t.sezione === 'ufficio') return true;
@@ -1895,8 +1780,6 @@ function selTipoApp(s){
   }
   apriFormApp(im, per, t);
 }
-
-/* ---------- PICKER ---------- */
 window._pickerCb = null;
 window._pickerSavedParent = null;
 function apriPicker(te, cb, sigla){
@@ -1921,8 +1804,7 @@ function apriPicker(te, cb, sigla){
 }
 function annullaPicker(){
   const saved = window._pickerSavedParent;
-  window._pickerSavedParent = null;
-  window._pickerCb = null;
+  window._pickerSavedParent = null; window._pickerCb = null;
   if(saved){
     document.getElementById('modal-title').innerHTML = saved.title;
     document.getElementById('modal-body').innerHTML = saved.body;
@@ -1957,8 +1839,7 @@ function cercaPicker(te, q, sigla){
   h += '</div>'; c.innerHTML = h;
 }
 function selPicker(t, id){
-  const cb = window._pickerCb;
-  const saved = window._pickerSavedParent;
+  const cb = window._pickerCb; const saved = window._pickerSavedParent;
   window._pickerCb = null; window._pickerSavedParent = null;
   if(!cb) return;
   const entity = t === 'immobile' ? DB.immobili.find(x => x.id === id) : trovaPersona(id);
@@ -1969,8 +1850,6 @@ function selPicker(t, id){
   } else chiudiModal();
   setTimeout(() => cb(entity), 40);
 }
-
-/* ---------- TITOLO APP ---------- */
 function titoloApp(t, im, per){
   if(!t || t.senza_tag) return '';
   const p = im ? propPrinc(im) : null;
@@ -1984,8 +1863,6 @@ function titoloApp(t, im, per){
   if(per) return `${s} - ${np}${tp?' '+tp:''}`;
   return s;
 }
-
-/* ---------- FORM APP ---------- */
 function apriFormApp(im, per, tipo){
   window._appIm = im; window._appPe = per; window._appTp = tipo;
   const iu = !!(tipo && tipo.senza_tag);
@@ -2000,9 +1877,7 @@ function apriFormApp(im, per, tipo){
   let h = '';
   if(im) h += `<div class="card" style="padding:10px 12px;margin-bottom:8px;"><div style="font-size:13px;font-weight:600;">${esc(titoloImmobile(im))}</div></div>`;
   if(per) h += `<div class="card" style="padding:10px 12px;margin-bottom:8px;"><div style="font-size:13px;font-weight:600;">${esc(titoloPersona(per))}</div></div>`;
-  if(isZona){
-    h += `<div style="margin-bottom:8px;"><label class="form-label">Zona</label><select class="form-select" id="ap-zona" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="">—</option>${OPT_ZONE.map(z => `<option value="${esc(z)}">${esc(z)}</option>`).join('')}</select></div>`;
-  }
+  if(isZona) h += `<div style="margin-bottom:8px;"><label class="form-label">Zona</label><select class="form-select" id="ap-zona" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="">—</option>${OPT_ZONE.map(z => `<option value="${esc(z)}">${esc(z)}</option>`).join('')}</select></div>`;
   h += '<div class="form-group">';
   h += `<div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="ap-titolo" value="${esc(ti)}"></div>`;
   h += `<div class="form-row"><label class="form-label">Inizio</label><input class="form-input" type="datetime-local" step="1" id="ap-inizio" value="${isoLocalInput(iD.toISOString())}" onchange="syncFineNew()"></div>`;
@@ -2058,8 +1933,8 @@ function apriSchedaApp(id){
   if(a.luogo) h += `<div class="info-row" style="padding:10px 14px;border-bottom:1px solid var(--bd);"><span class="label">Luogo</span><span class="value">${esc(a.luogo)}</span></div>`;
   if(a.note) h += `<div class="info-row" style="padding:10px 14px;"><span class="label">Note</span><span class="value">${esc(a.note)}</span></div>`;
   h += '</div>';
-  if(im) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="chiudiModal();setTimeout(()=>apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`;
-  if(per) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="chiudiModal();setTimeout(()=>apriSchedaPersona('${per.id}'),100)"><span class="txt">${esc(titoloPersona(per))}</span></div>`;
+  if(im) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`;
+  if(per) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${per.id}'),100)"><span class="txt">${esc(titoloPersona(per))}</span></div>`;
   const passato = new Date(a.dataFine) < new Date();
   const em = !!t.esito_obbligatorio && !a.esito && a.stato !== 'eseguito';
   if((a.stato !== 'eseguito' && a.stato !== 'annullato' && passato && t.esiti) || em) h += `<button class="btn btn-primary" onclick="apriChiusuraApp('${a.id}')">${ico('check',15)} Chiudi con esito</button>`;
@@ -2136,50 +2011,29 @@ function salvaModApp(id){
   apriSchedaApp(a.id);
 }
 
-/* ---------- AGENDA ---------- */
-/* ==========================================================================
-   AGENDA — visuale anno / mese / settimana / giorno con pinch-zoom
-   ========================================================================== */
+/* === AGENDA === */
 const GIORNI_B = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 const MESI_L = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 const GIORNI_L = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-
 let calMese = new Date();
 let agState = 'month';
 let agDayYmd = null;
 let agYear = new Date().getFullYear();
 const VIEW_LVL = ['year','month','week','day'];
 
-/* --- Items di un giorno (usati da tutte le visuali) --- */
 function itemsGiorno(y){
   const items = [];
   const apps = (DB.appuntamenti||[]).filter(a => ymd(new Date(a.dataInizio)) === y && a.stato !== 'annullato');
   const atts = raccogliAtt().filter(a => a.tipo === 'da_fare' && !a.completata && ymd(new Date(a.dataPrevista)) === y);
   const libs = (DB.pianificazioni||[]).filter(p => p.data === y);
-  apps.forEach(a => {
-    const t = getTipoApp(a.tipo);
-    items.push({ tipo:a.tipo, testo:a.titolo, ora:pad2(new Date(a.dataInizio).getHours())+':'+pad2(new Date(a.dataInizio).getMinutes()), colore:coloreTipo(t), id:a.id, kind:'app', dataInizio:a.dataInizio, dataFine:a.dataFine });
-  });
-  atts.forEach(a => {
-    items.push({ tipo:'ATT', testo:a.testo, ora:a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours())+':'+pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore:'var(--nt)', id:a.id, kind:'att', entTipo:a.entTipo, entId:a.entId });
-  });
-  libs.forEach(p => {
-    items.push({ tipo:'UFF', testo:p.testo, ora:p.ora || '--:--', colore:'var(--acc)', id:p.id, kind:'lib' });
-  });
-  items.sort((a,b) => {
-    const ta = a.ora === '--:--' ? '99:99' : a.ora;
-    const tb = b.ora === '--:--' ? '99:99' : b.ora;
-    return ta.localeCompare(tb);
-  });
+  apps.forEach(a => { const t = getTipoApp(a.tipo); items.push({ tipo:a.tipo, testo:a.titolo, ora:pad2(new Date(a.dataInizio).getHours())+':'+pad2(new Date(a.dataInizio).getMinutes()), colore:coloreTipo(t), id:a.id, kind:'app', dataInizio:a.dataInizio, dataFine:a.dataFine }); });
+  atts.forEach(a => { items.push({ tipo:'ATT', testo:a.testo, ora:a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours())+':'+pad2(new Date(a.dataPrevista).getMinutes())) : '--:--', colore:'var(--nt)', id:a.id, kind:'att', entTipo:a.entTipo, entId:a.entId }); });
+  libs.forEach(p => { items.push({ tipo:'UFF', testo:p.testo, ora:p.ora || '--:--', colore:'var(--acc)', id:p.id, kind:'lib' }); });
+  items.sort((a,b) => { const ta = a.ora === '--:--' ? '99:99' : a.ora; const tb = b.ora === '--:--' ? '99:99' : b.ora; return ta.localeCompare(tb); });
   return items;
 }
-
-/* --- Settimana corrente mostrata nella sidebar (mini-agenda in home) --- */
 let settCorrente = new Date();
-function cambiaSettimana(d){
-  settCorrente = d === 0 ? new Date() : new Date(settCorrente.getTime() + d*7*24*60*60*1000);
-  aggiornaAgendaSettimanale();
-}
+function cambiaSettimana(d){ settCorrente = d === 0 ? new Date() : new Date(settCorrente.getTime() + d*7*24*60*60*1000); aggiornaAgendaSettimanale(); }
 function aggiornaAgendaSettimanale(){
   const g = document.getElementById('agenda-grid'); if(!g) return;
   const b = new Date(settCorrente); const gi = b.getDay(); const df = gi === 0 ? -6 : 1-gi;
@@ -2205,10 +2059,8 @@ function aggiornaAgendaSettimanale(){
   }
   g.innerHTML = h;
 }
-
-/* --- Apertura / navigazione pagina agenda --- */
 function apriAgendaPage(){
-  agState = 'month';                       // si apre in visuale mese
+  agState = 'month';
   calMese = new Date();
   agDayYmd = ymd(new Date());
   agYear = new Date().getFullYear();
@@ -2236,100 +2088,38 @@ function shiftAgPeriod(d){
   }
   renderAgendaPage();
 }
-function apriPlanningGiorno(y){
-  agDayYmd = y;
-  agState = 'day';
-  mostraView('view-agenda');
-  renderAgendaPage();
-}
-function vaiOggi(){
-  agDayYmd = ymd(new Date());
-  calMese = new Date();
-  agYear = new Date().getFullYear();
-  renderAgendaPage();
-}
+function apriPlanningGiorno(y){ agDayYmd = y; agState = 'day'; mostraView('view-agenda'); renderAgendaPage(); }
+function vaiOggi(){ agDayYmd = ymd(new Date()); calMese = new Date(); agYear = new Date().getFullYear(); renderAgendaPage(); }
 function apriElemAg(kind, id){
   if(kind === 'app') apriSchedaApp(id);
   else if(kind === 'att'){ const a = raccogliAtt().find(x => x.id === id); if(a) apriAzioniAttGlob(a.id, a.entTipo, a.entId); }
   else if(kind === 'lib') apriAzioniPian(id);
 }
-
-/* --- Scroll helpers --- */
-function scrollAgoNow(){
-  const el = document.getElementById('ag-scroll'); if(!el) return;
-  if(agState !== 'week' && agState !== 'day') return;
-  const n = new Date();
-  el.scrollTop = Math.max(0,(n.getHours()-2)*ORA_H);
-}
-function scrollMM(){
-  const el = document.getElementById('ag-scroll'); if(!el || agState !== 'month') return;
-  const mm = el.querySelector('.ag-mm-month.current');
-  if(mm) el.scrollTop = mm.offsetTop - 10;
-}
-function scrollY(){
-  const el = document.getElementById('ag-scroll'); if(!el || agState !== 'year') return;
-  const nY = new Date().getFullYear();
-  const nM = new Date().getMonth();
-  const ms = el.querySelectorAll('.ag-year-month');
-  if(agYear === nY && ms[nM]) el.scrollTop = ms[nM].offsetTop - 10;
-  else el.scrollTop = 0;
-}
-
-/* --- Render principale --- */
+function scrollAgoNow(){ const el = document.getElementById('ag-scroll'); if(!el) return; if(agState !== 'week' && agState !== 'day') return; const n = new Date(); el.scrollTop = Math.max(0,(n.getHours()-2)*ORA_H); }
+function scrollMM(){ const el = document.getElementById('ag-scroll'); if(!el || agState !== 'month') return; const mm = el.querySelector('.ag-mm-month.current'); if(mm) el.scrollTop = mm.offsetTop - 10; }
+function scrollY(){ const el = document.getElementById('ag-scroll'); if(!el || agState !== 'year') return; const nY = new Date().getFullYear(); const nM = new Date().getMonth(); const ms = el.querySelectorAll('.ag-year-month'); if(agYear === nY && ms[nM]) el.scrollTop = ms[nM].offsetTop - 10; else el.scrollTop = 0; }
 function renderAgendaPage(){
   const c = document.getElementById('agenda-page-content'); if(!c) return;
-
-  const inner = agState === 'year'  ? htmlYear()
-              : agState === 'month' ? htmlMM()
-              : agState === 'week'  ? htmlWeek()
-              : htmlDay();
-
+  const inner = agState === 'year' ? htmlYear() : agState === 'month' ? htmlMM() : agState === 'week' ? htmlWeek() : htmlDay();
   let meseLbl = '';
   if(agState === 'year') meseLbl = String(agYear);
   else if(agState === 'month') meseLbl = `${MESI_L[calMese.getMonth()]} ${calMese.getFullYear()}`;
-  else {
-    const b = agDayYmd ? daYmd(agDayYmd) : new Date();
-    meseLbl = `${MESI_L[b.getMonth()]} ${b.getFullYear()}`;
-  }
-
-  const header = `
-    <div class="ag-header">
-      <button class="ag-back-btn" onclick="tornaAttivita()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-      <div class="ag-nav-group">
-        <button class="ag-nav-btn" onclick="shiftAgPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-        <div class="ag-month-lbl">${meseLbl}</div>
-        <button class="ag-nav-btn" onclick="shiftAgPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-      </div>
-      <div class="ag-spacer"></div>
-    </div>`;
-
-  /* Barra giorni: visibile solo in visuale DAY (in settimana ha header interno) */
+  else { const b = agDayYmd ? daYmd(agDayYmd) : new Date(); meseLbl = `${MESI_L[b.getMonth()]} ${b.getFullYear()}`; }
+  const header = `<div class="ag-header"><button class="ag-back-btn" onclick="tornaAttivita()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="ag-nav-group"><button class="ag-nav-btn" onclick="shiftAgPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="ag-month-lbl">${meseLbl}</div><button class="ag-nav-btn" onclick="shiftAgPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div><div class="ag-spacer"></div></div>`;
   const strip = agState === 'day' ? weekStripHtml() + '<div class="ag-sep"></div>' : '';
-
   c.innerHTML = `<div class="ag-view">${header}${strip}<div class="ag-content" id="ag-scroll">${inner}</div><div class="ag-bottombar"><button class="ag-pill" onclick="vaiOggi()">Oggi</button></div></div>`;
-
-  /* Scroll differito + eventi affiancati + gestures */
-  setTimeout(scrollAgoNow, 60);  setTimeout(scrollAgoNow, 300);
+  setTimeout(scrollAgoNow, 60); setTimeout(scrollAgoNow, 300);
   setTimeout(scrollMM, 60);
-  setTimeout(scrollY, 60);       setTimeout(scrollY, 300);
+  setTimeout(scrollY, 60); setTimeout(scrollY, 300);
   affiancaEventi();
   attachGestures();
 }
-
-/* --- Eventi simultanei affiancati --- */
 function affiancaEventi(){
   document.querySelectorAll('.ag-day-col').forEach(col => {
-    const ev = [].slice.call(col.children)
-      .filter(e => e.classList.contains('ag-event'))
-      .map(e => ({ e, s:parseFloat(e.style.top)||0, h:parseFloat(e.style.height)||44 }))
-      .sort((a,b) => a.s-b.s || b.h-a.h);
+    const ev = [].slice.call(col.children).filter(e => e.classList.contains('ag-event')).map(e => ({ e, s:parseFloat(e.style.top)||0, h:parseFloat(e.style.height)||44 })).sort((a,b) => a.s-b.s || b.h-a.h);
     let cl = [], cols = [], cend = -1;
     const flush = () => {
-      cl.forEach(x => {
-        x.e.style.left  = `calc(${x.c*100/cols.length}% + 2px)`;
-        x.e.style.width = `calc(${100/cols.length}% - 4px)`;
-        x.e.style.right = 'auto';
-      });
+      cl.forEach(x => { x.e.style.left = `calc(${x.c*100/cols.length}% + 2px)`; x.e.style.width = `calc(${100/cols.length}% - 4px)`; x.e.style.right = 'auto'; });
       cl = []; cols = [];
     };
     ev.forEach(x => {
@@ -2341,16 +2131,11 @@ function affiancaEventi(){
     flush();
   });
 }
-
-/* ============================================================
-   GESTURES: pinch per cambiare visuale, swipe, long-press
-   ============================================================ */
 let lpCurrentYmd = null, lpCurrentOra = null;
 function attachGestures(){
   const el = document.getElementById('agenda-page-content');
   if(!el || el._gesturesAtt) return;
   el._gesturesAtt = true;
-
   let startDist = 0, pinchSwitch = false;
   let tSX = 0, tSY = 0, tST = 0;
   let swipeFired = false, twoF = false;
@@ -2358,10 +2143,8 @@ function attachGestures(){
   let lpPreview = null, lpSlot = null;
   let lpLastX = 0, lpLastY = 0;
   let lpRaf = null;
-
   const dist = (t1,t2) => Math.hypot(t1.clientX-t2.clientX, t1.clientY-t2.clientY);
   const clearLpRaf = () => { if(lpRaf){ try{ cancelAnimationFrame(lpRaf); }catch(e){} lpRaf = null; } };
-
   function cancelLP(){
     if(lpTimer){ clearTimeout(lpTimer); lpTimer = null; }
     if(lpPreview){ try{ lpPreview.remove(); }catch(e){} lpPreview = null; }
@@ -2371,7 +2154,6 @@ function attachGestures(){
     const tl = el.querySelector('.ag-days');
     if(tl) tl.classList.remove('touching-longpress');
   }
-
   function getDayColAt(x, y){
     let node = document.elementFromPoint(x, y);
     while(node && node !== document.body){
@@ -2382,10 +2164,7 @@ function attachGestures(){
   }
   function pickColByX(x){
     const cols = el.querySelectorAll('.ag-day-col');
-    for(let i = 0; i < cols.length; i++){
-      const r = cols[i].getBoundingClientRect();
-      if(x >= r.left && x <= r.right) return cols[i];
-    }
+    for(let i = 0; i < cols.length; i++){ const r = cols[i].getBoundingClientRect(); if(x >= r.left && x <= r.right) return cols[i]; }
     return null;
   }
   function computeTime(col, clientY){
@@ -2414,14 +2193,14 @@ function attachGestures(){
     if(endH > 23){ endH = 23; endM = 59; }
     lpPreview.textContent = `${pad2(or.h)}:${pad2(or.m)} – ${pad2(endH)}:${pad2(endM)}`;
     lpPreview.style.left = clientX + 'px';
-    lpPreview.style.top  = Math.max(60, clientY-46) + 'px';
+    lpPreview.style.top = Math.max(60, clientY-46) + 'px';
     if(lpSlot && lpSlot.parentNode !== col){ try{ lpSlot.remove(); }catch(e){} lpSlot = null; }
     if(!lpSlot){
       lpSlot = document.createElement('div');
       lpSlot.className = 'ag-lp-slot';
       col.appendChild(lpSlot);
     }
-    lpSlot.style.top    = (or.h*ORA_H + or.m*(ORA_H/60)) + 'px';
+    lpSlot.style.top = (or.h*ORA_H + or.m*(ORA_H/60)) + 'px';
     lpSlot.style.height = ORA_H + 'px';
     lpCurrentYmd = or.ymd; lpCurrentOra = or;
     return or;
@@ -2442,12 +2221,9 @@ function attachGestures(){
     }
     lpRaf = requestAnimationFrame(autoScrollFrame);
   }
-
   el.addEventListener('touchstart', e => {
-    if(e.touches.length === 2){
-      twoF = true; startDist = dist(e.touches[0], e.touches[1]);
-      pinchSwitch = false; cancelLP();
-    } else if(e.touches.length === 1){
+    if(e.touches.length === 2){ twoF = true; startDist = dist(e.touches[0], e.touches[1]); pinchSwitch = false; cancelLP(); }
+    else if(e.touches.length === 1){
       twoF = false;
       tSX = e.touches[0].clientX; tSY = e.touches[0].clientY;
       tST = Date.now(); swipeFired = false;
@@ -2472,7 +2248,6 @@ function attachGestures(){
       }
     }
   }, { passive:true });
-
   el.addEventListener('touchmove', e => {
     if(lpTimer && lpStart && e.touches.length >= 1){
       const mdx = Math.abs(e.touches[0].clientX - lpStart.x);
@@ -2485,25 +2260,21 @@ function attachGestures(){
       updateLp(lpLastX, lpLastY);
       return;
     }
-    /* PINCH: cambia visuale */
     if(e.touches.length === 2 && twoF && startDist > 0 && !pinchSwitch){
       const d = dist(e.touches[0], e.touches[1]); const r = d/startDist;
       let idx = VIEW_LVL.indexOf(agState); if(idx < 0) idx = 1;
       if(r > 1.30 && idx < VIEW_LVL.length-1){
-        pinchSwitch = true;
-        agState = VIEW_LVL[idx+1];
+        pinchSwitch = true; agState = VIEW_LVL[idx+1];
         if(!agDayYmd) agDayYmd = ymd(new Date());
         if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(_){} }
         startDist = 0; renderAgendaPage();
       } else if(r < 0.72 && idx > 0){
-        pinchSwitch = true;
-        agState = VIEW_LVL[idx-1];
+        pinchSwitch = true; agState = VIEW_LVL[idx-1];
         if(navigator.vibrate){ try{ navigator.vibrate(12); }catch(_){} }
         startDist = 0; renderAgendaPage();
       }
       return;
     }
-    /* SWIPE orizzontale per cambiare periodo */
     if(e.touches.length === 1 && !twoF && !swipeFired && !lpFired && (agState === 'day' || agState === 'week')){
       const dx = e.touches[0].clientX - tSX, dy = e.touches[0].clientY - tSY, dt = Date.now() - tST;
       if(Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy)*1.8 && dt < 600){
@@ -2513,14 +2284,12 @@ function attachGestures(){
       }
     }
   }, { passive:false });
-
   el.addEventListener('touchend', e => {
     if(e.touches.length < 2){ startDist = 0; pinchSwitch = false; twoF = false; }
     if(e.touches.length === 0){
       swipeFired = false;
       if(lpFired){
-        const ymd2 = lpCurrentYmd;
-        const or = lpCurrentOra;
+        const ymd2 = lpCurrentYmd; const or = lpCurrentOra;
         cancelLP();
         if(ymd2 && or){
           const dt2 = new Date(`${ymd2}T${pad2(or.h)}:${pad2(or.m)}:00`);
@@ -2530,17 +2299,8 @@ function attachGestures(){
       } else cancelLP();
     }
   }, { passive:true });
-
-  el.addEventListener('touchcancel', () => {
-    startDist = 0; pinchSwitch = false; twoF = false; swipeFired = false; cancelLP();
-  }, { passive:true });
+  el.addEventListener('touchcancel', () => { startDist = 0; pinchSwitch = false; twoF = false; swipeFired = false; cancelLP(); }, { passive:true });
 }
-
-/* ============================================================
-   VISTE
-   ============================================================ */
-
-/* Barra giorni (usata in visuale DAY) */
 function weekStripHtml(){
   const b = agDayYmd ? daYmd(agDayYmd) : new Date();
   const dw = b.getDay(); const df = dw === 0 ? -6 : 1-dw;
@@ -2553,17 +2313,13 @@ function weekStripHtml(){
     const c = `ag-ws-day${y===t?' today':''}${y===sy?' sel':''}${fest?' festivo':''}`;
     h += `<div class="${c}" onclick="clickGiorno('${y}')"><div class="ag-ws-name">${GIORNI_B[i]}</div><div class="ag-ws-num">${d.getDate()}</div></div>`;
   }
-  h += '</div>';
-  return h;
+  h += '</div>'; return h;
 }
-
-/* --- Visuale ANNO: 12 mini-calendari --- */
 function htmlYear(){
   const t = ymd(new Date()); const sy = agDayYmd || '';
   let h = '<div style="padding:4px 12px 40px;">';
   for(let m = 0; m < 12; m++){
-    const fd = new Date(agYear, m, 1);
-    let sd = fd.getDay(); sd = sd === 0 ? 6 : sd-1;
+    const fd = new Date(agYear, m, 1); let sd = fd.getDay(); sd = sd === 0 ? 6 : sd-1;
     const s = new Date(fd); s.setDate(fd.getDate()-sd);
     h += `<div class="ag-year-month"><div class="ag-year-name">${MESI_L[m]}</div><div class="ag-year-grid">`;
     for(let i = 0; i < 42; i++){
@@ -2577,11 +2333,8 @@ function htmlYear(){
     }
     h += '</div></div>';
   }
-  h += '</div>';
-  return h;
+  h += '</div>'; return h;
 }
-
-/* --- Visuale MESE: mese corrente + 2 precedenti + 9 successivi scrollabili --- */
 function htmlMM(){
   const t = ymd(new Date()); const sy = agDayYmd || '';
   const cy = calMese.getFullYear(); const cm = calMese.getMonth();
@@ -2591,8 +2344,7 @@ function htmlMM(){
     const y = cy + Math.floor(am/12);
     const m = ((am%12)+12)%12;
     const ic = off === 0;
-    const fd = new Date(y, m, 1);
-    let sd = fd.getDay(); sd = sd === 0 ? 6 : sd-1;
+    const fd = new Date(y, m, 1); let sd = fd.getDay(); sd = sd === 0 ? 6 : sd-1;
     const s = new Date(fd); s.setDate(fd.getDate()-sd);
     h += `<div class="ag-mm-month${ic?' current':''}"><div class="ag-mm-name">${MESI_L[m]} ${y}</div><div class="ag-mm-weekdays">`;
     ['L','M','M','G','V','S','D'].forEach(x => h += `<div>${x}</div>`);
@@ -2600,10 +2352,7 @@ function htmlMM(){
     for(let i = 0; i < 42; i++){
       const d = new Date(s); d.setDate(s.getDate()+i);
       const y2 = ymd(d); const out = d.getMonth() !== m;
-      if(out && (i < 7 || (i >= 35 && d.getDate() > 7))){
-        h += '<div class="ag-mm-cell" style="opacity:.15;"></div>';
-        continue;
-      }
+      if(out && (i < 7 || (i >= 35 && d.getDate() > 7))){ h += '<div class="ag-mm-cell" style="opacity:.15;"></div>'; continue; }
       const items = itemsGiorno(y2); const fest = isFestivo(y2);
       h += `<div class="ag-mm-cell${y2===t?' today':''}${y2===sy?' selected':''}${fest?' festivo':''}" onclick="clickGiorno('${y2}')"><div class="ag-mm-num">${d.getDate()}</div>`;
       if(items.length){
@@ -2615,18 +2364,13 @@ function htmlMM(){
     }
     h += '</div></div>';
   }
-  h += '</div>';
-  return h;
+  h += '</div>'; return h;
 }
-
-/* --- Visuale SETTIMANA: header giorni + timeline oraria --- */
 function htmlWeek(){
   const b = agDayYmd ? daYmd(agDayYmd) : new Date();
   const dw = b.getDay(); const df = dw === 0 ? -6 : 1-dw;
   const s = new Date(b); s.setDate(b.getDate()+df);
   const t = ymd(new Date()); const now = new Date();
-
-  /* Barra giorni in alto (sticky) */
   let h = '<div style="display:flex;padding-left:48px;padding-top:4px;padding-bottom:4px;background:var(--bg);flex-shrink:0;border-bottom:1px solid var(--bd);">';
   for(let i = 0; i < 7; i++){
     const d0 = new Date(s); d0.setDate(s.getDate()+i);
@@ -2635,8 +2379,6 @@ function htmlWeek(){
     h += `<div style="flex:1;text-align:center;min-width:0;${y0===t?'color:var(--acc);font-weight:700;':''}"><div style="font-size:9px;font-weight:700;text-transform:uppercase;${stcol}">${GIORNI_B[i]}</div><div style="font-size:14px;font-weight:500;">${d0.getDate()}</div></div>`;
   }
   h += '</div>';
-
-  /* Timeline */
   h += '<div class="ag-timeline"><div class="ag-hours-col">';
   for(let hr = 0; hr < 24; hr++) h += `<div class="ag-hour-label">${pad2(hr)}</div>`;
   h += '</div><div class="ag-days">';
@@ -2654,17 +2396,11 @@ function htmlWeek(){
       if(it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine)-new Date(it.dataInizio))/60000) * (ORA_H/60);
       h += `<div class="ag-event" style="top:${top}px;height:${dur}px;border-left-color:${it.colore};" onclick="event.stopPropagation();apriElemAg('${it.kind}','${it.id}')"><div class="ag-event-title">${esc(it.tipo)}</div><div class="ag-event-time">${it.ora}</div></div>`;
     });
-    if(y2 === t){
-      const lt = (now.getHours()*60+now.getMinutes()) * (ORA_H/60);
-      h += `<div class="ag-now-line" style="top:${lt}px;"><div class="ag-now-dot"></div></div>`;
-    }
+    if(y2 === t){ const lt = (now.getHours()*60+now.getMinutes()) * (ORA_H/60); h += `<div class="ag-now-line" style="top:${lt}px;"><div class="ag-now-dot"></div></div>`; }
     h += '</div>';
   }
-  h += '</div></div>';
-  return h;
+  h += '</div></div>'; return h;
 }
-
-/* --- Visuale GIORNO: singola colonna timeline --- */
 function htmlDay(){
   const b = agDayYmd ? daYmd(agDayYmd) : new Date();
   const y = ymd(b); const it_ = y === ymd(new Date());
@@ -2681,19 +2417,81 @@ function htmlDay(){
     if(it.kind === 'app' && it.dataFine) dur = Math.max(30, (new Date(it.dataFine)-new Date(it.dataInizio))/60000) * (ORA_H/60);
     h += `<div class="ag-event" style="top:${top}px;height:${dur}px;border-left-color:${it.colore};" onclick="event.stopPropagation();apriElemAg('${it.kind}','${it.id}')"><div class="ag-event-title">${esc(it.tipo)}</div><div class="ag-event-time">${it.ora} · ${esc(it.testo.slice(0,32))}</div></div>`;
   });
-  if(it_){
-    const lt = (new Date().getHours()*60+new Date().getMinutes()) * (ORA_H/60);
-    h += `<div class="ag-now-line" style="top:${lt}px;"><div class="ag-now-dot"></div></div>`;
+  if(it_){ const lt = (new Date().getHours()*60+new Date().getMinutes()) * (ORA_H/60); h += `<div class="ag-now-line" style="top:${lt}px;"><div class="ag-now-dot"></div></div>`; }
+  h += '</div></div></div>'; return h;
+}
+
+/* --- PLANNING --- */
+let planYmd = null, planPageYmd = null;
+const currentPlanYmd = () => planYmd || ymd(new Date());
+function cambiaGiornoPlanning(d){ if(d === 0) planYmd = null; else { const c = daYmd(currentPlanYmd()); c.setDate(c.getDate()+d); planYmd = ymd(c); } renderPlanning(); }
+function planPerData(y){
+  const apps = (DB.appuntamenti||[]).filter(a => ymd(new Date(a.dataInizio)) === y && a.stato !== 'annullato').sort((a,b) => a.dataInizio.localeCompare(b.dataInizio));
+  const att = raccogliAtt().filter(a => a.tipo === 'da_fare' && !a.completata && ymd(new Date(a.dataPrevista)) === y).sort(cmpAtt);
+  const lib = (DB.pianificazioni||[]).filter(p => p.data === y);
+  return { apps, att, lib };
+}
+function renderPlanning(){
+  const c = document.getElementById('planning-contenuto'); if(!c) return;
+  const y = currentPlanYmd(); const d = daYmd(y);
+  const oggi = ymd(new Date()) === y;
+  const tl = document.getElementById('planning-titolo');
+  if(tl) tl.textContent = (oggi ? 'Oggi · ' : '') + GIORNI_B[(d.getDay()+6)%7] + ' ' + d.getDate();
+  const p = planPerData(y);
+  const tot = p.apps.length + p.att.length + p.lib.length;
+  let h = '';
+  if(!tot) h = '<div class="planning-empty">Nessun evento</div>';
+  else {
+    p.apps.forEach(a => { const o = pad2(new Date(a.dataInizio).getHours())+':'+pad2(new Date(a.dataInizio).getMinutes()); const t = getTipoApp(a.tipo); h += `<div class="planning-item" style="border-left-color:${coloreTipo(t)};" onclick="event.stopPropagation();apriSchedaApp('${a.id}')"><span class="pi-ora">${o}</span><div class="pi-testo">${esc(a.titolo.slice(0,40))}</div></div>`; });
+    p.att.forEach(a => { const o = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours())+':'+pad2(new Date(a.dataPrevista).getMinutes())) : '--'; h += `<div class="planning-item attivita" onclick="event.stopPropagation();apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}')"><span class="pi-ora">${o}</span><div class="pi-testo">${esc(a.testo.slice(0,40))}</div><span class="pi-tipo">ATT</span></div>`; });
+    p.lib.forEach(p2 => { h += `<div class="planning-item libera${p2.completata?' fatta':''}" onclick="event.stopPropagation();apriAzioniPian('${p2.id}')"><span class="pi-ora">${p2.ora||'--'}</span><div class="pi-testo">${esc(p2.testo.slice(0,40))}</div></div>`; });
   }
-  h += '</div></div></div>';
-  return h;
-}<script>
+  c.innerHTML = h;
+}
+function apriAzioniPian(id){
+  const p = (DB.pianificazioni||[]).find(x => x.id === id); if(!p) return;
+  let h = `<div class="card" style="padding:12px;"><div style="font-size:14px;">${esc(p.testo)}</div></div>`;
+  if(!p.completata) h += `<button class="btn btn-primary" onclick="complPian('${p.id}')">${ico('check',15)} Fatta</button>`;
+  else h += `<button class="btn btn-secondary" onclick="riapriPian('${p.id}')">${ico('aggiorna',15)} Riapri</button>`;
+  h += `<button class="btn btn-danger" onclick="elimPian('${p.id}')">${ico('cestino',15)} Elimina</button>`;
+  h += '<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>';
+  apriModal('Ufficio', h);
+}
+function complPian(id){ const p = (DB.pianificazioni||[]).find(x => x.id === id); if(!p) return; p.completata = true; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if(planPageYmd) setTimeout(renderPlanningPage, 100); }
+function riapriPian(id){ const p = (DB.pianificazioni||[]).find(x => x.id === id); if(!p) return; p.completata = false; p.updatedAt = new Date().toISOString(); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if(planPageYmd) setTimeout(renderPlanningPage, 100); }
+function elimPian(id){ if(!confirm('Eliminare?')) return; DB.pianificazioni = DB.pianificazioni.filter(x => x.id !== id); Storage.save(DB); chiudiModal(); renderPlanning(); renderAgendaPage(); if(planPageYmd) setTimeout(renderPlanningPage, 100); }
+function apriPlanningPage(y){ planPageYmd = y || currentPlanYmd(); mostraView('view-planning'); renderPlanningPage(); }
+function cambiaGiornoPlanningPage(d){ if(d === 0) planPageYmd = ymd(new Date()); else { const c = daYmd(planPageYmd); c.setDate(c.getDate()+d); planPageYmd = ymd(c); } renderPlanningPage(); }
+function renderPlanningPage(){
+  const c = document.getElementById('planning-page-content'); if(!c) return;
+  const y = planPageYmd || ymd(new Date()); const d = daYmd(y);
+  const p = planPerData(y); const tot = p.apps.length + p.att.length + p.lib.length;
+  const header = `<div class="ag-header"><button class="ag-back-btn" onclick="tornaAttivita()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="ag-nav-group"><button class="ag-nav-btn" onclick="cambiaGiornoPlanningPage(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="ag-month-lbl">${MESI_L[d.getMonth()]}</div><button class="ag-nav-btn" onclick="cambiaGiornoPlanningPage(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div><div class="ag-spacer"></div></div>`;
+  const strip = `<div style="text-align:center;padding:8px;"><div style="font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;">${GIORNI_L[d.getDay()]}</div><div style="font-size:26px;font-weight:800;color:var(--tx);line-height:1.2;">${d.getDate()}</div></div><div class="ag-sep"></div>`;
+  let body = '';
+  if(!tot) body = '<div class="planning-empty" style="padding:28px 14px;">Nessun evento</div>';
+  else {
+    body += '<div style="padding:10px 12px;">';
+    p.apps.forEach(a => body += renderItemApp(a));
+    if(p.att.length){
+      if(p.apps.length) body += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 6px;">Da fare</div>';
+      p.att.forEach(a => { const o = a.dataPrevista ? (pad2(new Date(a.dataPrevista).getHours())+':'+pad2(new Date(a.dataPrevista).getMinutes())) : '--:--'; body += `<div class="att-item" style="background:var(--card);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:5px;padding:10px 12px;border-left:3px solid var(--nt);" onclick="apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}')"><span class="att-dot oggi"></span><div class="att-body"><div class="att-data oggi">${o}</div><div class="att-testo">${esc(a.testo)}</div></div></div>`; });
+    }
+    if(p.lib.length){
+      body += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 6px;">Ufficio</div>';
+      p.lib.forEach(p2 => { body += `<div class="att-item" style="background:var(--card);border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:5px;padding:10px 12px;border-left:3px solid var(--acc);${p2.completata?'opacity:.55;':''}" onclick="apriAzioniPian('${p2.id}')"><div class="att-body"><div class="att-data" style="color:${p2.completata?'var(--ink)':'var(--acc)'};">${p2.ora||'--:--'}</div><div class="att-testo">${esc(p2.testo)}</div></div></div>`; });
+    }
+    body += '</div>';
+  }
+  c.innerHTML = `<div class="ag-view">${header}${strip}<div class="ag-content">${body}</div></div>`;
+}
+</script>
+
+<script>
 'use strict';
 /* ==========================================================================
-   ARANJÒ — IMMOBILI, CONDOMINI, DOCUMENTI, PREZZI
+   IMMOBILI + CONDOMINI + PREZZI + DOCUMENTI + MAPPA
    ========================================================================== */
-
-/* ---------- SCHEDA IMMOBILE — struttura principale ---------- */
 function apriScheda(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
   immobileAperto = id;
@@ -2705,8 +2503,6 @@ function apriScheda(id){
   const dc = (co && DB.condomini && DB.condomini[co]) || {};
   const hc = !!(im.lat && im.lng);
   const prezzoMercato = im.prezzi && parseNum(im.prezzi.mercato);
-
-  /* --- BOX DETTAGLI PRINCIPALI --- */
   let h = '<div class="scheda-top">';
   h += '<div class="top-badges">';
   h += `<span class="badge badge-${im.stato}">${im.stato}</span>`;
@@ -2727,19 +2523,15 @@ function apriScheda(id){
   h += `<button class="btn btn-secondary btn-icon" onclick="apriModifica()">${ico('modifica',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" onclick="apriCambiaStato()">${ico('aggiorna',15)}</button>`;
   h += '</div></div>';
-
-  /* --- BOX ATTIVITÀ --- */
   h += renderBoxAttivita(im, true);
-
-  /* --- BOX PREZZI (NT/INK/VND) --- */
+  /* PREZZI */
   if(['NT','INK','VND'].includes(im.stato)){
     const z = im.prezzi || {};
-    const rows = [];
     const fields = im.stato === 'NT' ? [['richiesto','Prezzo richiesto'],['valutato','Prezzo valutato'],['omi','Prezzo OMI']]
       : im.stato === 'INK' ? [['richiesto','Prezzo richiesto'],['valutato','Prezzo valutato'],['mercato','Prezzo al mercato'],['omi','Prezzo OMI'],['ultimo','Ultimo prezzo']]
       : [['richiesto','Prezzo richiesto'],['valutato','Prezzo valutato'],['mercato','Prezzo al mercato'],['venduto','Prezzo venduto'],['omi','Prezzo OMI']];
+    const rows = [];
     fields.forEach(([k,lbl]) => { if(z[k]) rows.push(`<div class="info-row"><span class="label">${lbl}</span><span class="value">${parseNum(z[k]).toLocaleString('it-IT')} €</span></div>`); });
-    /* % differenze */
     const pct = (a,b) => { a = parseNum(a); b = parseNum(b); if(a === null || b === null || !a) return null; const v = (a-b)/a*100; return (v>0?'+':'')+v.toFixed(1).replace('.',',')+'%'; };
     if(z.richiesto && z.valutato){ const p = pct(z.richiesto, z.valutato); if(p) rows.push(`<div class="info-row"><span class="label">Richiesto / valutato</span><span class="value">${p}</span></div>`); }
     if(z.richiesto && z.ultimo){ const p = pct(z.richiesto, z.ultimo); if(p) rows.push(`<div class="info-row"><span class="label">Trattativa (richiesto / ultimo)</span><span class="value">${p}</span></div>`); }
@@ -2752,12 +2544,10 @@ function apriScheda(id){
       rows.push(`<div class="info-row"><span class="label">Provvigione</span><span class="value">${t}</span></div>`);
       if(z.provvNote) rows.push(`<div class="info-row"><span class="label">Note provv.</span><span class="value">${esc(z.provvNote)}</span></div>`);
     }
-    const body = (rows.length ? rows.join('') : '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Da compilare</div>') +
-      `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriPrezzi('${id}')">${ico('modifica',14)} Modifica prezzi</button>`;
+    const body = (rows.length ? rows.join('') : '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Da compilare</div>') + `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriPrezzi('${id}')">${ico('modifica',14)} Modifica prezzi</button>`;
     h += collapsible('im_prezzi', ico('moneta',13) + ' Prezzi', body);
   }
-
-  /* --- BOX CONDOMINIO --- */
+  /* CONDOMINIO */
   if(!im.villa && co){
     let bodyC = '';
     if(dc.annoCostruzione) bodyC += `<div class="info-row"><span class="label">Anno</span><span class="value">${esc(dc.annoCostruzione)}</span></div>`;
@@ -2769,8 +2559,7 @@ function apriScheda(id){
     bodyC += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaCondominio('${esc(co).replace(/'/g,'')}')">${ico('modifica',14)} Condominio</button>`;
     h += collapsible('im_condo', ico('condominio',13) + ' Condominio', bodyC);
   }
-
-  /* --- BOX CARATTERISTICHE --- */
+  /* CARATTERISTICHE */
   const d = im.dettagli || {};
   const righe = [];
   if(Array.isArray(d.tipologia) && d.tipologia.length) righe.push(['Tipologia', d.tipologia.join(', ')]);
@@ -2802,8 +2591,7 @@ function apriScheda(id){
     const bodyD = righe.map(x => `<div class="info-row"><span class="label">${x[0]}</span><span class="value">${esc(x[1])}</span></div>`).join('');
     h += collapsible('im_det', ico('righello',13) + ' Caratteristiche', bodyD);
   }
-
-  /* --- BOX PROPRIETARI --- */
+  /* PROPRIETARI */
   let bp = '';
   if(props.length){
     props.forEach(pp => {
@@ -2813,16 +2601,13 @@ function apriScheda(id){
   } else bp = '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Nessuno</div>';
   bp += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriGestioneProprietari('${im.id}')">${ico('modifica',14)} Gestisci proprietari</button>`;
   h += collapsible('im_prop', ico('utenti',13) + ' Proprietari', bp, props.length || null);
-
-  /* --- BOX ZONE --- */
+  /* ZONE */
   const ze = zoneEff(im);
   if(ze.length) h += collapsible('im_zone', ico('pin',13) + ' Zone', `<div class="zone-chips">${ze.map(z => `<span class="zone-chip active">${esc(z)}</span>`).join('')}</div>`);
-
-  /* --- BOX DOCUMENTI — solo se ci sono allegati o stato non default --- */
+  /* DOCUMENTI (solo se compilati) */
   if(['NT','INK','VND'].includes(im.stato)){
     const docsConFile = DOCS_RICH.filter(t => im.documenti && im.documenti[t] && im.documenti[t].fileId);
     const dOk = DOCS_RICH.filter(t => im.documenti && im.documenti[t] && im.documenti[t].stato === 'presente').length;
-    /* mostra solo se qualcosa è stato compilato o allegato */
     if(dOk > 0 || docsConFile.length > 0){
       let bodyDocs = '';
       docsConFile.forEach(t => {
@@ -2833,11 +2618,8 @@ function apriScheda(id){
       h += collapsible('im_docs', ico('documento',13) + ' Documenti', bodyDocs, `${dOk}/${DOCS_RICH.length}`);
     }
   }
-
-  /* --- NOTE --- */
   if(im.note) h += collapsible('im_note', ico('nota',13) + ' Note', `<div style="font-size:13px;white-space:pre-wrap;">${esc(im.note)}</div>`);
-
-  /* --- MATCH acquirenti compatibili (solo per NT/INK) --- */
+  /* MATCH */
   if(['NT','INK'].includes(im.stato)){
     try{
       const mm = matchImmobile(im).filter(m => m.score >= 30 && !['ha-comprato','non-attiva','rogitato'].includes(m.persona.statoRR));
@@ -2845,18 +2627,16 @@ function apriScheda(id){
         const mb = mm.slice(0,10).map(m => {
           const cls = m.score >= 70 ? 'high' : m.score >= 40 ? 'mid' : 'low';
           const ko = m.ko && m.ko.length ? `<small>manca: ${m.ko.join(', ')}</small>` : '';
-          return `<div class="match-line" onclick="chiudiModal();setTimeout(()=>apriSchedaPersona('${m.persona.id}'),100)"><div class="ml-name">${esc(nomeCogn(m.persona))}${m.persona.telefono?' · '+m.persona.telefono:''}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
+          return `<div class="match-line" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${m.persona.id}'),100)"><div class="ml-name">${esc(nomeCogn(m.persona))}${m.persona.telefono?' · '+m.persona.telefono:''}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
         }).join('');
         h += collapsible('im_match', ico('target',13) + ' Acquirenti compatibili', mb, mm.length);
       }
     }catch(e){ console.error(e); }
   }
-
   h += `<button class="btn btn-danger" style="margin-top:6px;" onclick="eliminaImmobile()">${ico('cestino',15)} Elimina</button>`;
   apriModal(titoloImmobile(im), h);
 }
 
-/* ---------- ATTIVITÀ SU IMMOBILE/PERSONA ---------- */
 function renderBoxAttivita(ent, isImmobile){
   const att = (ent.attivita || []).slice();
   const oggi = new Date(); oggi.setHours(0,0,0,0);
@@ -2879,8 +2659,6 @@ function renderBoxAttivita(ent, isImmobile){
   h += '</div>';
   return h;
 }
-
-/* ---------- ATTIVITÀ CRUD ---------- */
 function apriNuovaAttivita(){
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="a-t" onchange="aggFormAtt()"><option value="fatta">Fatta</option><option value="da_fare">Da fare</option></select></div></div><div id="a-c"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${immobileAperto}')">Annulla</button><button class="btn btn-primary" onclick="salvaAtt()">Salva</button></div>`;
   apriModal('Attività', h); aggFormAtt();
@@ -2956,8 +2734,7 @@ function apriModificaAtt(tipo, idA){
   const a = ent && (ent.attivita||[]).find(x => x.id === idA); if(!a) return;
   const df = a.tipo === 'da_fare' && !a.completata;
   const back = `${tipo === 'immobile' ? 'apriAzioniAttivita' : 'apriAzioniAttivitaPersona'}('${idA}')`;
-  apriModal('Modifica attività',
-    `<div class="form-group"><div class="form-row"><label class="form-label">${df?'Data prevista':'Data'}</label><input class="form-input" type="datetime-local" step="1" id="ea-d" value="${isoLocalInput(dataAtt(a))}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ea-x">${esc(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="${back}">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAtt('${tipo}','${idA}')">Salva</button></div>`);
+  apriModal('Modifica attività', `<div class="form-group"><div class="form-row"><label class="form-label">${df?'Data prevista':'Data'}</label><input class="form-input" type="datetime-local" step="1" id="ea-d" value="${isoLocalInput(dataAtt(a))}"></div><div class="form-row"><label class="form-label">Testo</label><textarea class="form-textarea" id="ea-x">${esc(a.testo)}</textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="${back}">Annulla</button><button class="btn btn-primary" onclick="salvaModificaAtt('${tipo}','${idA}')">Salva</button></div>`);
 }
 function salvaModificaAtt(tipo, idA){
   const tx = (document.getElementById('ea-x').value || '').trim(); const d = document.getElementById('ea-d').value;
@@ -3056,8 +2833,6 @@ function syncAttToPersone(iid, attId, action){
     p.updatedAt = new Date().toISOString();
   });
 }
-
-/* ---------- CAMBIA STATO ---------- */
 function apriCambiaStato(){
   const i = DB.immobili.find(x => x.id === immobileAperto); if(!i) return;
   const o = ['IMM','PA','NT','INK','VND']; const x = o.indexOf(i.stato);
@@ -3075,7 +2850,6 @@ function eseguiCambioStato(ns){
   i.attivita.push({ id:uid(), seq:seq(), data:new Date().toISOString(), tipo:'fatta', testo:`Cambio stato: ${v} → ${ns}`, completata:true });
   i.updatedAt = new Date().toISOString();
   Storage.save(DB); renderListaImmobili(); apriScheda(i.id);
-  /* chiedi i prezzi per NT/INK/VND se non compilati */
   if(['NT','INK','VND'].includes(ns)){
     const z = i.prezzi || {};
     const hasAny = ['richiesto','valutato','mercato','omi','ultimo','venduto'].some(k => z[k]);
@@ -3089,6 +2863,14 @@ function eliminaImmobile(){
   Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita();
   if(map) aggiornaMappa();
 }
+function nextZ(im){
+  const c = condoDi(im); const used = {};
+  DB.immobili.forEach(x => {
+    if(x.id === im.id || x.villa || condoDi(x) !== c) return;
+    const n = parseInt(x.z, 10); if(Number.isInteger(n) && n > 0) used[n] = true;
+  });
+  let n = 1; while(used[n]) n++; return n;
+}
 function duplicaImmobile(id){
   const o = DB.immobili.find(x => x.id === id); if(!o) return;
   const c = JSON.parse(JSON.stringify(o));
@@ -3099,17 +2881,8 @@ function duplicaImmobile(id){
   DB.immobili.push(c);
   Storage.save(DB); renderListaImmobili(); apriScheda(c.id);
 }
-/* numero z progressivo */
-function nextZ(im){
-  const c = condoDi(im); const used = {};
-  DB.immobili.forEach(x => {
-    if(x.id === im.id || x.villa || condoDi(x) !== c) return;
-    const n = parseInt(x.z, 10); if(Number.isInteger(n) && n > 0) used[n] = true;
-  });
-  let n = 1; while(used[n]) n++; return n;
-}
 
-/* ---------- PREZZI ---------- */
+/* PREZZI */
 const PREZZI_FIELDS = {
   NT: [['richiesto','Prezzo richiesto'],['valutato','Prezzo valutato'],['omi','Prezzo OMI']],
   INK: [['richiesto','Prezzo richiesto'],['valutato','Prezzo valutato'],['mercato','Prezzo al mercato'],['omi','Prezzo OMI'],['ultimo','Ultimo prezzo (accettato)']],
@@ -3156,7 +2929,7 @@ function salvaPrezzi(id){
   Storage.save(DB); apriScheda(id);
 }
 
-/* ---------- GESTIONE PROPRIETARI ---------- */
+/* PROPRIETARI */
 const TIPI_PROPRIETARIO = ['Proprietà','Usufrutto','Nudo proprietario','Comproprietà','Superficie'];
 function apriGestioneProprietari(iid){
   const im = DB.immobili.find(x => x.id === iid); if(!im) return;
@@ -3191,7 +2964,8 @@ function apriEditProprietario(iid, idx){
   const p = pr.personaId ? trovaPersona(pr.personaId) : null;
   let h = '';
   h += '<div class="form-group">';
-  h += `<div class="form-row"><label class="form-label">Persona</label><button type="button" class="form-input" id="ep-p" style="text-align:left;background:var(--bg2);padding:10px 12px;border-radius:8px;cursor:pointer;" onclick="apriPicker('persona',per=>{window._epPid=per.id;document.getElementById('ep-p').textContent=nomeCogn(per);})">${p?esc(nomeCogn(p)):'Tocca per cercare…'}</button></div>`;
+  h += `<div class="form-row"><button type="button" class="add-btn" id="ep-newbtn" style="margin:0">＋ Nuova persona</button><div id="ep-newbox" style="display:none"><label class="form-label">Cognome</label><input class="form-input" id="ep-nc" style="background:var(--bg2);padding:10px 12px;border-radius:8px;margin-bottom:6px;"><label class="form-label">Nome</label><input class="form-input" id="ep-nn" style="background:var(--bg2);padding:10px 12px;border-radius:8px;margin-bottom:6px;"><label class="form-label">Telefono</label><input class="form-input" id="ep-nt" type="tel" style="background:var(--bg2);padding:10px 12px;border-radius:8px;margin-bottom:6px;"><button type="button" class="add-btn" id="ep-oldbtn" style="margin:0">Scegli tra le esistenti</button></div></div>`;
+  h += `<div class="form-row" id="ep-p-row"><label class="form-label">Persona</label><button type="button" class="form-input" id="ep-p" style="text-align:left;background:var(--bg2);padding:10px 12px;border-radius:8px;cursor:pointer;" onclick="apriPicker('persona',per => {window._epPid=per.id;document.getElementById('ep-p').textContent=nomeCogn(per);})">${p?esc(nomeCogn(p)):'Tocca per cercare…'}</button></div>`;
   h += `<div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="ep-t">${TIPI_PROPRIETARIO.map(t => `<option value="${t}"${pr.tipo===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
   h += `<div class="form-row"><label class="form-label">Quota %</label><input class="form-input" id="ep-q" inputmode="numeric" value="${esc(pr.quota||'')}"></div>`;
   h += `<div class="form-row"><label class="form-label">Principale</label><select class="form-select" id="ep-pr"><option value="no"${!pr.principale?' selected':''}>No</option><option value="si"${pr.principale?' selected':''}>Sì</option></select></div>`;
@@ -3199,9 +2973,27 @@ function apriEditProprietario(iid, idx){
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="apriGestioneProprietari('${iid}')">Annulla</button><button class="btn btn-primary" onclick="salvaProprietario('${iid}',${idx})">Salva</button></div>`;
   window._epPid = pr.personaId || null;
   apriModal(idx >= 0 ? 'Modifica proprietario' : 'Nuovo proprietario', h);
+  const nb = document.getElementById('ep-newbtn');
+  if(nb) nb.onclick = () => { window._epPid = null; document.getElementById('ep-newbox').style.display = 'block'; nb.style.display = 'none'; document.getElementById('ep-p-row').style.display = 'none'; document.getElementById('ep-nc').focus(); };
+  const ob = document.getElementById('ep-oldbtn');
+  if(ob) ob.onclick = () => { document.getElementById('ep-newbox').style.display = 'none'; nb.style.display = ''; document.getElementById('ep-p-row').style.display = ''; };
 }
 function salvaProprietario(iid, idx){
   const im = DB.immobili.find(x => x.id === iid); if(!im) return;
+  const box = document.getElementById('ep-newbox');
+  if(box && box.style.display !== 'none'){
+    const c = document.getElementById('ep-nc').value.trim().toUpperCase();
+    const n = document.getElementById('ep-nn').value.trim().toUpperCase();
+    const t = document.getElementById('ep-nt').value.trim();
+    if(!c || !n){ alert('Cognome e Nome obbligatori'); return; }
+    let per = t && DB.persone.find(x => x.telefono === t);
+    if(!per){
+      const ad = new Date().toISOString();
+      per = { id:uid(), cognome:c, nome:n, ruoli:['PROP'], telefono:t, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
+      DB.persone.push(per);
+    }
+    window._epPid = per.id;
+  }
   const pid = window._epPid;
   if(!pid){ alert('Seleziona una persona'); return; }
   const g = x => (document.getElementById(x)||{}).value || '';
@@ -3213,15 +3005,13 @@ function salvaProprietario(iid, idx){
     im.proprietari.push(obj);
   }
   const p = trovaPersona(pid);
-  if(p){
-    if(!Array.isArray(p.ruoli)) p.ruoli = [];
-    if(p.ruoli.indexOf('PROP') < 0) p.ruoli.push('PROP');
-  }
+  if(p){ if(!Array.isArray(p.ruoli)) p.ruoli = []; if(p.ruoli.indexOf('PROP') < 0) p.ruoli.push('PROP'); }
   im.updatedAt = new Date().toISOString();
   Storage.save(DB); apriGestioneProprietari(iid);
+  renderListaImmobili(); renderPersone();
 }
 
-/* ---------- DOCUMENTI ---------- */
+/* DOCUMENTI */
 function apriGestioneDoc(imId){
   const im = DB.immobili.find(x => x.id === imId); if(!im) return;
   if(!im.documenti) im.documenti = {};
@@ -3282,8 +3072,6 @@ function scaricaDoc(fid){
     setTimeout(() => URL.revokeObjectURL(u), 1500);
   });
 }
-
-/* ---------- FOTO ---------- */
 function apriPickerFoto(t, id, cam){
   const inp = document.createElement('input');
   inp.type = 'file'; inp.accept = 'image/*';
@@ -3319,7 +3107,7 @@ function apriFotoViewer(pid){
   });
 }
 
-/* ---------- FORM NUOVO IMMOBILE ---------- */
+/* NUOVO IMMOBILE */
 function apriFormNuovo(){
   window._villaNew = false;
   let h = `<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="f-t" onchange="aggFormNew()"><option value="censito">Censito (IMM)</option><option value="pa">PA</option><option value="nt">NT</option><option value="ink">INK</option></select></div></div><div id="f-c"></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>`;
@@ -3363,7 +3151,7 @@ function aggFormNew(){
     h += '<label class="form-label">Cerca anche casa da comprare?</label><select class="form-select" id="f-cerca" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="no">No</option><option value="si">Sì — anche acquirente</option></select>';
     h += '</div>';
     h += '<div id="f-existing-fields" style="display:none;">';
-    h += '<div style="cursor:pointer;padding:10px 12px;background:var(--bg2);border-radius:10px;" onclick="apriPicker(\'persona\',per=>{window._fPickId=per.id;const e=document.getElementById(\'f-picked\');if(e)e.innerHTML=\'✓ \'+escapeHtml(nomeCogn(per));})"><span id="f-picked" style="font-size:13px;">Tocca per cercare…</span></div>';
+    h += '<div style="cursor:pointer;padding:10px 12px;background:var(--bg2);border-radius:10px;" onclick="apriPicker(\'persona\',per => {window._fPickId=per.id;const e=document.getElementById(\'f-picked\');if(e)e.innerHTML=\'✓ \'+escapeHtml(nomeCogn(per));})"><span id="f-picked" style="font-size:13px;">Tocca per cercare…</span></div>';
     h += '</div></div>';
   }
   c.innerHTML = h;
@@ -3428,7 +3216,7 @@ function salvaNuovoImmobile(){
   else setTimeout(() => apriScheda(im.id), 180);
 }
 
-/* ---------- MODIFICA IMMOBILE (con tutti i campi) ---------- */
+/* MODIFICA IMMOBILE */
 function apriModifica(){
   const im = DB.immobili.find(x => x.id === immobileAperto); if(!im) return;
   const d = im.dettagli || {};
@@ -3436,7 +3224,6 @@ function apriModifica(){
   const isTerreno = Array.isArray(d.tipologia) && d.tipologia.includes('Terreno');
   const optStato = isTerreno ? OPT_STATO_TERRENO : OPT_STATO_IMMOBILE;
   let h = '';
-  /* Anagrafica */
   h += '<div class="card"><h2>Anagrafica</h2>';
   h += `<div style="margin-bottom:8px;"><label class="form-label">Indirizzo</label><input class="form-input" id="mi-ind" value="${esc(im.indirizzo||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Condominio</label><input class="form-input" id="mi-cond" value="${esc(im.condominio||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
@@ -3446,43 +3233,34 @@ function apriModifica(){
   h += `<div id="mi-gest-coll-wrap" style="margin-bottom:8px;display:${im.gestitoDa==='collega'?'block':'none'};"><label class="form-label">Nome collega</label><input class="form-input" id="mi-coll" value="${esc(im.collegaNome||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Note</label><textarea class="form-textarea" id="mi-note" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(im.note||'')}</textarea></div>`;
   h += '</div>';
-  /* Tipologia + sottotipologia */
   h += '<div class="card"><h2>Tipologia</h2>';
-  h += '<div style="margin-bottom:8px;"><label class="form-label">Macro tipologia</label>' + ms('mi-tipologia', TIPOLOGIE_KEYS, d.tipologia) + '</div>';
-  /* Sottotipologie: costruisco lista piatta raggruppata */
-  const subsAll = [];
-  TIPOLOGIE_KEYS.forEach(tk => TIPOLOGIE[tk].forEach(s => { if(!subsAll.includes(s)) subsAll.push(s); }));
-  h += '<div style="margin-bottom:8px;"><label class="form-label">Sotto-tipologia (combinabile)</label>' + ms('mi-sottotipologia', subsAll, d.sottotipologia) + '</div>';
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Macro tipologia</label>${ms('mi-tipologia', TIPOLOGIE_KEYS, d.tipologia)}</div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Sotto-tipologia (combinabile)</label>${ms('mi-sottotipologia', SOTTOTIPOLOGIE_ALL, d.sottotipologia)}</div>`;
   h += '</div>';
-  /* Caratteristiche */
   h += '<div class="card"><h2>Caratteristiche</h2>';
   h += `<div style="margin-bottom:8px;"><label class="form-label">Stato conservativo</label>${ms('mi-statoConservativo', optStato, d.statoConservativo)}</div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Mq calpestabili</label><input class="form-input" id="mi-mqCalp" inputmode="numeric" value="${esc(d.mqCalpestabili||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div><div><label class="form-label">Mq commerciali</label><input class="form-input" id="mi-mqComm" inputmode="numeric" value="${esc(d.mqCommerciali||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div></div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">N° locali</label>${ms('mi-locali', OPT_LOCALI, d.locali)}</div><div><label class="form-label">N° bagni</label>${ms('mi-bagni', OPT_BAGNI, d.bagni)}</div></div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Piano</label>${ms('mi-piano', OPT_PIANO, d.piano)}</div><div><label class="form-label">N° piano</label>${ms('mi-pianoNum', OPT_PIANO_FISSO, d.pianoNum)}</div></div>`;
-  h += `<div style="margin-bottom:8px;"><label class="form-label">Arredamento</label><select class="form-select" id="mi-arredamento" style="background:var(--bg2);padding:10px 12px;border-radius:10px;" onchange="document.getElementById('mi-arr-note-wrap').style.display=['Sì','Parzialmente','Su richiesta'].indexOf(this.value)>=0?'block':'none';">${OPT_ARREDAMENTO_IMM.map(o => `<option value="${o}"${(d.arredamento||'No')===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Arredamento</label><select class="form-select" id="mi-arredamento" style="background:var(--bg2);padding:10px 12px;border-radius:10px;" onchange="document.getElementById('mi-arr-note-wrap').style.display=['Sì','Parzialmente','Su richiesta'].indexOf(this.value)>=0?'block':'none';"><option value="Sì"${(d.arredamento||'No')==='Sì'?' selected':''}>Sì</option><option value="No"${(d.arredamento||'No')==='No'?' selected':''}>No</option><option value="Parzialmente"${d.arredamento==='Parzialmente'?' selected':''}>Parzialmente</option><option value="Su richiesta"${d.arredamento==='Su richiesta'?' selected':''}>Su richiesta</option></select></div>`;
   h += `<div id="mi-arr-note-wrap" style="margin-bottom:8px;display:${['Sì','Parzialmente','Su richiesta'].includes(d.arredamento)?'block':'none'};"><label class="form-label">Cosa viene lasciato / cosa no</label><textarea class="form-textarea" id="mi-arredamento-note" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(d.arredamentoNote||'')}</textarea></div>`;
   h += '</div>';
-  /* Riscaldamento/Raffreddamento */
   h += '<div class="card"><h2>Riscaldamento / Raffreddamento</h2>';
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Certificazione</label>${ms('mi-certEnergetica', OPT_CERT_ENERG, d.certEnergetica)}</div><div><label class="form-label">Classe energetica</label>${ms('mi-classeEnergetica', OPT_CLASSE_ENERG, d.classeEnergetica)}</div></div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Impianto risc.</label>${ms('mi-riscaldamento', OPT_RISC_IMPIANTO, d.riscaldamento ? [d.riscaldamento] : [])}</div><div><label class="form-label">Tipo risc.</label>${ms('mi-riscaldamentoTipo', OPT_RISC_TIPO_AUT.concat(OPT_RISC_TIPO_CEN), d.riscaldamentoTipo)}</div></div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Impianto raff.</label>${ms('mi-raffrescamento', OPT_RAFF_IMPIANTO, d.raffrescamento ? [d.raffrescamento] : [])}</div><div><label class="form-label">Tipo raff.</label>${ms('mi-raffTipo', OPT_RAFF_TIPO_AUT.concat(OPT_RAFF_TIPO_CEN), d.raffTipo)}</div></div>`;
   h += '</div>';
-  /* Fotovoltaico */
   h += '<div class="card"><h2>Fotovoltaico</h2>';
   h += `<div style="margin-bottom:8px;"><label class="form-label">Impianto</label>${ms('mi-fvImpianto', OPT_FV_IMPIANTO, d.fvImpianto ? [d.fvImpianto] : [])}</div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Accumulo</label>${ms('mi-fvAccumulo', OPT_FV_ACCUMULO, d.fvAccumulo ? [d.fvAccumulo] : [])}</div><div><label class="form-label">Tipo</label>${ms('mi-fvTipo', OPT_FV_TIPO, d.fvTipo ? [d.fvTipo] : [])}</div></div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Potenza (kWp)</label><input class="form-input" id="mi-fvPotenza" inputmode="decimal" value="${esc(d.fvPotenza||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div><div><label class="form-label">Anno install.</label><input class="form-input" id="mi-fvAnno" inputmode="numeric" value="${esc(d.fvAnno||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div></div>`;
   h += '</div>';
-  /* Extra */
   h += '<div class="card"><h2>Extra</h2>';
   h += `<div style="margin-bottom:8px;"><label class="form-label">Infissi</label>${ms('mi-infissi', OPT_INFISSI, d.infissi)}</div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Vista</label>${ms('mi-vista', OPT_VISTA, d.vista)}</div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Zona caratt.</label>${ms('mi-zonaCaratt', OPT_ZONA_CARATT, d.zonaCaratt)}</div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Cucina</label>${ms('mi-cucina', OPT_CUCINA, d.cucina)}</div>`;
   h += '</div>';
-  /* Dotazioni */
   h += '<div class="card"><h2>Dotazioni</h2>';
   const dotLabels = { ascensore:'Ascensore', balcone:'Balcone', terrazzo:'Terrazzo', giardino:'Giardino', box:'Box', postoAuto:'Posto auto', cantina:'Cantina' };
   Object.entries(dotLabels).forEach(([k,lbl]) => {
@@ -3491,9 +3269,7 @@ function apriModifica(){
   });
   if(d.box === 'Sì') h += `<div style="margin-bottom:8px;"><label class="form-label">Tipo box</label><select class="form-select" id="mi-boxTipo" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="">—</option>${OPT_BOX_TIPO.map(o => `<option value="${o}"${d.boxTipo===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
   h += '</div>';
-  /* Zone */
   h += '<div class="card"><h2>Zone</h2>' + ms('mi-zona', OPT_ZONE, im.zone) + '</div>';
-  /* Documenti: solo qui la gestione allegati */
   if(['NT','INK','VND'].includes(im.stato)){
     h += `<button class="btn btn-secondary" onclick="apriGestioneDoc('${im.id}')">${ico('documento',15)} Gestisci documenti</button>`;
   }
@@ -3546,7 +3322,7 @@ function salvaModifica(){
   Storage.save(DB); renderListaImmobili(); apriScheda(im.id);
 }
 
-/* ---------- CONDOMINI ---------- */
+/* CONDOMINI */
 function apriFormNuovoCondominio(){
   const nc = nomeCitta();
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-ind" placeholder="Via Roma 1, ${esc(nc)}"></div><div class="form-row"><label class="form-label">Anno</label><input class="form-input" id="nc-anno"></div><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="nc-amm"></div><div class="form-row"><label class="form-label">Telefono amm.</label><input class="form-input" id="nc-tel" type="tel"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea</button></div>`;
@@ -3583,7 +3359,7 @@ function eliminaCondominio(co){
   Storage.save(DB); chiudiModal(); renderListaImmobili(); if(map) aggiornaMappa();
 }
 
-/* ---------- MAPPA ---------- */
+/* MAPPA */
 function infoIcona(ims){
   if(!ims || !ims.length) return { tipo:'pin', colore:PIN_NEUTRAL, numero:0 };
   if(ims.length === 1){ const i = ims[0]; if(i.stato === 'IMM') return { tipo:'pin', colore:PIN_NEUTRAL, numero:1 }; return { tipo:'dot', colore:STATO_COL[i.stato]||'#b91c1c', label:i.stato }; }
@@ -3609,7 +3385,7 @@ function apriPopCondoIdx(i){ const c = window._popCondo[i]; if(c) apriPopCondo(c
 function apriPopCondo(co){
   const l = DB.immobili.filter(x => !x.villa && condoDi(x) === co);
   let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:10px;">${esc(co)}</div>`;
-  l.forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(()=>apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`);
+  l.forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`);
   h += `<button class="btn btn-secondary" style="margin-top:8px;" onclick="apriModificaCondominio('${esc(co).replace(/'/g,'')}')">${ico('modifica',14)} Condominio</button>`;
   apriModal(co, h);
 }
@@ -3668,17 +3444,13 @@ function geocodificaTutti(){
   }
   next();
 }
-
-console.log('[ARANJÒ] Immobili + prezzi + documenti ready');
 </script>
 
 <script>
 'use strict';
 /* ==========================================================================
-   ARANJÒ — SCHEDA PERSONA, RICHIESTA, SCAMBIO, CHIAMATE, MAGAZZINO, BOOT
+   PERSONA + RICHIESTA + CHIAMATE + MAGAZZINO + BACKUP + BOOT
    ========================================================================== */
-
-/* ---------- NUOVA PERSONA ---------- */
 let _npR = [];
 function toggleNpR(r){
   const i = _npR.indexOf(r);
@@ -3741,7 +3513,6 @@ function salvaNuovaPersona(){
   setTimeout(() => apriSchedaPersona(p.id), 120);
 }
 
-/* ---------- SCHEDA PERSONA ---------- */
 function apriSchedaPersona(id){
   const p = trovaPersona(id); if(!p) return;
   personaAperta = id;
@@ -3760,9 +3531,7 @@ function apriSchedaPersona(id){
   h += `<button class="btn btn-secondary btn-icon" onclick="apriModificaPersona()">${ico('modifica',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" onclick="cambiaRuoliPersona()">${ico('aggiorna',15)}</button>`;
   h += '</div></div>';
-
   h += renderBoxAttivita(p, false);
-
   if((p.ruoli||[]).indexOf('ACQUIRENTE') >= 0){
     const rq = p.richiesta || richiestaVuota();
     const rows = [];
@@ -3778,34 +3547,29 @@ function apriSchedaPersona(id){
     if(rq.arredamento && rq.arredamento !== 'Indifferente') rows.push(['Arredamento', rq.arredamento]);
     const body = rows.length ? rows.map(x => `<div class="info-row"><span class="label">${x[0]}</span><span class="value">${esc(x[1])}</span></div>`).join('') : '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Da compilare</div>';
     h += collapsible('p_req', ico('target',13) + ' Richiesta', body + `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaRichiesta('${p.id}')">${ico('modifica',14)} Modifica</button>`, rows.length ? rows.length + ' criteri' : null);
-
     try{
-      const mm = window.matchAcquirente(p).filter(m => m.score >= 30);
+      const mm = matchAcquirente(p).filter(m => m.score >= 30);
       if(mm.length){
         const mb = mm.slice(0,10).map(m => {
           const cls = m.score >= 70 ? 'high' : m.score >= 40 ? 'mid' : 'low';
           const ko = m.ko && m.ko.length ? `<small>manca: ${m.ko.join(', ')}</small>` : '';
-          return `<div class="match-line" onclick="chiudiModal();setTimeout(()=>apriScheda('${m.immobile.id}'),100)"><div class="ml-name">${esc(m.immobile.indirizzo || titoloImmobile(m.immobile))}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
+          return `<div class="match-line" onclick="chiudiModal();setTimeout(() => apriScheda('${m.immobile.id}'),100)"><div class="ml-name">${esc(m.immobile.indirizzo || titoloImmobile(m.immobile))}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
         }).join('');
         h += collapsible('p_match', ico('casa',13) + ' Compatibili', mb, mm.length);
       }
     }catch(e){ console.error(e); }
   }
-
-  /* Immobili collegati */
   let bodyI = '';
   if(immP.length){
     immP.forEach(im => {
       const pr = (im.proprietari||[]).find(x => x.personaId === p.id);
       const q = pr && pr.quota ? ' · ' + pr.quota + '%' : '';
       const tp = pr && pr.tipo && pr.tipo !== 'Proprietà' ? ' · ' + pr.tipo : '';
-      bodyI += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(()=>apriScheda('${im.id}'),100)"><span class="txt">${ico('casa',12)} ${esc(im.indirizzo||'')}${esc(q+tp)}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`;
+      bodyI += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${ico('casa',12)} ${esc(im.indirizzo||'')}${esc(q+tp)}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`;
     });
   } else bodyI = '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Nessuno collegato</div>';
   bodyI += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriLinkImmobili('${p.id}')">${ico('piu',14)} Aggiungi immobile</button>`;
   h += collapsible('p_imm', ico('casa',13) + ' Immobili', bodyI, immP.length || null);
-
-  /* Dati extra */
   if(p.cf || p.note || p.email || p.telefono2){
     let bodyD = '';
     if(p.cf) bodyD += `<div class="info-row"><span class="label">CF</span><span class="value">${esc(p.cf)}</span></div>`;
@@ -3814,7 +3578,6 @@ function apriSchedaPersona(id){
     if(p.note) bodyD += `<div class="info-row"><span class="label">Note</span><span class="value">${esc(p.note)}</span></div>`;
     h += collapsible('p_dati', ico('utente',13) + ' Dati', bodyD);
   }
-
   h += `<button class="btn btn-danger" style="margin-top:6px;" onclick="eliminaPersona()">${ico('cestino',15)} Elimina</button>`;
   apriModal(nomeCogn(p).toUpperCase() || 'Persona', h);
 }
@@ -3960,19 +3723,16 @@ function salvaNuovoImmobileRapido(){
   if(personaAperta) apriLinkImmobili(personaAperta); else apriScheda(im.id);
 }
 
-/* ---------- RICHIESTA ---------- */
 function apriModificaRichiesta(pid){
   const p = trovaPersona(pid); if(!p) return;
   if(!p.richiesta) p.richiesta = richiestaVuota();
   const r = p.richiesta;
-  const subsAll = [];
-  TIPOLOGIE_KEYS.forEach(tk => TIPOLOGIE[tk].forEach(s => { if(!subsAll.includes(s)) subsAll.push(s); }));
   let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:10px;">${esc(nomeCogn(p))}</div>`;
   h += '<div class="card"><h2>Base</h2>';
   h += `<div style="margin-bottom:8px;"><label class="form-label">Scopo</label>${ms('rq-scopo', OPT_SCOPO, r.scopo)}</div>`;
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Budget minimo €</label><input class="form-input" id="rq-budgetMin" inputmode="numeric" value="${esc(r.budgetMin||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div><div><label class="form-label">Budget massimo €</label><input class="form-input" id="rq-budget" inputmode="numeric" value="${esc(r.budget||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Macro tipologie</label>${ms('rq-tipologia', TIPOLOGIE_KEYS, r.tipologia)}</div>`;
-  h += `<div style="margin-bottom:8px;"><label class="form-label">Sotto-tipologie (combinabili)</label>${ms('rq-sottotipologia', subsAll, r.sottotipologia)}</div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Sotto-tipologie (combinabili)</label>${ms('rq-sottotipologia', SOTTOTIPOLOGIE_ALL, r.sottotipologia)}</div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Arredamento</label><select class="form-select" id="rq-arredamento" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${OPT_ARREDAMENTO_RIC.map(o => `<option value="${o}"${(r.arredamento||'Indifferente')===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
   h += '</div>';
   h += '<div class="card"><h2>Caratteristiche</h2>';
@@ -4063,78 +3823,7 @@ function salvaRichiesta(pid){
   Storage.save(DB); renderPersone(); apriSchedaPersona(pid);
 }
 
-/* ---------- AGGIUNGI PREZZO (legacy compat) ---------- */
-function apriAggiungiPrezzo(imId){
-  const im = DB.immobili.find(x => x.id === imId); if(!im) return;
-  const h = `<div class="form-group"><div class="form-row"><label class="form-label">Prezzo €</label><input class="form-input" id="pz-p" inputmode="numeric"></div><div class="form-row"><label class="form-label">Nota</label><input class="form-input" id="pz-n"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${imId}')">Annulla</button><button class="btn btn-primary" onclick="salvaPrezzo('${imId}')">Salva</button></div>`;
-  apriModal('Prezzo', h);
-}
-function salvaPrezzo(id){
-  const im = DB.immobili.find(x => x.id === id); if(!im) return;
-  const p = ((document.getElementById('pz-p')||{}).value || '').trim();
-  if(!p){ alert('Prezzo obbligatorio'); return; }
-  if(!Array.isArray(im.storicoPrezzo)) im.storicoPrezzo = [];
-  im.storicoPrezzo.push({ prezzo:p, data:new Date().toISOString(), nota:((document.getElementById('pz-n')||{}).value||'').trim() });
-  im.prezzo = p; im.updatedAt = new Date().toISOString();
-  Storage.save(DB); apriScheda(id);
-}
-
-/* ---------- ROUND ---------- */
-let _roundW = null, _roundAttivo = false, _roundRag = 500;
-let _roundDati = { persone:[], immobili:[], condomini:[] };
-function haversine(a, b, c, d){ const R = 6371000; const f1 = a*Math.PI/180, f2 = c*Math.PI/180; const df = (c-a)*Math.PI/180, dl = (d-b)*Math.PI/180; const x = Math.sin(df/2)*Math.sin(df/2)+Math.cos(f1)*Math.cos(f2)*Math.sin(dl/2)*Math.sin(dl/2); return 2*R*Math.asin(Math.sqrt(x)); }
-function roundMeToggle(){ if(_roundAttivo) roundMeFerma(); else roundMeAvvia(); }
-function roundMeAvvia(){
-  if(!navigator.geolocation){ alert('GPS non disponibile'); return; }
-  if(_roundW){ try{ navigator.geolocation.clearWatch(_roundW); }catch(e){} _roundW = null; }
-  _roundAttivo = true;
-  const b = document.getElementById('btn-roundme-start'); if(b){ b.textContent = '◼ Ferma'; b.style.background = 'var(--vnd)'; }
-  _roundW = navigator.geolocation.watchPosition(p => roundMeAggiorna(p.coords.latitude, p.coords.longitude), e => { roundMeFerma(); alert('GPS: ' + e.message); }, { enableHighAccuracy:true, maximumAge:5000, timeout:15000 });
-}
-function roundMeFerma(){ if(_roundW){ try{ navigator.geolocation.clearWatch(_roundW); }catch(e){} _roundW = null; } _roundAttivo = false; const b = document.getElementById('btn-roundme-start'); if(b){ b.textContent = '▶ GPS'; b.style.background = ''; } }
-function roundMeAggiorna(lat, lng){
-  const R = _roundRag;
-  const pers = DB.persone.filter(p => p.lat && p.lng).map(p => Object.assign({}, p, { dist:haversine(lat, lng, p.lat, p.lng) })).filter(p => p.dist <= R).sort((a,b) => a.dist - b.dist);
-  const imms = DB.immobili.filter(i => i.lat && i.lng).map(i => Object.assign({}, i, { dist:haversine(lat, lng, i.lat, i.lng) })).filter(i => i.dist <= R);
-  const mc = {}, orf = [];
-  imms.forEach(i => { const c = condoDi(i); if(c && !i.villa){ if(!mc[c]) mc[c] = []; mc[c].push(i); } else orf.push(i); });
-  const cond = Object.keys(mc).map(k => { const a = mc[k]; const mn = Math.min.apply(null, a.map(x => x.dist)); return { nome:k, immobili:a, dist:mn }; }).sort((a,b) => a.dist - b.dist);
-  orf.sort((a,b) => a.dist - b.dist);
-  _roundDati = { persone:pers, immobili:orf, condomini:cond, lat, lng };
-  roundMeRender();
-}
-function roundMeRender(){
-  const c = document.getElementById('roundme-contenuto'); if(!c) return;
-  const p = _roundDati;
-  if(!p.lat){ c.innerHTML = `<div class="empty">${ico('target',28)}Attiva GPS</div>`; return; }
-  let h = `<div class="card" style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--blu);cursor:pointer;" onclick="roundMeCambiaRaggio()"><span>Entro <strong>${_roundRag} m</strong></span>${ico('freccia',12)}</div>`;
-  if(p.persone.length){
-    h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:8px 0 4px;">Contatti</div>';
-    p.persone.forEach(pp => { const d = pp.dist < 1000 ? Math.round(pp.dist)+' m' : (pp.dist/1000).toFixed(1)+' km'; const tel = pp.telefono || pp.telefono2; h += `<div class="item-card" onclick="apriSchedaPersona('${pp.id}')"><div class="item-row"><div class="item-title">${esc(nomeCogn(pp))}</div></div><div class="item-sub">${esc(tel||'')} · ${d}</div></div>`; });
-  }
-  if(p.condomini.length){
-    h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:8px 0 4px;">Condomini</div>';
-    p.condomini.forEach(cc => { const d = cc.dist < 1000 ? Math.round(cc.dist)+' m' : (cc.dist/1000).toFixed(1)+' km'; h += `<div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;cursor:pointer;" onclick="apriPopCondo('${esc(cc.nome).replace(/'/g,'')}')"><span style="color:var(--blu);">${iconaCondo(20)}</span><div style="flex:1;"><div style="font-size:14px;font-weight:600;">${esc(cc.nome)}</div><div style="font-size:11.5px;color:var(--tx2);">${cc.immobili.length} imm · ${d}</div></div></div>`; });
-  }
-  if(p.immobili.length){
-    h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:8px 0 4px;">Immobili</div>';
-    p.immobili.forEach(im => { const d = im.dist < 1000 ? Math.round(im.dist)+' m' : (im.dist/1000).toFixed(1)+' km'; h += `<div class="item-card" onclick="apriScheda('${im.id}')"><div class="item-row"><div class="item-title">${esc(titoloImmobile(im))}</div><span class="badge badge-${im.stato}">${im.stato}</span></div><div class="item-sub">${d}</div></div>`; });
-  }
-  if(!p.persone.length && !p.immobili.length && !p.condomini.length) h += `<div class="empty">Nessuna entità entro ${_roundRag} m</div>`;
-  c.innerHTML = h;
-}
-function roundMeCambiaRaggio(){
-  apriFilterDD('Raggio', [{value:'100',label:'100 m'},{value:'300',label:'300 m'},{value:'500',label:'500 m'},{value:'1000',label:'1 km'},{value:'2000',label:'2 km'},{value:'5000',label:'5 km'}], String(_roundRag), v => {
-    if(!v) return;
-    _roundRag = parseInt(v, 10);
-    setTimeout(() => {
-      const lat = _roundDati.lat, lng = _roundDati.lng;
-      if(lat && lng) roundMeAggiorna(lat, lng); else roundMeRender();
-    }, 30);
-  });
-}
-
-/* ---------- CHIAMATE ---------- */
+/* CHIAMATE */
 let _recog = null, _mic = false;
 function avviaDettatura(cb){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -4142,14 +3831,7 @@ function avviaDettatura(cb){
   if(_recog){ try{ _recog.stop(); }catch(e){} }
   const r = new SR(); r.lang = 'it-IT'; r.continuous = true; r.interimResults = true;
   let fin = '';
-  r.onresult = e => {
-    let int = '';
-    for(let i = e.resultIndex; i < e.results.length; i++){
-      const t = e.results[i][0].transcript;
-      if(e.results[i].isFinal) fin += t + ' '; else int += t;
-    }
-    cb(fin+int, fin);
-  };
+  r.onresult = e => { let int = ''; for(let i = e.resultIndex; i < e.results.length; i++){ const t = e.results[i][0].transcript; if(e.results[i].isFinal) fin += t + ' '; else int += t; } cb(fin+int, fin); };
   r.onerror = e => console.warn(e);
   r.onend = () => { _recog = null; };
   r.start(); _recog = r; return r;
@@ -4180,7 +3862,7 @@ function renderChiamateOggi(){
 function apriNuovaChiamata(personaId){
   const p = personaId ? trovaPersona(personaId) : null;
   let h = '<div class="form-group">';
-  h += `<div class="form-row"><label class="form-label">Contatto</label><input class="form-input" id="ch-n" value="${p?esc(nomeCompleto(p)):''}" placeholder="Tocca per cercare" readonly onclick="apriPicker('persona',per=>{document.getElementById('ch-n').value=nomeCompleto(per);window._chPid=per.id;document.getElementById('ch-t').value=per.telefono||per.telefono2||'';})"></div>`;
+  h += `<div class="form-row"><label class="form-label">Contatto</label><input class="form-input" id="ch-n" value="${p?esc(nomeCompleto(p)):''}" placeholder="Tocca per cercare" readonly onclick="apriPicker('persona',per => {document.getElementById('ch-n').value=nomeCompleto(per);window._chPid=per.id;document.getElementById('ch-t').value=per.telefono||per.telefono2||'';})"></div>`;
   h += `<div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="ch-t" type="tel" value="${p?esc(p.telefono||p.telefono2||''):''}"></div>`;
   h += `<div class="form-row"><label class="form-label">Quando</label><input class="form-input" type="datetime-local" step="1" id="ch-q" value="${oraLocal()}"></div>`;
   h += '<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="ch-nn"></textarea></div></div>';
@@ -4213,8 +3895,7 @@ function apriChiusuraChiamata(id){
   _mic = false;
 }
 function toggleMic(){
-  const ta = document.getElementById('ch-t2');
-  const b = document.getElementById('ch-mic');
+  const ta = document.getElementById('ch-t2'); const b = document.getElementById('ch-mic');
   if(_mic){ fermaDettatura(); _mic = false; if(b) b.style.background = ''; return; }
   const r = avviaDettatura(txt => { if(ta) ta.value = txt; });
   if(r){ _mic = true; if(b) b.style.background = 'var(--vnd)'; }
@@ -4245,7 +3926,7 @@ function eliminaChiamata(id){
   Storage.save(DB); renderChiamateOggi(); aggiornaBadgeAttivita();
 }
 
-/* ---------- MAGAZZINO / RAPPORTINI ---------- */
+/* MAGAZZINO */
 let magQ = '';
 document.getElementById('search-magazzino').addEventListener('input', e => { magQ = e.target.value.toLowerCase().trim(); renderMagazzino(); });
 function renderMagazzino(){
@@ -4299,25 +3980,16 @@ function scanBarcode(){
     function loop(){
       if(!document.getElementById('scan-v')) return;
       det.detect(v).then(c => {
-        if(c.length){
-          const code = c[0].rawValue;
-          stream.getTracks().forEach(t => t.stop());
-          chiudiModal();
-          const art = DB.magazzino.find(a => a.barcode === code);
-          if(art) alert('Trovato: ' + art.descrizione);
-          else if(confirm('Non trovato. Creare?')){ apriNuovoArticolo(); setTimeout(() => { const b = document.getElementById('mg-b'); if(b) b.value = code; }, 100); }
-          return;
-        }
+        if(c.length){ const code = c[0].rawValue; stream.getTracks().forEach(t => t.stop()); chiudiModal(); const art = DB.magazzino.find(a => a.barcode === code); if(art) alert('Trovato: ' + art.descrizione); else if(confirm('Non trovato. Creare?')){ apriNuovoArticolo(); setTimeout(() => { const b = document.getElementById('mg-b'); if(b) b.value = code; }, 100); } return; }
         requestAnimationFrame(loop);
       }).catch(() => requestAnimationFrame(loop));
     }
     loop();
   }).catch(e => alert('Camera: ' + e.message));
 }
-function fermaScanner(){
-  if(window._scanStream){ try{ window._scanStream.getTracks().forEach(t => t.stop()); }catch(e){} window._scanStream = null; }
-  chiudiModal();
-}
+function fermaScanner(){ if(window._scanStream){ try{ window._scanStream.getTracks().forEach(t => t.stop()); }catch(e){} window._scanStream = null; } chiudiModal(); }
+
+/* RAPPORTINI */
 function renderRapportini(){
   const c = document.getElementById('rapportini-lista'); if(!c) return;
   if(!DB.rapportini) DB.rapportini = [];
@@ -4350,7 +4022,7 @@ function eliminaRapportino(id){
   Storage.save(DB); chiudiModal(); renderRapportini();
 }
 
-/* ---------- RICERCA GLOBALE ---------- */
+/* RICERCA GLOBALE */
 function apriRicercaGlobale(){
   const h = `<input type="search" class="search-bar" id="gs-i" placeholder="Cerca..." style="margin-bottom:10px;"><div id="gs-r"><div class="empty" style="padding:20px 8px;font-size:12px;">Digita 2+ caratteri</div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>`;
   apriModal('Cerca', h);
@@ -4366,15 +4038,15 @@ function eseguiRicerca(q){
   raccogliAtt().forEach(a => { if((a.testo||'').toLowerCase().indexOf(qq) >= 0) res.a.push(a); });
   for(const co in (DB.condomini||{})) if(co.toLowerCase().indexOf(qq) >= 0) res.c.push(co);
   let h = '';
-  if(res.p.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 4px;">Persone</div>'; res.p.slice(0,8).forEach(p => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(()=>apriSchedaPersona('${p.id}'),100)"><span class="txt">${esc(nomeCogn(p))}</span></div>`); }
-  if(res.i.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Immobili</div>'; res.i.slice(0,8).forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(()=>apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`); }
-  if(res.a.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Attività</div>'; res.a.slice(0,8).forEach(a => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(()=>apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}'),100)"><span class="txt">${esc(a.testo.slice(0,50))}</span></div>`); }
-  if(res.c.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Condomini</div>'; res.c.slice(0,8).forEach(co => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(()=>apriModificaCondominio('${esc(co).replace(/'/g,'')}'),100)"><span class="txt">${esc(co)}</span></div>`); }
+  if(res.p.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 4px;">Persone</div>'; res.p.slice(0,8).forEach(p => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${p.id}'),100)"><span class="txt">${esc(nomeCogn(p))}</span></div>`); }
+  if(res.i.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Immobili</div>'; res.i.slice(0,8).forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`); }
+  if(res.a.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Attività</div>'; res.a.slice(0,8).forEach(a => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}'),100)"><span class="txt">${esc(a.testo.slice(0,50))}</span></div>`); }
+  if(res.c.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Condomini</div>'; res.c.slice(0,8).forEach(co => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriModificaCondominio('${esc(co).replace(/'/g,'')}'),100)"><span class="txt">${esc(co)}</span></div>`); }
   if(!res.p.length && !res.i.length && !res.a.length && !res.c.length) h = '<div class="empty" style="padding:20px 8px;font-size:12px;">Nessun risultato</div>';
   c.innerHTML = h;
 }
 
-/* ---------- IMPOSTAZIONI / BACKUP ---------- */
+/* IMPOSTAZIONI / BACKUP */
 function apriImpostazioniCitta(){
   let h = `<div class="form-group"><div class="form-row"><label class="form-label">Città</label><input class="form-input" id="imp-c" value="${esc(citta())}"></div></div>`;
   h += `<button class="btn btn-secondary" onclick="document.getElementById('imp-c').value='${CITTA_DEFAULT}'">Ripristina Cremona</button>`;
@@ -4396,8 +4068,7 @@ function b64ToBlob(b, m){
 }
 function esportaBackup(){
   const bk = { versione:DB_VERSION, exportedAt:new Date().toISOString(), db:JSON.parse(JSON.stringify(DB)), foto:[], documenti:[] };
-  PhotoDB.keys()
-    .then(pk => { let ch = Promise.resolve(); pk.forEach(k => { ch = ch.then(() => PhotoDB.get(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.foto.push({ id:k, data:b, meta:r.meta||{} })); })); }); return ch.then(() => PhotoDB.docKeys()); })
+  PhotoDB.keys().then(pk => { let ch = Promise.resolve(); pk.forEach(k => { ch = ch.then(() => PhotoDB.get(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.foto.push({ id:k, data:b, meta:r.meta||{} })); })); }); return ch.then(() => PhotoDB.docKeys()); })
     .then(dk => { let ch2 = Promise.resolve(); dk.forEach(k => { ch2 = ch2.then(() => PhotoDB.getDoc(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.documenti.push({ id:k, data:b, meta:r.meta||{} })); })); }); return ch2; })
     .then(() => { const d = JSON.stringify(bk); const b = new Blob([d], { type:'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = `aranjo_backup_${o.getFullYear()}-${pad2(o.getMonth()+1)}-${pad2(o.getDate())}.json`; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); })
     .catch(e => alert('Errore: ' + e.message));
@@ -4423,11 +4094,7 @@ function importaBackup(e){
       let ch = Promise.resolve();
       if(isNew && Array.isArray(p.foto)) p.foto.forEach(f2 => { ch = ch.then(() => { try{ const b = b64ToBlob(f2.data, (f2.meta && f2.meta.mime) || 'image/jpeg'); return PhotoDB.save(f2.id, b, f2.meta||{}); }catch(e){} }); });
       if(isNew && Array.isArray(p.documenti)) p.documenti.forEach(f2 => { ch = ch.then(() => { try{ const b = b64ToBlob(f2.data, (f2.meta && f2.meta.mime) || 'application/octet-stream'); return PhotoDB.saveDoc(f2.id, b, f2.meta||{}); }catch(e){} }); });
-      ch.then(() => {
-        Storage.save(DB); renderListaImmobili(); aggiornaInfoSistema(); if(map) aggiornaMappa();
-        renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderApp(); renderChiamateOggi(); renderMagazzino(); renderRapportini();
-        alert('OK');
-      });
+      ch.then(() => { Storage.save(DB); renderListaImmobili(); aggiornaInfoSistema(); if(map) aggiornaMappa(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderApp(); renderChiamateOggi(); renderMagazzino(); renderRapportini(); alert('OK'); });
     }catch(err){ alert('Errore: ' + err.message); }
   };
   rd.readAsText(f); e.target.value = '';
@@ -4435,15 +4102,13 @@ function importaBackup(e){
 function cancellaTutto(){
   if(!confirm('Cancellare TUTTI i dati?')) return;
   if(!confirm('Sei sicuro?')) return;
-  PhotoDB.keys()
-    .then(k => { let c = Promise.resolve(); k.forEach(id => { c = c.then(() => PhotoDB.del(id).catch(() => {})); }); return c; })
+  PhotoDB.keys().then(k => { let c = Promise.resolve(); k.forEach(id => { c = c.then(() => PhotoDB.del(id).catch(() => {})); }); return c; })
     .then(() => PhotoDB.docKeys())
     .then(k => { let c = Promise.resolve(); k.forEach(id => { c = c.then(() => PhotoDB.delDoc(id).catch(() => {})); }); return c; })
     .then(() => {
       for(const k in photoCache){ try{ URL.revokeObjectURL(photoCache[k]); }catch(e){} delete photoCache[k]; }
       DB = Storage.default(); Storage.save(DB);
-      renderListaImmobili(); aggiornaInfoSistema(); if(map) aggiornaMappa();
-      renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderApp(); renderChiamateOggi(); renderMagazzino(); renderRapportini();
+      renderListaImmobili(); aggiornaInfoSistema(); if(map) aggiornaMappa(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderApp(); renderChiamateOggi(); renderMagazzino(); renderRapportini();
       alert('Cancellato');
     });
 }
@@ -4460,7 +4125,6 @@ function schedulaNotifiche(){
 }
 function notifica(t, b){ try{ if(Notification.permission === 'granted') new Notification(t, { body:b, icon:'./android-chrome-192x192.png' }); }catch(e){} }
 
-/* ---------- INFO SISTEMA ---------- */
 function aggiornaInfoSistema(){
   const el = document.getElementById('sistema-citta'); if(el) el.textContent = citta();
   const si = document.getElementById('storage-info');
@@ -4493,8 +4157,6 @@ function applicaIcone(){
   const auto = document.getElementById('th-auto'); if(auto) auto.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>';
   const dark = document.getElementById('th-dark'); if(dark) dark.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 }
-
-/* ---------- FAB MENU ---------- */
 function fabMenuImmobile(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriFormNuovo(); }
 function fabMenuCondominio(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriFormNuovoCondominio(); }
 function fabMenuPersona(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriNuovaPersona(); }
@@ -4506,24 +4168,16 @@ function onFabClick(){
   fabMenuAperto = true;
   document.getElementById('fab-menu').classList.add('open');
 }
-
-/* ---------- BACK GESTURE ---------- */
 window.addEventListener('popstate', e => {
   if(window._aranjoCloseFromUI){ window._aranjoCloseFromUI = false; return; }
   const mo = document.getElementById('modal').classList.contains('open');
-  if(mo){
-    if(window._modalStack > 0) window._modalStack--;
-    chiudiModal(true);
-    if(window._modalStack > 0){ try{ history.pushState({ _modal:true }, ''); }catch(err){} }
-    return;
-  }
+  if(mo){ if(window._modalStack > 0) window._modalStack--; chiudiModal(true); if(window._modalStack > 0){ try{ history.pushState({ _modal:true }, ''); }catch(err){} } return; }
   const ac = document.getElementById('app-content');
   if(ac.classList.contains('agenda-mode')){ tornaAttivita(); return; }
   const at = document.querySelector('.tabbar button.active');
   if(at && at.dataset.tab !== 'immobili') switchTab('immobili');
 });
 
-/* ---------- BOOT ---------- */
 function avviaBoot(){
   Storage2.open().then(() => {
     Storage2.persist();
@@ -4562,8 +4216,6 @@ function avviaBoot(){
   }).catch(e => alert('IndexedDB: ' + e.message));
 }
 avviaBoot();
-
-console.log('[ARANJÒ] Tutto pronto');
 </script>
 </body>
 </html>
