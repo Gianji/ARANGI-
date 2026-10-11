@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
+<html lang="it" data-theme="light"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="ARANJO">
+<meta name="apple-mobile-web-app-title" content="ARANJÒ">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#fafafa">
 <link rel="icon" type="image/png" sizes="32x32" href="./android-chrome-192x192.png">
-<title>ARANJO</title>
+<title>ARANJÒ</title>
 <script>
 try {
   var _t = localStorage.getItem('aranjo_theme') || 'auto';
@@ -19,7 +17,7 @@ try {
   document.documentElement.setAttribute('data-theme', _r);
 } catch(e) {}
 </script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root {
   --blu: #1f3a5f; --blu-soft: #f0f4f9;
@@ -382,15 +380,15 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
 <div class="app">
   <header class="app-header">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
-      <h1><span>ARAN</span>JO</h1>
-      <div id="header-prossimo-app" onclick="apriProssimoAppuntamento()">
+      <div><h1><span>ARAN</span>JÒ</h1><div class="brand-sub">Assistente Tecnorete</div></div>
+      <div id="header-prossimo-app" onclick="apriProssimoAppuntamento()" style="display: none;">
         <div class="lbl">Prossimo</div>
         <div id="header-prossimo-app-txt"></div>
       </div>
     </div>
   </header>
 
-  <main class="app-content" id="app-content">
+  <main class="app-content" id="app-content" style="">
     <section id="view-immobili" class="view active">
       <div class="search-sticky"><input type="search" class="search-bar" id="search-immobili" placeholder="Cerca..."></div>
       <div class="chips" id="chips-immobili">
@@ -400,25 +398,25 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
         <button class="chip" data-filtro="NT">NT</button>
         <button class="chip" data-filtro="INK">INK</button>
         <button class="chip" data-filtro="VND">VND</button>
-        <button class="chip" data-filtro="GEST" id="chip-gest"></button>
-        <button class="chip" data-filtro="COND" id="chip-cond"></button>
-        <button class="chip" data-filtro="ZONE" id="chip-zone"></button>
+        
+        <button class="chip" data-filtro="COND" id="chip-cond"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><rect x="3" y="2" width="11" height="20" rx="1"></rect><rect x="14" y="8" width="7" height="14" rx="1"></rect></svg> COND</button>
+        <button class="chip" data-filtro="ZONE" id="chip-zone"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ZONE</button>
       </div>
       <div id="filtro-attivo"></div>
-      <div id="lista-immobili"></div>
+      <div id="lista-immobili"><div class="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Nessun immobile</div></div>
     </section>
 
     <section id="view-persone" class="view">
       <div class="chips" id="persone-tabs" style="padding-bottom:8px;">
-        <button class="chip acc active" data-ptab="acquirente" id="chip-ptab-acq"></button>
-        <button class="chip acc" data-ptab="prop" id="chip-ptab-prop"></button>
-        <button class="chip acc" data-ptab="locatore" id="chip-ptab-loc"></button>
-        <button class="chip acc" data-ptab="conduttore" id="chip-ptab-cond"></button>
-        <button class="chip acc" data-ptab="professionista" id="chip-ptab-prof"></button>
+        <button class="chip acc active" data-ptab="acquirente" id="chip-ptab-acq">Acquirenti</button>
+        <button class="chip acc" data-ptab="prop" id="chip-ptab-prop">Venditori</button>
+        <button class="chip acc" data-ptab="locatore" id="chip-ptab-loc">Locatori</button>
+        <button class="chip acc" data-ptab="conduttore" id="chip-ptab-cond">Conduttori</button>
+        <button class="chip acc" data-ptab="professionista" id="chip-ptab-prof">Professionisti</button>
       </div>
       <div class="search-sticky"><input type="search" class="search-bar" id="search-persone" placeholder="Cerca..."></div>
-      <div id="filtro-persone-attivo" style="margin-bottom:6px;"></div>
-      <div id="lista-persone"></div>
+      <div id="filtro-persone-attivo" style="margin-bottom:6px;"><div class="chips" style="padding-bottom:0;"><button class="chip" onclick="apriFiltroPersone()">Stato</button></div></div>
+      <div id="lista-persone"><div class="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Nessun contatto</div></div>
     </section>
 
     <section id="view-attivita" class="view">
@@ -428,7 +426,7 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
           <div class="att-subtab oggi active" data-att="oggi" onclick="setAttTab('oggi')"><div class="num" id="att-num-oggi">0</div><div class="lbl">Oggi</div></div>
           <div class="att-subtab prossime" data-att="prossime" onclick="setAttTab('prossime')"><div class="num" id="att-num-prossime">0</div><div class="lbl">Prossime</div></div>
         </div>
-        <div id="lista-attivita" class="att-scroll"></div>
+        <div id="lista-attivita" class="att-scroll"><div class="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><polyline points="20 6 9 17 4 12"></polyline></svg>Nessuna attività</div></div>
       </div>
       <div class="att-col">
         <div class="agenda-sett">
@@ -439,19 +437,19 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
               <button onclick="cambiaSettimana(1)">›</button>
             </div>
           </h3>
-          <div class="agenda-grid" id="agenda-grid"></div>
+          <div class="agenda-grid" id="agenda-grid"><div class="agenda-giorno" onclick="apriPlanningGiorno('2026-10-05')"><div class="ag-nome">Lun</div><div class="ag-num">5</div><div class="ag-empty">·</div></div><div class="agenda-giorno" onclick="apriPlanningGiorno('2026-10-06')"><div class="ag-nome">Mar</div><div class="ag-num">6</div><div class="ag-empty">·</div></div><div class="agenda-giorno" onclick="apriPlanningGiorno('2026-10-07')"><div class="ag-nome">Mer</div><div class="ag-num">7</div><div class="ag-empty">·</div></div><div class="agenda-giorno" onclick="apriPlanningGiorno('2026-10-08')"><div class="ag-nome">Gio</div><div class="ag-num">8</div><div class="ag-empty">·</div></div><div class="agenda-giorno" onclick="apriPlanningGiorno('2026-10-09')"><div class="ag-nome">Ven</div><div class="ag-num">9</div><div class="ag-empty">·</div></div><div class="agenda-giorno" onclick="apriPlanningGiorno('2026-10-10')"><div class="ag-nome">Sab</div><div class="ag-num">10</div><div class="ag-empty">·</div></div><div class="agenda-giorno oggi" onclick="apriPlanningGiorno('2026-10-11')"><div class="ag-nome">Dom</div><div class="ag-num">11</div><div class="ag-empty">·</div></div></div>
         </div>
       </div>
       <div class="att-col">
         <div class="planning-sett">
-          <h3 onclick="apriPlanningPage()"><span id="planning-titolo">Oggi</span>
+          <h3 onclick="apriPlanningPage()"><span id="planning-titolo">Oggi · Dom 11</span>
             <div class="nav-sett" onclick="event.stopPropagation()">
               <button onclick="cambiaGiornoPlanning(-1)">‹</button>
               <button onclick="cambiaGiornoPlanning(0)">•</button>
               <button onclick="cambiaGiornoPlanning(1)">›</button>
             </div>
           </h3>
-          <div id="planning-contenuto"></div>
+          <div id="planning-contenuto"><div class="planning-empty">Nessun evento</div></div>
         </div>
       </div>
     </section>
@@ -461,11 +459,11 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
 
     <section id="view-chiamate" class="view">
       <div class="search-sticky" style="display:flex;gap:6px;align-items:center;">
-        <button class="btn btn-secondary btn-icon" onclick="tornaAttivita()" id="btn-back-chiamate"></button>
+        <button class="btn btn-secondary btn-icon" onclick="tornaAttivita()" id="btn-back-chiamate"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
         <div style="flex:1;font-size:14px;font-weight:700;color:var(--blu);">Chiamate oggi</div>
-        <button class="btn btn-primary btn-icon" onclick="apriNuovaChiamata(null)" id="btn-new-chiamata"></button>
+        <button class="btn btn-primary btn-icon" onclick="apriNuovaChiamata(null)" id="btn-new-chiamata"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
       </div>
-      <div id="chiamate-lista"></div>
+      <div id="chiamate-lista"><div class="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>Nessuna chiamata</div></div>
     </section>
 
     <section id="view-mappa" class="view" style="padding:0;margin:0;">
@@ -486,8 +484,8 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
           </div>
         </div>
         <div class="map-overlay-bottom">
-          <button class="map-btn" onclick="centraMappaSuCittaPrincipale()" id="map-btn-casa"></button>
-          <button class="map-btn" onclick="fitBoundsImmobili()" id="map-btn-target"></button>
+          <button class="map-btn" onclick="centraMappaSuCittaPrincipale()" id="map-btn-casa"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></button>
+          <button class="map-btn" onclick="fitBoundsImmobili()" id="map-btn-target"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></button>
         </div>
       </div>
     </section>
@@ -500,75 +498,75 @@ input.form-input, textarea.form-textarea, select.form-select { font-size: 16px; 
     <section id="view-magazzino" class="view">
       <div class="search-sticky" style="display:flex;gap:6px;">
         <input type="search" class="search-bar" id="search-magazzino" placeholder="Cerca..." style="flex:1;">
-        <button class="btn btn-primary btn-icon" onclick="apriNuovoArticolo()" id="btn-add-articolo"></button>
+        <button class="btn btn-primary btn-icon" onclick="apriNuovoArticolo()" id="btn-add-articolo"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
       </div>
-      <button class="btn btn-secondary" onclick="scanBarcode()" id="btn-scan-barcode" style="margin-bottom:10px;"></button>
-      <div id="magazzino-lista"></div>
+      <button class="btn btn-secondary" onclick="scanBarcode()" id="btn-scan-barcode" style="margin-bottom:10px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M3 5v14M7 5v14M11 5v10M15 5v14M19 5v14M21 5v14"></path></svg> Scansiona</button>
+      <div id="magazzino-lista"><div class="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>Nessun articolo</div></div>
     </section>
 
     <section id="view-rapportini" class="view">
-      <button class="btn btn-primary" onclick="apriNuovoRapportino()" id="btn-new-rapportino" style="margin-bottom:10px;"></button>
-      <div id="rapportini-lista"></div>
+      <button class="btn btn-primary" onclick="apriNuovoRapportino()" id="btn-new-rapportino" style="margin-bottom:10px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Nuovo rapportino</button>
+      <div id="rapportini-lista"><div class="empty"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Nessun rapportino</div></div>
     </section>
 
     <section id="view-altro" class="view">
       <div class="card">
         <h2><span class="dot"></span>Strumenti</h2>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="mostraView('view-magazzino')"><span id="ico-mag"></span></button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="mostraView('view-rapportini')"><span id="ico-rapp"></span></button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="apriViewChiamate()"><span id="ico-chiam"></span></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="mostraView('view-magazzino')"><span id="ico-mag"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> Magazzino</span></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="mostraView('view-rapportini')"><span id="ico-rapp"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Rapportini</span></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="apriViewChiamate()"><span id="ico-chiam"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> Chiamate</span></button>
         </div>
       </div>
-      <button class="btn btn-secondary" onclick="apriRicercaGlobale()" id="btn-ricerca-globale"></button>
+      <button class="btn btn-secondary" onclick="apriRicercaGlobale()" id="btn-ricerca-globale"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Cerca</button>
       <div class="card">
         <h2><span class="dot"></span>Aspetto</h2>
         <div style="display:flex;gap:6px;">
-          <button type="button" id="th-auto" class="chip" onclick="setTema('auto')">Auto</button>
-          <button type="button" id="th-light" class="chip" onclick="setTema('light')">Chiaro</button>
-          <button type="button" id="th-dark" class="chip" onclick="setTema('dark')">Scuro</button>
-        </div>
+          
+          
+          
+        <button type="button" id="th-light" class="chip" onclick="setTema('light')" title="Chiaro" aria-label="Chiaro" style="flex: 1 1 0%; justify-content: center; padding: 10px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></button><button type="button" id="th-auto" class="chip active" onclick="setTema('auto')" title="Auto" aria-label="Auto" style="flex: 1 1 0%; justify-content: center; padding: 10px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"></path></svg></button><button type="button" id="th-dark" class="chip" onclick="setTema('dark')" title="Scuro" aria-label="Scuro" style="flex: 1 1 0%; justify-content: center; padding: 10px;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></button></div>
       </div>
       <div class="card">
         <h2><span class="dot"></span>Azioni</h2>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="richiediPermessoNotifiche(true)" id="btn-notif"></button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="apriImpostazioniCitta()" id="btn-citta"></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="richiediPermessoNotifiche(true)" id="btn-notif"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path></svg></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="apriImpostazioniCitta()" id="btn-citta"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></button>
         </div>
         <div style="display:flex;gap:6px;margin-top:6px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="esportaBackup()" id="btn-export"></button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="document.getElementById('file-import').click()" id="btn-import"></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="esportaBackup()" id="btn-export"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="document.getElementById('file-import').click()" id="btn-import"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></button>
         </div>
         <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaBackup(event)">
       </div>
       <div class="card">
         <h2><span class="dot"></span>Sistema</h2>
-        <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">—</span></div>
-        <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta">—</span></div>
-        <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist">—</span></div>
+        <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
+        <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta">CREMONA, CR, 26100</span></div>
+        <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color: var(--vnd);">No</span></div>
       </div>
-      <button class="btn btn-danger" onclick="cancellaTutto()" id="btn-reset"></button>
+      <button class="btn btn-danger" onclick="cancellaTutto()" id="btn-reset"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg> Cancella tutto</button>
     </section>
   </main>
 
-  <button class="fab" id="fab" onclick="onFabClick()"></button>
-  <div id="fab-menu" class="fab-menu"></div>
+  <button class="fab" id="fab" onclick="onFabClick()" style="display: flex;"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button>
+  <div id="fab-menu" class="fab-menu"><button onclick="fabMenuImmobile()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></button><button onclick="fabMenuCondominio()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><rect x="3" y="2" width="11" height="20" rx="1"></rect><rect x="14" y="8" width="7" height="14" rx="1"></rect></svg></button></div>
 
   <nav class="tabbar" id="tabbar">
-    <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
-    <button data-tab="persone"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></button>
-    <button data-tab="attivita"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="badge-tab" id="tab-badge-attivita">0</span></button>
-    <button data-tab="mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></button>
-    <button data-tab="roundme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/></svg></button>
-    <button data-tab="altro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg></button>
+    <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></button>
+    <button data-tab="persone" class=""><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></button>
+    <button data-tab="attivita" class=""><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg><span class="badge-tab" id="tab-badge-attivita">0</span></button>
+    <button data-tab="mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg></button>
+    <button data-tab="roundme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="2" x2="12" y2="7"></line><line x1="12" y1="17" x2="12" y2="22"></line></svg></button>
+    <button data-tab="altro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"></path></svg></button>
   </nav>
 </div>
 
 <div class="modal-overlay" id="modal" onclick="if(event.target===this)chiudiModal()">
   <div class="modal-sheet">
     <div class="modal-header">
-      <h2 id="modal-title">Titolo</h2>
-      <button class="modal-close" onclick="chiudiModal()" id="btn-modal-close"></button>
+      <h2 id="modal-title">Nuovo immobile</h2>
+      <button class="modal-close" onclick="chiudiModal()" id="btn-modal-close"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
     </div>
     <div class="modal-body" id="modal-body"></div>
   </div>
@@ -610,7 +608,7 @@ var OPT_PIANO = ['Seminterrato','Piano terra','Rialzato','Basso (1-2)','Medio (3
 var OPT_PIANO_FISSO = ['T','R','1','2','3','4','5','6+'];
 var OPT_SI_NO = ['Sì','No','Meglio','Indifferente'];
 var OPT_SI_NO_STRETTO = ['Sì','No'];
-var OPT_SCOPO = ['Abitazione principale','Seconda casa','Investimento','Casa vacanze','Uso commerciale','Altro'];
+var OPT_SCOPO = ['Abitazione principale','Seconda casa','Investimento','Compra, ristruttura e rivende','Casa vacanze','Uso commerciale','Altro'];
 var OPT_RISCALDAMENTO = ['Autonomo','Centralizzato','Indifferente'];
 var OPT_MUTUO = ['Sì','No','Da valutare'];
 var OPT_TEMPISTICA = ['Immediata','Entro 3 mesi','Entro 6 mesi','Oltre 6 mesi'];
@@ -1984,6 +1982,7 @@ function apriModificaRichiesta(pid) {
   h += '<div style="margin-bottom:8px;"><label class="form-label">Scopo</label>' + ms('rq-scopo', OPT_SCOPO, r.scopo) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Budget €</label><input class="form-input" id="rq-budget" inputmode="numeric" value="' + esc(r.budget) + '" style="background:var(--bg2);padding:10px 12px;border-radius:8px;"></div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Tipologie</label>' + ms('rq-tipologia', OPT_TIPOLOGIA, r.tipologia) + '</div>';
+  h += '<div style="margin-bottom:8px;"><label class="form-label">Arredamento</label><select class="form-select" id="rq-arredamento" style="background:var(--bg2);padding:10px 12px;border-radius:8px;">' + ['Indifferente','Sì','No','Parzialmente'].map(function(o){ return '<option value="'+o+'"'+((r.arredamento||'Indifferente')===o?' selected':'')+'>'+o+'</option>'; }).join('') + '</select></div>';
   h += '</div>';
 
   h += '<div class="card"><h2><span class="dot"></span>Caratteristiche</h2>';
@@ -2042,6 +2041,7 @@ function salvaRichiesta(pid) {
   var g = function(id) { return (document.getElementById(id)||{}).value || ''; };
   p.richiesta = {
     scopo: msVal('rq-scopo'),
+    arredamento: g('rq-arredamento') || 'Indifferente',
     budget: g('rq-budget').trim(),
     tipologia: msVal('rq-tipologia'),
     statoConservativo: msVal('rq-statoConservativo'),
@@ -3027,6 +3027,8 @@ function apriScheda(id) {
   if (im.citofono) h += '<div class="top-sub">' + ico('campanello',12) + ' ' + esc(im.citofono) + '</div>';
   if (nomeP) h += '<div class="top-sub">' + ico('persona',12) + ' ' + esc(nomeP) + '</div>';
   if (telP) h += '<div class="top-sub">' + ico('telefono',12) + ' ' + esc(telP) + '</div>';
+  var prezzoMercato = im.prezzi && parseNum(im.prezzi.mercato);
+  if (prezzoMercato !== null && prezzoMercato > 0) h += '<div class="top-sub" style="font-weight:700;color:var(--ink);">Prezzo al mercato: ' + prezzoMercato.toLocaleString('it-IT', {maximumFractionDigits:0}) + ' €</div>';
   if (!im.villa && co && dc.amministratore && dc.amministratore.nome) h += '<div class="top-sub">' + iconaCondo(12) + ' ' + esc(dc.amministratore.nome) + '</div>';
   h += '<div class="top-actions">';
   if (telP) { h += '<button class="btn btn-secondary btn-icon" onclick="chiama(\'' + esc(telP) + '\')">' + ico('telefono',15) + '</button><button class="btn btn-secondary btn-icon" onclick="wa(\'' + esc(telP) + '\')">' + ico('whatsapp',15) + '</button>'; }
@@ -3056,6 +3058,8 @@ function apriScheda(id) {
   if (d.bagni) righe.push(['Bagni', d.bagni]);
   if (d.piano || d.pianoNum) righe.push(['Piano', [Array.isArray(d.piano) ? d.piano.join(', ') : d.piano, Array.isArray(d.pianoNum) ? d.pianoNum.join(', ') : d.pianoNum].filter(Boolean).join(' ')]);
   if (d.statoConservativo) righe.push(['Stato', Array.isArray(d.statoConservativo) ? d.statoConservativo.join(', ') : d.statoConservativo]);
+  if (d.arredamento) righe.push(['Arredamento', d.arredamento]);
+  if (d.arredamentoNote && ['Sì','Parzialmente','Su richiesta'].indexOf(d.arredamento)>=0) righe.push(['Dettagli arredi', d.arredamentoNote]);
   if (d.ascensore) righe.push(['Ascensore', d.ascensore]);
   if (d.balcone && d.balcone !== 'No') righe.push(['Balcone', d.balcone]);
   if (d.terrazzo && d.terrazzo !== 'No') righe.push(['Terrazzo', d.terrazzo]);
@@ -3094,13 +3098,14 @@ function apriScheda(id) {
     var dOk = 0;
     DOCS_RICH.forEach(function(t){ if (im.documenti && im.documenti[t] && im.documenti[t].stato === 'presente') dOk++; });
     h += '<div class="card" style="padding:0 14px;"><div class="doc-summary-row" onclick="apriGestioneDoc(\'' + im.id + '\')"><div class="ds-left">' + ico('documento',14) + ' Documenti</div><div class="ds-right ' + (dOk === DOCS_RICH.length ? 'ok' : dOk > 0 ? 'warn' : '') + '">' + dOk + '/' + DOCS_RICH.length + '</div></div></div>';
+    var allegati = DOCS_RICH.filter(function(t){ return im.documenti && im.documenti[t] && im.documenti[t].fileId; });
+    if (allegati.length) h += '<div class="card" style="padding:8px 14px;">' + allegati.map(function(t){ var r=im.documenti[t]; return '<div class="info-row"><span class="label">' + esc(t) + '</span><button class="btn btn-secondary" style="padding:5px 8px;font-size:11px;" onclick="scaricaDoc(\'' + String(r.fileId).replace(/[^a-zA-Z0-9_-]/g,'') + '\')">' + esc(r.nomeFile || 'Scarica allegato') + '</button></div>'; }).join('') + '</div>';
   }
 
   var bodyAz = '';
   bodyAz += '<button class="btn btn-secondary" onclick="apriModificaIpoteca(\'' + im.id + '\')">' + ico('banca',14) + ' Ipoteca</button>';
   bodyAz += '<button class="btn btn-secondary" onclick="apriModificaProcura(\'' + im.id + '\')">' + ico('contratto',14) + ' Procura</button>';
   bodyAz += '<button class="btn btn-secondary" onclick="apriModificaCatasto(\'' + im.id + '\')">' + ico('landmark',14) + ' Catasto</button>';
-  bodyAz += '<button class="btn btn-secondary" onclick="apriAggiungiPrezzo(\'' + im.id + '\')">' + ico('moneta',14) + ' Prezzo</button>';
   bodyAz += '<button class="btn btn-secondary" onclick="duplicaImmobile(\'' + im.id + '\')">' + ico('file',14) + ' Duplica</button>';
   h += collapsible('im_az', ico('ingranaggio',13) + ' Azioni', bodyAz);
 
@@ -3394,6 +3399,8 @@ function apriModifica() {
   h += '<div style="margin-bottom:8px;"><label class="form-label">Piano</label>' + ms('mi-piano', OPT_PIANO, d.piano) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">N° piano</label>' + ms('mi-pianoNum', OPT_PIANO_FISSO, d.pianoNum) + '</div>';
   h += '<div style="margin-bottom:8px;"><label class="form-label">Classe energetica</label>' + ms('mi-classeEnergetica', OPT_CLASSE, d.classeEnergetica) + '</div>';
+  h += '<div style="margin-bottom:8px;"><label class="form-label">Arredamento</label><select class="form-select" id="mi-arredamento" style="background:var(--bg2);padding:10px 12px;border-radius:8px;">' + ['Sì','No','Parzialmente','Su richiesta'].map(function(o){ return '<option value="'+o+'"'+((d.arredamento||'No')===o?' selected':'')+'>'+o+'</option>'; }).join('') + '</select></div>';
+  h += '<div id="mi-arredamento-note-wrap" style="margin-bottom:8px;display:'+(['Sì','Parzialmente','Su richiesta'].indexOf(d.arredamento)>=0?'block':'none')+';"><label class="form-label">Cosa viene lasciato e cosa no</label><textarea class="form-textarea" id="mi-arredamento-note" style="background:var(--bg2);padding:10px 12px;border-radius:8px;">'+esc(d.arredamentoNote||'')+'</textarea></div>';
   h += '</div>';
 
   h += '<div class="card"><h2><span class="dot"></span>Extra</h2>';
@@ -3440,6 +3447,8 @@ function salvaModifica() {
   im.dettagli.piano = msVal('mi-piano');
   im.dettagli.pianoNum = msVal('mi-pianoNum');
   im.dettagli.classeEnergetica = msVal('mi-classeEnergetica');
+  im.dettagli.arredamento = g('mi-arredamento') || 'No';
+  im.dettagli.arredamentoNote = ['Sì','Parzialmente','Su richiesta'].indexOf(im.dettagli.arredamento)>=0 ? g('mi-arredamento-note').trim() : '';
   im.dettagli.riscaldamentoTipo = msVal('mi-riscaldamentoTipo');
   im.dettagli.infissi = msVal('mi-infissi');
   im.dettagli.vista = msVal('mi-vista');
@@ -4350,6 +4359,7 @@ details.fold>div{padding:0 16px 10px}
     if (r.boxTipo && (r.box === 'Sì' || r.box === 'Meglio') && d.boxTipo) add('boxTipo', lw(d.boxTipo) === lw(r.boxTipo), 2);
 
     if (!ck.length) return { score: 0, ko: [] };
+    if (ck.some(function(c){ return c.obb && !c.ok; })) return { score: 0, ko: ck.filter(function(c){ return !c.ok; }).map(function(c){ return c.obb ? '<b>' + LBL[c.k] + '</b>' : LBL[c.k]; }) };
     var wr = function(a){ var t = 0, g = 0; a.forEach(function(c){ t += c.w; if (c.ok) g += c.w; }); return t ? g / t : 1; };
     var ob = ck.filter(function(c){ return c.obb; }), pf = ck.filter(function(c){ return !c.obb; });
     var s;
@@ -4473,11 +4483,12 @@ details.fold>div{padding:0 16px 10px}
 
   /* ===== 2) Numero z progressivo nello stesso condominio ===== */
   function nextZ(im){
-    var m = 0, c = condoDi(im);
+    var c = condoDi(im), used = {};
     DB.immobili.forEach(function(x){
-      if (x.id !== im.id && !x.villa && condoDi(x) === c) m = Math.max(m, parseInt(x.z, 10) || 0);
+      if (x.id === im.id || x.villa || condoDi(x) !== c) return;
+      var n = parseInt(x.z, 10); if (Number.isInteger(n) && n > 0) used[n] = true;
     });
-    return m + 1;
+    var n = 1; while (used[n]) n++; return n;
   }
   var _snm = window.salvaNuovoImmobile;
   window.salvaNuovoImmobile = function(){
@@ -4804,5 +4815,15 @@ details.fold>div{padding:0 16px 10px}
 </script>
 <!-- ===== FINE AGGIORNAMENTO 4 ===== -->
 
-</body>
-</html>
+
+<script>
+/* Interazione del campo arredamento: mostra le note solo quando servono. */
+document.addEventListener('change', function(e) {
+  if (!e.target || e.target.id !== 'mi-arredamento') return;
+  var wrap = document.getElementById('mi-arredamento-note-wrap');
+  if (wrap) wrap.style.display = ['Sì','Parzialmente','Su richiesta'].indexOf(e.target.value) >= 0 ? 'block' : 'none';
+});
+</script>
+
+
+</body></html>
