@@ -602,6 +602,12 @@ details.fold .box2{gap:6px;}
 .unione-field{font-size:11px;letter-spacing:.01em;font-weight:700;color:var(--tx2);margin-bottom:7px}
 .unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
 #mi-inline-map{position:relative;z-index:1}
+
+/* ARANJO 1.34.0: elementi contrattuali compatti su schermi piccoli */
+#modal-body .info-row small{font-size:11px;line-height:1.5;overflow-wrap:anywhere;}
+#modal-body .info-row .label{min-width:0;overflow-wrap:anywhere;}
+#modal-body .geo-help{line-height:1.5;}
+#modal-body [hidden]{display:none!important;}
 </style>
 </head>
 <body>
@@ -758,7 +764,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.33.0</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.0</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -801,7 +807,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.33.0';
+const APP_VERSION = '1.34.0';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1709,7 +1715,11 @@ function cardImmobile(im, compact){
     }
   }
   if(prezzoMercato !== null && prezzoMercato > 0) h2 += `<div class="item-sub" style="font-weight:700;color:var(--ink);">${ico('moneta',11)} ${prezzoMercato.toLocaleString('it-IT',{maximumFractionDigits:0})} €</div>`;
-  if(im.locazione && ['affitto','entrambi'].includes(im.locazione.operazione)) h2 += `<div class="item-sub" style="font-weight:650;">${ico('casa',11)} Affitto${im.locazione.canoneRichiesto ? ' · '+esc(im.locazione.canoneRichiesto)+' €/mese' : ''}</div>`;
+  if(im.locazione && (im.locazione.operazione==='affitto' || im.locazione.operazione==='entrambi' || locazioneInCorso(im))){
+    const l=im.locazione, v=locazioneInCorso(im);
+    const badge = l.operazione==='entrambi' ? 'Vendita · Affitto' : (l.operazione==='affitto'?'Affitto':'Vendita');
+    h2 += `<div class="item-sub" style="font-weight:650;">${ico('casa',11)} ${badge}${v?' · LOCATO':''}${l.operazione!=='vendita'&&l.canoneRichiesto?' · '+esc(l.canoneRichiesto)+' €/mese':''}</div>`;
+  }
   if(im.stato === 'IMM' && im.citofono) h2 += `<div class="item-sub">${ico('campanello',11)} ${esc(im.citofono)}</div>`;
   if(tel && im.stato !== 'IMM') h2 += `<div class="item-sub">${ico('telefono',11)} ${esc(tel)}</div>`;
   if(co && !im.villa) h2 += `<div class="item-sub">${iconaCondo(11)} ${esc(co)}</div>`;
@@ -1745,7 +1755,7 @@ function apriMenuAzioniImmobile(id){
   if(['NT','INK','VND'].includes(im.stato)){
     h += `<button class="btn btn-secondary" onclick="apriModificaDossier('${im.id}')">${ico('documento',15)} Apri dossier</button>`;
   }
-  h += `<button class="btn btn-secondary" onclick="apriLocazioneImmobile('${im.id}')">${ico('casa',15)} Affitto</button>`;
+  h += `<button class="btn btn-secondary" onclick="apriLocazioneImmobile('${im.id}')">${ico('casa',15)} Operazione · occupazione</button>`;
   h += `<button class="btn btn-secondary" onclick="apriUnione('immobile','${im.id}')">${ico('aggiorna',15)} Unisci duplicato</button>`;
   h += `</div>`;
   apriModal('Altre azioni', h);
@@ -2871,7 +2881,8 @@ function apriScheda(id){
   if(telP) h += `<div class="top-sub">${ico('telefono',12)} ${esc(telP)}</div>`;
   if(prezzoMercato !== null && prezzoMercato > 0) h += `<div class="top-sub" style="font-weight:700;color:var(--ink);">${ico('moneta',12)} Prezzo al mercato: ${prezzoMercato.toLocaleString('it-IT',{maximumFractionDigits:0})} €</div>`;
   if(nomeP) h += `<div class="top-sub">${ico('persona',12)} ${esc(nomeP)}</div>`;
-  (im.occupanti||[]).forEach(o=>{ const p=trovaPersona(o.personaId);if(p)h+=`<div class="top-sub">${ico('persona',12)} Inquilino: ${esc(nomeCogn(p))}</div>`; });
+  if(locazioneInCorso(im)) h += `<div class="top-sub" style="font-weight:700;color:var(--ink);">${ico('casa',12)} ${im.locazione.operazione==='vendita'?'IN VENDITA · LOCATO':'IMMOBILE LOCATO'}</div>`;
+  (im.occupanti||[]).forEach(o=>{ const p=trovaPersona(o.personaId);if(p)h+=`<div class="top-sub">${ico('persona',12)} ${locazioneInCorso(im)?esc(o.tipo||'Inquilino'):'Contatto locazione'}: ${esc(nomeCogn(p))}</div>`; });
   if(im.valutata) h += `<div class="top-sub" style="color:var(--ink);font-weight:600;">${ico('check',12)} Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):'—'}</div>`;
   if(!im.villa && co && dc.amministratore && dc.amministratore.nome) h += `<div class="top-sub">${iconaCondo(12)} ${esc(dc.amministratore.nome)}</div>`;
   h += '<div class="top-actions" style="flex-wrap:wrap;">';
@@ -2903,12 +2914,20 @@ function apriScheda(id){
     h += collapsible('im_valut', ico('righello',13) + ' Scheda valutazione', bodyV, im.valutata ? 'Valutato' : null);
   }
   const lo=im.locazione || {};
-  if(lo.operazione==='affitto'||lo.operazione==='entrambi'){
-    let righeLoc=[];
-    [['canoneRichiesto','Canone richiesto'],['canoneConcordato','Canone concordato'],['speseCondominiali','Spese condominiali']].forEach(([k,l])=>{if(lo[k]) righeLoc.push([l,esc(lo[k])+' €/mese']);});
-    [['stato','Situazione'],['scadenzaContratto','Scadenza contratto'],['contratto','Contratto'],['durata','Durata'],['depositoMensilita','Deposito (mensilita)'],['disponibileDal','Disponibile dal'],['animali','Animali'],['arredamento','Arredo'],['cedolare','Cedolare secca'],['utenze','Utenze'],['note','Note affitto']].forEach(([k,l])=>{if(lo[k]) righeLoc.push([l,lo[k]]);});
-    const corpo=righeLoc.map(([k,v])=>`<div class="info-row"><span class="label">${k}</span><span class="value">${esc(v)}</span></div>`).join('')+`<button class="btn btn-secondary" onclick="apriLocazioneImmobile('${im.id}')">${ico('modifica',14)} Modifica</button>`;
-    h+=collapsible('im_loc',ico('casa',13)+' Affitto',corpo);
+  if(haDatiLocazione(im)){
+    const righeLoc=[];
+    if(lo.operazione) righeLoc.push(['Operazione',etichettaOperazione(lo.operazione)]);
+    if(lo.stato) righeLoc.push(['Occupazione',lo.stato]);
+    if(lo.canoneConcordato)righeLoc.push(['Canone contrattuale',lo.canoneConcordato+' €/mese']);
+    else if(lo.canoneRichiesto)righeLoc.push(['Canone richiesto',lo.canoneRichiesto+' €/mese']);
+    if(lo.decorrenzaContratto)righeLoc.push(['Decorrenza',lo.decorrenzaContratto]);
+    if(lo.scadenzaContratto)righeLoc.push(['Scadenza',lo.scadenzaContratto]);
+    if(lo.contratto)righeLoc.push(['Contratto',lo.contratto]);
+    if(lo.registrazione)righeLoc.push(['Registrazione',lo.registrazione]);
+    const corpo=righeLoc.map(([k,v])=>`<div class="info-row"><span class="label">${esc(k)}</span><span class="value">${esc(v)}</span></div>`).join('')
+      + `<div class="btn-row" style="margin-top:8px;"><button class="btn btn-secondary" onclick="apriLocazioneImmobile('${im.id}')">${ico('modifica',14)} Gestisci</button><button class="btn btn-secondary" onclick="apriArchivioLocazione('${im.id}')">${ico('documento',14)} Documenti</button></div>`;
+    const badge=locazioneInCorso(im)?'Locato':null;
+    h+=collapsible('im_loc',ico('casa',13)+' Operazione · locazione',corpo,badge);
   }
   if(['NT','INK','VND'].includes(im.stato)){
     const z = im.prezzi || {};
@@ -4772,38 +4791,202 @@ function collegaOccupanteCitofono(im, inf){
  if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
  inf.personaId=p.id;
 }
-function apriLocazioneImmobile(id){
- const im=DB.immobili.find(x=>x.id===id); if(!im)return;
- const o=im.locazione||{};
- let h='<div class="form-group">';
- h+=selectLoc('loc-op','Operazione',o.operazione||'',[...opLocazione]);
- h+='<div id="loc-dettagli">';
- h+=`<div class="box2">${inputLoc('loc-canoneRichiesto','Canone richiesto €/mese',o.canoneRichiesto,'num')}${inputLoc('loc-canoneConcordato','Canone concordato €/mese',o.canoneConcordato,'num')}</div>`;
- h+=`<div class="box2">${inputLoc('loc-speseCondominiali','Spese condominiali €/mese',o.speseCondominiali,'num')}${inputLoc('loc-depositoMensilita','Deposito (mensilita)',o.depositoMensilita,'num')}</div>`;
- h+=selectLoc('loc-stato','Situazione',o.stato||'',['','Da locare','Locato','In scadenza','Sospeso']);
- h+=selectLoc('loc-contratto','Tipo contratto',o.contratto||'',opContratto);
- h+=inputLoc('loc-durata','Durata / proroga',o.durata);
- h+=`<div class="box2">${inputLoc('loc-disponibileDal','Disponibile dal',o.disponibileDal,'date')}${inputLoc('loc-scadenzaContratto','Scadenza contratto',o.scadenzaContratto,'date')}</div>`;
- h+=`<div class="box2">${selectLoc('loc-arredamento','Arredamento',o.arredamento||'',['','Si','No','Parzialmente'])}${selectLoc('loc-animali','Animali ammessi',o.animali||'',['','Si','No','Da valutare'])}</div>`;
- h+=`<div class="box2">${selectLoc('loc-cedolare','Cedolare secca',o.cedolare||'',['','Si','No','Da verificare'])}${selectLoc('loc-utenze','Utenze',o.utenze||'',['','A carico conduttore','Incluse','Da definire'])}</div>`;
- h+=inputLoc('loc-garanzie','Garanzie richieste',o.garanzie);
- h+=`<div class="form-row"><label class="form-label">Note locazione</label><textarea class="form-textarea" id="loc-note">${esc(o.note||'')}</textarea></div>`;
- h+='</div></div>';
- h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${id}')">Annulla</button><button class="btn btn-primary" onclick="salvaLocazioneImmobile('${id}')">Salva</button></div>`;
- apriModal('Locazione immobile',h);
- const sel=document.getElementById('loc-op');const upd=()=>{document.getElementById('loc-dettagli').hidden=!['affitto','entrambi'].includes(sel.value);};sel.addEventListener('change',upd);upd();
+/* ARANJO 1.34.0 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
+const TIPI_DOC_LOCAZIONE=['Contratto firmato','Registrazione / ricevuta RLI','Proroga / rinnovo','Cessione / subentro','Disdetta / risoluzione','Deposito cauzionale','Verbale consegna / riconsegna','Inventario / arredi','Ricevute canoni','Comunicazioni','Altro'];
+function etichettaOperazione(op){ return op==='entrambi'?'Vendita e affitto':op==='affitto'?'Affitto':op==='vendita'?'Vendita':'Da definire'; }
+function locazioneInCorso(im){return !!(im && im.locazione && ['Locato','In scadenza'].includes(im.locazione.stato));}
+function haDatiLocazione(im){
+ const l=(im&&im.locazione)||{};
+ return !!(l.operazione||l.stato||l.canoneRichiesto||l.canoneConcordato||l.contratto||l.scadenzaContratto||(im.occupanti||[]).length||(im.documentiLocazione||[]).length);
 }
-function salvaLocazioneImmobile(id){
+function datiContrattoPresenti(l){return !!(l.contratto||l.canoneConcordato||l.decorrenzaContratto||l.scadenzaContratto||l.codiceRegistrazione||l.registrazione||l.depositoMensilita);}
+function aggiornaDettagliLocazione(){
+ const op=(document.getElementById('loc-op')||{}).value;
+ const st=(document.getElementById('loc-stato')||{}).value;
+ const details=document.getElementById('loc-dettagli');
+ if(details)details.hidden = !(op==='affitto'||op==='entrambi'||['Locato','In scadenza','Occupato senza contratto'].includes(st)||window._locArchivioPresente===true);
+ const avviso=document.getElementById('loc-avviso');
+ if(avviso)avviso.hidden = !(['vendita','entrambi'].includes(op)&&['Locato','In scadenza'].includes(st));
+ const sub=document.getElementById('loc-subentro');if(sub)sub.hidden=!(['vendita','entrambi'].includes(op)&&['Locato','In scadenza'].includes(st));
+}
+function apriLocazioneImmobile(id){
+ const im=DB.immobili.find(x=>x.id===id);if(!im)return;
+ const o=im.locazione||{};
+ window._locArchivioPresente=datiContrattoPresenti(o);
+ const numero=(im.occupanti||[]).length;
+ const numdoc=(im.documentiLocazione||[]).length;
+ let h='<div class="form-group">';
+ h+=selectLoc('loc-op','Operazione attuale',o.operazione||'vendita',['vendita','affitto','entrambi']);
+ h+=selectLoc('loc-stato','Situazione occupazionale',o.stato||'',['','Libero','Da locare','Locato','In scadenza','Occupato senza contratto','Da verificare','Sospeso']);
+ h+=`<div class="geo-help" id="loc-avviso" hidden>Vendita con inquilino: il contratto resta collegato all'immobile. Verifica la documentazione e le condizioni del subentro dell'acquirente.</div>`;
+ h+=`<div class="btn-row" style="margin:10px 0;"><button class="btn btn-secondary" type="button" onclick="salvaLocazioneImmobile('${id}','conduttori')">${ico('utenti',14)} Inquilini${numero?' · '+numero:''}</button><button class="btn btn-secondary" type="button" onclick="salvaLocazioneImmobile('${id}','documenti')">${ico('documento',14)} Documenti${numdoc?' · '+numdoc:''}</button></div>`;
+ h+='<div id="loc-dettagli">';
+ h+=`<div class="box2">${inputLoc('loc-canoneRichiesto','Canone richiesto €/mese',o.canoneRichiesto,'num')}${inputLoc('loc-canoneConcordato','Canone in contratto €/mese',o.canoneConcordato,'num')}</div>`;
+ h+=`<div class="box2">${inputLoc('loc-speseCondominiali','Spese €/mese',o.speseCondominiali,'num')}${inputLoc('loc-depositoMensilita','Deposito (mensilita)',o.depositoMensilita,'num')}</div>`;
+ h+=selectLoc('loc-contratto','Tipo contratto',o.contratto||'',opContratto);
+ h+=`<div class="box2">${inputLoc('loc-decorrenzaContratto','Decorrenza contratto',o.decorrenzaContratto,'date')}${inputLoc('loc-scadenzaContratto','Scadenza contratto',o.scadenzaContratto,'date')}</div>`;
+ h+=`<div class="box2">${selectLoc('loc-registrazione','Registrazione',o.registrazione||'',['','Registrato','Non registrato','Da verificare'])}${inputLoc('loc-codiceRegistrazione','Codice registrazione / ID contratto',o.codiceRegistrazione)}</div>`;
+ h+=`<div class="box2">${inputLoc('loc-durata','Durata / proroga',o.durata)}${inputLoc('loc-disponibileDal','Disponibile dal',o.disponibileDal,'date')}</div>`;
+ h+=`<div class="box2">${selectLoc('loc-arredamento','Arredo',o.arredamento||'',['','Si','No','Parzialmente'])}${selectLoc('loc-animali','Animali',o.animali||'',['','Si','No','Da valutare'])}</div>`;
+ h+=`<div class="box2">${selectLoc('loc-cedolare','Cedolare secca',o.cedolare||'',['','Si','No','Da verificare'])}${selectLoc('loc-utenze','Utenze',o.utenze||'',['','A carico conduttore','Incluse','Da definire'])}</div>`;
+ h+=inputLoc('loc-garanzie','Garanzie',o.garanzie);
+ h+=`<div class="form-row"><label class="form-label" for="loc-note">Note contratto / affitto</label><textarea class="form-textarea" id="loc-note">${esc(o.note||'')}</textarea></div>`;
+ h+='</div>';
+ h+=`<div id="loc-subentro" class="form-row"><label class="form-label" for="loc-noteSubentro">Vendita con inquilino · note per il subentro</label><textarea class="form-textarea" id="loc-noteSubentro" placeholder="Es. deposito, arretrati, visite, accordi con il conduttore">${esc(o.noteSubentro||'')}</textarea></div>`;
+ if((o.storicoOperazioni||[]).length){
+  h+='<details class="fold"><summary>Storico operazioni</summary><div style="padding:8px 2px">';
+  (o.storicoOperazioni||[]).slice().reverse().forEach(m=>{h+=`<div class="info-row"><span class="label">${esc((m.data||'').slice(0,10))}</span><span class="value">${esc(etichettaOperazione(m.da))} → ${esc(etichettaOperazione(m.a))}</span></div>`;});
+  h+='</div></details>';
+ }
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${id}')">Annulla</button><button class="btn btn-primary" onclick="salvaLocazioneImmobile('${id}')">Salva</button></div>`;
+ apriModal('Operazione e occupazione',h);
+ document.getElementById('loc-op').addEventListener('change', aggiornaDettagliLocazione);
+ document.getElementById('loc-stato').addEventListener('change', aggiornaDettagliLocazione);
+ aggiornaDettagliLocazione();
+}
+function salvaLocazioneImmobile(id,next){
  const im=DB.immobili.find(x=>x.id===id);if(!im)return;
  const g=k=>(document.getElementById('loc-'+k)||{}).value||'';
  const op=g('op');
- const fields=['stato','scadenzaContratto','canoneRichiesto','canoneConcordato','speseCondominiali','depositoMensilita','contratto','durata','disponibileDal','arredamento','animali','cedolare','utenze','garanzie','note'];
- const o={...(im.locazione||{}),operazione:op};
- fields.forEach(k=>o[k]=g(k).trim());
- if(['affitto','entrambi'].includes(op)){
-  for(const k of ['canoneRichiesto','canoneConcordato','speseCondominiali','depositoMensilita']){if(o[k] && (!/^[\d.,\s]+$/.test(o[k]) || Number(o[k].replace(',','.').replace(/\s/g,''))<0)){alert('Verifica '+k);return;}}
+ if(!['vendita','affitto','entrambi'].includes(op)){alert('Seleziona una operazione');return;}
+ const prev=im.locazione||{};
+ const keys=['stato','decorrenzaContratto','scadenzaContratto','canoneRichiesto','canoneConcordato','speseCondominiali','depositoMensilita','contratto','durata','disponibileDal','arredamento','animali','cedolare','utenze','garanzie','note','registrazione','codiceRegistrazione','noteSubentro'];
+ const o={...prev,operazione:op};
+ keys.forEach(k=>o[k]=g(k).trim());
+ for(const k of ['canoneRichiesto','canoneConcordato','speseCondominiali','depositoMensilita']){
+  if(o[k] && (!/^[\d.,\s]+$/.test(o[k])||!Number.isFinite(Number(o[k].replace(',','.').replace(/\s/g,'')))||Number(o[k].replace(',','.').replace(/\s/g,''))<0)){alert('Controlla il valore di '+k);return;}
  }
- im.locazione=o;im.updatedAt=new Date().toISOString();Storage.save(DB);renderListaImmobili();apriScheda(id);
+ if(prev.operazione && prev.operazione!==op){
+  o.storicoOperazioni=[...(prev.storicoOperazioni||[]),{data:new Date().toISOString(),da:prev.operazione,a:op}];
+ }
+ im.locazione=o;im.updatedAt=new Date().toISOString();Storage.save(DB);renderListaImmobili();
+ if(next==='conduttori')apriGestioneConduttori(id);else if(next==='documenti')apriArchivioLocazione(id);else apriScheda(id);return true;
+}
+function apriGestioneConduttori(id){
+ const im=DB.immobili.find(x=>x.id===id);if(!im)return;
+ const occ=im.occupanti||[];
+ let h='<div class="form-group">';
+ if(!occ.length)h+='<div class="geo-help">Nessun inquilino collegato. Puoi selezionare una persona esistente o crearne una.</div>';
+ if((im.locazione||{}).stato==='Libero') h+='<div class="geo-help">Situazione: libero. Questi sono contatti storici collegati, non occupanti attuali.</div>';
+ occ.forEach(o=>{
+  const p=trovaPersona(o.personaId);
+  h+=`<div class="info-row" style="align-items:center;gap:8px;"><span class="label" style="flex:1;">${esc(p?nomeCogn(p):'Contatto non trovato')}<small style="display:block;color:var(--tx3)">${esc(o.tipo||'Inquilino')}${p&&p.telefono?' · '+esc(p.telefono):''}</small></span><span class="value" style="display:flex;gap:4px;"><button class="btn btn-secondary btn-icon" title="Apri persona" aria-label="Apri persona" onclick="apriSchedaPersona('${o.personaId}')">${ico('utente',14)}</button><button class="btn btn-secondary btn-icon" title="Scollega" aria-label="Scollega" onclick="scollegaConduttore('${id}','${o.personaId}')">${ico('x',14)}</button></span></div>`;
+ });
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriCercaConduttore('${id}')">${ico('lente',14)} Cerca persona</button><button class="btn btn-secondary" onclick="apriNuovoConduttore('${id}')">${ico('piu',14)} Nuova persona</button></div>`;
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriLocazioneImmobile('${id}')">Torna</button></div>`;
+ apriModal('Inquilini · '+esc(im.indirizzo||''),h);
+}
+function scollegaConduttore(imId,pid){
+ const im=DB.immobili.find(i=>i.id===imId);if(!im)return;
+ const o=(im.occupanti||[]).find(x=>x.personaId===pid);
+ if(!o||!confirm('Scollegare questo inquilino dall’immobile? La scheda persona e i documenti non vengono eliminati.'))return;
+ im.occupanti=(im.occupanti||[]).filter(x=>x.personaId!==pid);
+ im.updatedAt=new Date().toISOString();Storage.save(DB);apriGestioneConduttori(imId);
+}
+function apriCercaConduttore(id){
+ const im=DB.immobili.find(i=>i.id===id);if(!im)return;
+ const h=`<input id="cn-search" type="search" class="form-input" placeholder="Nome o telefono" oninput="risultatiCercaConduttore('${id}')" autocomplete="off"><div id="cn-results"></div><div class="btn-row"><button class="btn btn-secondary" onclick="apriGestioneConduttori('${id}')">Torna</button></div>`;
+ apriModal('Cerca inquilino',h);risultatiCercaConduttore(id);
+}
+function risultatiCercaConduttore(id){
+ const im=DB.immobili.find(i=>i.id===id);if(!im)return;
+ const q=((document.getElementById('cn-search')||{}).value||'').trim().toLowerCase();
+ const c=document.getElementById('cn-results');if(!c)return;
+ if(!q){c.innerHTML='<div class="geo-help">Digita almeno un nome o un numero.</div>';return;}
+ const presenti=new Set((im.occupanti||[]).map(o=>o.personaId));
+ const arr=DB.persone.filter(p=>!presenti.has(p.id)&&[nomeCogn(p),p.telefono,p.telefono2,p.email].some(v=>String(v||'').toLowerCase().includes(q))).slice(0,12);
+ c.innerHTML=arr.map(p=>`<button type="button" class="immobile-line" style="width:100%;text-align:left;cursor:pointer" onclick="apriConfermaConduttore('${id}','${p.id}')"><span class="txt">${esc(nomeCogn(p))}</span><span style="font-size:11px;color:var(--tx3)">${esc(p.telefono||'')}</span></button>`).join('')||'<div class="geo-help">Nessuna persona trovata.</div>';
+}
+function apriConfermaConduttore(imId,pid){
+ const p=trovaPersona(pid);if(!p)return;
+ let h=`<div class="geo-help">${esc(nomeCogn(p))}${p.telefono?' · '+esc(p.telefono):''}</div>`;
+ h+=selectLoc('cn-tipo','Collegamento','Inquilino',['Inquilino','Co-conduttore','Altro occupante']);
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriCercaConduttore('${imId}')">Indietro</button><button class="btn btn-primary" onclick="confermaConduttore('${imId}','${pid}')">Collega</button></div>`;
+ apriModal('Collega persona',h);
+}
+function confermaConduttore(imId,pid){
+ const im=DB.immobili.find(i=>i.id===imId),p=trovaPersona(pid);if(!im||!p)return;
+ im.occupanti=im.occupanti||[];
+ if(im.occupanti.some(o=>o.personaId===pid)){apriGestioneConduttori(imId);return;}
+ const tipo=((document.getElementById('cn-tipo')||{}).value)||'Inquilino';
+ im.occupanti.push({personaId:pid,tipo});
+ if(tipo!=='Altro occupante')p.ruoli=Array.from(new Set([...(p.ruoli||[]),'CONDUTTORE']));
+ im.updatedAt=p.updatedAt=new Date().toISOString();Storage.save(DB);renderPersone();apriGestioneConduttori(imId);
+}
+function apriNuovoConduttore(id){
+ let h='<div class="form-group">';
+ h+=`<div class="box2">${inputLoc('cn-cognome','Cognome','')}${inputLoc('cn-nome','Nome','')}</div>`;
+ h+=`<div class="box2">${inputLoc('cn-telefono','Telefono','')}${inputLoc('cn-email','Email','')}</div>`;
+ h+=inputLoc('cn-cf','Codice fiscale','');
+ h+=selectLoc('cn-tipo','Collegamento','Inquilino',['Inquilino','Co-conduttore','Altro occupante']);
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriGestioneConduttori('${id}')">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoConduttore('${id}')">Salva</button></div>`;
+ apriModal('Nuovo inquilino',h);
+}
+function salvaNuovoConduttore(imId){
+ const im=DB.immobili.find(i=>i.id===imId);if(!im)return;
+ const g=k=>((document.getElementById('cn-'+k)||{}).value||'').trim();
+ const nome=g('nome').toUpperCase(), cognome=g('cognome').toUpperCase(),tel=g('telefono'),cf=g('cf').toUpperCase(),email=g('email'),tipo=g('tipo')||'Inquilino';
+ if(!nome||!cognome){alert('Inserisci nome e cognome.');return;}
+ const duplicati=DB.persone.filter(p=>(cf && String(p.cf||'').toUpperCase()===cf)||(tel && String(p.telefono||'').replace(/\s/g,'')===tel.replace(/\s/g,'')));
+ if(duplicati.length){alert('Esiste gia una persona con questo telefono o codice fiscale. Usa “Cerca persona” per collegarla, evitando duplicati.');return;}
+ const ad=new Date().toISOString();const p={id:uid(),nome,cognome,telefono:tel,email,cf,ruoli:tipo==='Altro occupante'?[]:['CONDUTTORE'],attivita:[],foto:[],createdAt:ad,updatedAt:ad};
+ DB.persone.push(p);im.occupanti=im.occupanti||[];im.occupanti.push({personaId:p.id,tipo});im.updatedAt=ad;
+ Storage.save(DB);renderPersone();apriGestioneConduttori(imId);
+}
+function apriArchivioLocazione(imId){
+ const im=DB.immobili.find(i=>i.id===imId);if(!im)return;
+ const docs=Array.isArray(im.documentiLocazione)?im.documentiLocazione:[];
+ let h='<div class="form-group">';
+ if(!docs.length)h+='<div class="geo-help">Nessun documento registrato. Gli allegati restano nell’immobile anche cambiando operazione.</div>';
+ docs.slice().sort((a,b)=>String(b.data||'').localeCompare(String(a.data||''))).forEach(d=>{
+  h+=`<div class="info-row" style="align-items:center;gap:7px;"><span class="label" style="flex:1;min-width:0;">${esc(d.tipo||'Documento')}<small style="display:block;color:var(--tx3)">${esc(d.data||'')}${d.nomeFile?' · '+esc(d.nomeFile):''}${!d.fileId?' · '+esc(d.stato||'Da verificare'):''}</small></span><span class="value" style="display:flex;gap:4px;">${d.fileId?`<button class="btn btn-secondary btn-icon" aria-label="Scarica" title="Scarica" onclick="scaricaDoc('${d.fileId}')">${ico('download',14)}</button>`:''}<button class="btn btn-secondary btn-icon" aria-label="Modifica" title="Modifica" onclick="apriModificaDocumentoLocazione('${imId}','${d.id}')">${ico('modifica',14)}</button></span></div>`;
+ });
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriLocazioneImmobile('${imId}')">Torna</button><button class="btn btn-primary" onclick="apriModificaDocumentoLocazione('${imId}','')">${ico('piu',14)} Documento</button></div>`;
+ apriModal('Documenti locazione',h);
+}
+function apriModificaDocumentoLocazione(imId,docId){
+ const im=DB.immobili.find(i=>i.id===imId);if(!im)return;
+ const d=(im.documentiLocazione||[]).find(x=>x.id===docId)||{};
+ let h='<div class="form-group">';
+ h+=selectLoc('ld-tipo','Tipo documento',d.tipo||TIPI_DOC_LOCAZIONE[0],TIPI_DOC_LOCAZIONE);
+ h+=`<div class="box2">${inputLoc('ld-data','Data',d.data||'','date')}${selectLoc('ld-stato','Stato',d.stato||'Da richiedere',['Da richiedere','Da verificare','Presente','Non applicabile'])}</div>`;
+ h+=`<div class="form-row"><label for="ld-note" class="form-label">Note</label><textarea class="form-textarea" id="ld-note">${esc(d.note||'')}</textarea></div>`;
+ h+=`<div class="form-row"><label for="ld-file" class="form-label">${d.fileId?'Sostituisci allegato (facoltativo)':'Allegato (facoltativo)'}</label><input id="ld-file" type="file" accept="application/pdf,image/*" class="form-input"></div>`;
+ if(d.fileId)h+=`<div class="geo-help">Allegato attuale: ${esc(d.nomeFile||'Documento')} · <button class="btn btn-secondary" onclick="scaricaDoc('${d.fileId}')">${ico('download',12)} Scarica</button></div>`;
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriArchivioLocazione('${imId}')">Annulla</button><button class="btn btn-primary" onclick="salvaDocumentoLocazione('${imId}','${docId||''}')">Salva</button></div>`;
+ if(d.id) h+=`<button class="btn btn-danger" onclick="eliminaDocumentoLocazione('${imId}','${d.id}')">Elimina riferimento</button>`;
+ apriModal(docId?'Documento locazione':'Aggiungi documento',h);
+}
+async function salvaDocumentoLocazione(imId,docId){
+ const im=DB.immobili.find(i=>i.id===imId);if(!im)return;
+ const g=k=>((document.getElementById('ld-'+k)||{}).value||'').trim();
+ const input=document.getElementById('ld-file');const file=input&&input.files&&input.files[0];
+ if(file && file.size>25*1024*1024){alert('Il file supera 25 MB.');return;}
+ if(file && !(file.type==='application/pdf'||file.type.startsWith('image/'))){alert('Allega un PDF o una immagine.');return;}
+ let d=(im.documentiLocazione||[]).find(x=>x.id===docId);const nuovo=!d;
+ const obj={...(d||{}),id:docId||uid(),tipo:g('tipo'),data:g('data'),stato:g('stato'),note:g('note')};
+ if(file){
+   const fileId='doc_l_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
+   try{await PhotoDB.saveDoc(fileId,file,{nome:file.name,mime:file.type,size:file.size});}
+   catch(e){alert('Allegato non salvato: '+(e&&e.message||e));return;}
+   obj.fileId=fileId;obj.nomeFile=file.name;obj.stato='Presente';
+ }
+ if(!Array.isArray(im.documentiLocazione))im.documentiLocazione=[];
+ if(nuovo) im.documentiLocazione.push(obj);
+ else Object.assign(d,obj);
+ im.updatedAt=new Date().toISOString();Storage.save(DB);apriArchivioLocazione(imId);
+}
+function eliminaDocumentoLocazione(imId,docId){
+ const im=DB.immobili.find(i=>i.id===imId);if(!im)return;
+ if(!confirm('Eliminare questo riferimento documentale?'))return;
+ im.documentiLocazione=(im.documentiLocazione||[]).filter(d=>d.id!==docId);
+ im.updatedAt=new Date().toISOString();Storage.save(DB);apriArchivioLocazione(imId);
+ // Non eliminare il blob qui: puo ancora essere presente in un backup o in un altro riferimento.
 }
 function apriRichiestaLocazione(pid){
  const p=trovaPersona(pid);if(!p)return;
@@ -4917,6 +5100,7 @@ function confermaUnione(){
    merged[k]=unioneUnique(origA[k],origB[k],k==='proprietari'||k==='occupanti'?'personaId':(k==='attivita'?'id':null));
  }
  merged.documenti={...(origB.documenti||{}),...(origA.documenti||{}),...(merged.documenti||{})};
+ merged.documentiLocazione=unioneUnique(origA.documentiLocazione||[],origB.documentiLocazione||[],'id');
  for(const [k,v] of Object.entries(origB.documenti||{})){if(merged.documenti[k]===undefined||merged.documenti[k]===null)merged.documenti[k]=v;}
  merged.mergedFrom=unioneUnique(origA.mergedFrom,[(origB.id),...(origB.mergedFrom||[])]);
  merged.updatedAt=new Date().toISOString();
