@@ -122,6 +122,7 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .badge-PROP{--bc:var(--blu)} .badge-ACQUIRENTE{--bc:var(--rr)} .badge-PROFESSIONISTA{--bc:var(--prof)} .badge-LOCATORE{--bc:#7c3aed} .badge-CONDUTTORE{--bc:#0e7490}
 .badge-RR-attiva{--bc:var(--rr)} .badge-RR-in-attesa{--bc:var(--pa)} .badge-RR-proposta{--bc:var(--ink)} .badge-RR-ha-comprato{--bc:var(--vnd)} .badge-RR-non-attiva{--bc:var(--tx3)} .badge-RR-rogitato{--bc:#162a47}
 .badge-collega{--bc:var(--coll)}
+.badge-VAL{--bc:var(--ink)}
 
 .tabbar{position:fixed;bottom:0;left:0;right:0;height:calc(var(--tab-h) + env(safe-area-inset-bottom));background:rgba(255,255,255,.82);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border-top:1px solid var(--bd);display:flex;justify-content:space-around;align-items:center;padding-bottom:env(safe-area-inset-bottom);padding-top:4px;z-index:100}
 :root[data-theme="dark"] .tabbar{background:rgba(15,15,17,.9)}
@@ -168,7 +169,7 @@ button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line
 .scheda-top .top-title{font-size:19px;font-weight:600;color:var(--tx);line-height:1.3;letter-spacing:-.02em;word-break:break-word}
 .scheda-top .top-sub{font-size:12.5px;color:var(--tx2);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .scheda-top .top-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;align-items:center}
-.scheda-top .top-actions{display:flex;gap:8px;margin-top:10px}
+.scheda-top .top-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .scheda-top .top-actions .btn{margin-bottom:0;flex:1}
 .scheda-top .top-actions .btn-icon{flex:0 0 42px;background:var(--bg2);border-color:transparent;color:var(--blu)}
 
@@ -418,6 +419,8 @@ details.fold .cx-campo textarea{min-height:44px;}
 details.fold .ms-btn{font-size:13.5px;padding:9px 11px;min-height:38px;border-radius:8px;}
 details.fold .ms-btn svg{width:11px;height:11px;}
 details.fold .box2{gap:6px;}
+.cx-hidden{display:none !important;}
+.cx-info{font-size:11px;color:var(--tx3);padding:4px 0;font-style:italic;}
 @media (max-width: 340px){ .cx-row2{grid-template-columns:1fr;} }
 </style>
 </head>
@@ -640,9 +643,10 @@ details.fold .box2{gap:6px;}
 /* ==========================================================================
    CORE — DB, storage, costanti, utility
    ========================================================================== */
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
+const POI_CACHE_KEY = 'aranjo_poi_cache_v1';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
 const CREMONA_CENTER = [45.1333, 10.0167];
 const ORA_H = 44;
@@ -690,6 +694,11 @@ const OPT_MUTUO = ['Sì','No','Da valutare'];
 const OPT_TEMPISTICA = ['Immediata','Entro 3 mesi','Entro 6 mesi','Oltre 6 mesi'];
 const OPT_CNCV = ['CN','CV'];
 const OPT_ZONE = ['CASTELLO','GHINAGLIA','PIAZZA RISORGIMENTO','VIA DANTE','STAZIONE','SANT AMBROGIO','SAN ZENO','VIA FILZI','VIA BERGAMO','CASTELLEONE','VIA MILANO','SAN PAOLO','CENTRO','BORGO SAN GIACOMO','CAVATIGOZZI','MIGLIARO','SAN FELICE','PERSICO','PORTA ROMANA','VIA GIORDANO','ZONA ZdF','ZONA Libera','ZONA ZdF altrui'];
+
+/* Scheda valutazione — tipi immobile */
+const TIPI_VALUTAZIONE = ['Appartamento','Condominio','Stabile','Villa singola','Villa schiera','Rustico','Villa bifamiliare','Cantiere','Negozio','Terreno','Edilizia agevolata'];
+const STATI_VALUTAZIONE = ['Nuovo','Buono','Discreto','Da ristrutturare'];
+const DISP_VALUTAZIONE = ['Libero','Chiavi','Occupato dal proprietario','Affittato'];
 
 const ICON_PATHS = {
   calendario:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
@@ -816,6 +825,9 @@ const Storage = {
       if(!im.gestitoDa) im.gestitoDa = 'me';
       if(typeof im.collegaNome === 'undefined') im.collegaNome = '';
       if(!im.prezzi) im.prezzi = {};
+      if(typeof im.valutata === 'undefined') im.valutata = false;
+      if(typeof im.dataValutazione === 'undefined') im.dataValutazione = null;
+      if(!im.schedaValutazione) im.schedaValutazione = null;
     });
     db.persone.forEach(per => {
       if(per.richiesta){
@@ -826,6 +838,10 @@ const Storage = {
     Object.keys(db.condomini).forEach(k => {
       if(!Array.isArray(db.condomini[k].foto)) db.condomini[k].foto = [];
       if(!Array.isArray(db.condomini[k].zone)) db.condomini[k].zone = [];
+      // Migrazione: aggiungi campi strutturali condominio
+      ['cappotto','ascensore','portineria','cortile','giardinoCondo','montacarichi','nAscensori','androne','isolamentoAcustico','accessoCarrabile','piscina'].forEach(kk => {
+        if(typeof db.condomini[k].datiStrutturali === 'undefined') db.condomini[k].datiStrutturali = {};
+      });
     });
     return db;
   },
@@ -1062,7 +1078,13 @@ function zoneEff(im){
   const d = (DB.condomini && DB.condomini[c]) || {};
   return (d.zone && d.zone.length > 0) ? d.zone : (im.zone || []);
 }
-function dettagliCondo(c){ if(!DB.condomini) DB.condomini = {}; if(!DB.condomini[c]) DB.condomini[c] = { zone:[], foto:[] }; if(!Array.isArray(DB.condomini[c].foto)) DB.condomini[c].foto = []; return DB.condomini[c]; }
+function dettagliCondo(c){ 
+  if(!DB.condomini) DB.condomini = {}; 
+  if(!DB.condomini[c]) DB.condomini[c] = { zone:[], foto:[], datiStrutturali:{} }; 
+  if(!Array.isArray(DB.condomini[c].foto)) DB.condomini[c].foto = [];
+  if(!DB.condomini[c].datiStrutturali) DB.condomini[c].datiStrutturali = {};
+  return DB.condomini[c]; 
+}
 const citta = () => DB.cittaPrincipale || CITTA_DEFAULT;
 const nomeCitta = () => citta().split(',')[0].trim();
 const iconaCondo = s => ico('condominio', s||15);
@@ -1154,6 +1176,105 @@ function geocodifica(ind){
       return null;
     }).catch(() => null);
 }
+
+/* --- POI: vicinanze automatiche da indirizzo (Overpass API) --- */
+let poiCache = {};
+try{ poiCache = JSON.parse(localStorage.getItem(POI_CACHE_KEY) || '{}'); }catch(e){ poiCache = {}; }
+const salvaPoiCache = () => { try{ localStorage.setItem(POI_CACHE_KEY, JSON.stringify(poiCache)); }catch(e){} };
+
+const POI_DEF = {
+  distScuole:           { amenity:'school', raggio:800, nome:'Scuole' },
+  distSupermercato:     { shop:'supermarket', raggio:600, nome:'Supermercato' },
+  distStazione:         { railway:'station', raggio:1500, nome:'Stazione' },
+  distParco:            { leisure:'park', raggio:600, nome:'Parco' },
+  distOspedale:         { amenity:'hospital', raggio:2000, nome:'Ospedale' },
+  distFarmacia:         { amenity:'pharmacy', raggio:500, nome:'Farmacia' },
+  distChiesa:           { amenity:'place_of_worship', raggio:500, nome:'Chiesa' },
+  distBanca:            { amenity:'bank', raggio:500, nome:'Banca' },
+  distCentroCommerciale:{ shop:'mall', raggio:2000, nome:'Centro commerciale' },
+  fermataBus:           { highway:'bus_stop', raggio:300, nome:'Fermata bus' }
+};
+
+function distanzaM(lat1, lng1, lat2, lng2){
+  const R = 6371000, q = x => x * Math.PI / 180;
+  const a = Math.sin(q(lat2-lat1)/2)**2 + Math.cos(q(lat1)) * Math.cos(q(lat2)) * Math.sin(q(lng2-lng1)/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+function distanzaToLabel(metri){
+  if(metri < 400) return '< 5 min';
+  if(metri < 800) return '5-10 min';
+  if(metri < 1500) return '10-20 min';
+  return '> 20 min';
+}
+
+function rilevaPOI(im){
+  if(!im || !im.lat || !im.lng) return Promise.resolve(null);
+  const key = im.lat.toFixed(5) + ',' + im.lng.toFixed(5);
+  if(poiCache[key]) return Promise.resolve(poiCache[key]);
+  // Costruisci query Overpass per tutti i POI entro 2000m
+  const query = `[out:json][timeout:25];
+(
+  nwr["amenity"~"school|hospital|pharmacy|place_of_worship|bank"](around:2000,${im.lat},${im.lng});
+  nwr["shop"~"supermarket|mall"](around:2000,${im.lat},${im.lng});
+  nwr["railway"="station"](around:2000,${im.lat},${im.lng});
+  nwr["leisure"="park"](around:2000,${im.lat},${im.lng});
+  nwr["highway"="bus_stop"](around:2000,${im.lat},${im.lng});
+);
+out center;`;
+  return fetch('https://overpass-api.de/api/interpreter', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
+    body:'data=' + encodeURIComponent(query)
+  })
+  .then(r => r.ok ? r.json() : null)
+  .then(data => {
+    if(!data || !data.elements) return null;
+    const result = {};
+    Object.keys(POI_DEF).forEach(k => { result[k] = null; });
+    data.elements.forEach(el => {
+      const lat = el.lat || (el.center && el.center.lat);
+      const lng = el.lon || (el.center && el.center.lon);
+      if(!lat || !lng) return;
+      const d = distanzaM(im.lat, im.lng, lat, lng);
+      const tags = el.tags || {};
+      Object.keys(POI_DEF).forEach(k => {
+        const def = POI_DEF[k];
+        let match = false;
+        if(def.amenity && tags.amenity === def.amenity) match = true;
+        if(def.shop && tags.shop === def.shop) match = true;
+        if(def.railway && tags.railway === def.railway) match = true;
+        if(def.leisure && tags.leisure === def.leisure) match = true;
+        if(def.highway && tags.highway === def.highway) match = true;
+        if(match && d <= def.raggio){
+          if(result[k] === null || d < result[k]) result[k] = d;
+        }
+      });
+    });
+    // Converti in label
+    const label = {};
+    Object.keys(result).forEach(k => { label[k] = result[k] === null ? null : distanzaToLabel(result[k]); });
+    poiCache[key] = label; salvaPoiCache();
+    return label;
+  }).catch(() => null);
+}
+
+window.rilevaPOIImmobile = function(iid){
+  const im = DB.immobili.find(x => x.id === iid); if(!im) return;
+  if(!im.lat || !im.lng){ alert('Immobile senza coordinate. Geocodifica prima.'); return; }
+  apriModal('Rilevamento POI', '<div style="text-align:center;padding:20px;">Rilevamento in corso…<br><small style="color:var(--tx3);">Interrogazione Overpass API</small></div>');
+  rilevaPOI(im).then(res => {
+    if(!res){ chiudiModal(); alert('Nessun dato disponibile'); return; }
+    im.dettagli = im.dettagli || {};
+    let aggiornati = 0;
+    Object.keys(res).forEach(k => { if(res[k] !== null){ im.dettagli[k] = res[k]; aggiornati++; } });
+    im.updatedAt = new Date().toISOString();
+    Storage.save(DB);
+    chiudiModal();
+    alert(`Aggiornati ${aggiornati} campi POI automaticamente.`);
+    if(immobileAperto === iid) apriScheda(iid);
+  });
+};
+
 let _coordsCitta = null;
 function geocodificaCitta(){
   const n = nomeCitta();
@@ -1322,6 +1443,8 @@ function renderListaImmobili(){
   c.innerHTML = h2;
 }
 function toggleCondoEsp(c){ condoEspansi[c] = !condoEspansi[c]; renderListaImmobili(); }
+
+/* --- CARD IMMOBILE (con badge valutata) --- */
 function cardImmobile(im, compact){
   if(compact){
     const cito = im.citofono || '';
@@ -1341,6 +1464,7 @@ function cardImmobile(im, compact){
   let h2 = `<div class="item-card" onclick="apriScheda('${im.id}')"><div class="item-row"><div class="item-title">${esc(titoloImmobile(im))}</div>`;
   if(im.villa) h2 += '<span style="font-size:10px;color:var(--ink);font-weight:600;">VILLA</span>';
   if(im.gestitoDa === 'collega') h2 += '<span class="badge badge-collega" style="font-size:8px;">COL.</span>';
+  if(im.valutata) h2 += `<span class="badge badge-VAL" title="Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):''}">VAL</span>`;
   h2 += `<span class="badge badge-${im.stato}">${im.stato}</span></div>`;
   if(['NT','INK','VND'].includes(im.stato) && typeof window.dossierIm === 'function'){
     const dz = window.dossierIm(im);
@@ -1869,7 +1993,13 @@ function selEsitoApp(eid){
   DB.attivita.push(att);
   if(im){ if(!im.attivita) im.attivita = []; im.attivita.push({ id:attId, seq:att.seq, data:att.data, tipo:'fatta', testo:att.testo, completata:true }); im.updatedAt = new Date().toISOString(); }
   if(per){ if(!per.attivita) per.attivita = []; per.attivita.push({ id:attId, seq:att.seq, data:att.data, tipo:'fatta', testo:att.testo, completata:true }); per.updatedAt = new Date().toISOString(); }
-  if(a.tipo === 'VAL' && im && im.stato === 'NT' && eid === 'val-ok') im.sottotipo = 'NT valutata';
+  if(a.tipo === 'VAL' && im && im.stato === 'NT' && eid === 'val-ok'){ 
+    im.sottotipo = 'NT valutata'; 
+    im.valutata = true; 
+    im.dataValutazione = new Date().toISOString();
+    if(!im.schedaValutazione) im.schedaValutazione = { creataDa:'VAL' };
+  }
+  if(a.tipo === 'RIVAL' && im && eid === 'rival-ok'){ im.valutata = true; if(!im.dataValutazione) im.dataValutazione = new Date().toISOString(); }
   if(a.tipo === 'RIT PROP' && im && eid === 'rit-ok') im.inTrattativa = true;
   if(a.tipo === 'CONTRO PROP' && im && eid === 'contro-acc'){ im.inTrattativa = true; im.propostaAccettata = true; }
   if(a.tipo === 'ACC PROP' && im && eid === 'accprop-acc'){ im.inTrattativa = true; im.propostaAccettata = true; if(per && (per.ruoli||[]).indexOf('ACQUIRENTE') >= 0) per.statoRR = 'ha-comprato'; }
@@ -2407,6 +2537,7 @@ function apriScheda(id){
   let h = '<div class="scheda-top">';
   h += '<div class="top-badges">';
   h += `<span class="badge badge-${im.stato}">${im.stato}</span>`;
+  if(im.valutata) h += `<span class="badge badge-VAL">VAL</span>`;
   if(!im.villa) h += `<span style="font-size:11px;color:var(--tx3);font-weight:600;">z${im.z||1}</span>`;
   if(im.villa) h += '<span style="font-size:10px;color:var(--ink);font-weight:700;">VILLA</span>';
   if(im.inTrattativa) h += '<span class="badge" style="background:var(--pa);">TRATTATIVA</span>';
@@ -2417,14 +2548,34 @@ function apriScheda(id){
   if(telP) h += `<div class="top-sub">${ico('telefono',12)} ${esc(telP)}</div>`;
   if(prezzoMercato !== null && prezzoMercato > 0) h += `<div class="top-sub" style="font-weight:700;color:var(--ink);">${ico('moneta',12)} Prezzo al mercato: ${prezzoMercato.toLocaleString('it-IT',{maximumFractionDigits:0})} €</div>`;
   if(nomeP) h += `<div class="top-sub">${ico('persona',12)} ${esc(nomeP)}</div>`;
+  if(im.valutata) h += `<div class="top-sub" style="color:var(--ink);font-weight:600;">${ico('check',12)} Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):'—'}</div>`;
   if(!im.villa && co && dc.amministratore && dc.amministratore.nome) h += `<div class="top-sub">${iconaCondo(12)} ${esc(dc.amministratore.nome)}</div>`;
   h += '<div class="top-actions">';
   if(telP) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(telP)}')">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(telP)}')">${ico('whatsapp',15)}</button>`;
   if(hc) h += `<button class="btn btn-secondary btn-icon" onclick="navMaps(${im.lat},${im.lng},'${esc(im.indirizzo).replace(/'/g,'')}')">${ico('nav',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" onclick="apriModifica()">${ico('modifica',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" onclick="apriCambiaStato()">${ico('aggiorna',15)}</button>`;
+  h += `<button class="btn btn-secondary btn-icon" onclick="apriSchedaValutazione('${id}')" title="Scheda valutazione">${ico('righello',15)}</button>`;
   h += '</div></div>';
   h += renderBoxAttivita(im, true);
+  
+  /* VALUTAZIONE — pannello dedicato */
+  if(im.schedaValutazione && Object.keys(im.schedaValutazione).length > 0){
+    const sv = im.schedaValutazione;
+    let bodyV = '';
+    if(im.dataValutazione) bodyV += `<div class="info-row"><span class="label">Data valutazione</span><span class="value">${fmtD(im.dataValutazione)}</span></div>`;
+    if(sv.tipoImmobile) bodyV += `<div class="info-row"><span class="label">Tipo</span><span class="value">${esc(sv.tipoImmobile)}</span></div>`;
+    if(sv.statoImmobile) bodyV += `<div class="info-row"><span class="label">Stato</span><span class="value">${esc(sv.statoImmobile)}</span></div>`;
+    if(sv.richiestaValutazione) bodyV += `<div class="info-row"><span class="label">Richiesta valutazione</span><span class="value">${esc(sv.richiestaValutazione)} €</span></div>`;
+    if(sv.mqComplessivi) bodyV += `<div class="info-row"><span class="label">Mq complessivi</span><span class="value">${esc(sv.mqComplessivi)}</span></div>`;
+    if(sv.nCamere) bodyV += `<div class="info-row"><span class="label">Camere</span><span class="value">${esc(sv.nCamere)}</span></div>`;
+    if(sv.serviziBagno) bodyV += `<div class="info-row"><span class="label">Bagni</span><span class="value">${esc(sv.serviziBagno)}</span></div>`;
+    if(sv.lavoriUrgenti) bodyV += `<div class="info-row"><span class="label">Lavori urgenti</span><span class="value">${esc(sv.lavoriUrgenti)}</span></div>`;
+    if(sv.note) bodyV += `<div class="info-row"><span class="label">Note</span><span class="value" style="white-space:pre-wrap;">${esc(sv.note)}</span></div>`;
+    bodyV += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriSchedaValutazione('${id}')">${ico('modifica',14)} Apri scheda completa</button>`;
+    h += collapsible('im_valut', ico('righello',13) + ' Scheda valutazione', bodyV, im.valutata ? 'Valutato' : null);
+  }
+  
   /* PREZZI */
   if(['NT','INK','VND'].includes(im.stato)){
     const z = im.prezzi || {};
@@ -2536,6 +2687,181 @@ function apriScheda(id){
   }
   h += `<button class="btn btn-danger" style="margin-top:6px;" onclick="eliminaImmobile()">${ico('cestino',15)} Elimina</button>`;
   apriModal(titoloImmobile(im), h);
+}
+
+/* --- SCHEDA TECNICA VALUTAZIONE --- */
+function apriSchedaValutazione(id){
+  const im = DB.immobili.find(x => x.id === id); if(!im) return;
+  window._valId = id;
+  im.schedaValutazione = im.schedaValutazione || {};
+  const sv = im.schedaValutazione;
+  
+  let h = '';
+  /* Header: tipo + stato */
+  h += '<div class="card"><h2>Classificazione</h2>';
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Tipo di immobile</label><select class="form-select" id="sv-tipo" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="">—</option>${TIPI_VALUTAZIONE.map(t => `<option value="${t}"${sv.tipoImmobile===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Stato immobile</label><select class="form-select" id="sv-stato" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="">—</option>${STATI_VALUTAZIONE.map(t => `<option value="${t}"${sv.statoImmobile===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += '</div>';
+  
+  /* Note fabbricato */
+  h += '<details class="fold"><summary>Note fabbricato</summary><div>';
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Anno costruzione</label><input class="form-input" id="sv-anno" value="${esc(sv.annoCostruzione||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Riscaldamento</label><input class="form-input" id="sv-risc" value="${esc(sv.riscaldamento||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Ascensore</label><select class="form-select" id="sv-asc" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.ascensore===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Portineria</label><select class="form-select" id="sv-port" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.portineria===t?' selected':''}>${t}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">N. appartamenti</label><input class="form-input" id="sv-napp" value="${esc(sv.nAppartamenti||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Piani fuori terra</label><input class="form-input" id="sv-piani" value="${esc(sv.pianiFuoriTerra||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Lavanderia</label><select class="form-select" id="sv-lav" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.lavanderia===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Posto macchina</label><select class="form-select" id="sv-pm" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.postoMacchina===t?' selected':''}>${t}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Cortile (mq)</label><input class="form-input" id="sv-cort" value="${esc(sv.cortileMq||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Giardino (mq)</label><input class="form-input" id="sv-giard" value="${esc(sv.giardinoMq||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
+  h += '</div></details>';
+  
+  /* Caratteristiche con dimensioni */
+  const roomKeys = [
+    {k:'ingresso', l:'Ingresso'},
+    {k:'angoloCottura', l:'Angolo cottura'},
+    {k:'cucinaAbitabile', l:'Cucina abitabile'},
+    {k:'tinello', l:'Tinello'},
+    {k:'salaPranzo', l:'Sala pranzo'},
+    {k:'soggiorno', l:'Soggiorno'},
+    {k:'studio', l:'Studio'},
+    {k:'camere', l:'Camere da letto (n)'},
+    {k:'cameraPiccola', l:'Piccola camera (L×W)'},
+    {k:'cameraMedia', l:'Media camera (L×W)'},
+    {k:'cameraGrande', l:'Grande camera (L×W)'},
+    {k:'serviziBagno', l:'Servizi bagno'},
+    {k:'terrazzo', l:'Terrazzo'},
+    {k:'balcone', l:'Balcone'},
+    {k:'postoAuto', l:'Posto auto'},
+    {k:'box', l:'Box'},
+    {k:'altro1', l:'Altro'},
+    {k:'altro2', l:'Altro'}
+  ];
+  h += '<details class="fold"><summary>Caratteristiche immobile</summary><div>';
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Piano</label><input class="form-input" id="sv-piano" value="${esc(sv.piano||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Mq complessivi</label><input class="form-input" id="sv-mq" value="${esc(sv.mqComplessivi||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
+  roomKeys.forEach(rk => {
+    const v = sv[rk.k] || {};
+    const hasDim = !['ingresso','angoloCottura','cucinaAbitabile','tinello','salaPranzo','soggiorno','studio','camere','serviziBagno'].includes(rk.k);
+    let cells = '';
+    if(hasDim){
+      cells = `<div class="cx-row2"><div class="cx-campo"><label class="form-label">L (m)</label><input class="form-input" id="sv-${rk.k}-l" value="${esc(v.l||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="decimal"></div><div class="cx-campo"><label class="form-label">W (m)</label><input class="form-input" id="sv-${rk.k}-w" value="${esc(v.w||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="decimal"></div></div>`;
+    } else {
+      cells = `<input class="form-input" id="sv-${rk.k}" value="${esc(v||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;">`;
+    }
+    h += `<div class="cx-campo" style="margin-top:6px;"><label class="form-label">${rk.l}</label>${cells}</div>`;
+  });
+  h += '</div></details>';
+  
+  /* Disponibilità */
+  h += '<details class="fold"><summary>Disponibilità dell\'immobile</summary><div>';
+  h += `<div class="cx-campo"><label class="form-label">Stato</label><select class="form-select" id="sv-disp" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${DISP_VALUTAZIONE.map(t => `<option value="${t}"${sv.disponibilita===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Libero dal</label><input class="form-input" id="sv-libdal" value="${esc(sv.liberoDal||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Affittato dal</label><input class="form-input" id="sv-affdal" value="${esc(sv.affittatoDal||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Contratto locazione scadente il</label><input class="form-input" id="sv-contsc" value="${esc(sv.contrattoScadente||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Spese condominiali (€/mese)</label><input class="form-input" id="sv-spese" value="${esc(sv.speseCond||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Riscaldamento (spese)</label><input class="form-input" id="sv-riscsp" value="${esc(sv.riscaldamentoSpese||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Amministratore</label><input class="form-input" id="sv-amm" value="${esc(sv.amministratore||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
+  h += '</div></details>';
+  
+  /* Ipoteche ed oneri */
+  h += '<details class="fold"><summary>Ipoteche ed oneri</summary><div>';
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Immobile libero</label><select class="form-select" id="sv-libero" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.libero===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Ipoteche</label><select class="form-select" id="sv-ipot" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.ipoteche===t?' selected':''}>${t}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Vincoli</label><select class="form-select" id="sv-vinc" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.vincoli===t?' selected':''}>${t}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Servitù</label><select class="form-select" id="sv-serv" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"><option value="">—</option>${['Sì','No'].map(t => `<option value="${t}"${sv.servitu===t?' selected':''}>${t}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Mutuo residuo — c/o studio</label><input class="form-input" id="sv-mutc" value="${esc(sv.mutuoResiduoStudio||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Importo residuo (€)</label><input class="form-input" id="sv-mutimp" value="${esc(sv.mutuoResiduoImporto||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Rata (mens/sem)</label><input class="form-input" id="sv-mutrata" value="${esc(sv.mutuoResiduoRata||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">N. rate residue</label><input class="form-input" id="sv-mutn" value="${esc(sv.mutuoResiduoNRate||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Importo rata (€)</label><input class="form-input" id="sv-mutimp2" value="${esc(sv.mutuoResiduoImportoRata||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
+  h += '</div></details>';
+  
+  /* Note + lavori + richiesta */
+  h += '<div class="card" style="margin-top:8px;"><h2>Valutazione</h2>';
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Note / Descrizione</label><textarea class="form-textarea" id="sv-note" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(sv.note||'')}</textarea></div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Lavori urgenti</label><textarea class="form-textarea" id="sv-lavurg" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(sv.lavoriUrgenti||'')}</textarea></div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Richiesta valutazione (€)</label><input class="form-input" id="sv-rich" value="${esc(sv.richiestaValutazione||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;" inputmode="numeric"></div>`;
+  h += '</div>';
+  
+  /* Orari visite */
+  h += '<div class="card"><h2>Orari visite</h2>';
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Tutti i giorni dalle</label><input class="form-input" id="sv-visdal" value="${esc(sv.visiteDalle||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="time"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">alle</label><input class="form-input" id="sv-visalle" value="${esc(sv.visiteAlle||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="time"></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Giorni</label><input class="form-input" id="sv-visgiorni" value="${esc(sv.visiteGiorni||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" placeholder="es. Lun-Ven"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Contattare il sig./ra</label><input class="form-input" id="sv-viscont" value="${esc(sv.visiteContattare||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
+  h += '</div>';
+  
+  /* Badge valutata */
+  h += '<div class="card" style="background:var(--blu-soft);"><div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--blu);font-weight:600;">';
+  h += `<input type="checkbox" id="sv-valutata" ${im.valutata?'checked':''} style="width:20px;height:20px;">`;
+  h += `<label for="sv-valutata" style="cursor:pointer;">Immobile valutato (anche se lo stato cambia)</label></div></div>`;
+  
+  h += `<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal();setTimeout(() => apriScheda('${id}'),80)">Annulla</button><button class="btn btn-primary" onclick="salvaSchedaValutazione('${id}')">Salva</button></div>`;
+  
+  apriModal('Scheda valutazione', h);
+}
+
+function salvaSchedaValutazione(id){
+  const im = DB.immobili.find(x => x.id === id); if(!im) return;
+  im.schedaValutazione = im.schedaValutazione || {};
+  const sv = im.schedaValutazione;
+  const g = x => (document.getElementById(x)||{}).value || '';
+  sv.tipoImmobile = g('sv-tipo');
+  sv.statoImmobile = g('sv-stato');
+  sv.annoCostruzione = g('sv-anno');
+  sv.riscaldamento = g('sv-risc');
+  sv.ascensore = g('sv-asc');
+  sv.portineria = g('sv-port');
+  sv.nAppartamenti = g('sv-napp');
+  sv.pianiFuoriTerra = g('sv-piani');
+  sv.lavanderia = g('sv-lav');
+  sv.postoMacchina = g('sv-pm');
+  sv.cortileMq = g('sv-cort');
+  sv.giardinoMq = g('sv-giard');
+  sv.piano = g('sv-piano');
+  sv.mqComplessivi = g('sv-mq');
+  const roomKeys = ['ingresso','angoloCottura','cucinaAbitabile','tinello','salaPranzo','soggiorno','studio','camere','cameraPiccola','cameraMedia','cameraGrande','serviziBagno','terrazzo','balcone','postoAuto','box','altro1','altro2'];
+  roomKeys.forEach(rk => {
+    const lEl = document.getElementById('sv-'+rk+'-l');
+    const wEl = document.getElementById('sv-'+rk+'-w');
+    const pEl = document.getElementById('sv-'+rk);
+    if(lEl || wEl) sv[rk] = { l:g('sv-'+rk+'-l'), w:g('sv-'+rk+'-w') };
+    else if(pEl) sv[rk] = g('sv-'+rk);
+  });
+  sv.disponibilita = g('sv-disp');
+  sv.liberoDal = g('sv-libdal');
+  sv.affittatoDal = g('sv-affdal');
+  sv.contrattoScadente = g('sv-contsc');
+  sv.speseCond = g('sv-spese');
+  sv.riscaldamentoSpese = g('sv-riscsp');
+  sv.amministratore = g('sv-amm');
+  sv.libero = g('sv-libero');
+  sv.ipoteche = g('sv-ipot');
+  sv.vincoli = g('sv-vinc');
+  sv.servitu = g('sv-serv');
+  sv.mutuoResiduoStudio = g('sv-mutc');
+  sv.mutuoResiduoImporto = g('sv-mutimp');
+  sv.mutuoResiduoRata = g('sv-mutrata');
+  sv.mutuoResiduoNRate = g('sv-mutn');
+  sv.mutuoResiduoImportoRata = g('sv-mutimp2');
+  sv.note = g('sv-note');
+  sv.lavoriUrgenti = g('sv-lavurg');
+  sv.richiestaValutazione = g('sv-rich');
+  sv.visiteDalle = g('sv-visdal');
+  sv.visiteAlle = g('sv-visalle');
+  sv.visiteGiorni = g('sv-visgiorni');
+  sv.visiteContattare = g('sv-viscont');
+  const cb = document.getElementById('sv-valutata');
+  im.valutata = cb ? cb.checked : false;
+  if(im.valutata && !im.dataValutazione) im.dataValutazione = new Date().toISOString();
+  if(!im.valutata) im.dataValutazione = null;
+  im.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  chiudiModal();
+  setTimeout(() => apriScheda(id), 80);
+  renderListaImmobili();
 }
 
 function renderBoxAttivita(ent, isImmobile){
@@ -2740,13 +3066,24 @@ function apriCambiaStato(){
   let h = '';
   if(x < o.length-1) h += `<button class="btn btn-secondary" onclick="eseguiCambioStato('${o[x+1]}')">→ ${o[x+1]}</button>`;
   if(x > 0) h += `<button class="btn btn-secondary" onclick="eseguiCambioStato('${o[x-1]}')">← ${o[x-1]}</button>`;
+  h += `<button class="btn btn-secondary" onclick="toggleValutata('${i.id}')">${i.valutata ? '✗ Rimuovi valutazione' : '✓ Segna come valutato'}</button>`;
+  h += `<button class="btn btn-secondary" onclick="apriSchedaValutazione('${i.id}')">${ico('righello',14)} Scheda valutazione</button>`;
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Annulla</button></div>`;
   apriModal('Stato', h);
+}
+function toggleValutata(id){
+  const i = DB.immobili.find(x => x.id === id); if(!i) return;
+  i.valutata = !i.valutata;
+  if(i.valutata && !i.dataValutazione) i.dataValutazione = new Date().toISOString();
+  i.updatedAt = new Date().toISOString();
+  Storage.save(DB);
+  apriScheda(id);
 }
 function eseguiCambioStato(ns){
   const i = DB.immobili.find(x => x.id === immobileAperto); if(!i) return;
   const v = i.stato;
   i.stato = ns;
+  // La valutazione resta anche se cambia stato (regola 2.1)
   if(!i.attivita) i.attivita = [];
   i.attivita.push({ id:uid(), seq:seq(), data:new Date().toISOString(), tipo:'fatta', testo:`Cambio stato: ${v} → ${ns}`, completata:true });
   i.updatedAt = new Date().toISOString();
@@ -2777,6 +3114,7 @@ function duplicaImmobile(id){
   const c = JSON.parse(JSON.stringify(o));
   c.id = uid(); c.attivita = []; c.foto = []; c.documenti = {}; c.storicoPrezzo = [];
   c.inTrattativa = false; c.propostaAccettata = false; c.propostaNotificata = false;
+  c.valutata = false; c.dataValutazione = null; c.schedaValutazione = null;
   c.createdAt = new Date().toISOString(); c.updatedAt = c.createdAt;
   if(!c.villa) c.z = nextZ(c);
   DB.immobili.push(c);
@@ -3074,7 +3412,7 @@ function salvaNuovoImmobile(){
   const coll = gest === 'collega' ? ((document.getElementById('f-coll')||{}).value || '').trim().toUpperCase() : '';
   let im;
   if(tf === 'censito'){
-    im = { id:uid(), stato:'IMM', indirizzo:ind, z:1, citofono:cito, villa:iv, cognomeNome:'', telefono:'', residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, createdAt:ad, updatedAt:ad };
+    im = { id:uid(), stato:'IMM', indirizzo:ind, z:1, citofono:cito, villa:iv, cognomeNome:'', telefono:'', residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, valutata:false, dataValutazione:null, schedaValutazione:null, createdAt:ad, updatedAt:ad };
     const cog = ((document.getElementById('f-cognome')||{}).value || '').trim().toUpperCase();
     const nom = ((document.getElementById('f-nome')||{}).value || '').trim().toUpperCase();
     const tel = (document.getElementById('f-tel')||{}).value || '';
@@ -3106,7 +3444,7 @@ function salvaNuovoImmobile(){
     if((per.ruoli||[]).indexOf(ruolo) < 0) per.ruoli.push(ruolo);
     const cn = nomeCogn(per);
     const stato = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK';
-    im = { id:uid(), stato, indirizzo:ind, z:1, villa:iv, citofono:cito, cognomeNome:cn, telefono:tel2, residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, createdAt:ad, updatedAt:ad };
+    im = { id:uid(), stato, indirizzo:ind, z:1, villa:iv, citofono:cito, cognomeNome:cn, telefono:tel2, residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, valutata:false, dataValutazione:null, schedaValutazione:null, createdAt:ad, updatedAt:ad };
     im.proprietari.push({ personaId:per.id, quota:'', principale:true, note:'', tipo:'Proprietà' });
     if(!iv) im.z = nextZ(im);
   }
@@ -3135,6 +3473,9 @@ function apriModifica(){
   if(['NT','INK','VND'].includes(im.stato)){
     h += `<button class="btn btn-secondary" onclick="apriGestioneDoc('${im.id}')">${ico('documento',15)} Gestisci documenti</button>`;
   }
+  if(im.lat && im.lng){
+    h += `<button class="btn btn-secondary" onclick="rilevaPOIImmobile('${im.id}')">${ico('target',15)} Rileva POI vicini (auto)</button>`;
+  }
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${im.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaModifica()">Salva</button></div>`;
   apriModal('Modifica', h);
 }
@@ -3154,7 +3495,7 @@ function salvaModifica(){
   Storage.save(DB); renderListaImmobili(); apriScheda(im.id);
 }
 
-/* CONDOMINI */
+/* CONDOMINI — con dati strutturali (cappotto, ascensore, ecc.) */
 function apriFormNuovoCondominio(){
   const nc = nomeCitta();
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-ind" placeholder="Via Roma 1, ${esc(nc)}"></div><div class="form-row"><label class="form-label">Anno</label><input class="form-input" id="nc-anno"></div><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="nc-amm"></div><div class="form-row"><label class="form-label">Telefono amm.</label><input class="form-input" id="nc-tel" type="tel"></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea</button></div>`;
@@ -3165,23 +3506,57 @@ function salvaNuovoCondominio(){
   if(!i){ alert('Indirizzo obbligatorio'); return; }
   if(DB.condomini && DB.condomini[i]){ if(!confirm('Esiste. Sovrascrivere?')) return; }
   if(!DB.condomini) DB.condomini = {};
-  DB.condomini[i] = { annoCostruzione:((document.getElementById('nc-anno')||{}).value||'').trim(), amministratore:{ nome:((document.getElementById('nc-amm')||{}).value||'').trim().toUpperCase(), telefono:((document.getElementById('nc-tel')||{}).value||'') }, zone:[], foto:[] };
+  DB.condomini[i] = { annoCostruzione:((document.getElementById('nc-anno')||{}).value||'').trim(), amministratore:{ nome:((document.getElementById('nc-amm')||{}).value||'').trim().toUpperCase(), telefono:((document.getElementById('nc-tel')||{}).value||'') }, zone:[], foto:[], datiStrutturali:{} };
   Storage.save(DB); chiudiModal(); alert('Creato: ' + i);
   vistaCond = true; aggiornaChips(); renderListaImmobili();
 }
 function apriModificaCondominio(co){
   const d = dettagliCondo(co);
   const a = d.amministratore || {};
+  const ds = d.datiStrutturali || {};
+  const st = 'background:var(--bg2);padding:8px 10px;border-radius:8px;';
   let h = `<div class="form-group"><div class="form-row"><label class="form-label">Anno costruzione</label><input class="form-input" id="cd-anno" value="${esc(d.annoCostruzione||'')}"></div><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="cd-amm" value="${esc(a.nome||'')}"></div><div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="cd-tel" type="tel" value="${esc(a.telefono||'')}"></div></div>`;
+  h += `<details class="fold" open><summary>Dati strutturali (vince su immobili)</summary><div style="padding:4px 0;">`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Cappotto termico</label><select class="form-select" id="cd-cappotto" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.cappotto||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Isolamento acustico</label><select class="form-select" id="cd-isol" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.isolamentoAcustico||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Ascensore</label><select class="form-select" id="cd-asc" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.ascensore||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">N. ascensori</label><input class="form-input" id="cd-nasc" value="${esc(ds.nAscensori||'')}" style="${st}" inputmode="numeric"></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Portineria</label><select class="form-select" id="cd-port" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.portineria||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Montacarichi</label><select class="form-select" id="cd-mont" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.montacarichi||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Cortile</label><select class="form-select" id="cd-cort" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.cortile||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Giardino condominiale</label><select class="form-select" id="cd-giard" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.giardinoCondo||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Accesso carrabile</label><select class="form-select" id="cd-accesso" style="${st}">${['','Sì','No'].map(x => `<option value="${x}"${(ds.accessoCarrabile||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Androne</label><select class="form-select" id="cd-andr" style="${st}">${['','Signorile','Normale','Modesto'].map(x => `<option value="${x}"${(ds.androne||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Piscina</label><select class="form-select" id="cd-pisc" style="${st}">${['','Condominiale','Privata'].map(x => `<option value="${x}"${(ds.piscina||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
+  h += '</div></details>';
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCondominio('${esc(co).replace(/'/g,'')}')">Salva</button></div>`;
   h += `<button class="btn btn-danger" style="margin-top:6px;" onclick="eliminaCondominio('${esc(co).replace(/'/g,'')}')">${ico('cestino',15)} Elimina</button>`;
   apriModal('Condominio', h);
 }
 function salvaCondominio(co){
   if(!DB.condomini) DB.condomini = {};
-  const pf = (DB.condomini[co] && Array.isArray(DB.condomini[co].foto)) ? DB.condomini[co].foto : [];
-  const pz = (DB.condomini[co] && Array.isArray(DB.condomini[co].zone)) ? DB.condomini[co].zone : [];
-  DB.condomini[co] = { annoCostruzione:((document.getElementById('cd-anno')||{}).value||'').trim(), amministratore:{ nome:((document.getElementById('cd-amm')||{}).value||'').trim().toUpperCase(), telefono:((document.getElementById('cd-tel')||{}).value||'') }, zone:pz, foto:pf };
+  const prev = DB.condomini[co] || {};
+  const pf = Array.isArray(prev.foto) ? prev.foto : [];
+  const pz = Array.isArray(prev.zone) ? prev.zone : [];
+  const g = id => (document.getElementById(id)||{}).value || '';
+  DB.condomini[co] = { 
+    annoCostruzione:g('cd-anno').trim(), 
+    amministratore:{ nome:g('cd-amm').trim().toUpperCase(), telefono:g('cd-tel') }, 
+    zone:pz, foto:pf,
+    datiStrutturali:{
+      cappotto:g('cd-cappotto'),
+      isolamentoAcustico:g('cd-isol'),
+      ascensore:g('cd-asc'),
+      nAscensori:g('cd-nasc'),
+      portineria:g('cd-port'),
+      montacarichi:g('cd-mont'),
+      cortile:g('cd-cort'),
+      giardinoCondo:g('cd-giard'),
+      accessoCarrabile:g('cd-accesso'),
+      androne:g('cd-andr'),
+      piscina:g('cd-pisc')
+    }
+  };
   Storage.save(DB);
   if(immobileAperto) apriScheda(immobileAperto); else chiudiModal();
 }
@@ -3527,7 +3902,7 @@ function linkImmobile(pid, iid){
 function apriNuovoImmobilePerPersona(pid){
   const p = trovaPersona(pid); if(!p) return;
   const ad = new Date().toISOString();
-  const im = { id:uid(), stato:'IMM', indirizzo:'', z:1, villa:false, citofono:'', cognomeNome:nomeCogn(p).toUpperCase(), telefono:p.telefono||'', proprietari:[{ personaId:pid, quota:'', principale:true, note:'', tipo:'Proprietà' }], condominio:'', sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:'me', collegaNome:'', createdAt:ad, updatedAt:ad };
+  const im = { id:uid(), stato:'IMM', indirizzo:'', z:1, villa:false, citofono:'', cognomeNome:nomeCogn(p).toUpperCase(), telefono:p.telefono||'', proprietari:[{ personaId:pid, quota:'', principale:true, note:'', tipo:'Proprietà' }], condominio:'', sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:'me', collegaNome:'', valutata:false, dataValutazione:null, schedaValutazione:null, createdAt:ad, updatedAt:ad };
   DB.immobili.push(im);
   Storage.save(DB);
   apriModificaImmobile(im.id);
@@ -4004,9 +4379,10 @@ avviaBoot();
 
 <script>
 /* ==========================================================================
-   ARANJÒ — MATCHING v4b
-   Dossier immobile unico, ordinato, senza duplicati.
-   L'anagrafica resta in apriModifica; TUTTO il resto è qui.
+   ARANJÒ — MATCHING v4b REV
+   - Campi condizionali (dep) — niente info inutili
+   - Merge condominio > immobile per dati strutturali
+   - Scheda valutazione integrata (aperta sopra)
    ========================================================================== */
 (function(){
 'use strict';
@@ -4021,16 +4397,14 @@ const IMP = {
 };
 const LEG = { obbligatorio:'indispensabile', preferito:'media' };
 
-/* ---------- CATALOGO ---------- */
-const CAT = [];
-const F = (k,g,l,t,o) => CAT.push(Object.assign({ k, g, l, t, w:5, def:'media', ui:'im' }, o || {}));
+/* ---------- HELPER ---------- */
 const A  = v => Array.isArray(v) ? v.filter(Boolean) : (v ? [v] : []);
 const lw = x => String(x).toLowerCase().trim();
 const CLASSI = ['A4','A3','A2','A1','A+','A','B','C','D','E','F','G'];
 const SOGLIA_CE = { 'Alta (A4-A1)':'A', 'Media (A-C)':'C', 'Bassa (D-G)':'G' };
 
-/* options locali */
-const OPT_SN   = ['Sì','No'];
+/* Opzioni locali */
+const OPT_SN = ['Sì','No'];
 const OPT_ORD_ST = ['Ottimo','Buono','Da sistemare'];
 const DIST = ['< 5 min','5-10 min','10-20 min','> 20 min'];
 const OPT_STRUTTURA = ['In linea','Torre','Ballatoio','Villino','Schiera','Isolato','Rurale','Signorile','Popolare'];
@@ -4064,7 +4438,6 @@ const OPT_TRAFF = ['Poco trafficata','Media','Molto trafficata'];
 const OPT_LAVORI = ['Nessuno','Tinteggiatura','Bagno','Cucina','Impianti','Tetto','Facciata','Completa','Demolizione/ricostruzione'];
 const OPT_BAGNI_FIN = ['Tutti finestrati','Alcuni','Nessuno'];
 const OPT_ARRED_IMM = ['Sì','No','Parzialmente','Su richiesta'];
-const OPT_ARRED_RQ  = ['Sì','No','Parzialmente','Indifferente'];
 const OPT_FV_IMP_IMM = ['Assente','Predisposizione','Connesso alla rete (Grid-connected)','Isolato dalla rete (Off-grid)','Ibrido'];
 const OPT_FV_ACC = ['Assente','Accumulo','Con accumulo e backup'];
 const OPT_FV_TIPO = ['Autonomo','Condominiale','Condiviso'];
@@ -4079,47 +4452,52 @@ function prezzoRef(im){
   return ric !== null ? ric : mer;
 }
 
-/* ============ GRUPPI ============ */
-const GRUPPI = [
-  ['TI','Tipologia'],
-  ['ED','Edificio e struttura'],
-  ['DI','Dimensioni e spazi'],
-  ['IN','Interni e servizi'],
-  ['ES','Esterni, vista e pertinenze'],
-  ['IP','Impianti e tecnologia'],
-  ['IF','Infissi e serramenti'],
-  ['EN','Energia e certificazioni'],
-  ['CM','Commerciale / aziendale'],
-  ['LG','Legale e catastale'],
-  ['MT','Manutenzione e stato'],
-  ['ZO','Zona e contesto'],
-  ['SP','Spese'],
-  ['NT','Note libere'],
-  ['CL','Richiesta cliente (solo richiesta)']
-];
+/* ---------- CONDIVISIONE DATI CONDOMINIO ---------- */
+const COND_KEYS = ['cappotto','isolamentoAcustico','ascensore','nAscensori','portineria','montacarichi','cortile','giardinoCondo','accessoCarrabile','androne','piscina','annoCostruzione'];
+const condoData = im => {
+  if(im.villa) return null;
+  const c = condoDi(im); if(!c) return null;
+  return (DB.condomini && DB.condomini[c]) || null;
+};
+function mergeCond(im, key, immVal){
+  // Restituisce il valore del condominio se presente e non vuoto, altrimenti quello dell'immobile
+  const cd = condoData(im); if(!cd) return immVal;
+  const ds = cd.datiStrutturali || {};
+  if(COND_KEYS.includes(key)){
+    const v = ds[key];
+    if(v !== undefined && v !== null && v !== '') return v;
+    // annoCostruzione ha una posizione sua nel condominio
+    if(key === 'annoCostruzione' && cd.annoCostruzione) return cd.annoCostruzione;
+  }
+  return immVal;
+}
+
+/* ---------- CATALOGO ---------- */
+const CAT = [];
+const F = (k,g,l,t,o) => CAT.push(Object.assign({ k, g, l, t, w:5, def:'media', ui:'im' }, o || {}));
 
 /* ============ TI — Tipologia ============ */
 F('tipologia','TI','Macro tipologia','multi',{ w:9, def:'alta', ui:'both', opts:TIPOLOGIE_KEYS, pair:'ti1' });
 F('sottotipologia','TI','Sotto-tipologia','multi',{ w:6, ui:'both', opts:SOTTOTIPOLOGIE_ALL, pair:'ti1' });
 
 /* ============ ED — Edificio e struttura ============ */
-F('tipoStruttura','ED','Tipo struttura','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA, pair:'ed1' });
-F('strutturaPortante','ED','Struttura portante','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA_PORTANTE, pair:'ed1' });
-F('tipoCopertura','ED','Tipo copertura','ord',{ w:2, ui:'both', opts:OPT_COPERTURA, tol:1.5, pair:'ed2' });
-F('nPianiEdificio','ED','N° piani edificio','num',{ w:2, ui:'both', tolAbs:3, pair:'ed2' });
-F('unitaPerPiano','ED','Unità per piano','num',{ w:1, ui:'both', tolAbs:2, pair:'ed3' });
-F('nAscensori','ED','N° ascensori','num',{ w:2, ui:'both', tolAbs:1, pair:'ed3' });
+F('tipoStruttura','ED','Tipo struttura','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA, pair:'ed1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('strutturaPortante','ED','Struttura portante','multi',{ w:2, ui:'both', opts:OPT_STRUTTURA_PORTANTE, pair:'ed1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('tipoCopertura','ED','Tipo copertura','ord',{ w:2, ui:'both', opts:OPT_COPERTURA, tol:1.5, pair:'ed2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('nPianiEdificio','ED','N° piani edificio','num',{ w:2, ui:'both', tolAbs:3, pair:'ed2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('unitaPerPiano','ED','Unità per piano','num',{ w:1, ui:'both', tolAbs:2, pair:'ed3', dep:d => !A(d.tipologia).includes('Terreno') && !d.villaCantiere });
+F('nAscensori','ED','N° ascensori','num',{ w:2, ui:'both', tolAbs:1, pair:'ed3', dep:d => !A(d.tipologia).includes('Terreno') && (d.ascensore !== 'No') });
 F('annoCostruzione','ED','Anno costruzione','num',{ w:3, ui:'both', tolAbs:10, pair:'ed4',
-   imv:(im,d) => parseNum(d.annoCostruzione) || parseNum(((DB.condomini || {})[condoDi(im)] || {}).annoCostruzione) });
+   imv:(im,d) => mergeCond(im, 'annoCostruzione', parseNum(d.annoCostruzione)) });
 F('annoRistrutturazione','ED','Anno ultima ristrutturazione','num',{ w:3, ui:'both', tolAbs:10, pair:'ed4' });
-F('cappotto','ED','Cappotto termico','sn',{ w:3, ui:'both', pair:'ed5' });
-F('isolamentoAcustico','ED','Isolamento acustico','sn',{ w:2, ui:'both', pair:'ed5' });
-F('statoFacciata','ED','Stato facciata','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5, pair:'ed6' });
-F('statoTetto','ED','Stato tetto','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5, pair:'ed6' });
-F('portineria','ED','Portineria','sn',{ w:2, ui:'both', pair:'ed7' });
-F('montacarichi','ED','Montacarichi','sn',{ w:2, ui:'both', pair:'ed7' });
-F('androne','ED','Androne / atrio','ord',{ w:1, ui:'both', opts:['Signorile','Normale','Modesto'], tol:1.5, pair:'ed8' });
-F('accessoCarrabile','ED','Accesso carrabile diretto','sn',{ w:3, ui:'both', pair:'ed8' });
+F('cappotto','ED','Cappotto termico','sn',{ w:3, ui:'both', pair:'ed5', dep:d => !A(d.tipologia).includes('Terreno'), imv:(im,d) => mergeCond(im, 'cappotto', d.cappotto) });
+F('isolamentoAcustico','ED','Isolamento acustico','sn',{ w:2, ui:'both', pair:'ed5', dep:d => !A(d.tipologia).includes('Terreno'), imv:(im,d) => mergeCond(im, 'isolamentoAcustico', d.isolamentoAcustico) });
+F('statoFacciata','ED','Stato facciata','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5, pair:'ed6', dep:d => !A(d.tipologia).includes('Terreno') });
+F('statoTetto','ED','Stato tetto','ord',{ w:2, ui:'both', opts:OPT_ORD_ST, tol:1.5, pair:'ed6', dep:d => !A(d.tipologia).includes('Terreno') });
+F('portineria','ED','Portineria','sn',{ w:2, ui:'both', pair:'ed7', dep:d => !d.villa, imv:(im,d) => mergeCond(im, 'portineria', d.portineria) });
+F('montacarichi','ED','Montacarichi','sn',{ w:2, ui:'both', pair:'ed7', dep:d => !d.villa, imv:(im,d) => mergeCond(im, 'montacarichi', d.montacarichi) });
+F('androne','ED','Androne / atrio','ord',{ w:1, ui:'both', opts:['Signorile','Normale','Modesto'], tol:1.5, pair:'ed8', dep:d => !d.villa, imv:(im,d) => mergeCond(im, 'androne', d.androne) });
+F('accessoCarrabile','ED','Accesso carrabile diretto','sn',{ w:3, ui:'both', pair:'ed8', imv:(im,d) => mergeCond(im, 'accessoCarrabile', d.accessoCarrabile) });
 
 /* ============ DI — Dimensioni e spazi ============ */
 F('mqCalpestabili','DI','Mq calpestabili','num',{ w:5, tol:.15, pair:'di1' });
@@ -4130,144 +4508,147 @@ F('esposizione','DI','Esposizione','multi',{ w:4, ui:'both', opts:OPT_ESP, pair:
 F('luminosita','DI','Luminosità','ord',{ w:3, ui:'both', opts:OPT_LUM, tol:1.5, pair:'di3' });
 F('privacy','DI','Privacy / affaccio','ord',{ w:3, ui:'both', opts:OPT_PRIV, tol:1.5, pair:'di4' });
 F('soppalco','DI','Soppalco presente','sn',{ w:2, ui:'both', pair:'di4' });
-F('mqSoppalco','DI','Mq soppalco','num',{ w:2, ui:'both', tol:.3 });
+F('mqSoppalco','DI','Mq soppalco','num',{ w:2, ui:'both', tol:.3, dep:d => d.soppalco === 'Sì' });
 
 /* ============ IN — Interni e servizi ============ */
 F('statoConservativo','IN','Stato conservativo','multi',{ w:6, opts:OPT_STATO_IMMOBILE.concat(OPT_STATO_TERRENO), pair:'in1' });
-F('piano','IN','Piano','multi',{ w:3, opts:OPT_PIANO, pair:'in1' });
-F('pianoNum','IN','N° piano','multi',{ w:3, opts:OPT_PIANO_FISSO, pair:'in2' });
-F('locali','IN','N° locali','multi',{ w:6, opts:OPT_LOCALI, pair:'in2' });
-F('bagni','IN','N° bagni','multi',{ w:4, opts:OPT_BAGNI, pair:'in3' });
-F('camere','IN','Camere da letto','multi',{ w:6, ui:'both', opts:['1','2','3','4','5+'], pair:'in3' });
-F('tipoBagniFinestrati','IN','Bagni finestrati','ord',{ w:3, ui:'both', opts:OPT_BAGNI_FIN, tol:1.5, pair:'in4' });
-F('doppiServizi','IN','Doppi servizi','sn',{ w:3, ui:'both', pair:'in4' });
-F('soggiorno','IN','Soggiorno','ord',{ w:2, ui:'both', opts:['Ampio','Normale','Piccolo'], tol:1.5, pair:'in5' });
-F('cucina','IN','Cucina','multi',{ w:1, opts:OPT_CUCINA, pair:'in5' });
-F('studio','IN','Studio / stanza in più','sn',{ w:3, ui:'both', pair:'in6' });
-F('taverna','IN','Taverna','sn',{ w:2, ui:'both', pair:'in6' });
-F('soffitta','IN','Soffitta / mansarda','sn',{ w:2, ui:'both', pair:'in7' });
-F('ripostiglio','IN','Ripostiglio','sn',{ w:2, ui:'both', pair:'in7' });
-F('lavanderia','IN','Lavanderia','sn',{ w:2, ui:'both', pair:'in8' });
-F('cucinaInclusa','IN','Cucina arredata inclusa','sn',{ w:2, ui:'both', pair:'in8' });
+F('piano','IN','Piano','multi',{ w:3, opts:OPT_PIANO, pair:'in1', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('pianoNum','IN','N° piano','multi',{ w:3, opts:OPT_PIANO_FISSO, pair:'in2', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('locali','IN','N° locali','multi',{ w:6, opts:OPT_LOCALI, pair:'in2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('bagni','IN','N° bagni','multi',{ w:4, opts:OPT_BAGNI, pair:'in3', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('camere','IN','Camere da letto','multi',{ w:6, ui:'both', opts:['1','2','3','4','5+'], pair:'in3', dep:d => A(d.tipologia).includes('Appartamento') || A(d.tipologia).includes('Villa') || A(d.tipologia).includes('Rustico/Cascina/Casa') });
+F('tipoBagniFinestrati','IN','Bagni finestrati','ord',{ w:3, ui:'both', opts:OPT_BAGNI_FIN, tol:1.5, pair:'in4', dep:d => A(d.bagni).length > 0 });
+F('doppiServizi','IN','Doppi servizi','sn',{ w:3, ui:'both', pair:'in4', dep:d => A(d.bagni).length > 0 });
+F('soggiorno','IN','Soggiorno','ord',{ w:2, ui:'both', opts:['Ampio','Normale','Piccolo'], tol:1.5, pair:'in5', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('cucina','IN','Cucina','multi',{ w:1, opts:OPT_CUCINA, pair:'in5', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('studio','IN','Studio / stanza in più','sn',{ w:3, ui:'both', pair:'in6', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('taverna','IN','Taverna','sn',{ w:2, ui:'both', pair:'in6', dep:d => !A(d.tipologia).includes('Terreno') });
+F('soffitta','IN','Soffitta / mansarda','sn',{ w:2, ui:'both', pair:'in7', dep:d => !A(d.tipologia).includes('Terreno') });
+F('ripostiglio','IN','Ripostiglio','sn',{ w:2, ui:'both', pair:'in7', dep:d => !A(d.tipologia).includes('Terreno') });
+F('lavanderia','IN','Lavanderia','sn',{ w:2, ui:'both', pair:'in8', dep:d => !A(d.tipologia).includes('Terreno') });
+F('cucinaInclusa','IN','Cucina arredata inclusa','sn',{ w:2, ui:'both', pair:'in8', dep:d => !A(d.tipologia).includes('Terreno') });
 F('accessibile','IN','Senza barriere architettoniche','sn',{ w:5, ui:'both', pair:'in9' });
-F('soffittiAlti','IN','Soffitti alti (> 3 m)','sn',{ w:2, ui:'both', pair:'in9' });
-F('camino','IN','Camino / stufa','multi',{ w:2, ui:'both', opts:['Camino aperto','Camino chiuso','Stufa a legna','Stufa a pellets','Stufa a gas'], pair:'in10' });
-F('pavimenti','IN','Pavimenti','multi',{ w:1, ui:'both', opts:OPT_PAV, pair:'in10' });
-F('arredamento','IN','Arredamento','custom',{ w:4, ui:'im',
+F('soffittiAlti','IN','Soffitti alti (> 3 m)','sn',{ w:2, ui:'both', pair:'in9', dep:d => !A(d.tipologia).includes('Terreno') });
+F('camino','IN','Camino / stufa','multi',{ w:2, ui:'both', opts:['Camino aperto','Camino chiuso','Stufa a legna','Stufa a pellets','Stufa a gas'], pair:'in10', dep:d => !A(d.tipologia).includes('Terreno') });
+F('pavimenti','IN','Pavimenti','multi',{ w:1, ui:'both', opts:OPT_PAV, pair:'in10', dep:d => !A(d.tipologia).includes('Terreno') });
+F('arredamento','IN','Arredamento','custom',{ w:4, ui:'im', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto'),
   campoIm: val => `<select class="form-select" id="cx-im-arredamento" style="background:var(--bg2);padding:8px 10px;border-radius:8px;">${[''].concat(OPT_ARRED_IMM).map(o => `<option value="${esc(o)}"${o===val?' selected':''}>${o||'—'}</option>`).join('')}</select>`,
   rqv:r => (r.arredamento && r.arredamento !== 'Indifferente') ? r.arredamento : null,
   fn:(rv,iv) => !iv ? null : rv === 'No' ? (iv === 'No' ? 1 : 0)
     : rv === 'Sì' ? (['Sì','Parzialmente','Su richiesta'].includes(iv) ? 1 : 0)
     : (['Sì','Parzialmente'].includes(iv) ? 1 : .5) });
-F('arredamentoNote','IN','Cosa viene lasciato / cosa no','long',{ ui:'im' });
+F('arredamentoNote','IN','Cosa viene lasciato / cosa no','long',{ ui:'im', dep:d => !A(d.tipologia).includes('Terreno') });
 
 /* ============ ES — Esterni, vista e pertinenze ============ */
-F('ascensore','ES','Ascensore','sn',{ w:5, leg:true, pair:'es1' });
-F('balcone','ES','Balcone','sn',{ w:4, leg:true, pair:'es1' });
-F('mqBalcone','ES','Mq balcone','num',{ w:2, ui:'both', tol:.3, pair:'es2' });
-F('terrazzo','ES','Terrazzo','sn',{ w:4, leg:true, pair:'es2' });
-F('mqTerrazzo','ES','Mq terrazzo','num',{ w:3, ui:'both', tol:.3, pair:'es3' });
+F('ascensore','ES','Ascensore','sn',{ w:5, leg:true, pair:'es1', dep:d => !d.villa });
+F('balcone','ES','Balcone','sn',{ w:4, leg:true, pair:'es1', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('mqBalcone','ES','Mq balcone','num',{ w:2, ui:'both', tol:.3, pair:'es2', dep:d => d.balcone === 'Sì' });
+F('terrazzo','ES','Terrazzo','sn',{ w:4, leg:true, pair:'es2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('mqTerrazzo','ES','Mq terrazzo','num',{ w:3, ui:'both', tol:.3, pair:'es3', dep:d => d.terrazzo === 'Sì' });
 F('giardino','ES','Giardino','sn',{ w:5, leg:true, pair:'es3' });
-F('mqGiardino','ES','Mq giardino','num',{ w:4, ui:'both', tol:.3, pair:'es4' });
-F('box','ES','Box','sn',{ w:6, leg:true, pair:'es4' });
-F('boxTipo','ES','Tipo box','ord',{ opts:OPT_BOX_TIPO, pair:'es5' });
-F('mqBox','ES','Mq box','num',{ w:2, ui:'both', tol:.3, pair:'es5' });
+F('mqGiardino','ES','Mq giardino','num',{ w:4, ui:'both', tol:.3, pair:'es4', dep:d => d.giardino === 'Sì' });
+F('box','ES','Box','sn',{ w:6, leg:true, pair:'es4', dep:d => !A(d.tipologia).includes('Terreno') });
+F('boxTipo','ES','Tipo box','ord',{ opts:OPT_BOX_TIPO, pair:'es5', dep:d => d.box === 'Sì' });
+F('mqBox','ES','Mq box','num',{ w:2, ui:'both', tol:.3, pair:'es5', dep:d => d.box === 'Sì' });
 F('postoAuto','ES','Posto auto','sn',{ w:5, leg:true, pair:'es6' });
-F('cantina','ES','Cantina','sn',{ w:3, leg:true, pair:'es6' });
-F('mqCantina','ES','Mq cantina','num',{ w:1, ui:'both', tol:.3, pair:'es7' });
+F('cantina','ES','Cantina','sn',{ w:3, leg:true, pair:'es6', dep:d => !A(d.tipologia).includes('Terreno') });
+F('mqCantina','ES','Mq cantina','num',{ w:1, ui:'both', tol:.3, pair:'es7', dep:d => d.cantina === 'Sì' });
 F('portico','ES','Portico','sn',{ w:3, ui:'both', pair:'es7' });
 F('loggia','ES','Loggia','sn',{ w:2, ui:'both', pair:'es8' });
 F('veranda','ES','Veranda','sn',{ w:3, ui:'both', pair:'es8' });
 F('gazebo','ES','Gazebo / pergolato','sn',{ w:1, ui:'both', pair:'es9' });
-F('cortile','ES','Cortile interno','sn',{ w:2, ui:'both', pair:'es9' });
-F('giardinoCondo','ES','Giardino condominiale','sn',{ w:2, ui:'both', pair:'es10' });
-F('piscina','ES','Piscina','multi',{ w:3, ui:'both', opts:['Condominiale','Privata'], pair:'es10' });
-F('tipoGiardino','ES','Tipo giardino','multi',{ w:2, ui:'both', opts:OPT_TIPO_GIARDINO, pair:'es11' });
-F('recinzione','ES','Recinzione','multi',{ w:2, ui:'both', opts:OPT_RECINZIONE, pair:'es11' });
-F('cancelloElettrico','ES','Cancello elettrico','sn',{ w:2, ui:'both', pair:'es12' });
-F('pozzo','ES','Pozzo','sn',{ w:2, ui:'both', pair:'es12' });
-F('cisterna','ES','Cisterna / serbatoio','sn',{ w:1, ui:'both', pair:'es13' });
-F('irrigazione','ES','Impianto irrigazione','sn',{ w:1, ui:'both', pair:'es13' });
-F('colonninaEV','ES','Colonnina auto elettrica','sn',{ w:2, ui:'both', pair:'es14' });
-F('animaliAmmessi','ES','Animali ammessi dal regolamento','sn',{ w:4, ui:'both', pair:'es14' });
-F('parcheggioFacile','ES','Parcheggio facile in strada','sn',{ w:3, ui:'both' });
-F('vista','ES','Vista','multi',{ w:3, opts:OPT_VISTA });
+F('cortile','ES','Cortile interno','sn',{ w:2, ui:'both', pair:'es9', imv:(im,d) => mergeCond(im, 'cortile', d.cortile) });
+F('giardinoCondo','ES','Giardino condominiale','sn',{ w:2, ui:'both', pair:'es10', dep:d => !d.villa, imv:(im,d) => mergeCond(im, 'giardinoCondo', d.giardinoCondo) });
+F('piscina','ES','Piscina','multi',{ w:3, ui:'both', opts:['Condominiale','Privata'], pair:'es10', imv:(im,d) => mergeCond(im, 'piscina', d.piscina) });
+F('tipoGiardino','ES','Tipo giardino','multi',{ w:2, ui:'both', opts:OPT_TIPO_GIARDINO, pair:'es11', dep:d => d.giardino === 'Sì' });
+F('recinzione','ES','Recinzione','multi',{ w:2, ui:'both', opts:OPT_RECINZIONE, pair:'es11', dep:d => d.giardino === 'Sì' });
+F('cancelloElettrico','ES','Cancello elettrico','sn',{ w:2, ui:'both', pair:'es12', dep:d => d.villa || d.giardino === 'Sì' });
+F('pozzo','ES','Pozzo','sn',{ w:2, ui:'both', pair:'es12', dep:d => d.villa || d.giardino === 'Sì' });
+F('cisterna','ES','Cisterna / serbatoio','sn',{ w:1, ui:'both', pair:'es13', dep:d => d.villa || d.giardino === 'Sì' });
+F('irrigazione','ES','Impianto irrigazione','sn',{ w:1, ui:'both', pair:'es13', dep:d => d.giardino === 'Sì' });
+F('colonninaEV','ES','Colonnina auto elettrica','sn',{ w:2, ui:'both', pair:'es14', dep:d => !A(d.tipologia).includes('Terreno') });
+F('animaliAmmessi','ES','Animali ammessi dal regolamento','sn',{ w:4, ui:'both', pair:'es14', dep:d => !A(d.tipologia).includes('Terreno') });
+F('parcheggioFacile','ES','Parcheggio facile in strada','sn',{ w:3, ui:'both', dep:d => !A(d.tipologia).includes('Terreno') });
+F('vista','ES','Vista','multi',{ w:3, opts:OPT_VISTA, dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
 
 /* ============ IP — Impianti e tecnologia ============ */
-F('riscaldamento','IP','Impianto riscaldamento','multi',{ w:2, opts:OPT_RISC_IMPIANTO, pair:'ip1' });
-F('riscaldamentoTipo','IP','Tipo riscaldamento','multi',{ w:3, opts:OPT_RISC_TIPO_AUT.concat(OPT_RISC_TIPO_CEN), pair:'ip1' });
-F('combustibile','IP','Combustibile / fonte','multi',{ w:3, ui:'both', opts:OPT_COMBUST, pair:'ip2' });
-F('annoCaldaia','IP','Anno caldaia','num',{ w:2, ui:'both', tolAbs:8, pair:'ip2' });
-F('ultimaRevCaldaia','IP','Ultima revisione caldaia','text',{ ui:'both', pair:'ip3' });
-F('raffrescamento','IP','Impianto raffrescamento','multi',{ w:2, opts:OPT_RAFF_IMPIANTO, pair:'ip3' });
-F('raffTipo','IP','Tipo raffrescamento','multi',{ w:2, opts:OPT_RAFF_TIPO_AUT.concat(OPT_RAFF_TIPO_CEN), pair:'ip4' });
-F('climatizzatoreFisso','IP','Climatizzatore fisso','sn',{ w:3, ui:'both', pair:'ip4' });
+F('riscaldamento','IP','Impianto riscaldamento','multi',{ w:2, opts:OPT_RISC_IMPIANTO, pair:'ip1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('riscaldamentoTipo','IP','Tipo riscaldamento','multi',{ w:3, pair:'ip1', dep:d => A(d.riscaldamento).length > 0,
+  // Filtro dinamico: se autonomo mostro aut, se centralizzato mostro cen, se entrambi unisco
+  opts: OPT_RISC_TIPO_AUT.concat(OPT_RISC_TIPO_CEN) });
+F('combustibile','IP','Combustibile / fonte','multi',{ w:3, ui:'both', opts:OPT_COMBUST, pair:'ip2', dep:d => A(d.riscaldamento).length > 0 });
+F('annoCaldaia','IP','Anno caldaia','num',{ w:2, ui:'both', tolAbs:8, pair:'ip2', dep:d => A(d.riscaldamento).length > 0 });
+F('ultimaRevCaldaia','IP','Ultima revisione caldaia','text',{ ui:'both', pair:'ip3', dep:d => A(d.riscaldamento).length > 0 });
+F('raffrescamento','IP','Impianto raffrescamento','multi',{ w:2, opts:OPT_RAFF_IMPIANTO, pair:'ip3', dep:d => !A(d.tipologia).includes('Terreno') });
+F('raffTipo','IP','Tipo raffrescamento','multi',{ w:2, pair:'ip4', dep:d => A(d.raffrescamento).some(x => x !== 'Assente'),
+  opts: OPT_RAFF_TIPO_AUT.concat(OPT_RAFF_TIPO_CEN) });
+F('climatizzatoreFisso','IP','Climatizzatore fisso','sn',{ w:3, ui:'both', pair:'ip4', dep:d => !A(d.tipologia).includes('Terreno') });
 F('solareTermico','IP','Solare termico','sn',{ w:2, ui:'both', pair:'ip5' });
 F('vmc','IP','VMC (ventilazione mecc.)','sn',{ w:2, ui:'both', pair:'ip5' });
-F('trifase','IP','Corrente trifase','sn',{ w:3, ui:'both', pair:'ip6' });
-F('cabinaElettrica','IP','Cabina elettrica','sn',{ w:2, ui:'both', pair:'ip6' });
+F('trifase','IP','Corrente trifase','sn',{ w:3, ui:'both', pair:'ip6', dep:d => A(d.tipologia).includes('Locale Commerciale') || A(d.tipologia).includes('Box/Posto auto') });
+F('cabinaElettrica','IP','Cabina elettrica','sn',{ w:2, ui:'both', pair:'ip6', dep:d => A(d.tipologia).includes('Locale Commerciale') });
 F('annoImpiantoElettrico','IP','Anno impianto elettrico','num',{ w:3, ui:'both', tolAbs:10, pair:'ip7' });
 F('statImpiantoElettrico','IP','Stato impianto elettrico','ord',{ w:4, ui:'both', opts:['A norma','Da verificare','Vecchio'], tol:1.5, pair:'ip7' });
-F('annoImpiantoIdrico','IP','Anno impianto idrico','num',{ w:3, ui:'both', tolAbs:10, pair:'ip8' });
-F('statImpiantoIdrico','IP','Stato impianto idrico','ord',{ w:3, ui:'both', opts:['Rifatto','Buono','Vecchio'], tol:1.5, pair:'ip8' });
+F('annoImpiantoIdrico','IP','Anno impianto idrico','num',{ w:3, ui:'both', tolAbs:10, pair:'ip8', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('statImpiantoIdrico','IP','Stato impianto idrico','ord',{ w:3, ui:'both', opts:['Rifatto','Buono','Vecchio'], tol:1.5, pair:'ip8', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
 F('contatoriSeparati','IP','Contatori separati','sn',{ w:4, ui:'both', pair:'ip9' });
 F('impiantiANorma','IP','Impianti a norma (cert.)','sn',{ w:4, ui:'both', pair:'ip9' });
-F('allarme','IP','Allarme / antifurto','sn',{ w:3, ui:'both', pair:'ip10' });
+F('allarme','IP','Allarme / antifurto','sn',{ w:3, ui:'both', pair:'ip10', dep:d => !A(d.tipologia).includes('Terreno') });
 F('videosorveglianza','IP','Videosorveglianza','sn',{ w:2, ui:'both', pair:'ip10' });
-F('domotica','IP','Domotica','sn',{ w:3, ui:'both', pair:'ip11' });
-F('fibra','IP','Fibra ottica','sn',{ w:4, ui:'both', pair:'ip11' });
-F('portaBlindata','IP','Porta blindata','sn',{ w:2, ui:'both', pair:'ip12' });
-F('videocitofono','IP','Videocitofono','sn',{ w:1, ui:'both', pair:'ip12' });
-F('tapparelleElettriche','IP','Tapparelle elettriche','sn',{ w:2, ui:'both', pair:'ip13' });
-F('zanzariere','IP','Zanzariere','sn',{ w:1, ui:'both', pair:'ip13' });
+F('domotica','IP','Domotica','sn',{ w:3, ui:'both', pair:'ip11', dep:d => !A(d.tipologia).includes('Terreno') });
+F('fibra','IP','Fibra ottica','sn',{ w:4, ui:'both', pair:'ip11', dep:d => !A(d.tipologia).includes('Terreno') });
+F('portaBlindata','IP','Porta blindata','sn',{ w:2, ui:'both', pair:'ip12', dep:d => !A(d.tipologia).includes('Terreno') && !A(d.tipologia).includes('Box/Posto auto') });
+F('videocitofono','IP','Videocitofono','sn',{ w:1, ui:'both', pair:'ip12', dep:d => !A(d.tipologia).includes('Terreno') });
+F('tapparelleElettriche','IP','Tapparelle elettriche','sn',{ w:2, ui:'both', pair:'ip13', dep:d => !A(d.tipologia).includes('Terreno') });
+F('zanzariere','IP','Zanzariere','sn',{ w:1, ui:'both', pair:'ip13', dep:d => !A(d.tipologia).includes('Terreno') });
 F('antennaTV','IP','Antenna TV','multi',{ w:1, ui:'both', opts:OPT_ANTENNA, pair:'ip14' });
 F('kwhMqAnno','IP','Consumo kWh/mq/anno','num',{ w:4, ui:'both', tol:.25, pair:'ip14' });
-F('speseRiscaldamento','IP','Spese riscaldamento (€/anno)','num',{ w:3, ui:'both', tol:.3 });
+F('speseRiscaldamento','IP','Spese riscaldamento (€/anno)','num',{ w:3, ui:'both', tol:.3, dep:d => A(d.riscaldamento).length > 0 });
 
 /* ============ IF — Infissi e serramenti ============ */
-F('infissi','IF','Materiale infissi','multi',{ w:2, opts:OPT_INFISSI, pair:'if1' });
-F('tipoAperturaInfissi','IF','Tipo apertura infissi','multi',{ w:1, ui:'both', opts:OPT_APERT, pair:'if1' });
-F('oscuranti','IF','Oscuranti','multi',{ w:2, ui:'both', opts:OPT_OSCUR, pair:'if2' });
-F('annoSostituzioneInfissi','IF','Anno sostituzione infissi','num',{ w:3, ui:'both', tolAbs:8, pair:'if2' });
-F('tipoVetro','IF','Tipo vetro','multi',{ w:2, ui:'both', opts:OPT_VETRO, pair:'if3' });
-F('trattamentoVetro','IF','Trattamento vetro','multi',{ w:1, ui:'both', opts:OPT_TRATT_VETRO, pair:'if3' });
+F('infissi','IF','Materiale infissi','multi',{ w:2, opts:OPT_INFISSI, pair:'if1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('tipoAperturaInfissi','IF','Tipo apertura infissi','multi',{ w:1, ui:'both', opts:OPT_APERT, pair:'if1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('oscuranti','IF','Oscuranti','multi',{ w:2, ui:'both', opts:OPT_OSCUR, pair:'if2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('annoSostituzioneInfissi','IF','Anno sostituzione infissi','num',{ w:3, ui:'both', tolAbs:8, pair:'if2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('tipoVetro','IF','Tipo vetro','multi',{ w:2, ui:'both', opts:OPT_VETRO, pair:'if3', dep:d => !A(d.tipologia).includes('Terreno') });
+F('trattamentoVetro','IF','Trattamento vetro','multi',{ w:1, ui:'both', opts:OPT_TRATT_VETRO, pair:'if3', dep:d => !A(d.tipologia).includes('Terreno') });
 
 /* ============ EN — Energia e certificazioni ============ */
-F('certEnergetica','EN','Certificazione energetica','multi',{ w:3, opts:OPT_CERT_ENERG, pair:'en1' });
-F('classeEnergeticaUI','EN','Classe energetica','multi',{ w:5, imK:'classeEnergetica', opts:OPT_CLASSE_ENERG, pair:'en1' });
-F('esenteAPE','EN','Esente APE','ord',{ opts:OPT_SN, pair:'en2' });
-F('scadenzaAPE','EN','Scadenza APE','text',{ pair:'en2' });
+F('certEnergetica','EN','Certificazione energetica','multi',{ w:3, opts:OPT_CERT_ENERG, pair:'en1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('classeEnergeticaUI','EN','Classe energetica','multi',{ w:5, imK:'classeEnergetica', opts:OPT_CLASSE_ENERG, pair:'en1', dep:d => !A(d.tipologia).includes('Terreno') });
+F('esenteAPE','EN','Esente APE','ord',{ opts:OPT_SN, pair:'en2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('scadenzaAPE','EN','Scadenza APE','text',{ pair:'en2', dep:d => !A(d.tipologia).includes('Terreno') });
 F('fvImpianto','EN','Fotovoltaico','multi',{ w:3, opts:OPT_FV_IMP_IMM, pair:'en3' });
-F('fvAccumulo','EN','Accumulo FV','ord',{ opts:OPT_FV_ACC, pair:'en3' });
-F('fvTipo','EN','Tipo FV','ord',{ opts:OPT_FV_TIPO, pair:'en4' });
-F('fvPotenza','EN','Potenza FV (kWp)','num',{ w:2, tolAbs:2, pair:'en4' });
-F('fvAnno','EN','Anno installazione FV','num',{ w:2, tolAbs:8 });
+F('fvAccumulo','EN','Accumulo FV','ord',{ opts:OPT_FV_ACC, pair:'en3', dep:d => A(d.fvImpianto).some(x => x !== 'Assente' && x !== 'Predisposizione') });
+F('fvTipo','EN','Tipo FV','ord',{ opts:OPT_FV_TIPO, pair:'en4', dep:d => A(d.fvImpianto).some(x => x !== 'Assente' && x !== 'Predisposizione') });
+F('fvPotenza','EN','Potenza FV (kWp)','num',{ w:2, tolAbs:2, pair:'en4', dep:d => A(d.fvImpianto).some(x => x !== 'Assente' && x !== 'Predisposizione') });
+F('fvAnno','EN','Anno installazione FV','num',{ w:2, tolAbs:8, dep:d => A(d.fvImpianto).some(x => x !== 'Assente' && x !== 'Predisposizione') });
 
-/* ============ CM — Commerciale / aziendale ============ */
-F('destinazioneUso','CM','Destinazione d\'uso','multi',{ w:6, ui:'both', opts:OPT_DEST_USO, pair:'cm1' });
-F('altezzaLocale','CM','Altezza locale (m)','num',{ w:3, ui:'both', tolAbs:.4, pair:'cm1' });
-F('vetrina','CM','Vetrina su strada','sn',{ w:4, ui:'both', pair:'cm2' });
-F('affaccioStrada','CM','Affaccio su strada principale','sn',{ w:2, ui:'both', pair:'cm2' });
-F('caricoScarico','CM','Carico / scarico merci','sn',{ w:3, ui:'both', pair:'cm3' });
-F('cannaFumaria','CM','Canna fumaria','sn',{ w:3, ui:'both', pair:'cm3' });
-F('antincendio','CM','Impianto antincendio a norma','sn',{ w:2, ui:'both', pair:'cm4' });
-F('nIngressi','CM','N° ingressi','num',{ w:2, ui:'both', tolAbs:2, pair:'cm4' });
-F('portataSolaio','CM','Portata solaio (kg/mq)','num',{ w:3, ui:'both', tolAbs:200, pair:'cm5' });
-F('parcheggiClienti','CM','N° parcheggi clienti','num',{ w:2, ui:'both', tolAbs:3, pair:'cm5' });
+/* ============ CM — Commerciale (solo per Locale Commerciale) ============ */
+F('destinazioneUso','CM','Destinazione d\'uso','multi',{ w:6, ui:'both', opts:OPT_DEST_USO, pair:'cm1', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('altezzaLocale','CM','Altezza locale (m)','num',{ w:3, ui:'both', tolAbs:.4, pair:'cm1', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('vetrina','CM','Vetrina su strada','sn',{ w:4, ui:'both', pair:'cm2', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('affaccioStrada','CM','Affaccio su strada principale','sn',{ w:2, ui:'both', pair:'cm2', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('caricoScarico','CM','Carico / scarico merci','sn',{ w:3, ui:'both', pair:'cm3', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('cannaFumaria','CM','Canna fumaria','sn',{ w:3, ui:'both', pair:'cm3', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('antincendio','CM','Impianto antincendio a norma','sn',{ w:2, ui:'both', pair:'cm4', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('nIngressi','CM','N° ingressi','num',{ w:2, ui:'both', tolAbs:2, pair:'cm4', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('portataSolaio','CM','Portata solaio (kg/mq)','num',{ w:3, ui:'both', tolAbs:200, pair:'cm5', dep:d => A(d.tipologia).includes('Locale Commerciale') });
+F('parcheggiClienti','CM','N° parcheggi clienti','num',{ w:2, ui:'both', tolAbs:3, pair:'cm5', dep:d => A(d.tipologia).includes('Locale Commerciale') });
 
 /* ============ LG — Legale e catastale ============ */
 F('usoReale','LG','Uso reale','ord',{ opts:OPT_USO_REALE, pair:'lg1' });
 F('tipoProprieta','LG','Tipo di proprietà','ord',{ opts:OPT_TIPO_PROP, pair:'lg1' });
-F('categoriaCatastale','LG','Categoria catastale','ord',{ opts:OPT_CAT_CAT, pair:'lg2' });
-F('rendita','LG','Rendita catastale (€)','text',{ pair:'lg2' });
+F('categoriaCatastale','LG','Categoria catastale','ord',{ opts:OPT_CAT_CAT, pair:'lg2', dep:d => !A(d.tipologia).includes('Terreno') });
+F('rendita','LG','Rendita catastale (€)','text',{ pair:'lg2', dep:d => !A(d.tipologia).includes('Terreno') });
 F('provenienza','LG','Provenienza','ord',{ opts:OPT_PROVEN, pair:'lg3' });
 F('annoAcquisto','LG','Anno acquisto proprietario','num',{ pair:'lg3' });
 F('venditoreTipo','LG','Venditore','ord',{ opts:OPT_VEND, pair:'lg4' });
 F('trattabile','LG','Prezzo trattabile','ord',{ opts:OPT_TRATT, pair:'lg4' });
 F('ipotecaPresente','LG','Ipoteca','ord',{ opts:OPT_IPOT, pair:'lg5' });
 F('occupazione','LG','Occupazione','ord',{ opts:OPT_OCCUP, pair:'lg5' });
-F('canoneMensile','LG','Canone mensile (€)','text',{ pair:'lg6' });
-F('scadenzaLocazione','LG','Scadenza contratto locazione','text',{ pair:'lg6' });
+F('canoneMensile','LG','Canone mensile (€)','text',{ pair:'lg6', dep:d => d.occupazione === 'Locato' });
+F('scadenzaLocazione','LG','Scadenza contratto locazione','text',{ pair:'lg6', dep:d => d.occupazione === 'Locato' });
 F('difformita','LG','Difformità urbanistiche','ord',{ opts:OPT_SN, pair:'lg7' });
 F('catastaleConforme','LG','Planimetria catastale','ord',{ opts:['Conforme','Non conforme','Da depositare'], pair:'lg7' });
 F('conformitaUrbanistica','LG','Conformità urbanistica','ord',{ opts:OPT_CONF, pair:'lg8' });
@@ -4284,16 +4665,16 @@ F('amianto','LG','Amianto / eternit','ord',{ opts:OPT_SN, pair:'lg13' });
 F('vincoli','LG','Vincoli / servitù / usufrutto','long',{});
 
 /* ============ MT — Manutenzione e stato ============ */
-F('muffa','MT','Muffa / condensa','ord',{ ui:'both', opts:OPT_SN, pair:'mt1' });
+F('muffa','MT','Muffa / condensa','ord',{ ui:'both', opts:OPT_SN, pair:'mt1', dep:d => !A(d.tipologia).includes('Terreno') });
 F('crepe','MT','Crepe strutturali','ord',{ ui:'both', opts:OPT_SN, pair:'mt1' });
-F('infiltrazioni','MT','Infiltrazioni','ord',{ ui:'both', opts:OPT_SN, pair:'mt2' });
+F('infiltrazioni','MT','Infiltrazioni','ord',{ ui:'both', opts:OPT_SN, pair:'mt2', dep:d => !A(d.tipologia).includes('Terreno') });
 F('problemiStrutturali','MT','Problemi strutturali','ord',{ ui:'both', opts:OPT_SN, pair:'mt2' });
-F('statoSerrature','MT','Stato serramenti','ord',{ ui:'both', opts:['Ottimo','Buono','Da sostituire'], tol:1.5, pair:'mt3' });
-F('statoPavimenti','MT','Stato pavimenti','ord',{ ui:'both', opts:['Ottimo','Buono','Da rifare'], tol:1.5, pair:'mt3' });
-F('ultimaTinteggiatura','MT','Ultima tinteggiatura','text',{ ui:'both', pair:'mt4' });
+F('statoSerrature','MT','Stato serramenti','ord',{ ui:'both', opts:['Ottimo','Buono','Da sostituire'], tol:1.5, pair:'mt3', dep:d => !A(d.tipologia).includes('Terreno') });
+F('statoPavimenti','MT','Stato pavimenti','ord',{ ui:'both', opts:['Ottimo','Buono','Da rifare'], tol:1.5, pair:'mt3', dep:d => !A(d.tipologia).includes('Terreno') });
+F('ultimaTinteggiatura','MT','Ultima tinteggiatura','text',{ ui:'both', pair:'mt4', dep:d => !A(d.tipologia).includes('Terreno') });
 F('ultimaManutenzione','MT','Ultima manutenzione straordinaria','text',{ ui:'both', pair:'mt4' });
 
-/* ============ ZO — Zona e contesto ============ */
+/* ============ ZO — Zona e contesto (auto da POI se geocodificato) ============ */
 [['distScuole','Scuole',4],['distSupermercato','Supermercato',3],['distStazione','Stazione',4],['distCentro','Centro',3],
  ['distParco','Parco / verde',2],['distCasello','Tangenziale / casello',3],['distOspedale','Ospedale',2],['distFarmacia','Farmacia',2],
  ['distChiesa','Chiesa',1],['distBanca','Banca',1],['distCentroCommerciale','Centro commerciale',2],['fermataBus','Fermata bus',3]]
@@ -4308,9 +4689,9 @@ F('zonaVerde','ZO','Zona verde / alberata','sn',{ w:2, ui:'both', pair:'zo9' });
 F('zonaCaratt','ZO','Caratteristiche zona','multi',{ w:3, opts:OPT_ZONA_CARATT, pair:'zo9' });
 
 /* ============ SP — Spese ============ */
-F('speseCond','SP','Spese condominiali (€/mese)','num',{ w:5, ui:'both', tol:.25, pair:'sp1' });
-F('speseStraord','SP','Spese straordinarie deliberate','sn',{ w:5, ui:'both', pair:'sp1' });
-F('speseStraordImporto','SP','Importo spese straordinarie (€)','num',{ w:3, ui:'both', tol:.25 });
+F('speseCond','SP','Spese condominiali (€/mese)','num',{ w:5, ui:'both', tol:.25, pair:'sp1', dep:d => !d.villa });
+F('speseStraord','SP','Spese straordinarie deliberate','sn',{ w:5, ui:'both', pair:'sp1', dep:d => !d.villa });
+F('speseStraordImporto','SP','Importo spese straordinarie (€)','num',{ w:3, ui:'both', tol:.25, dep:d => d.speseStraord === 'Sì' });
 
 /* ============ NT — Note libere ============ */
 F('motivoVendita','NT','Perché vende / urgenza','long',{});
@@ -4318,30 +4699,51 @@ F('chiHaAbitato','NT','Chi ha abitato / abita','long',{});
 F('noteVicinato','NT','Note vicinato','long',{});
 F('tagLiberi','NT','Parole chiave (virgola)','tag',{ w:3, def:'bassa', ui:'both', imv:(im,d) => testoIm(im,d) });
 
-/* ============ CL — Richiesta cliente ============ */
-F('lavoriDaFare','CL','Lavori previsti','multi',{ w:5, def:'alta', ui:'rq', opts:OPT_LAVORI, pair:'cl1' });
-F('budgetLavori','CL','Budget lavori (€)','text',{ ui:'rq', pair:'cl1' });
-F('rendimentoMin','CL','Rendimento lordo min. (%)','custom',{ w:6, ui:'rq', pair:'cl2',
+/* ============ CL — Richiesta cliente (con dep) ============ */
+F('lavoriDaFare','CL','Lavori previsti','multi',{ w:5, def:'alta', ui:'rq', opts:OPT_LAVORI, pair:'cl1', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Investimento') || s.includes('Compra, ristruttura e rivende') || s.includes('Seconda casa');
+} });
+F('budgetLavori','CL','Budget lavori (€)','text',{ ui:'rq', pair:'cl1', dep:r => A(r.lavoriDaFare).length > 0 });
+F('rendimentoMin','CL','Rendimento lordo min. (%)','custom',{ w:6, ui:'rq', pair:'cl2', dep:r => A(r.scopo).includes('Investimento'),
    rqv:r => parseNum(r.rendimentoMin),
    imv:(im,d) => { const c = parseNum(d.canoneMensile), p = prezzoRef(im); return (c && p) ? c * 12 / p * 100 : null; },
    fn:(rv,iv) => iv === null ? null : Math.min(1, iv / rv),
    campoRq: val => `<input class="form-input" id="cx-rq-rendimentoMin" inputmode="decimal" value="${esc(val||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;">` });
 F('anticipo','CL','Anticipo disponibile (€)','text',{ ui:'rq', pair:'cl2' });
-F('mutuoImporto','CL','Mutuo richiesto (€)','text',{ ui:'rq', pair:'cl3' });
+F('mutuoImporto','CL','Mutuo richiesto (€)','text',{ ui:'rq', pair:'cl3', dep:r => r.mutuo !== 'No' });
 F('deveVendere','CL','Deve prima vendere la sua casa','ord',{ ui:'rq', opts:OPT_SN, pair:'cl3' });
-F('lavoriNelBudget','CL','Il budget include i lavori','ord',{ ui:'rq', opts:OPT_SN, pair:'cl4' });
-F('numPersone','CL','Componenti nucleo','text',{ ui:'rq', pair:'cl4' });
-F('haBambini','CL','Ha bambini','ord',{ ui:'rq', opts:OPT_SN, pair:'cl5' });
-F('haAnimali','CL','Ha animali domestici','ord',{ ui:'rq', opts:OPT_SN, pair:'cl5' });
-F('mobilitaRidotta','CL','Anziani / mobilità ridotta','ord',{ ui:'rq', opts:OPT_SN, pair:'cl6' });
-F('smartWorking','CL','Lavora da casa','ord',{ ui:'rq', opts:OPT_SN, pair:'cl6' });
-F('numAuto','CL','Numero auto','text',{ ui:'rq', pair:'cl7' });
-F('raggioLavoroKm','CL','Distanza max dal lavoro (km)','text',{ ui:'rq', pair:'cl7' });
-F('luogoLavoro','CL','Indirizzo di lavoro','text',{ ui:'rq' });
-F('accettaAste','CL','Accetta immobili da asta','ord',{ ui:'rq', opts:OPT_SN, pair:'cl8' });
-F('accettaSaldoStralcio','CL','Accetta saldo e stralcio','ord',{ ui:'rq', opts:OPT_SN, pair:'cl8' });
+F('lavoriNelBudget','CL','Il budget include i lavori','ord',{ ui:'rq', opts:OPT_SN, pair:'cl4', dep:r => A(r.lavoriDaFare).length > 0 });
+F('numPersone','CL','Componenti nucleo','text',{ ui:'rq', pair:'cl4', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Abitazione principale') || s.includes('Casa vacanze') || s.length === 0;
+} });
+F('haBambini','CL','Ha bambini','ord',{ ui:'rq', opts:OPT_SN, pair:'cl5', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Abitazione principale') || s.length === 0;
+} });
+F('haAnimali','CL','Ha animali domestici','ord',{ ui:'rq', opts:OPT_SN, pair:'cl5', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Abitazione principale') || s.includes('Casa vacanze') || s.length === 0;
+} });
+F('mobilitaRidotta','CL','Anziani / mobilità ridotta','ord',{ ui:'rq', opts:OPT_SN, pair:'cl6', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Abitazione principale') || s.length === 0;
+} });
+F('smartWorking','CL','Lavora da casa','ord',{ ui:'rq', opts:OPT_SN, pair:'cl6', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Abitazione principale') || s.length === 0;
+} });
+F('numAuto','CL','Numero auto','text',{ ui:'rq', pair:'cl7', dep:r => {
+  const s = A(r.scopo);
+  return s.includes('Abitazione principale') || s.length === 0;
+} });
+F('raggioLavoroKm','CL','Distanza max dal lavoro (km)','text',{ ui:'rq', pair:'cl7', dep:r => r.smartWorking !== 'Sì' });
+F('luogoLavoro','CL','Indirizzo di lavoro','text',{ ui:'rq', dep:r => r.smartWorking !== 'Sì' });
+F('accettaAste','CL','Accetta immobili da asta','ord',{ ui:'rq', opts:OPT_SN, pair:'cl8', dep:r => A(r.scopo).includes('Investimento') });
+F('accettaSaldoStralcio','CL','Accetta saldo e stralcio','ord',{ ui:'rq', opts:OPT_SN, pair:'cl8', dep:r => A(r.scopo).includes('Investimento') });
 F('accettaRentToBuy','CL','Interessato a rent to buy','ord',{ ui:'rq', opts:OPT_SN, pair:'cl9' });
-F('pianoEscluso','CL','Piani da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'piano', opts:OPT_PIANO, pair:'cl9' });
+F('pianoEscluso','CL','Piani da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'piano', opts:OPT_PIANO, pair:'cl9', dep:r => !A(r.tipologia).includes('Terreno') });
 F('zoneEscluse','CL','Zone da escludere','multiNo',{ w:7, def:'alta', ui:'rq', opts:OPT_ZONE, imv:im => zoneEff(im) });
 F('statoEscluso','CL','Stati da escludere','multiNo',{ w:5, def:'alta', ui:'rq', imK:'statoConservativo', opts:OPT_STATO_IMMOBILE.concat(OPT_STATO_TERRENO) });
 F('tagEsclusi','CL','Parole da escludere','tagNo',{ w:5, def:'alta', ui:'rq', imv:(im,d) => testoIm(im,d) });
@@ -4446,8 +4848,19 @@ function sc(f,rv,iv){
   return null;
 }
 function imVal(f,im,d,r){
+  // I campi con imv hanno la precedenza (perché gestiscono merge condominio)
   if(f.imv) return f.imv(im,d,r);
-  const v = d[ik(f)];
+  const key = ik(f);
+  // Merge condominio
+  if(COND_KEYS.includes(key)){
+    const c = condoData(im);
+    if(c){
+      const ds = c.datiStrutturali || {};
+      if(key === 'annoCostruzione' && c.annoCostruzione) return c.annoCostruzione;
+      if(ds[key] !== undefined && ds[key] !== null && ds[key] !== '') return ds[key];
+    }
+  }
+  const v = d[key];
   if(f.t === 'num') return parseNum(v);
   return (v === '' || v === undefined) ? null : v;
 }
@@ -4455,6 +4868,11 @@ function match(im,per){
   const r = per.richiesta || {}, d = im.dettagli || {}, righe = [];
   CAT.forEach(f => {
     if(f.t === 'dato' || f.ui === 'im') return;
+    // Se esiste dep, controlla che sia soddisfatta (con dati sia immobile che richiesta)
+    if(f.dep){
+      const ctx = Object.assign({}, d, r); // union per check dep
+      if(!f.dep(ctx)) return;
+    }
     const rv = reqVal(f,r); if(rv === null || rv === undefined) return;
     const imp = impEff(f,r); if(imp === 'indifferente') return;
     righe.push({ f, imp, s:sc(f,rv,imVal(f,im,d,r)) });
@@ -4497,7 +4915,7 @@ window.matchAcquirente = per => {
   return out.sort((a,b) => b.rank - a.rank);
 };
 
-/* ---------- UI GENERATA ---------- */
+/* ---------- UI: campo con wrapper condizionale ---------- */
 const ST = 'background:var(--bg2);padding:8px 10px;border-radius:8px;';
 const opt = (arr,sel,vuoto) => (vuoto !== undefined ? `<option value="">${vuoto}</option>` : '') + arr.map(o => `<option value="${esc(o)}"${o === sel ? ' selected' : ''}>${esc(o)}</option>`).join('');
 
@@ -4508,6 +4926,7 @@ function impSel(f,r){
   Object.keys(IMP).forEach(k => o += `<option value="${k}"${k === salvato ? ' selected' : ''}>${IMP[k].l}</option>`);
   return `<select class="form-select" id="cx-rq-${f.k}-imp" style="${ST}margin-top:5px;font-size:12.5px;color:var(--tx2);">${o}</select>`;
 }
+
 function campo(f,ctx,src){
   const id = `cx-${ctx}-${f.k}`, rq = ctx === 'rq', val = src[rq ? rk(f) : ik(f)];
   let c = '';
@@ -4520,8 +4939,10 @@ function campo(f,ctx,src){
   else if(f.long) c = `<textarea class="form-textarea" id="${id}" style="${ST}">${esc(val || '')}</textarea>`;
   else c = `<input class="form-input" id="${id}" value="${esc(val || '')}" style="${ST}"${f.t === 'num' ? ' inputmode="numeric"' : ''}>`;
   const imp = (rq && f.t !== 'dato' && f.ui !== 'im' && f.ui !== 'none') ? impSel(f,src) : '';
-  return `<label class="form-label">${f.l}</label>${c}${imp}`;
+  // Wrapper con data-cx-key per gestione visibilità
+  return `<div class="cx-campo" data-cx-key="${f.k}" data-cx-ctx="${ctx}"><label class="form-label">${f.l}</label>${c}${imp}</div>`;
 }
+
 function sezione(ctx,src){
   let h = '';
   GRUPPI.forEach(g => {
@@ -4541,8 +4962,8 @@ function sezione(ctx,src){
     });
     if(curRow.length) rows.push(curRow);
     const body = rows.map(row => {
-      if(row.length === 1) return `<div class="cx-campo">${campo(row[0], ctx, src)}</div>`;
-      return `<div class="cx-row2">${row.map(f => `<div class="cx-campo">${campo(f, ctx, src)}</div>`).join('')}</div>`;
+      if(row.length === 1) return campo(row[0], ctx, src);
+      return `<div class="cx-row2">${row.map(f => campo(f, ctx, src)).join('')}</div>`;
     }).join('');
     h += `<details class="fold"><summary>${g[1]}</summary><div>${body}</div></details>`;
   });
@@ -4554,6 +4975,55 @@ function sezione(ctx,src){
   }
   return h;
 }
+
+/* Applica visibilità condizionale dopo il render */
+function applicaDep(ctx, src){
+  const container = document.getElementById('modal-body');
+  if(!container) return;
+  const campi = container.querySelectorAll(`[data-cx-ctx="${ctx}"]`);
+  const ctxData = Object.assign({}, ctx === 'im' ? src : {}, ctx === 'rq' ? src : {});
+  campi.forEach(el => {
+    const k = el.dataset.cxKey;
+    const f = CAT.find(x => x.k === k);
+    if(!f || !f.dep){ el.classList.remove('cx-hidden'); return; }
+    const vis = f.dep(ctxData);
+    el.classList.toggle('cx-hidden', !vis);
+  });
+}
+
+/* Listener per aggiornare visibilità su change */
+function bindDepChange(ctx, src){
+  const container = document.getElementById('modal-body');
+  if(!container || container._depBound) return;
+  container._depBound = true;
+  container.addEventListener('change', () => {
+    // Ricostruisci dati correnti dal form
+    const dati = {};
+    container.querySelectorAll('[data-cx-ctx]').forEach(el => {
+      const k = el.dataset.cxKey;
+      const f = CAT.find(x => x.k === k);
+      if(!f) return;
+      const id = `cx-${ctx}-${f.k}`;
+      const v = window._msSel[id] ? window._msSel[id].val : null;
+      if(v) dati[f.k] = v;
+      else {
+        const inp = document.getElementById(id);
+        if(inp) dati[f.k] = inp.value;
+      }
+      // anche per i multi già selezionati
+      if(window._msSel[id]) dati[f.k] = window._msSel[id].val;
+    });
+    const ctxData = Object.assign({}, dati, src);
+    container.querySelectorAll('[data-cx-ctx]').forEach(el => {
+      const k = el.dataset.cxKey;
+      const f = CAT.find(x => x.k === k);
+      if(!f || !f.dep){ el.classList.remove('cx-hidden'); return; }
+      const vis = f.dep(ctxData);
+      el.classList.toggle('cx-hidden', !vis);
+    });
+  });
+}
+
 function leggi(ctx){
   const dati = {}, imp = {}, gv = id => { const e = document.getElementById(id); return e ? e.value : undefined; };
   CAT.forEach(f => {
@@ -4576,7 +5046,10 @@ const _am = window.apriModifica;
 window.apriModifica = function(){
   _am();
   const im = DB.immobili.find(x => x.id === immobileAperto), row = ultimaRiga();
-  if(im && row) row.insertAdjacentHTML('beforebegin', sezione('im', im.dettagli || {}));
+  if(im && row){
+    row.insertAdjacentHTML('beforebegin', sezione('im', im.dettagli || {}));
+    setTimeout(() => { applicaDep('im', im.dettagli || {}); bindDepChange('im', im.dettagli || {}); }, 50);
+  }
 };
 const _sm = window.salvaModifica;
 window.salvaModifica = function(){
@@ -4588,7 +5061,10 @@ const _amr = window.apriModificaRichiesta;
 window.apriModificaRichiesta = function(pid){
   _amr(pid);
   const p = trovaPersona(pid), row = ultimaRiga();
-  if(p && row) row.insertAdjacentHTML('beforebegin', sezione('rq', p.richiesta || {}));
+  if(p && row){
+    row.insertAdjacentHTML('beforebegin', sezione('rq', p.richiesta || {}));
+    setTimeout(() => { applicaDep('rq', p.richiesta || {}); bindDepChange('rq', p.richiesta || {}); }, 50);
+  }
 };
 const _sr = window.salvaRichiesta;
 window.salvaRichiesta = function(pid){
