@@ -515,7 +515,7 @@ details.fold .box2{gap:6px;}
 .filter-modal-footer .btn{flex:1;margin:0;}
 .backup-icon-btn{min-width:42px!important;width:42px!important;height:38px!important;border-radius:11px!important;padding:0!important;}
 .backup-icon-btn svg{width:17px;height:17px;}
-.map-filter-toolbar{width:max-content;max-width:100%;}
+.map-filter-toolbar{width:max-content;max-width:100%;padding:0!important;border:0!important;background:transparent!important;}
 .map-filter-toolbar .filter-trigger{width:40px;height:36px;background:rgba(255,255,255,.96);}
 .map-filter-toolbar .filter-trigger.active{background:var(--blu);color:#fff;}
 
@@ -612,9 +612,6 @@ details.fold .box2{gap:6px;}
       <div id="map-container">
         <div id="map"></div>
         <div class="map-overlay-top">
-          <div class="chips filter-toolbar map-filter-toolbar" id="map-chips" style="background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-radius:var(--rs);border:1px solid var(--bd);padding:6px 8px;margin-bottom:0;">
-            <button type="button" class="chip filter-trigger" id="map-filter-trigger" onclick="apriFiltriMappa()" aria-label="Filtra immobili sulla mappa" title="Filtri mappa"><span id="map-filter-icon"></span><span class="filter-count" id="map-filter-count" hidden></span></button>
-          </div>
           <div class="map-status">
             <div><span class="count" id="map-count">0</span> <span style="color:var(--tx3);">/ <span id="map-tot">0</span></span></div>
             <button onclick="geocodificaTutti()" id="btn-geocode-all">Geocodifica</button>
@@ -623,6 +620,10 @@ details.fold .box2{gap:6px;}
         <div class="map-overlay-bottom">
           <button class="map-btn" onclick="centraMappaSuCittaPrincipale()" id="map-btn-casa"></button>
           <button class="map-btn" onclick="fitBoundsImmobili()" id="map-btn-target"></button>
+          <div class="chips filter-toolbar map-filter-toolbar" id="map-chips" style="background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-radius:var(--rs);border:1px solid var(--bd);padding:6px 8px;margin-bottom:0;">
+            <button type="button" class="chip filter-trigger" id="map-filter-trigger" onclick="apriFiltriMappa()" aria-label="Filtra immobili sulla mappa" title="Filtri mappa"><span id="map-filter-icon"></span><span class="filter-count" id="map-filter-count" hidden></span></button>
+          </div>
+
         </div>
       </div>
     </section>
@@ -678,7 +679,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.1</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.2</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -721,7 +722,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.31.1';
+const APP_VERSION = '1.31.2';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1517,7 +1518,7 @@ function cardImmobile(im, compact){
   if(ze.length) h2 += `<div class="item-sub">${ico('pin',11)} ${esc(ze.slice(0,3).join(' · '))}</div>`;
   if(ult) h2 += `<div class="item-meta"><span>${esc(ult.testo.slice(0,34))}${ult.testo.length>34?'…':''}</span><span>${fmtD(dataAtt(ult))}</span></div>`;
   /* Azioni secondarie raccolte in un solo comando contestuale. */
-  const haAzioniValutazione = (im.stato === 'NT' && !im.valutata) || !!im.valutata;
+  const haAzioniValutazione = ['NT','INK','VND'].includes(im.stato) || !!im.svPrimaCompilazioneAt || !!im.schedaValutazione;
   const haAzioniDossier = ['NT','INK','VND'].includes(im.stato);
   if(haAzioniValutazione || haAzioniDossier){
     h2 += `<div class="item-card-actions"><button class="item-more-btn" type="button" title="Altre azioni per ${esc(titoloImmobile(im))}" aria-label="Altre azioni per ${esc(titoloImmobile(im))}" onclick="event.stopPropagation();apriMenuAzioniImmobile('${im.id}')"><span aria-hidden="true">⋯</span></button></div>`;
@@ -1526,14 +1527,15 @@ function cardImmobile(im, compact){
   return h2;
 }
 
+function haSchedaValutazioneDisponibile(im){ return ['NT','INK','VND'].includes(im.stato) || !!im.svPrimaCompilazioneAt || !!im.schedaValutazione; }
 function apriMenuAzioniImmobile(id){
   const im = DB.immobili.find(x => x.id === id);
   if(!im) return;
   immobileAperto = im.id;
   let h = `<div class="context-actions">`;
-  if(im.stato === 'NT' && !im.valutata){
+  if(haSchedaValutazioneDisponibile(im) && !im.schedaValutazione){
     h += `<button class="btn btn-primary" onclick="apriSchedaValutazione('${im.id}')">${ico('righello',15)} Avvia valutazione</button>`;
-  } else if(im.valutata){
+  } else if(haSchedaValutazioneDisponibile(im)){
     h += `<button class="btn btn-secondary" onclick="apriSchedaValutazione('${im.id}')">${ico('righello',15)} Scheda valutazione</button>`;
   }
   if(['NT','INK','VND'].includes(im.stato)){
@@ -2188,7 +2190,9 @@ function renderAgendaPage(){
   else { const b = agDayYmd ? daYmd(agDayYmd) : new Date(); meseLbl = `${MESI_L[b.getMonth()]} ${b.getFullYear()}`; }
   const header = `<div class="ag-header"><button class="ag-back-btn" onclick="tornaAttivita()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="ag-nav-group"><button class="ag-nav-btn" onclick="shiftAgPeriod(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><div class="ag-month-lbl">${meseLbl}</div><button class="ag-nav-btn" onclick="shiftAgPeriod(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button></div><div class="ag-spacer"></div></div>`;
   const strip = agState === 'day' ? weekStripHtml() + '<div class="ag-sep"></div>' : '';
-  c.innerHTML = `<div class="ag-view">${header}${strip}<div class="ag-content" id="ag-scroll">${inner}</div><div class="ag-bottombar"><button class="ag-pill" onclick="vaiOggi()">Oggi</button></div></div>`;
+  const weekHeader = agState === 'week' ? inner.slice(0,inner.indexOf('<div class="ag-timeline">')) : '';
+  const calendarBody = agState === 'week' ? inner.slice(inner.indexOf('<div class="ag-timeline">')) : inner;
+  c.innerHTML = `<div class="ag-view">${header}${strip}${weekHeader}<div class="ag-content" id="ag-scroll">${calendarBody}</div><div class="ag-bottombar"><button class="ag-pill" onclick="vaiOggi()">Oggi</button></div></div>`;
   setTimeout(scrollAgoNow, 60); setTimeout(scrollAgoNow, 300);
   setTimeout(scrollMM, 60);
   setTimeout(scrollY, 60); setTimeout(scrollY, 300);
@@ -2606,7 +2610,7 @@ function apriScheda(id){
   h += '</div>';
   h += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">';
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModificaDossier('${id}')">${ico('documento',14)} Dossier</button>`;
-  h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriSchedaValutazione('${id}')">${ico('righello',14)} Valutazione</button>`;
+  if(haSchedaValutazioneDisponibile(im)) h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriSchedaValutazione('${id}')">${ico('righello',14)} Valutazione</button>`;
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModifica()">${ico('modifica',14)} Anagrafica</button>`;
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriCambiaStato()">${ico('aggiorna',14)} Stato</button>`;
   h += '</div></div>';
@@ -2685,6 +2689,12 @@ function apriScheda(id){
   if(Array.isArray(d.cucina) && d.cucina.length) righe.push(['Cucina', d.cucina.join(', ')]);
   const dotLabels = { ascensore:'Ascensore', balcone:'Balcone', terrazzo:'Terrazzo', giardino:'Giardino', box:'Box', postoAuto:'Posto auto', cantina:'Cantina' };
   Object.entries(dotLabels).forEach(([k,lbl]) => { if(d[k] && d[k] !== 'No') righe.push([lbl, d[k] + (k === 'box' && d.boxTipo ? ' ' + d.boxTipo : '')]); });
+  if(d.schedaValutazione && typeof d.schedaValutazione === 'object'){
+    const svd = d.schedaValutazione;
+    const labels = {annoCostruzione:'Anno costruzione',annoRistrutturazione:'Anno ristrutturazione',nAppartamenti:'N. appartamenti',pianiFuoriTerra:'Piani fuori terra',riscaldamento:'Riscaldamento',mqComplessivi:'Mq complessivi',nCamere:'Camere',serviziBagno:'Bagni',lavoriUrgenti:'Lavori urgenti',note:'Note valutazione',richiestaValutazione:'Richiesta valutazione',disponibilita:'Disponibilità',visiteGiorni:'Giorni visite',visiteDalle:'Visite dalle',visiteAlle:'Visite alle',visiteContattare:'Contattare',speseCond:'Spese condominiali'};
+    Object.entries(labels).forEach(([k,l]) => { const v=svd[k]; if(v && (!Array.isArray(v)||v.length)) righe.push([l,Array.isArray(v)?v.join(', '):String(v)]); });
+    SV_AMBIENTI.forEach(([k,l]) => { if(svAmbienteAttivo(svd,k)){ const v=svd[k]; const dim=v && typeof v==='object' ? [v.l,v.w].filter(Boolean).join(' × ') : ''; righe.push([l,dim?dim+' m':'Presente']); } });
+  }
   if(righe.length){
     const bodyD = righe.map(x => `<div class="info-row"><span class="label">${x[0]}</span><span class="value">${esc(x[1])}</span></div>`).join('');
     h += collapsible('im_det', ico('righello',13) + ' Caratteristiche', bodyD);
@@ -2734,13 +2744,29 @@ function apriScheda(id){
 }
 
 /* ============ SCHEDA VALUTAZIONE — VELOCE ============ */
-const SV_AMBIENTI_DIM = ['cameraPiccola','cameraMedia','cameraGrande','terrazzo','balcone','postoAuto','box','altro1','altro2'];
+const SV_AMBIENTI = [
+  ['ingresso','Ingresso'],['soggiorno','Soggiorno'],['salaPranzo','Sala pranzo'],
+  ['cucinaAbitabile','Cucina ab.'],['angoloCottura','Angolo cottura'],['tinello','Tinello'],
+  ['cameraGrande','Cam. grande'],['cameraMedia','Cam. media'],['cameraPiccola','Cam. piccola'],
+  ['bagnoAmbiente','Bagno'],['studio','Studio'],
+  ['terrazzo','Terrazzo'],['balcone','Balcone'],['postoAuto','Posto auto'],['box','Box']
+];
+const SV_AMBIENTI_DIM = SV_AMBIENTI.map(a => a[0]);
+function svAmbienteAttivo(sv, k){
+  if(sv.ambientiPresenti && Object.prototype.hasOwnProperty.call(sv.ambientiPresenti,k)) return sv.ambientiPresenti[k] === true;
+  if(k === 'bagnoAmbiente' && !sv.ambientiPresenti && Number(sv.serviziBagno) > 0) return true;
+  const v = sv[k];
+  if(v && typeof v === 'object') return Boolean(v.presente || v.l || v.w);
+  return v === 'Sì';
+}
 
 function apriSchedaValutazione(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
   window._valId = id;
-  im.schedaValutazione = im.schedaValutazione || {};
-  const sv = im.schedaValutazione;
+  if(!['NT','INK','VND'].includes(im.stato) && !im.svPrimaCompilazioneAt && !im.schedaValutazione) return;
+  // Bozza indipendente: Annulla non altera i dati dell'immobile.
+  window._svBozza = JSON.parse(JSON.stringify(im.schedaValutazione || {}));
+  const sv = window._svBozza;
   if(typeof sv.disponibilita === 'string') sv.disponibilita = sv.disponibilita ? [sv.disponibilita] : [];
   if(!Array.isArray(sv.disponibilita)) sv.disponibilita = [];
 
@@ -2757,10 +2783,11 @@ function apriSchedaValutazione(id){
 
   /* 2. Fabbricato */
   h += '<details class="fold" open><summary>2. Fabbricato</summary><div>';
-  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Anno costruzione</label><input class="form-input" id="sv-anno" value="${esc(sv.annoCostruzione||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">N. appartamenti</label><input class="form-input" id="sv-napp" value="${esc(sv.nAppartamenti||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
-  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Piani f.t.</label><input class="form-input" id="sv-piani" value="${esc(sv.pianiFuoriTerra||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Riscaldamento</label><input class="form-input" id="sv-risc" value="${esc(sv.riscaldamento||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Anno costruzione</label><input class="form-input" id="sv-anno" value="${esc(sv.annoCostruzione||'')}" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Anno ristrutturazione</label><input class="form-input" id="sv-annorist" value="${esc(sv.annoRistrutturazione||'')}" inputmode="numeric"></div></div>`;
+  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">N. appartamenti</label><input class="form-input" id="sv-napp" value="${esc(sv.nAppartamenti||'')}" inputmode="numeric"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Piani f.t.</label><input class="form-input" id="sv-piani" value="${esc(sv.pianiFuoriTerra||'')}" inputmode="numeric"></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Riscaldamento</label><input class="form-input" id="sv-risc" value="${esc(sv.riscaldamento||'')}"></div>`;
   h += '<div class="form-label" style="margin-top:6px;">Presenza</div><div class="sv-quick">';
   [['ascensore','Ascensore'],['portineria','Portineria'],['lavanderia','Lavanderia'],['postoMacchina','Posto macchina']].forEach(([k,l]) => {
     h += `<button type="button" class="${sv[k]==='Sì'?'active':''}" onclick="svToggle('${k}',this)">${l}</button>`;
@@ -2777,27 +2804,17 @@ function apriSchedaValutazione(id){
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Camere letto</label><input class="form-input" id="sv-camere" value="${esc(sv.nCamere||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Bagni</label><input class="form-input" id="sv-bagni" value="${esc(sv.serviziBagno||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
   h += '<div class="form-label" style="margin-top:6px;">Ambienti presenti</div><div class="sv-quick">';
-  const ambienti = [
-    ['ingresso','Ingresso'],['angoloCottura','Angolo cottura'],['cucinaAbitabile','Cucina ab.'],
-    ['tinello','Tinello'],['salaPranzo','Sala pranzo'],['soggiorno','Soggiorno'],['studio','Studio'],
-    ['cameraPiccola','Cam. piccola'],['cameraMedia','Cam. media'],['cameraGrande','Cam. grande'],
-    ['serviziBagno','Bagno'],['terrazzo','Terrazzo'],['balcone','Balcone'],
-    ['postoAuto','Posto auto'],['box','Box']
-  ];
-  ambienti.forEach(([k,l]) => {
-    const v = sv[k];
-    const hasDim = SV_AMBIENTI_DIM.includes(k);
-    const att = hasDim ? (v && typeof v === 'object' && (v.l || v.w)) : (typeof v === 'string' && v.trim() ? true : false);
-    h += `<button type="button" class="${att?'active':''}" onclick="svToggleAmbiente('${k}',this)">${l}</button>`;
+  SV_AMBIENTI.forEach(([k,l]) => {
+    const att = svAmbienteAttivo(sv,k);
+    h += `<button type="button" class="${att?'active':''}" aria-pressed="${att}" onclick="svToggleAmbiente('${k}',this)">${l}</button>`;
   });
   h += '</div>';
-  SV_AMBIENTI_DIM.forEach(k => {
-    const v = (sv[k] && typeof sv[k] === 'object') ? sv[k] : { l:'', w:'' };
-    const att = sv[k] && typeof sv[k] === 'object' && (sv[k].l || sv[k].w);
+  SV_AMBIENTI.forEach(([k,l]) => {
+    const v = sv[k] && typeof sv[k] === 'object' ? sv[k] : {l:'',w:''};
+    const att = svAmbienteAttivo(sv,k);
     h += `<div class="cx-row2 ${att?'':'cx-hidden'}" id="sv-dim-${k}" style="margin-top:6px;">`;
-    h += `<div class="cx-campo"><label class="form-label">${k} L (m)</label><input class="form-input" id="sv-${k}-l" value="${esc(v.l||'')}" style="background:var(--bg2);padding:6px 8px;border-radius:6px;" inputmode="decimal"></div>`;
-    h += `<div class="cx-campo"><label class="form-label">W (m)</label><input class="form-input" id="sv-${k}-w" value="${esc(v.w||'')}" style="background:var(--bg2);padding:6px 8px;border-radius:6px;" inputmode="decimal"></div>`;
-    h += '</div>';
+    h += `<div class="cx-campo"><label class="form-label">${l} · L (m)</label><input class="form-input" id="sv-${k}-l" value="${esc(v.l||'')}" inputmode="decimal"></div>`;
+    h += `<div class="cx-campo"><label class="form-label">P (m)</label><input class="form-input" id="sv-${k}-w" value="${esc(v.w||'')}" inputmode="decimal"></div></div>`;
   });
   h += '</div></details>';
 
@@ -2851,68 +2868,76 @@ function apriSchedaValutazione(id){
 }
 
 function svSel(campo, valore, btn){
-  const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
-  im.schedaValutazione = im.schedaValutazione || {};
-  const cur = im.schedaValutazione[campo];
+  const im = DB.immobili.find(x => x.id === window._valId); if(!im || !window._svBozza) return;
+  const cur = window._svBozza[campo];
   const nuovo = (cur === valore) ? '' : valore;
-  im.schedaValutazione[campo] = nuovo;
+  window._svBozza[campo] = nuovo;
   if(btn && btn.parentNode){
     btn.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('active'));
     if(nuovo) btn.classList.add('active');
   }
 }
 function svSelMulti(campo, valore, btn){
-  const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
-  im.schedaValutazione = im.schedaValutazione || {};
-  let arr = im.schedaValutazione[campo];
+  const im = DB.immobili.find(x => x.id === window._valId); if(!im || !window._svBozza) return;
+  let arr = window._svBozza[campo];
   if(typeof arr === 'string') arr = arr ? [arr] : [];
   if(!Array.isArray(arr)) arr = [];
   const i = arr.indexOf(valore);
   if(i >= 0) arr.splice(i, 1); else arr.push(valore);
-  im.schedaValutazione[campo] = arr;
+  window._svBozza[campo] = arr;
   if(btn) btn.classList.toggle('active', arr.includes(valore));
 }
 function svToggle(campo, btn){
-  const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
-  im.schedaValutazione = im.schedaValutazione || {};
-  const cur = im.schedaValutazione[campo];
-  im.schedaValutazione[campo] = (cur === 'Sì') ? 'No' : 'Sì';
-  if(btn) btn.classList.toggle('active', im.schedaValutazione[campo] === 'Sì');
+  const im = DB.immobili.find(x => x.id === window._valId); if(!im || !window._svBozza) return;
+  const cur = window._svBozza[campo];
+  window._svBozza[campo] = (cur === 'Sì') ? 'No' : 'Sì';
+  if(btn) btn.classList.toggle('active', window._svBozza[campo] === 'Sì');
 }
 function svToggleAmbiente(k, btn){
-  const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
-  im.schedaValutazione = im.schedaValutazione || {};
-  const hasDim = SV_AMBIENTI_DIM.includes(k);
-  const cur = im.schedaValutazione[k];
-  const active = hasDim ? (cur && typeof cur === 'object' && (cur.l || cur.w)) : (typeof cur === 'string' && cur.trim());
-  if(active){
-    im.schedaValutazione[k] = hasDim ? null : '';
-    if(btn) btn.classList.remove('active');
-  } else {
-    im.schedaValutazione[k] = hasDim ? { l:'', w:'' } : 'Sì';
-    if(btn) btn.classList.add('active');
-  }
+  const sv = window._svBozza; if(!sv) return;
+  sv.ambientiPresenti = sv.ambientiPresenti || {};
+  const active = svAmbienteAttivo(sv,k);
+  sv.ambientiPresenti[k] = !active;
+  if(!active && (!sv[k] || typeof sv[k] !== 'object')) sv[k] = {l:'',w:''};
+  if(btn){ btn.classList.toggle('active',!active); btn.setAttribute('aria-pressed',String(!active)); }
   const dimBlock = document.getElementById('sv-dim-' + k);
-  if(dimBlock) dimBlock.classList.toggle('cx-hidden', !(btn && btn.classList.contains('active')));
+  if(dimBlock) dimBlock.classList.toggle('cx-hidden',active);
 }
 
 function salvaSchedaValutazione(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
-  im.schedaValutazione = im.schedaValutazione || {};
-  const sv = im.schedaValutazione;
-  ['anno','napp','piani','risc','cort','giard','piano','mq','camere','bagni','spese','amm','mutimp','mutrata','rich','lavurg','note','visdal','visalle','visgiorni','viscont','libdal','affdal'].forEach(x => {
+  const sv = window._svBozza; if(!sv || window._valId !== id) return;
+  const primaCompilazione = !im.svPrimaCompilazioneAt && !im.schedaValutazione;
+  ['anno','annorist','napp','piani','risc','cort','giard','piano','mq','camere','bagni','spese','amm','mutimp','mutrata','rich','lavurg','note','visdal','visalle','visgiorni','viscont','libdal','affdal'].forEach(x => {
     const el = document.getElementById('sv-'+x);
-    if(el) sv[{anno:'annoCostruzione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare',libdal:'liberoDal',affdal:'affittatoDal'}[x]] = el.value;
+    if(el) sv[{anno:'annoCostruzione',annorist:'annoRistrutturazione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare',libdal:'liberoDal',affdal:'affittatoDal'}[x]] = el.value;
   });
   SV_AMBIENTI_DIM.forEach(k => {
     const lEl = document.getElementById('sv-'+k+'-l'); const wEl = document.getElementById('sv-'+k+'-w');
-    if(lEl || wEl){ sv[k] = { l:(lEl?lEl.value:''), w:(wEl?wEl.value:'') }; }
+    if(svAmbienteAttivo(sv,k)) sv[k] = {l:lEl?lEl.value:'',w:wEl?wEl.value:''};
+    else sv[k] = null;
   });
+  // Compatibilità con il precedente campo numerico 'serviziBagno'.
+  sv.ambientiPresenti = sv.ambientiPresenti || {};
   const cb = document.getElementById('sv-valutata');
   im.valutata = cb ? cb.checked : false;
   if(im.valutata && !im.dataValutazione) im.dataValutazione = new Date().toISOString();
   if(!im.valutata) im.dataValutazione = null;
+  const compilata = Object.entries(sv).some(([k,v]) => k !== 'ambientiPresenti' && (typeof v === 'string' ? v.trim() !== '' : Array.isArray(v) ? v.length > 0 : v && typeof v === 'object' ? Object.values(v).some(x => Boolean(x)) : v === true)) || Object.values(sv.ambientiPresenti).some(Boolean);
+  if(!compilata && primaCompilazione){
+    alert('La scheda è vuota: inserisci almeno un dato prima di salvarla.');
+    return;
+  }
+  im.schedaValutazione = sv;
+  if(primaCompilazione && compilata){
+    im.svPrimaCompilazioneAt = new Date().toISOString();
+    const a = {id:uid(),seq:seq(),data:im.svPrimaCompilazioneAt,tipo:'fatta',tipoAtt:'ALTRO',testo:'Prima compilazione scheda valutazione',completata:true,immobileId:im.id};
+    im.attivita = im.attivita || []; im.attivita.push({id:a.id,seq:a.seq,data:a.data,tipo:a.tipo,testo:a.testo,completata:true});
+    DB.attivita = DB.attivita || []; DB.attivita.push(a);
+    syncAttToPersone(im.id,a.id,'add');
+  }
   applicaSchedaAlDossier(im);
+  window._svBozza = null;
   im.updatedAt = new Date().toISOString();
   Storage.save(DB);
   chiudiModal();
@@ -2923,7 +2948,9 @@ function salvaSchedaValutazione(id){
 function applicaSchedaAlDossier(im){
   const sv = im.schedaValutazione || {};
   const d = im.dettagli = im.dettagli || {};
-
+  // Copia completa della scheda nel dossier, anche per i campi senza corrispondenza nel matching.
+  d.schedaValutazione = JSON.parse(JSON.stringify(sv));
+  if(sv.annoRistrutturazione) d.annoRistrutturazione = sv.annoRistrutturazione;
   if(sv.statoImmobile) d.statoConservativo = [sv.statoImmobile];
   if(sv.annoCostruzione) d.annoCostruzione = sv.annoCostruzione;
   if(sv.ascensore === 'Sì') d.ascensore = 'Sì';
@@ -2945,9 +2972,9 @@ function applicaSchedaAlDossier(im){
     if(r.indexOf('autonom') >= 0) d.riscaldamento = ['Autonomo'];
     else if(r.indexOf('central') >= 0) d.riscaldamento = ['Centralizzato'];
   }
-  if(sv.studio && (sv.studio.l || sv.studio.w || sv.studio === 'Sì')) d.studio = 'Sì';
-  if(sv.cucinaAbitabile && sv.cucinaAbitabile.l) d.cucina = ['Abitabile'];
-  else if(sv.angoloCottura && sv.angoloCottura.l) d.cucina = ['Angolo cottura'];
+  if(svAmbienteAttivo(sv,'studio')) d.studio = 'Sì';
+  if(svAmbienteAttivo(sv,'cucinaAbitabile')) d.cucina = ['Abitabile'];
+  else if(svAmbienteAttivo(sv,'angoloCottura')) d.cucina = ['Angolo cottura'];
   if(sv.nCamere){
     const n = parseNum(sv.nCamere);
     if(n !== null){
@@ -2962,10 +2989,10 @@ function applicaSchedaAlDossier(im){
       else if(n >= 1) d.bagni = [String(n)];
     }
   }
-  if(sv.terrazzo && (sv.terrazzo.l || sv.terrazzo.w)) d.terrazzo = 'Sì';
-  if(sv.balcone && (sv.balcone.l || sv.balcone.w)) d.balcone = 'Sì';
-  if(sv.box && (sv.box.l || sv.box.w)) d.box = 'Sì';
-  if(sv.postoAuto && (sv.postoAuto.l || sv.postoAuto.w)) d.postoAuto = 'Sì';
+  d.terrazzo = svAmbienteAttivo(sv,'terrazzo') ? 'Sì' : 'No';
+  d.balcone = svAmbienteAttivo(sv,'balcone') ? 'Sì' : 'No';
+  d.box = svAmbienteAttivo(sv,'box') ? 'Sì' : 'No';
+  d.postoAuto = svAmbienteAttivo(sv,'postoAuto') ? 'Sì' : 'No';
   if(sv.speseCond) d.speseCond = sv.speseCond;
   if(sv.ipoteche) d.ipotecaPresente = sv.ipoteche === 'Sì' ? 'Sì' : 'No';
 
