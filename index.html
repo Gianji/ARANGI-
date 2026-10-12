@@ -66,8 +66,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #header-prossimo-app-txt{font-size:10.5px;font-weight:700;color:var(--blu);line-height:1.25;margin-top:1px;overflow:hidden}
 .app-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 14px calc(80px + env(safe-area-inset-bottom));min-height:0}
 .app-content.attivita-active{padding:2px 14px calc(60px + env(safe-area-inset-bottom))}
-.att-quick-actions{display:flex;gap:6px;margin:0 0 8px;flex-shrink:0}
-.att-quick-actions .btn{flex:1;min-width:0;padding:9px 5px;font-size:11px;white-space:nowrap}
 .att-history-list{display:flex;flex-direction:column;gap:7px}
 .att-history-row{padding:10px;border:1px solid var(--bd);border-radius:10px;display:flex;gap:9px;align-items:flex-start;cursor:pointer}
 .att-history-row:active{opacity:.72}
@@ -445,6 +443,64 @@ details.fold .box2{gap:6px;}
 .sv-quick button{flex:1;min-width:calc(50% - 3px);padding:11px 8px;border-radius:10px;border:1px solid var(--bd);background:var(--card);font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tx);cursor:pointer;text-align:center;transition:all .15s;}
 .sv-quick button.active{background:var(--blu);color:#fff;border-color:var(--blu);}
 .sv-quick button:active{transform:scale(.97);}
+
+/* ARANJÒ 1.31.0 — interfaccia compatta: le azioni secondarie compaiono solo quando richieste. */
+.btn{padding:10px 12px;border-radius:10px;font-size:12.5px;min-height:40px;}
+.btn-icon{width:40px;height:40px;min-height:40px;padding:0;border-radius:50%;}
+.btn-row{gap:6px;}
+.chip{padding:6px 10px;font-size:11.5px;min-height:30px;}
+.card{padding:11px 12px;margin-bottom:7px;}
+.card h2{margin-bottom:7px;font-size:12px;}
+.item-card{padding:11px 12px;margin-bottom:5px;}
+.item-title{font-size:13.5px;}
+.item-sub{font-size:11.5px;}
+.item-card-actions{display:flex;justify-content:flex-end;align-items:center;margin-top:3px;}
+.item-more-btn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:30px;padding:0;border:1px solid var(--bd2);border-radius:9px;background:var(--bg2);color:var(--blu);font-size:21px;font-weight:700;line-height:1;font-family:inherit;cursor:pointer;touch-action:manipulation;}
+.item-more-btn:active{transform:scale(.95);}
+.context-actions{display:flex;flex-direction:column;gap:7px;padding:2px 0 6px;}
+.context-actions .btn{width:100%;margin:0;justify-content:flex-start;}
+.att-col{max-height:none;}
+.att-gruppo-header{padding:8px 10px;}
+.att-item{padding:7px 10px;}
+.att-subtabs{gap:5px;margin-bottom:5px;}
+.att-subtab{padding:7px 3px;}
+.att-subtab .num{font-size:17px;}
+.att-subtab .lbl{font-size:9px;}
+.agenda-sett,.planning-sett{padding:9px 9px;}
+.agenda-sett h3,.planning-sett h3{margin-bottom:5px;}
+.agenda-sett h3 .nav-sett button,.planning-sett h3 .nav-sett button{width:28px;height:28px;}
+/* La schermata attività privilegia l'elenco operativo; agenda e pianificazione restano accessibili nella stessa vista. */
+.app-content.attivita-active #view-attivita.active{height:100%;display:flex;flex-direction:column;gap:6px;overflow:hidden;}
+.app-content.attivita-active #view-attivita .att-col{flex:1 1 0;min-height:0;max-height:none;}
+.app-content.attivita-active #view-attivita .att-col:first-of-type{flex:1.55 1 0;}
+.app-content.attivita-active #view-attivita .att-col:nth-of-type(2),
+.app-content.attivita-active #view-attivita .att-col:nth-of-type(3){flex:.72 1 0;}
+.app-content.attivita-active #view-attivita .att-scroll{min-height:0;}
+.tabbar button{touch-action:manipulation;}
+.tabbar button:focus-visible,.fab:focus-visible,.fab-menu button:focus-visible{outline:2px solid var(--acc);outline-offset:-3px;}
+@media(max-width:420px){
+  .app-content{padding-left:10px;padding-right:10px;}
+  .card{padding:10px;}
+  .item-card{padding:10px;}
+  .btn{padding:9px 10px;}
+  .app-header h1{font-size:24px;}
+}
+@media(max-height:720px){
+  .app-header{padding-bottom:5px;padding-top:calc(9px + env(safe-area-inset-top));}
+  .app-header h1{font-size:23px;}
+  .app-content.attivita-active #view-attivita .att-col:first-of-type{flex:1.35 1 0;}
+  .app-content.attivita-active #view-attivita .att-col:nth-of-type(2),
+  .app-content.attivita-active #view-attivita .att-col:nth-of-type(3){flex:.65 1 0;}
+}
+
+
+/* Il menu + resta vicino al pollice: le etichette appaiono solo quando viene aperto. */
+.fab-menu{right:18px;bottom:calc(var(--tab-h) + 84px + env(safe-area-inset-bottom));gap:6px;align-items:stretch;}
+.fab-menu button{width:min(184px,calc(100vw - 36px));height:42px;min-height:42px;padding:0 12px;border-radius:11px;justify-content:flex-start;gap:10px;font-size:12.5px;font-weight:600;white-space:nowrap;}
+.fab-menu button svg{width:18px;height:18px;flex:none;}
+#planning-contenuto{min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.agenda-grid{min-height:0;}
+
 </style>
 </head>
 <body>
@@ -494,11 +550,6 @@ details.fold .box2{gap:6px;}
     </section>
 
     <section id="view-attivita" class="view">
-      <div class="att-quick-actions" aria-label="Azioni rapide">
-        <button class="btn btn-primary" onclick="apriNuovaAttivitaGlobale()">＋ Attività</button>
-        <button class="btn btn-secondary" onclick="apriNuovaChiamata(null)">＋ Chiamata</button>
-        <button class="btn btn-secondary" onclick="apriNuovoAppuntamentoGlobale()">＋ Appuntamento</button>
-      </div>
       <div class="att-col">
         <div class="att-subtabs" id="att-subtabs">
           <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')"><div class="num" id="att-num-scadute">0</div><div class="lbl">Scadute</div></div>
@@ -620,7 +671,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.30.0</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.0</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -631,16 +682,16 @@ details.fold .box2{gap:6px;}
     </section>
   </main>
 
-  <button class="fab" id="fab" onclick="onFabClick()"></button>
+  <button class="fab" id="fab" onclick="onFabClick()" aria-label="Nuovo" title="Nuovo"></button>
   <div id="fab-menu" class="fab-menu"></div>
 
   <nav class="tabbar" id="tabbar">
-    <button data-tab="immobili" class="active"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
-    <button data-tab="persone"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></button>
-    <button data-tab="attivita"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="badge-tab" id="tab-badge-attivita">0</span></button>
-    <button data-tab="mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></button>
-    <button data-tab="roundme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/></svg></button>
-    <button data-tab="altro"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg></button>
+    <button data-tab="immobili" class="active" aria-label="Immobili" title="Immobili"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
+    <button data-tab="persone" aria-label="Persone" title="Persone"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></button>
+    <button data-tab="attivita" aria-label="Attività" title="Attività"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="badge-tab" id="tab-badge-attivita">0</span></button>
+    <button data-tab="mappa" aria-label="Mappa" title="Mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></button>
+    <button data-tab="roundme" aria-label="Zona e GPS" title="Zona e GPS"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/></svg></button>
+    <button data-tab="altro" aria-label="Altro e impostazioni" title="Altro e impostazioni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg></button>
   </nav>
 </div>
 
@@ -663,7 +714,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.30.0';
+const APP_VERSION = '1.31.0';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1273,9 +1324,9 @@ function switchTab(tab){
   } else {
     fab.style.display = (tab==='immobili'||tab==='persone'||tab==='attivita') ? 'flex' : 'none';
     fm.classList.remove('open'); fabMenuAperto = false;
-    if(tab === 'immobili') fm.innerHTML = `<button onclick="fabMenuImmobile()">${ico('casa',20)}</button><button onclick="fabMenuCondominio()">${iconaCondo(20)}</button>`;
-    else if(tab === 'attivita') fm.innerHTML = `<button onclick="fabMenuChiamata()">${ico('telefono',20)}</button><button onclick="fabMenuAttivita()">${ico('check',20)}</button><button onclick="fabMenuApp()">${ico('calendario',20)}</button>`;
-    else if(tab === 'persone') fm.innerHTML = `<button onclick="fabMenuPersona()">${ico('utente',20)}</button>`;
+    if(tab === 'immobili') fm.innerHTML = `<button type="button" title="Nuovo immobile" aria-label="Nuovo immobile" onclick="fabMenuImmobile()">${ico('casa',18)}<span>Nuovo immobile</span></button><button type="button" title="Nuovo condominio" aria-label="Nuovo condominio" onclick="fabMenuCondominio()">${iconaCondo(18)}<span>Condominio</span></button>`;
+    else if(tab === 'attivita') fm.innerHTML = `<button type="button" title="Nuova chiamata" aria-label="Nuova chiamata" onclick="fabMenuChiamata()">${ico('telefono',18)}<span>Chiamata</span></button><button type="button" title="Nuova attività" aria-label="Nuova attività" onclick="fabMenuAttivita()">${ico('check',18)}<span>Attività</span></button><button type="button" title="Nuovo appuntamento" aria-label="Nuovo appuntamento" onclick="fabMenuApp()">${ico('calendario',18)}<span>Appuntamento</span></button>`;
+    else if(tab === 'persone') fm.innerHTML = `<button type="button" title="Nuova persona" aria-label="Nuova persona" onclick="fabMenuPersona()">${ico('utente',18)}<span>Persona</span></button>`;
     else if(tab === 'altro') aggiornaInfoSistema();
     if(tab === 'attivita'){ renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderChiamateOggi(); }
     else if(tab === 'immobili') renderListaImmobili();
@@ -1433,13 +1484,31 @@ function cardImmobile(im, compact){
   if(co && !im.villa) h2 += `<div class="item-sub">${iconaCondo(11)} ${esc(co)}</div>`;
   if(ze.length) h2 += `<div class="item-sub">${ico('pin',11)} ${esc(ze.slice(0,3).join(' · '))}</div>`;
   if(ult) h2 += `<div class="item-meta"><span>${esc(ult.testo.slice(0,34))}${ult.testo.length>34?'…':''}</span><span>${fmtD(dataAtt(ult))}</span></div>`;
-  /* Quick azioni */
-  h2 += `<div style="display:flex;gap:6px;margin-top:8px;">`;
-  if(im.stato === 'NT' && !im.valutata) h2 += `<button class="btn btn-primary" style="margin:0;padding:8px 10px;font-size:12px;flex:1;" onclick="event.stopPropagation();apriSchedaValutazione('${im.id}')">${ico('righello',13)} Valuta ora</button>`;
-  else if(im.valutata) h2 += `<button class="btn btn-secondary" style="margin:0;padding:8px 10px;font-size:12px;flex:1;" onclick="event.stopPropagation();apriSchedaValutazione('${im.id}')">${ico('righello',13)} Scheda</button>`;
-  if(['NT','INK','VND'].includes(im.stato)) h2 += `<button class="btn btn-secondary" style="margin:0;padding:8px 10px;font-size:12px;flex:1;" onclick="event.stopPropagation();apriModificaDossier('${im.id}')">${ico('documento',13)} Dossier</button>`;
-  h2 += `</div></div>`;
+  /* Azioni secondarie raccolte in un solo comando contestuale. */
+  const haAzioniValutazione = (im.stato === 'NT' && !im.valutata) || !!im.valutata;
+  const haAzioniDossier = ['NT','INK','VND'].includes(im.stato);
+  if(haAzioniValutazione || haAzioniDossier){
+    h2 += `<div class="item-card-actions"><button class="item-more-btn" type="button" title="Altre azioni per ${esc(titoloImmobile(im))}" aria-label="Altre azioni per ${esc(titoloImmobile(im))}" onclick="event.stopPropagation();apriMenuAzioniImmobile('${im.id}')"><span aria-hidden="true">⋯</span></button></div>`;
+  }
+  h2 += `</div>`;
   return h2;
+}
+
+function apriMenuAzioniImmobile(id){
+  const im = DB.immobili.find(x => x.id === id);
+  if(!im) return;
+  immobileAperto = im.id;
+  let h = `<div class="context-actions">`;
+  if(im.stato === 'NT' && !im.valutata){
+    h += `<button class="btn btn-primary" onclick="apriSchedaValutazione('${im.id}')">${ico('righello',15)} Avvia valutazione</button>`;
+  } else if(im.valutata){
+    h += `<button class="btn btn-secondary" onclick="apriSchedaValutazione('${im.id}')">${ico('righello',15)} Scheda valutazione</button>`;
+  }
+  if(['NT','INK','VND'].includes(im.stato)){
+    h += `<button class="btn btn-secondary" onclick="apriModificaDossier('${im.id}')">${ico('documento',15)} Apri dossier</button>`;
+  }
+  h += `</div>`;
+  apriModal('Altre azioni', h);
 }
 function renderListaCondomini(c){
   const g = {};
