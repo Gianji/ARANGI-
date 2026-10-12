@@ -425,7 +425,7 @@ details.fold .box2{gap:6px;}
 
 /* Schede valutazione rapide */
 .sv-quick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
-.sv-quick button{flex:1;min-width:calc(50% - 3px);padding:12px 8px;border-radius:10px;border:1px solid var(--bd);background:var(--card);font-family:inherit;font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;text-align:center;transition:all .15s;}
+.sv-quick button{flex:1;min-width:calc(50% - 3px);padding:11px 8px;border-radius:10px;border:1px solid var(--bd);background:var(--card);font-family:inherit;font-size:12.5px;font-weight:600;color:var(--tx);cursor:pointer;text-align:center;transition:all .15s;}
 .sv-quick button.active{background:var(--blu);color:#fff;border-color:var(--blu);}
 .sv-quick button:active{transform:scale(.97);}
 </style>
@@ -818,6 +818,10 @@ const Storage = {
       if(typeof im.valutata === 'undefined') im.valutata = false;
       if(typeof im.dataValutazione === 'undefined') im.dataValutazione = null;
       if(!im.schedaValutazione) im.schedaValutazione = null;
+      // Migrazione disponibilità a array
+      if(im.schedaValutazione && typeof im.schedaValutazione.disponibilita === 'string'){
+        im.schedaValutazione.disponibilita = im.schedaValutazione.disponibilita ? [im.schedaValutazione.disponibilita] : [];
+      }
     });
     db.persone.forEach(per => {
       if(per.richiesta){
@@ -1093,7 +1097,6 @@ const getTipoApp = s => { const n = normalizzaSigla(s); return TIPI_APP.find(t =
 function immobileValidoPerTipo(sigla, im){
   if(!im) return false;
   const t = TIPI_APP.find(x => x.sigla === sigla); if(!t) return true;
-  const tv = (im.sottotipo||'').toLowerCase().indexOf('valutata') >= 0 && (im.sottotipo||'').toLowerCase().indexOf('non') < 0;
   switch(t.richiede){
     case 'NT_nv': return im.stato === 'NT' && !im.valutata;
     case 'NT_v': return im.stato === 'NT' && im.valutata;
@@ -2446,20 +2449,17 @@ function apriScheda(id){
   if(nomeP) h += `<div class="top-sub">${ico('persona',12)} ${esc(nomeP)}</div>`;
   if(im.valutata) h += `<div class="top-sub" style="color:var(--ink);font-weight:600;">${ico('check',12)} Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):'—'}</div>`;
   if(!im.villa && co && dc.amministratore && dc.amministratore.nome) h += `<div class="top-sub">${iconaCondo(12)} ${esc(dc.amministratore.nome)}</div>`;
-  /* AZIONI RAPIDE — ordine pensato per velocità */
   h += '<div class="top-actions" style="flex-wrap:wrap;">';
   if(telP) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(telP)}')">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(telP)}')">${ico('whatsapp',15)}</button>`;
   if(hc) h += `<button class="btn btn-secondary btn-icon" onclick="navMaps(${im.lat},${im.lng},'${esc(im.indirizzo).replace(/'/g,'')}')">${ico('nav',15)}</button>`;
-  /* Bottoni grandi e visibili */
   h += '</div>';
-  h += '<div style="display:flex;gap:6px;margin-top:8px;">';
-  h += `<button class="btn btn-secondary" style="flex:1;margin:0;padding:10px 6px;font-size:12px;" onclick="apriModificaDossier('${id}')">${ico('documento',14)} Dossier</button>`;
-  h += `<button class="btn btn-secondary" style="flex:1;margin:0;padding:10px 6px;font-size:12px;" onclick="apriSchedaValutazione('${id}')">${ico('righello',14)} Valutazione</button>`;
-  h += `<button class="btn btn-secondary" style="flex:1;margin:0;padding:10px 6px;font-size:12px;" onclick="apriModifica()">${ico('modifica',14)} Anagrafica</button>`;
-  h += `<button class="btn btn-secondary" style="flex:1;margin:0;padding:10px 6px;font-size:12px;" onclick="apriCambiaStato()">${ico('aggiorna',14)} Stato</button>`;
+  h += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">';
+  h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModificaDossier('${id}')">${ico('documento',14)} Dossier</button>`;
+  h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriSchedaValutazione('${id}')">${ico('righello',14)} Valutazione</button>`;
+  h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModifica()">${ico('modifica',14)} Anagrafica</button>`;
+  h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriCambiaStato()">${ico('aggiorna',14)} Stato</button>`;
   h += '</div></div>';
   h += renderBoxAttivita(im, true);
-  /* Scheda valutazione compatta (se presente) */
   if(im.schedaValutazione && Object.keys(im.schedaValutazione).length > 0){
     const sv = im.schedaValutazione;
     let bodyV = '';
@@ -2474,7 +2474,6 @@ function apriScheda(id){
     if(sv.note) bodyV += `<div class="info-row"><span class="label">Note</span><span class="value" style="white-space:pre-wrap;">${esc(sv.note)}</span></div>`;
     h += collapsible('im_valut', ico('righello',13) + ' Scheda valutazione', bodyV, im.valutata ? 'Valutato' : null);
   }
-  /* PREZZI */
   if(['NT','INK','VND'].includes(im.stato)){
     const z = im.prezzi || {};
     const fields = im.stato === 'NT' ? [['richiesto','Prezzo richiesto'],['valutato','Prezzo valutato'],['omi','Prezzo OMI']]
@@ -2497,7 +2496,6 @@ function apriScheda(id){
     const body = (rows.length ? rows.join('') : '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Da compilare</div>') + `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriPrezzi('${id}')">${ico('modifica',14)} Modifica prezzi</button>`;
     h += collapsible('im_prezzi', ico('moneta',13) + ' Prezzi', body);
   }
-  /* CONDOMINIO */
   if(!im.villa && co){
     let bodyC = '';
     if(dc.annoCostruzione) bodyC += `<div class="info-row"><span class="label">Anno</span><span class="value">${esc(dc.annoCostruzione)}</span></div>`;
@@ -2509,7 +2507,6 @@ function apriScheda(id){
     bodyC += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaCondominio('${esc(co).replace(/'/g,'')}')">${ico('modifica',14)} Condominio</button>`;
     h += collapsible('im_condo', ico('condominio',13) + ' Condominio', bodyC);
   }
-  /* CARATTERISTICHE */
   const d = im.dettagli || {};
   const righe = [];
   if(Array.isArray(d.tipologia) && d.tipologia.length) righe.push(['Tipologia', d.tipologia.join(', ')]);
@@ -2543,7 +2540,6 @@ function apriScheda(id){
   } else {
     h += collapsible('im_det', ico('righello',13) + ' Caratteristiche', `<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Da compilare</div><button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaDossier('${id}')">${ico('modifica',14)} Compila dossier</button>`);
   }
-  /* PROPRIETARI */
   let bp = '';
   if(props.length){
     props.forEach(pp => {
@@ -2587,148 +2583,184 @@ function apriScheda(id){
 }
 
 /* ============ SCHEDA VALUTAZIONE — VELOCE ============ */
+const SV_AMBIENTI_DIM = ['cameraPiccola','cameraMedia','cameraGrande','terrazzo','balcone','postoAuto','box','altro1','altro2'];
+
 function apriSchedaValutazione(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
   window._valId = id;
   im.schedaValutazione = im.schedaValutazione || {};
   const sv = im.schedaValutazione;
-  
+  if(typeof sv.disponibilita === 'string') sv.disponibilita = sv.disponibilita ? [sv.disponibilita] : [];
+  if(!Array.isArray(sv.disponibilita)) sv.disponibilita = [];
+
   let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:8px;">${esc(titoloImmobile(im))} · Scheda tecnica per valutazione</div>`;
-  
-  /* Classificazione — bottoni rapidi */
+
+  /* 1. Classificazione */
   h += '<div class="card"><h2>1. Tipo e stato</h2>';
-  h += '<div class="form-label">Tipo immobile</div><div class="sv-quick" id="sv-tipo">';
-  TIPI_VALUTAZIONE.forEach(t => h += `<button type="button" class="${sv.tipoImmobile===t?'active':''}" onclick="svSel('tipoImmobile','${t}')">${t}</button>`);
+  h += '<div class="form-label">Tipo immobile</div><div class="sv-quick" id="sv-grp-tipoImmobile">';
+  TIPI_VALUTAZIONE.forEach(t => h += `<button type="button" class="${sv.tipoImmobile===t?'active':''}" onclick="svSel('tipoImmobile','${t.replace(/'/g,"\\'")}',this)">${t}</button>`);
   h += '</div>';
-  h += '<div class="form-label" style="margin-top:10px;">Stato</div><div class="sv-quick" id="sv-stato">';
-  OPT_STATO_IMMOBILE.forEach(t => h += `<button type="button" class="${sv.statoImmobile===t?'active':''}" onclick="svSel('statoImmobile','${t}')">${t}</button>`);
+  h += '<div class="form-label" style="margin-top:10px;">Stato</div><div class="sv-quick" id="sv-grp-statoImmobile">';
+  OPT_STATO_IMMOBILE.forEach(t => h += `<button type="button" class="${sv.statoImmobile===t?'active':''}" onclick="svSel('statoImmobile','${t.replace(/'/g,"\\'")}',this)">${t}</button>`);
   h += '</div></div>';
-  
-  /* Note fabbricato — compatta */
+
+  /* 2. Fabbricato */
   h += '<details class="fold" open><summary>2. Fabbricato</summary><div>';
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Anno costruzione</label><input class="form-input" id="sv-anno" value="${esc(sv.annoCostruzione||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">N. appartamenti</label><input class="form-input" id="sv-napp" value="${esc(sv.nAppartamenti||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Piani f.t.</label><input class="form-input" id="sv-piani" value="${esc(sv.pianiFuoriTerra||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Riscaldamento</label><input class="form-input" id="sv-risc" value="${esc(sv.riscaldamento||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
   h += '<div class="form-label" style="margin-top:6px;">Presenza</div><div class="sv-quick">';
-  [['sv-asc','ascensore','Ascensore'],['sv-port','portineria','Portineria'],['sv-lav','lavanderia','Lavanderia'],['sv-pm','postoMacchina','Posto macchina']].forEach(([id,k,l]) => {
-    const v = sv[k];
-    h += `<button type="button" class="${v==='Sì'?'active':''}" onclick="svToggle('${k}')">${l}</button>`;
+  [['ascensore','Ascensore'],['portineria','Portineria'],['lavanderia','Lavanderia'],['postoMacchina','Posto macchina']].forEach(([k,l]) => {
+    h += `<button type="button" class="${sv[k]==='Sì'?'active':''}" onclick="svToggle('${k}',this)">${l}</button>`;
   });
   h += '</div>';
   h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Cortile (mq)</label><input class="form-input" id="sv-cort" value="${esc(sv.cortileMq||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Giardino (mq)</label><input class="form-input" id="sv-giard" value="${esc(sv.giardinoMq||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
   h += '</div></details>';
-  
-  /* Caratteristiche interne — solo essenziali */
+
+  /* 3. Caratteristiche — dimensioni sempre presenti, mostrate/nascoste */
   h += '<details class="fold" open><summary>3. Caratteristiche</summary><div>';
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Piano</label><input class="form-input" id="sv-piano" value="${esc(sv.piano||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Mq complessivi</label><input class="form-input" id="sv-mq" value="${esc(sv.mqComplessivi||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Camere letto</label><input class="form-input" id="sv-camere" value="${esc(sv.nCamere||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Bagni</label><input class="form-input" id="sv-bagni" value="${esc(sv.serviziBagno||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
   h += '<div class="form-label" style="margin-top:6px;">Ambienti presenti</div><div class="sv-quick">';
-  [['ingresso','Ingresso'],['angoloCottura','Angolo cottura'],['cucinaAbitabile','Cucina ab.'],['tinello','Tinello'],['salaPranzo','Sala pranzo'],['soggiorno','Soggiorno'],['studio','Studio'],['cameraPiccola','Cam. piccola'],['cameraMedia','Cam. media'],['cameraGrande','Cam. grande'],['serviziBagno','Bagno'],['terrazzo','Terrazzo'],['balcone','Balcone'],['postoAuto','Posto auto'],['box','Box']].forEach(([k,l]) => {
-    const v = sv[k]; const att = v && (v.l || v.w || (typeof v === 'string' && v.trim()));
-    h += `<button type="button" class="${att?'active':''}" onclick="svToggleAmbiente('${k}')">${l}</button>`;
+  const ambienti = [
+    ['ingresso','Ingresso'],['angoloCottura','Angolo cottura'],['cucinaAbitabile','Cucina ab.'],
+    ['tinello','Tinello'],['salaPranzo','Sala pranzo'],['soggiorno','Soggiorno'],['studio','Studio'],
+    ['cameraPiccola','Cam. piccola'],['cameraMedia','Cam. media'],['cameraGrande','Cam. grande'],
+    ['serviziBagno','Bagno'],['terrazzo','Terrazzo'],['balcone','Balcone'],
+    ['postoAuto','Posto auto'],['box','Box']
+  ];
+  ambienti.forEach(([k,l]) => {
+    const v = sv[k];
+    const hasDim = SV_AMBIENTI_DIM.includes(k);
+    const att = hasDim ? (v && typeof v === 'object' && (v.l || v.w)) : (typeof v === 'string' && v.trim() ? true : false);
+    h += `<button type="button" class="${att?'active':''}" onclick="svToggleAmbiente('${k}',this)">${l}</button>`;
   });
   h += '</div>';
-  /* Dimensioni per gli ambienti selezionati */
-  const ambDim = ['cameraPiccola','cameraMedia','cameraGrande','terrazzo','balcone','postoAuto','box','altro1','altro2'];
-  ambDim.forEach(k => { const v = sv[k]; if(v && typeof v === 'object'){ h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">${k} L (m)</label><input class="form-input" id="sv-${k}-l" value="${esc(v.l||'')}" style="background:var(--bg2);padding:6px 8px;border-radius:6px;" inputmode="decimal"></div><div class="cx-campo"><label class="form-label">W (m)</label><input class="form-input" id="sv-${k}-w" value="${esc(v.w||'')}" style="background:var(--bg2);padding:6px 8px;border-radius:6px;" inputmode="decimal"></div></div>`; } });
+  SV_AMBIENTI_DIM.forEach(k => {
+    const v = (sv[k] && typeof sv[k] === 'object') ? sv[k] : { l:'', w:'' };
+    const att = sv[k] && typeof sv[k] === 'object' && (sv[k].l || sv[k].w);
+    h += `<div class="cx-row2 ${att?'':'cx-hidden'}" id="sv-dim-${k}" style="margin-top:6px;">`;
+    h += `<div class="cx-campo"><label class="form-label">${k} L (m)</label><input class="form-input" id="sv-${k}-l" value="${esc(v.l||'')}" style="background:var(--bg2);padding:6px 8px;border-radius:6px;" inputmode="decimal"></div>`;
+    h += `<div class="cx-campo"><label class="form-label">W (m)</label><input class="form-input" id="sv-${k}-w" value="${esc(v.w||'')}" style="background:var(--bg2);padding:6px 8px;border-radius:6px;" inputmode="decimal"></div>`;
+    h += '</div>';
+  });
   h += '</div></details>';
-  
-  /* Disponibilità + oneri — collassati di default */
+
+  /* 4. Disponibilità — MULTI SELECT */
   h += '<details class="fold"><summary>4. Disponibilità</summary><div>';
-  h += '<div class="sv-quick" id="sv-disp">';
-  DISP_VALUTAZIONE.forEach(t => h += `<button type="button" class="${sv.disponibilita===t?'active':''}" onclick="svSel('disponibilita','${t}')">${t}</button>`);
+  h += '<div class="form-label">Situazione (selezione multipla)</div>';
+  h += '<div class="sv-quick" id="sv-grp-disponibilita">';
+  DISP_VALUTAZIONE.forEach(t => {
+    const att = sv.disponibilita.includes(t);
+    h += `<button type="button" class="${att?'active':''}" onclick="svSelMulti('disponibilita','${t.replace(/'/g,"\\'")}',this)">${t}</button>`;
+  });
   h += '</div>';
   h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Spese cond. €/mese</label><input class="form-input" id="sv-spese" value="${esc(sv.speseCond||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Amministratore</label><input class="form-input" id="sv-amm" value="${esc(sv.amministratore||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
+  h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Libero dal</label><input class="form-input" id="sv-libdal" value="${esc(sv.liberoDal||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Affittato dal</label><input class="form-input" id="sv-affdal" value="${esc(sv.affittatoDal||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div></div>`;
   h += '</div></details>';
-  
+
+  /* 5. Ipoteche */
   h += '<details class="fold"><summary>5. Ipoteche / Oneri</summary><div>';
   h += '<div class="sv-quick">';
-  [['libero','Libero'],['ipoteche','Ipoteche'],['vincoli','Vincoli'],['servitu','Servitù']].forEach(([k,l]) => h += `<button type="button" class="${sv[k]==='Sì'?'active':''}" onclick="svToggle('${k}')">${l}</button>`);
+  [['libero','Libero'],['ipoteche','Ipoteche'],['vincoli','Vincoli'],['servitu','Servitù']].forEach(([k,l]) => h += `<button type="button" class="${sv[k]==='Sì'?'active':''}" onclick="svToggle('${k}',this)">${l}</button>`);
   h += '</div>';
   h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Importo mutuo (€)</label><input class="form-input" id="sv-mutimp" value="${esc(sv.mutuoResiduoImporto||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Rata mensile (€)</label><input class="form-input" id="sv-mutrata" value="${esc(sv.mutuoResiduoRata||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
   h += '</div></details>';
-  
-  /* Valutazione + note */
+
+  /* 6. Valutazione */
   h += '<div class="card" style="margin-top:8px;"><h2>6. Valutazione</h2>';
   h += `<div style="margin-bottom:8px;"><label class="form-label">Richiesta valutazione (€)</label><input class="form-input" id="sv-rich" value="${esc(sv.richiestaValutazione||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;" inputmode="numeric"></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Lavori urgenti</label><textarea class="form-textarea" id="sv-lavurg" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(sv.lavoriUrgenti||'')}</textarea></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Note</label><textarea class="form-textarea" id="sv-note" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(sv.note||'')}</textarea></div>`;
   h += '</div>';
-  
-  /* Orari visite */
+
+  /* 7. Orari visite */
   h += '<details class="fold"><summary>7. Orari visite</summary><div>';
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Dalle</label><input class="form-input" id="sv-visdal" value="${esc(sv.visiteDalle||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="time"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Alle</label><input class="form-input" id="sv-visalle" value="${esc(sv.visiteAlle||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="time"></div></div>`;
   h += `<div class="cx-campo"><label class="form-label">Giorni</label><input class="form-input" id="sv-visgiorni" value="${esc(sv.visiteGiorni||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" placeholder="es. Lun-Ven"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Contattare</label><input class="form-input" id="sv-viscont" value="${esc(sv.visiteContattare||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
   h += '</div></details>';
-  
-  /* Valutata checkbox */
+
   h += '<div class="card" style="background:var(--blu-soft);margin-top:8px;"><div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--blu);font-weight:600;">';
   h += `<input type="checkbox" id="sv-valutata" ${im.valutata?'checked':''} style="width:22px;height:22px;">`;
   h += `<label for="sv-valutata" style="cursor:pointer;">Immobile valutato</label></div>`;
   h += '<div style="font-size:11.5px;color:var(--tx2);margin-top:4px;padding-left:30px;">Al salvataggio, i dati verranno copiati nel dossier dell\'immobile</div></div>';
-  
+
   h += `<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="chiudiModal();setTimeout(() => apriScheda('${id}'),80)">Annulla</button><button class="btn btn-primary" onclick="salvaSchedaValutazione('${id}')">${ico('check',15)} Salva e compila dossier</button></div>`;
-  
+
   apriModal('Scheda valutazione', h);
 }
 
-function svSel(campo, valore){
+function svSel(campo, valore, btn){
   const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
   im.schedaValutazione = im.schedaValutazione || {};
-  im.schedaValutazione[campo] = (im.schedaValutazione[campo] === valore) ? '' : valore;
-  /* Ricarica solo i bottoni del gruppo */
-  const cont = document.getElementById('sv-'+campo) || document.querySelector(`[onclick*="svSel('${campo}'"]`)?.parentNode;
-  if(cont){ cont.querySelectorAll('button').forEach(b => { b.classList.toggle('active', b.textContent.trim() === im.schedaValutazione[campo]); }); }
+  const cur = im.schedaValutazione[campo];
+  const nuovo = (cur === valore) ? '' : valore;
+  im.schedaValutazione[campo] = nuovo;
+  if(btn && btn.parentNode){
+    btn.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    if(nuovo) btn.classList.add('active');
+  }
 }
-function svToggle(campo){
+function svSelMulti(campo, valore, btn){
+  const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
+  im.schedaValutazione = im.schedaValutazione || {};
+  let arr = im.schedaValutazione[campo];
+  if(typeof arr === 'string') arr = arr ? [arr] : [];
+  if(!Array.isArray(arr)) arr = [];
+  const i = arr.indexOf(valore);
+  if(i >= 0) arr.splice(i, 1); else arr.push(valore);
+  im.schedaValutazione[campo] = arr;
+  if(btn) btn.classList.toggle('active', arr.includes(valore));
+}
+function svToggle(campo, btn){
   const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
   im.schedaValutazione = im.schedaValutazione || {};
   const cur = im.schedaValutazione[campo];
   im.schedaValutazione[campo] = (cur === 'Sì') ? 'No' : 'Sì';
-  const btn = event.target;
-  btn.classList.toggle('active');
+  if(btn) btn.classList.toggle('active', im.schedaValutazione[campo] === 'Sì');
 }
-function svToggleAmbiente(k){
+function svToggleAmbiente(k, btn){
   const im = DB.immobili.find(x => x.id === window._valId); if(!im) return;
   im.schedaValutazione = im.schedaValutazione || {};
+  const hasDim = SV_AMBIENTI_DIM.includes(k);
   const cur = im.schedaValutazione[k];
-  if(cur && (cur.l || cur.w || (typeof cur === 'string' && cur.trim()))){
-    im.schedaValutazione[k] = null;
+  const active = hasDim ? (cur && typeof cur === 'object' && (cur.l || cur.w)) : (typeof cur === 'string' && cur.trim());
+  if(active){
+    im.schedaValutazione[k] = hasDim ? null : '';
+    if(btn) btn.classList.remove('active');
   } else {
-    im.schedaValutazione[k] = { l:'', w:'' };
+    im.schedaValutazione[k] = hasDim ? { l:'', w:'' } : 'Sì';
+    if(btn) btn.classList.add('active');
   }
-  /* Ricarica la scheda per mostrare i campi dimensioni */
-  apriSchedaValutazione(window._valId);
+  const dimBlock = document.getElementById('sv-dim-' + k);
+  if(dimBlock) dimBlock.classList.toggle('cx-hidden', !(btn && btn.classList.contains('active')));
 }
+
 function salvaSchedaValutazione(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
   im.schedaValutazione = im.schedaValutazione || {};
   const sv = im.schedaValutazione;
-  const g = x => { const e = document.getElementById(x); return e ? e.value : (sv[x] || ''); };
-  /* Testi */
-  ['anno','napp','piani','risc','cort','giard','piano','mq','camere','bagni','spese','amm','mutimp','mutrata','rich','lavurg','note','visdal','visalle','visgiorni','viscont'].forEach(x => {
+  ['anno','napp','piani','risc','cort','giard','piano','mq','camere','bagni','spese','amm','mutimp','mutrata','rich','lavurg','note','visdal','visalle','visgiorni','viscont','libdal','affdal'].forEach(x => {
     const el = document.getElementById('sv-'+x);
-    if(el) sv[{anno:'annoCostruzione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare'}[x]] = el.value;
+    if(el) sv[{anno:'annoCostruzione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare',libdal:'liberoDal',affdal:'affittatoDal'}[x]] = el.value;
   });
-  /* Ambienti con dimensioni */
-  ['cameraPiccola','cameraMedia','cameraGrande','terrazzo','balcone','postoAuto','box','altro1','altro2'].forEach(k => {
+  SV_AMBIENTI_DIM.forEach(k => {
     const lEl = document.getElementById('sv-'+k+'-l'); const wEl = document.getElementById('sv-'+k+'-w');
     if(lEl || wEl){ sv[k] = { l:(lEl?lEl.value:''), w:(wEl?wEl.value:'') }; }
   });
-  /* Checkbox */
   const cb = document.getElementById('sv-valutata');
   im.valutata = cb ? cb.checked : false;
   if(im.valutata && !im.dataValutazione) im.dataValutazione = new Date().toISOString();
   if(!im.valutata) im.dataValutazione = null;
-  /* Pre-compila dossier */
   applicaSchedaAlDossier(im);
   im.updatedAt = new Date().toISOString();
   Storage.save(DB);
@@ -2740,10 +2772,8 @@ function salvaSchedaValutazione(id){
 function applicaSchedaAlDossier(im){
   const sv = im.schedaValutazione || {};
   const d = im.dettagli = im.dettagli || {};
-  
-  /* Stato conservativo */
+
   if(sv.statoImmobile) d.statoConservativo = [sv.statoImmobile];
-  /* Struttura */
   if(sv.annoCostruzione) d.annoCostruzione = sv.annoCostruzione;
   if(sv.ascensore === 'Sì') d.ascensore = 'Sì';
   else if(sv.ascensore === 'No') d.ascensore = 'No';
@@ -2754,28 +2784,19 @@ function applicaSchedaAlDossier(im){
   if(sv.postoMacchina === 'Sì') d.postoAuto = 'Sì';
   if(sv.cortileMq){ d.cortile = 'Sì'; }
   if(sv.giardinoMq){ d.giardino = 'Sì'; d.mqGiardino = sv.giardinoMq; }
-  /* Piano e mq */
   if(sv.piano) d.piano = [sv.piano];
-  if(sv.mqComplessivi){ 
+  if(sv.mqComplessivi){
     const m = parseNum(sv.mqComplessivi);
-    if(m !== null && m > 0) { d.mqCommerciali = sv.mqComplessivi; if(!d.mqCalpestabili) d.mqCalpestabili = sv.mqComplessivi; }
+    if(m !== null && m > 0){ d.mqCommerciali = sv.mqComplessivi; if(!d.mqCalpestabili) d.mqCalpestabili = sv.mqComplessivi; }
   }
-  /* Riscaldamento */
   if(sv.riscaldamento){
     const r = sv.riscaldamento.toLowerCase();
     if(r.indexOf('autonom') >= 0) d.riscaldamento = ['Autonomo'];
     else if(r.indexOf('central') >= 0) d.riscaldamento = ['Centralizzato'];
   }
-  /* Locali */
-  const amb = {
-    ingresso:null, angoloCottura:'Angolo cottura', cucinaAbitabile:'Abitabile', tinello:null,
-    salaPranzo:null, soggiorno:null, studio:'Sì'
-  };
   if(sv.studio && (sv.studio.l || sv.studio.w || sv.studio === 'Sì')) d.studio = 'Sì';
   if(sv.cucinaAbitabile && sv.cucinaAbitabile.l) d.cucina = ['Abitabile'];
   else if(sv.angoloCottura && sv.angoloCottura.l) d.cucina = ['Angolo cottura'];
-  if(sv.soggiorno && sv.soggiorno.l) { /* soggiorno è campo ord, skip */ }
-  /* Camere e bagni */
   if(sv.nCamere){
     const n = parseNum(sv.nCamere);
     if(n !== null){
@@ -2790,30 +2811,33 @@ function applicaSchedaAlDossier(im){
       else if(n >= 1) d.bagni = [String(n)];
     }
   }
-  /* Pertinenze */
   if(sv.terrazzo && (sv.terrazzo.l || sv.terrazzo.w)) d.terrazzo = 'Sì';
   if(sv.balcone && (sv.balcone.l || sv.balcone.w)) d.balcone = 'Sì';
   if(sv.box && (sv.box.l || sv.box.w)) d.box = 'Sì';
   if(sv.postoAuto && (sv.postoAuto.l || sv.postoAuto.w)) d.postoAuto = 'Sì';
-  /* Spese */
   if(sv.speseCond) d.speseCond = sv.speseCond;
-  /* Ipoteche */
   if(sv.ipoteche) d.ipotecaPresente = sv.ipoteche === 'Sì' ? 'Sì' : 'No';
-  if(sv.libero === 'Sì') d.occupazione = 'Libero';
-  /* Disponibilità */
-  if(sv.disponibilita){
+
+  /* Disponibilità (array) */
+  if(Array.isArray(sv.disponibilita) && sv.disponibilita.length){
+    if(sv.disponibilita.includes('Libero')) d.occupazione = 'Libero';
+    else if(sv.disponibilita.includes('Affittato')) d.occupazione = 'Locato';
+    else if(sv.disponibilita.includes('Occupato dal proprietario')) d.occupazione = 'Abitato dal proprietario';
+    if(sv.disponibilita.includes('Chiavi')){
+      const note = (im.note || '').trim();
+      if(!note.toLowerCase().includes('chiavi')) im.note = (note ? note + ' · ' : '') + 'Chiavi disponibili';
+    }
+  } else if(sv.disponibilita && typeof sv.disponibilita === 'string'){
     if(sv.disponibilita === 'Libero') d.occupazione = 'Libero';
     else if(sv.disponibilita === 'Affittato') d.occupazione = 'Locato';
     else if(sv.disponibilita === 'Occupato dal proprietario') d.occupazione = 'Abitato dal proprietario';
   }
-  /* Amministratore → condominio */
   if(sv.amministratore && !im.villa){
     const co = condoDi(im);
     if(co){
       const dc = dettagliCondo(co);
       if(!dc.amministratore) dc.amministratore = { nome:'', telefono:'' };
       if(!dc.amministratore.nome) dc.amministratore.nome = sv.amministratore;
-      if(sv.speseCond && !dc.datiStrutturali) dc.datiStrutturali = {};
     }
   }
 }
@@ -3404,7 +3428,6 @@ function salvaNuovoImmobile(){
   else setTimeout(() => apriScheda(im.id), 180);
 }
 
-/* MODIFICA ANAGRAFICA (senza dossier) */
 function apriModifica(){
   const im = DB.immobili.find(x => x.id === immobileAperto); if(!im) return;
   window._villaMod = !!im.villa;
@@ -3441,21 +3464,23 @@ function salvaModifica(){
   Storage.save(DB); renderListaImmobili(); apriScheda(im.id);
 }
 
-/* MODIFICA DOSSIER — dedicata, iniettata dal blocco MATCHING */
+/* MODIFICA DOSSIER — usa le funzioni esposte dal modulo MATCHING */
 function apriModificaDossier(id){
   const im = DB.immobili.find(x => x.id === (id || immobileAperto)); if(!im) return;
   immobileAperto = im.id;
-  const sezione = window.sezioneDossier;
-  if(!sezione){ alert('Dossier non disponibile'); return; }
+  if(!window.sezioneDossier){ alert('Dossier non disponibile'); return; }
   let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:8px;">${esc(titoloImmobile(im))}</div>`;
-  h += sezione('im', im.dettagli || {});
-  h += `<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${im.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaDossier('${im.id}')">Salva dossier</button></div>`;
+  h += window.sezioneDossier('im', im.dettagli || {});
+  h += `<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="apriScheda('${im.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaDossier('${im.id}')">Salva dossier</button></div>`;
   apriModal('Dossier immobile', h);
-  setTimeout(() => { window.applicaDepDossier && window.applicaDepDossier('im', im.dettagli || {}); window.bindDepDossier && window.bindDepDossier('im', im.dettagli || {}); }, 60);
+  setTimeout(() => {
+    if(window.applicaDepDossier) window.applicaDepDossier('im', im.dettagli || {});
+    if(window.bindDepDossier) window.bindDepDossier('im', im.dettagli || {});
+  }, 60);
 }
 function salvaDossier(id){
   const im = DB.immobili.find(x => x.id === (id || immobileAperto)); if(!im) return;
-  if(!window.leggiDossier) { alert('Modulo non pronto'); return; }
+  if(!window.leggiDossier){ alert('Modulo non disponibile'); return; }
   im.dettagli = im.dettagli || {};
   const v = window.leggiDossier('im');
   Object.assign(im.dettagli, v.dati);
@@ -3623,9 +3648,6 @@ function geocodificaTutti(){
 
 <script>
 'use strict';
-/* ==========================================================================
-   PERSONA + RICHIESTA + CHIAMATE + MAGAZZINO + BACKUP + BOOT
-   ========================================================================== */
 let _npR = [];
 function toggleNpR(r){
   const i = _npR.indexOf(r);
@@ -4430,6 +4452,25 @@ function mergeCond(im, key, immVal){
 const CAT = [];
 const F = (k,g,l,t,o) => CAT.push(Object.assign({ k, g, l, t, w:5, def:'media', ui:'im' }, o || {}));
 
+/* ---------- GRUPPI ---------- */
+const GRUPPI = [
+  ['TI','Tipologia'],
+  ['ED','Edificio e struttura'],
+  ['DI','Dimensioni e spazi'],
+  ['IN','Interni e servizi'],
+  ['ES','Esterni, vista e pertinenze'],
+  ['IP','Impianti e tecnologia'],
+  ['IF','Infissi e serramenti'],
+  ['EN','Energia e certificazioni'],
+  ['CM','Commerciale / aziendale'],
+  ['LG','Legale e catastale'],
+  ['MT','Manutenzione e stato'],
+  ['ZO','Zona e contesto'],
+  ['SP','Spese'],
+  ['NT','Note libere'],
+  ['CL','Richiesta cliente (solo richiesta)']
+];
+
 /* TI */
 F('tipologia','TI','Macro tipologia','multi',{ w:9, def:'alta', ui:'both', opts:TIPOLOGIE_KEYS, pair:'ti1' });
 F('sottotipologia','TI','Sotto-tipologia','multi',{ w:6, ui:'both', opts:SOTTOTIPOLOGIE_ALL, pair:'ti1' });
@@ -4932,11 +4973,7 @@ window.applicaDepDossier = applicaDep;
 window.bindDepDossier = bindDepChange;
 window.leggiDossier = leggi;
 
-/* Inietta dossier in apriModifica esistente come sezione aggiuntiva */
-const _amOld = window.apriModifica;
-window.apriModificaOriginale = _amOld;
-
-/* Inietta richiesta in apriModificaRichiesta */
+/* Inietta richiesta in apriModificaRichiesta (il dossier ha già la sua funzione dedicata) */
 const _amrOld = window.apriModificaRichiesta;
 window.apriModificaRichiesta = function(pid){
   _amrOld(pid);
@@ -4961,7 +4998,6 @@ window.salvaRichiesta = function(pid){
   Storage.save(DB);
 };
 
-/* GRUPPI — spostato in fondo per poter definire prima CAT */
 })();
 </script>
 
