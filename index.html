@@ -521,7 +521,7 @@ details.fold .box2{gap:6px;}
 
 .sv-dossier-summary{margin-top:12px;border:1px solid var(--line,#ddd);border-radius:10px;padding:10px}.sv-dossier-summary summary{cursor:pointer;font-weight:650;font-size:13px}.sv-dossier-rows{margin-top:8px}
 
-/* ARANJO 1.32.2 — numerazione Z modificabile e controllata */
+/* ARANJO 1.33.0 — numerazione Z modificabile e controllata */
 :root{--aranjo-fab-right:18px;--aranjo-fab-width:54px;--aranjo-menu-width:42px}
 .fab{right:var(--aranjo-fab-right)}
 .fab-menu{right:calc(var(--aranjo-fab-right) + (var(--aranjo-fab-width) - var(--aranjo-menu-width))/2);align-items:center;gap:9px}
@@ -582,7 +582,7 @@ details.fold .box2{gap:6px;}
 .cx-row2:has(>.cx-campo.cx-hidden){grid-template-columns:1fr}
 .cx-row2>.cx-campo.cx-hidden + .cx-campo:not(.cx-hidden){grid-column:1/-1}
 @media(max-width:360px){.people-filter-option{padding:11px 9px}.modal-body .sv-quick button{flex-basis:calc(50% - 3px)}.dossier-room-row{grid-template-columns:1fr auto}.dossier-room-row small{grid-column:2}}
-/* 1.32.3: correzione posizione, unico campo Google Maps */
+/* 1.33.0: correzione posizione, unico campo Google Maps */
 .geo-fold{border:1px solid var(--bd);border-radius:12px;background:var(--bg2);margin:10px 0 12px;overflow:hidden}
 .geo-fold>summary{cursor:pointer;display:flex;align-items:center;gap:8px;list-style:none;padding:12px 13px;font-size:12.5px;font-weight:650;color:var(--tx);touch-action:manipulation}
 .geo-fold>summary::-webkit-details-marker{display:none}
@@ -592,6 +592,16 @@ details.fold .box2{gap:6px;}
 .geo-inner{border-top:1px solid var(--bd);padding:12px 13px 13px}
 .geo-help{font-size:11px;color:var(--tx3);margin-top:7px;line-height:1.5}
 .geo-input{font-variant-numeric:tabular-nums;font-size:14px!important}
+
+/* ARANJO 1.33.0: fusione guidata, pannelli sintetici */
+.unione-intro{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px;font-size:13px}
+.unione-intro strong{display:block;font-size:12px;margin-bottom:5px}.unione-intro small{display:block;color:var(--tx3);margin-top:5px;line-height:1.45}
+.unione-warning{background:var(--bg2);border-left:3px solid var(--warn);padding:10px;border-radius:8px;font-size:12px;line-height:1.5;margin:10px 0}
+.unione-scroll{max-height:42vh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;border:1px solid var(--bd);border-radius:12px;margin:8px 0 13px}
+.unione-diff{padding:10px;border-bottom:1px solid var(--bd)}.unione-diff:last-child{border-bottom:0}
+.unione-field{font-size:11px;letter-spacing:.01em;font-weight:700;color:var(--tx2);margin-bottom:7px}
+.unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
+#mi-inline-map{position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -748,7 +758,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.32.3</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.33.0</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -791,7 +801,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.32.3';
+const APP_VERSION = '1.33.0';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1077,6 +1087,7 @@ function apriModal(titolo, html){
   try{ if(!history.state || !history.state._modal){ history.pushState({ _modal:true },''); window._modalStack++; } }catch(e){}
 }
 function chiudiModal(fromBack){
+  window._mapCreateCoord=null;
   const mo = document.getElementById('modal');
   const wasOpen = mo.classList.contains('open');
   mo.classList.remove('open');
@@ -1195,7 +1206,7 @@ const STATI_RR = [
   {id:'attiva',label:'Attiva'},{id:'in-attesa',label:'In attesa'},{id:'proposta',label:'Proposta'},
   {id:'ha-comprato',label:'Ha comprato'},{id:'non-attiva',label:'Non attiva'},{id:'rogitato',label:'Rogitato'}
 ];
-const RUOLI_LABEL = { PROP:'Venditore', ACQUIRENTE:'Acquirente', PROFESSIONISTA:'Professionista', LOCATORE:'Locatore', CONDUTTORE:'Conduttore', PROCURATORE:'Procuratore', ALTRO:'Altro' };
+const RUOLI_LABEL = { PROP:'Venditore', ACQUIRENTE:'Acquirente', PROFESSIONISTA:'Professionista', LOCATORE:'Locatore', CONDUTTORE:'Conduttore', RICERCA_LOCAZIONE:'Cerca affitto', PROCURATORE:'Procuratore', ALTRO:'Altro' };
 const DOCS_RICH = ['Planimetria','Visura Catastale','Atto di Provenienza','Accesso agli Atti','ACE/APE vecchio','APE nuovo'];
 const STATI_DOC = ['presente','mancante','da-richiedere','non-applicabile'];
 const STATI_DOC_LBL = { presente:'Presente', mancante:'Mancante', 'da-richiedere':'Da richiedere', 'non-applicabile':'N/A' };
@@ -1371,7 +1382,7 @@ function formatCoordinate(c){
 function campoCoordinate(id, attuali, titolo){
   const manuale = attuali && attuali.fonte === 'manuale';
   const approssimata = attuali && !manuale && attuali.preciso === false;
-  return `<details class="geo-fold"><summary>${ico('pin',14)} ${titolo || 'Posizione sulla mappa'} <span class="geo-note">${manuale?'Posizione verificata':approssimata?'Da verificare':'Opzionale'}</span></summary><div class="geo-inner"><label class="form-label" for="${id}">Coordinate Google Maps</label><input class="form-input geo-input" id="${id}" inputmode="text" autocomplete="off" spellcheck="false" placeholder="45.133123, 10.023456" value="${manuale?esc(formatCoordinate(attuali)):''}" aria-label="Latitudine, longitudine in un unico campo"><div class="geo-help">Incolla entrambe le coordinate insieme. Vuoto = posizione automatica. Se inserisci la posizione del condominio, sara riutilizzata dagli immobili collegati.</div></div></details>`;
+  return `<details class="geo-fold"${attuali && coordValide(attuali)?' open':''}><summary>${ico('pin',14)} ${titolo || 'Posizione sulla mappa'} <span class="geo-note">${manuale?'Posizione verificata':approssimata?'Da verificare':'Opzionale'}</span></summary><div class="geo-inner"><label class="form-label" for="${id}">Coordinate Google Maps</label><input class="form-input geo-input" id="${id}" inputmode="text" autocomplete="off" spellcheck="false" placeholder="45.133123, 10.023456" value="${attuali&&coordValide(attuali)?esc(formatCoordinate(attuali)):''}" aria-label="Latitudine, longitudine in un unico campo"><div class="geo-help">Incolla entrambe le coordinate insieme. Vuoto = posizione automatica. Se inserisci la posizione del condominio, sara riutilizzata dagli immobili collegati.</div></div></details>`;
 }
 function coordValide(c){return !!c && Number.isFinite(Number(c.lat)) && Number.isFinite(Number(c.lng)) && Math.abs(Number(c.lat))<=90 && Math.abs(Number(c.lng))<=180;}
 function coordCondominio(co){return (DB.coordinateCondomini||{})[co] || null;}
@@ -1397,10 +1408,11 @@ function salvaCoordCondominio(co, c, fonte){
 function impostaCoordImmobile(im, c, fonte){
   im.lat=Number(c.lat);im.lng=Number(c.lng);im.geoFonte=fonte||'manuale';im.geoPreciso=fonte==='manuale'||!!c.preciso;
 }
+function immobileTerreno(im){const d=im.dettagli||{};const t=Array.isArray(d.tipologia)?d.tipologia.join(' '):String(d.tipologia||'');return /terreno/i.test(t+' '+(im.sottotipo||'')+' '+((im.schedaValutazione||{}).tipoImmobile||''));}
 function localizzaImmobile(im, manuali){
   if(manuali){
     impostaCoordImmobile(im, manuali, 'manuale');
-    if(!im.villa && normInd(im.indirizzo)===normInd(condoDi(im))) salvaCoordCondominio(condoDi(im),manuali,'manuale');
+    if(!im.villa && !immobileTerreno(im) && normInd(im.indirizzo)===normInd(condoDi(im))) salvaCoordCondominio(condoDi(im),manuali,'manuale');
     Storage.save(DB); if(map) aggiornaMappa(); return;
   }
   const condivise=coordDisponibili(im.indirizzo, condoDi(im), im.id);
@@ -1578,7 +1590,7 @@ function matchRic(im, q){
   const co = condoDi(im);
   const det = (co && DB.condomini && DB.condomini[co]) || {};
   const props = propsImmobile(im).map(x => nomeCogn(x.persona));
-  const c = [im.indirizzo, im.cognomeNome, im.telefono, im.note, im.condominio, im.citofono, im.collegaNome, zoneEff(im).join(' '), det.amministratore && det.amministratore.nome, det.amministratore && det.amministratore.telefono].concat(props);
+  const c = [im.indirizzo, im.cognomeNome, im.telefono, im.note, im.condominio, im.citofono, im.collegaNome, im.citofonoInfo && im.citofonoInfo.nome, im.locazione && im.locazione.canoneRichiesto, zoneEff(im).join(' '), det.amministratore && det.amministratore.nome, det.amministratore && det.amministratore.telefono].concat(props);
   return c.some(x => (x||'').toLowerCase().indexOf(q) >= 0);
 }
 function bannerFiltri(){
@@ -1589,7 +1601,7 @@ function bannerFiltri(){
   if(gestFil === 'me') p.push('Miei');
   if(gestFil === 'collega') p.push('Colleghi');
   if(!p.length){ c.innerHTML = ''; return; }
-  c.innerHTML = `<div class="card" style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--blu);font-weight:500;margin-bottom:6px;"><span>${p.join(' · ')}</span><button style="background:transparent;border:none;color:var(--blu);cursor:pointer;padding:0;" onclick="rimuoviFiltri()">${ico('x',12)}</button></div>`;
+  c.innerHTML = `<div class="card" style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--blu);font-weight:500;margin-bottom:6px;"><span>${p.map(esc).join(' · ')}</span><div style="display:flex;gap:8px;align-items:center">${condoFil?`<button title="Modifica condominio" aria-label="Modifica condominio" class="btn btn-secondary btn-icon" style="height:32px;width:32px" onclick="apriModificaCondominio(${argEvento(condoFil)})">${ico('modifica',15)}</button>`:''}<button style="background:transparent;border:none;color:var(--blu);cursor:pointer;padding:5px" onclick="rimuoviFiltri()">${ico('x',12)}</button></div></div>`;
 }
 function rimuoviFiltri(){ statoFil = null; zonaFil = null; vistaCond = false; condoFil = null; gestFil = null; aggiornaChips(); renderListaImmobili(); }
 
@@ -1660,7 +1672,7 @@ function renderListaImmobili(){
       const det = (DB.condomini && DB.condomini[e.condo]) || {};
       const amm = det.amministratore && det.amministratore.nome ? ' · ' + esc(det.amministratore.nome) : '';
       const count = e.immobili.length;
-      h2 += `<div class="condo-card" role="button" tabindex="0" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;cursor:pointer;" onclick="selCondo(${argEvento(e.condo)})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selCondo(${argEvento(e.condo)})}"><span style="color:var(--blu);opacity:.65;">${iconaCondo(20)}</span><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;">${esc(e.condo)}</div><div style="font-size:11.5px;color:var(--tx2);margin-top:2px;">${count} imm.${amm}</div></div><span style="color:var(--tx3);">${ico('freccia',16)}</span></div>`;
+      h2 += `<div class="condo-card" role="button" tabindex="0" style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;cursor:pointer;" onclick="selCondo(${argEvento(e.condo)})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selCondo(${argEvento(e.condo)})}"><span style="color:var(--blu);opacity:.65;">${iconaCondo(20)}</span><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;">${esc(e.condo)}</div><div style="font-size:11.5px;color:var(--tx2);margin-top:2px;">${count} imm.${amm}</div></div><button type="button" class="btn btn-secondary btn-icon" title="Modifica condominio" aria-label="Modifica condominio" style="min-width:32px;min-height:32px;padding:6px" onclick="event.stopPropagation();apriModificaCondominio(${argEvento(e.condo)})">${ico('modifica',15)}</button><span style="color:var(--tx3);">${ico('freccia',16)}</span></div>`;
     } else h2 += cardImmobile(e.imm);
   });
   c.innerHTML = h2;
@@ -1684,7 +1696,7 @@ function cardImmobile(im, compact){
   const tel = prop2 && prop2.persona.telefono ? prop2.persona.telefono : im.telefono;
   const prezzoMercato = im.prezzi && parseNum(im.prezzi.mercato);
   let h2 = `<div class="item-card" onclick="apriScheda('${im.id}')"><div class="item-row"><div class="item-title">${esc(titoloImmobile(im))}</div>`;
-  if(im.villa) h2 += '<span style="font-size:10px;color:var(--ink);font-weight:600;">VILLA</span>';
+  // Un immobile singolo non richiede una seconda etichetta di tipologia.
   if(im.gestitoDa === 'collega') h2 += '<span class="badge badge-collega" style="font-size:8px;">COL.</span>';
   if(im.valutata) h2 += `<span class="badge badge-VAL" title="Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):''}">VAL</span>`;
   else if(im.stato === 'NT') h2 += `<span class="badge badge-daval">DA VAL.</span>`;
@@ -1697,6 +1709,7 @@ function cardImmobile(im, compact){
     }
   }
   if(prezzoMercato !== null && prezzoMercato > 0) h2 += `<div class="item-sub" style="font-weight:700;color:var(--ink);">${ico('moneta',11)} ${prezzoMercato.toLocaleString('it-IT',{maximumFractionDigits:0})} €</div>`;
+  if(im.locazione && ['affitto','entrambi'].includes(im.locazione.operazione)) h2 += `<div class="item-sub" style="font-weight:650;">${ico('casa',11)} Affitto${im.locazione.canoneRichiesto ? ' · '+esc(im.locazione.canoneRichiesto)+' €/mese' : ''}</div>`;
   if(im.stato === 'IMM' && im.citofono) h2 += `<div class="item-sub">${ico('campanello',11)} ${esc(im.citofono)}</div>`;
   if(tel && im.stato !== 'IMM') h2 += `<div class="item-sub">${ico('telefono',11)} ${esc(tel)}</div>`;
   if(co && !im.villa) h2 += `<div class="item-sub">${iconaCondo(11)} ${esc(co)}</div>`;
@@ -1732,6 +1745,8 @@ function apriMenuAzioniImmobile(id){
   if(['NT','INK','VND'].includes(im.stato)){
     h += `<button class="btn btn-secondary" onclick="apriModificaDossier('${im.id}')">${ico('documento',15)} Apri dossier</button>`;
   }
+  h += `<button class="btn btn-secondary" onclick="apriLocazioneImmobile('${im.id}')">${ico('casa',15)} Affitto</button>`;
+  h += `<button class="btn btn-secondary" onclick="apriUnione('immobile','${im.id}')">${ico('aggiorna',15)} Unisci duplicato</button>`;
   h += `</div>`;
   apriModal('Altre azioni', h);
 }
@@ -1790,7 +1805,7 @@ let pTab = 'tutti', pStatoRR = null, pTipoProf = null, pQ = '';
 const RUOLI_PERSONE = [
   {value:'tutti',label:'Tutti'}, {value:'acquirente',label:'Acquirenti'},
   {value:'prop',label:'Venditori'}, {value:'locatore',label:'Locatori'},
-  {value:'conduttore',label:'Conduttori'}, {value:'professionista',label:'Professionisti'}
+  {value:'conduttore',label:'Conduttori'}, {value:'ricercaAffitto',label:'Cerca affitto'}, {value:'professionista',label:'Professionisti'}
 ];
 function apriFiltroRuoloPersone(){
   const conta = k => personePerTab(k).length;
@@ -1854,7 +1869,7 @@ function apriFiltroPersone(){
   }
 }
 function personePerTab(tab){
-  const filters = { acquirente:['ACQUIRENTE'], prop:['PROP'], professionista:['PROFESSIONISTA'], locatore:['LOCATORE'], conduttore:['CONDUTTORE'] };
+  const filters = { acquirente:['ACQUIRENTE'], prop:['PROP'], professionista:['PROFESSIONISTA'], locatore:['LOCATORE'], conduttore:['CONDUTTORE'], ricercaAffitto:['RICERCA_LOCAZIONE'] };
   return tab === 'tutti' ? DB.persone.slice() : DB.persone.filter(p => (p.ruoli||[]).some(r => (filters[tab]||[]).includes(r)));
 }
 function renderPersone(){
@@ -1868,6 +1883,7 @@ function renderPersone(){
   if(pQ) l = l.filter(p => {
     const arr = [p.nome, p.cognome, nomeCompleto(p), p.telefono, p.telefono2, p.email, p.cf, p.note, p.zona];
     if(p.richiesta) arr.push((p.richiesta.zona||[]).join(' '), (p.richiesta.tipologia||[]).join(' '), p.richiesta.budget);
+    if(p.richiestaLocazione)arr.push((p.richiestaLocazione.zone||[]).join(' '),(p.richiestaLocazione.tipologie||[]).join(' '),p.richiestaLocazione.budgetMax);
     return arr.some(x => (x||'').toLowerCase().indexOf(pQ) >= 0);
   });
   l.sort((a,b) => nomeCogn(a).localeCompare(nomeCogn(b)));
@@ -2846,26 +2862,30 @@ function apriScheda(id){
   if(im.valutata) h += `<span class="badge badge-VAL">VAL</span>`;
   else if(im.stato === 'NT') h += `<span class="badge badge-daval">DA VAL.</span>`;
   if(!im.villa) h += `<span style="font-size:11px;color:var(--tx3);font-weight:600;">z${im.z||1}</span>`;
-  if(im.villa) h += '<span style="font-size:10px;color:var(--ink);font-weight:700;">VILLA</span>';
+  // Per il singolo la tipologia e' gia' implicita nella struttura.
   if(im.inTrattativa) h += '<span class="badge" style="background:var(--pa);">TRATTATIVA</span>';
   if(im.gestitoDa === 'collega') h += `<span class="badge badge-collega">${ico('briefcase',9)} ${esc(im.collegaNome||'Collega')}</span>`;
   h += '</div>';
   h += `<div class="top-title">${esc(im.indirizzo || 'Senza indirizzo')}</div>`;
-  if(im.citofono) h += `<div class="top-sub">${ico('campanello',12)} ${esc(im.citofono)}</div>`;
+  if(im.citofono) h += `<div class="top-sub">${ico('campanello',12)} ${esc(im.citofono)}${im.citofonoInfo && im.citofonoInfo.ruolo ? ' · '+esc(im.citofonoInfo.ruolo) : ''}</div>`;
   if(telP) h += `<div class="top-sub">${ico('telefono',12)} ${esc(telP)}</div>`;
   if(prezzoMercato !== null && prezzoMercato > 0) h += `<div class="top-sub" style="font-weight:700;color:var(--ink);">${ico('moneta',12)} Prezzo al mercato: ${prezzoMercato.toLocaleString('it-IT',{maximumFractionDigits:0})} €</div>`;
   if(nomeP) h += `<div class="top-sub">${ico('persona',12)} ${esc(nomeP)}</div>`;
+  (im.occupanti||[]).forEach(o=>{ const p=trovaPersona(o.personaId);if(p)h+=`<div class="top-sub">${ico('persona',12)} Inquilino: ${esc(nomeCogn(p))}</div>`; });
   if(im.valutata) h += `<div class="top-sub" style="color:var(--ink);font-weight:600;">${ico('check',12)} Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):'—'}</div>`;
   if(!im.villa && co && dc.amministratore && dc.amministratore.nome) h += `<div class="top-sub">${iconaCondo(12)} ${esc(dc.amministratore.nome)}</div>`;
   h += '<div class="top-actions" style="flex-wrap:wrap;">';
   if(telP) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(telP)}')">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(telP)}')">${ico('whatsapp',15)}</button>`;
   if(hc) h += `<button class="btn btn-secondary btn-icon" onclick="navMaps(${geoNav.lat},${geoNav.lng},'${esc(im.indirizzo).replace(/'/g,'')}')">${ico('nav',15)}</button>`;
+  h += `<button class="btn btn-secondary btn-icon" title="Altre azioni" aria-label="Altre azioni" onclick="apriMenuAzioniImmobile('${id}')"><span style="font-size:20px;line-height:1">⋯</span></button>`;
   h += '</div>';
   h += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">';
   if(['NT','INK','VND'].includes(im.stato) || haSchedaValutazioneCompilata(im)) h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModificaDossier('${id}')">${ico('documento',14)} Dossier</button>`;
   if(haSchedaValutazioneDisponibile(im)) h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriSchedaValutazione('${id}')">${ico('righello',14)} Valutazione</button>`;
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModifica()">${ico('modifica',14)} Anagrafica</button>`;
+
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriCambiaStato()">${ico('aggiorna',14)} Stato</button>`;
+
   h += '</div></div>';
   h += renderBoxAttivita(im, true);
   if(im.schedaValutazione && Object.keys(im.schedaValutazione).length > 0){
@@ -2881,6 +2901,14 @@ function apriScheda(id){
     if(sv.lavoriUrgenti) bodyV += `<div class="info-row"><span class="label">Lavori urgenti</span><span class="value">${esc(sv.lavoriUrgenti)}</span></div>`;
     if(sv.note) bodyV += `<div class="info-row"><span class="label">Note</span><span class="value" style="white-space:pre-wrap;">${esc(sv.note)}</span></div>`;
     h += collapsible('im_valut', ico('righello',13) + ' Scheda valutazione', bodyV, im.valutata ? 'Valutato' : null);
+  }
+  const lo=im.locazione || {};
+  if(lo.operazione==='affitto'||lo.operazione==='entrambi'){
+    let righeLoc=[];
+    [['canoneRichiesto','Canone richiesto'],['canoneConcordato','Canone concordato'],['speseCondominiali','Spese condominiali']].forEach(([k,l])=>{if(lo[k]) righeLoc.push([l,esc(lo[k])+' €/mese']);});
+    [['stato','Situazione'],['scadenzaContratto','Scadenza contratto'],['contratto','Contratto'],['durata','Durata'],['depositoMensilita','Deposito (mensilita)'],['disponibileDal','Disponibile dal'],['animali','Animali'],['arredamento','Arredo'],['cedolare','Cedolare secca'],['utenze','Utenze'],['note','Note affitto']].forEach(([k,l])=>{if(lo[k]) righeLoc.push([l,lo[k]]);});
+    const corpo=righeLoc.map(([k,v])=>`<div class="info-row"><span class="label">${k}</span><span class="value">${esc(v)}</span></div>`).join('')+`<button class="btn btn-secondary" onclick="apriLocazioneImmobile('${im.id}')">${ico('modifica',14)} Modifica</button>`;
+    h+=collapsible('im_loc',ico('casa',13)+' Affitto',corpo);
   }
   if(['NT','INK','VND'].includes(im.stato)){
     const z = im.prezzi || {};
@@ -3947,12 +3975,13 @@ function apriFotoViewer(pid){
   });
 }
 
-function apriFormNuovo(){
+function apriFormNuovo(contesto){
   window._villaNew = false;
-  window._nuovoCondoContesto = condoFil || ''; // Usato solo se l'utente si trova in un condominio.
+  window._nuovoCondoContesto = contesto !== undefined ? contesto : (condoFil || ''); // Usato solo se l'utente si trova in un condominio.
   let h = `<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="f-t" onchange="aggFormNew()"><option value="censito">Censito (IMM)</option><option value="pa">PA</option><option value="nt">NT</option><option value="ink">INK</option></select></div></div><div id="f-c"></div>${campoCoordinate("f-coord")}<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>`;
   apriModal('Nuovo immobile', h);
   aggFormNew();
+  if(window._mapCreateCoord){ const x=document.getElementById('f-coord'); if(x){x.value=formatCoordinate(window._mapCreateCoord); const fold=x.closest('details');if(fold)fold.open=true;} }
 }
 function aggFormNew(){
   const t = document.getElementById('f-t').value;
@@ -3960,14 +3989,14 @@ function aggFormNew(){
   const nc = nomeCitta();
   const iv = window._villaNew === true;
   const coAttivo = window._nuovoCondoContesto || '';
-  const campoInd = `<div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-ind" placeholder="Via Roma 1, ${esc(nc)}" value="${esc(coAttivo)}" oninput="aggZPropostoNew()"${coAttivo ? ' readonly aria-label="Indirizzo del condominio"' : ''}></div>`;
+  const campoInd = (!coAttivo ? `<div class="form-row"><label class="form-label">Struttura</label><div class="quick-row"><button type="button" class="quick-btn${iv?'':' on'}" onclick="setStrutturaNuovo(false)">Condominio</button><button type="button" class="quick-btn${iv?' on':''}" onclick="setStrutturaNuovo(true)">Singolo</button></div></div>` : '') + `<div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="f-ind" placeholder="Via Roma 1, ${esc(nc)}" value="${esc(coAttivo)}" oninput="aggZPropostoNew()"${coAttivo ? ' readonly aria-label="Indirizzo del condominio"' : ''}></div>`;
   const suggeritoZ = coAttivo ? nextZ({id:null, indirizzo:coAttivo, condominio:coAttivo, villa:false}) : 1;
   const campoZ = iv ? '' : `<div class="form-row"><label class="form-label" for="f-z">Z</label><input class="form-input" id="f-z" type="number" inputmode="numeric" min="1" max="99999" step="1" value="${suggeritoZ}" oninput="this.dataset.manualZ='1'" aria-label="Numero Z modificabile"></div>`;
-  let h = '';
+  let h = `<div class="form-row"><label class="form-label">Operazione</label><select class="form-select" id="f-operazione"><option value="vendita">Vendita</option><option value="affitto">Affitto</option><option value="entrambi">Vendita e affitto</option></select></div>`;
   if(t === 'censito'){
     h += '<div class="form-group">';
     h += campoInd;
-    h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="f-cit"></div>';
+    h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="f-cit"></div>' + campoOccupanteCitofono('f');
     h += campoZ;
     if(!iv && !coAttivo) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-cond" oninput="aggZPropostoNew()"></div>';
     h += '<div class="form-row"><label class="form-label">Gestito da</label><select class="form-select" id="f-gest"><option value="me">Io</option><option value="collega">Collega</option></select></div>';
@@ -3981,13 +4010,13 @@ function aggFormNew(){
   } else {
     h += '<div class="form-group">';
     h += campoInd;
-    h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="f-cit"></div>';
+    h += '<div class="form-row"><label class="form-label">Citofono</label><input class="form-input" id="f-cit"></div>' + campoOccupanteCitofono('f');
     h += campoZ;
     if(!iv && !coAttivo) h += '<div class="form-row"><label class="form-label">Condominio</label><input class="form-input" id="f-cond" oninput="aggZPropostoNew()"></div>';
     h += '<div class="form-row"><label class="form-label">Gestito da</label><select class="form-select" id="f-gest"><option value="me">Io</option><option value="collega">Collega</option></select></div>';
     h += '<div class="form-row" id="f-gest-coll-wrap" style="display:none;"><label class="form-label">Nome collega</label><input class="form-input" id="f-coll"></div>';
     h += '</div>';
-    h += '<div class="card"><h2>Proprietario</h2>';
+    h += '<div class="card"><h2>Contatto</h2>';
     h += '<div class="quick-row"><button type="button" class="quick-btn on" id="f-rv" onclick="setRuoloNew(\'vend\')">Venditore</button><button type="button" class="quick-btn" id="f-rc" onclick="setRuoloNew(\'cond\')">Conduttore</button></div>';
     h += '<div class="quick-row"><button type="button" class="quick-btn on" id="f-mn" onclick="setModeNew(\'new\')">Nuovo</button><button type="button" class="quick-btn" id="f-me" onclick="setModeNew(\'existing\')">Esistente</button></div>';
     h += '<div id="f-new-fields">';
@@ -4005,6 +4034,7 @@ function aggFormNew(){
   const gs = document.getElementById('f-gest');
   if(gs) gs.addEventListener('change', () => { const cd = document.getElementById('f-gest-coll-wrap'); if(cd) cd.style.display = gs.value === 'collega' ? 'block' : 'none'; });
 }
+function setStrutturaNuovo(singolo){ const addr=(document.getElementById('f-ind')||{}).value||''; const z=(document.getElementById('f-z')||{}).value||''; const op=(document.getElementById('f-operazione')||{}).value||'vendita'; window._villaNew=singolo; aggFormNew(); const next=document.getElementById('f-ind');if(next)next.value=addr;const nz=document.getElementById('f-z');if(nz && z)nz.value=z;const no=document.getElementById('f-operazione');if(no)no.value=op; }
 function setRuoloNew(r){ window._sellerRuolo = r; document.getElementById('f-rv').classList.toggle('on', r === 'vend'); document.getElementById('f-rc').classList.toggle('on', r === 'cond'); }
 function setModeNew(m){ window._sellerMode = m; document.getElementById('f-mn').classList.toggle('on', m === 'new'); document.getElementById('f-me').classList.toggle('on', m === 'existing'); document.getElementById('f-new-fields').style.display = m === 'new' ? 'block' : 'none'; document.getElementById('f-existing-fields').style.display = m === 'existing' ? 'block' : 'none'; }
 function salvaNuovoImmobile(){
@@ -4015,15 +4045,19 @@ function salvaNuovoImmobile(){
   const iv = coAttivo ? false : window._villaNew === true;
   const ad = new Date().toISOString();
   const co = iv ? '' : (coAttivo || normInd((document.getElementById('f-cond')||{}).value || ind));
+  const operazione=((document.getElementById('f-operazione')||{}).value)||'vendita';
   const cito = ((document.getElementById('f-cit')||{}).value || '').trim().toUpperCase();
+  const citofonoInfo = leggiOccupanteCitofono('f');
   const gest = ((document.getElementById('f-gest')||{}).value) || 'me';
   const coll = gest === 'collega' ? ((document.getElementById('f-coll')||{}).value || '').trim().toUpperCase() : '';
   // Prima di creare persone o immobili, verifica la numerazione richiesta.
   const proposta = { id:null, indirizzo:ind, condominio:co, villa:iv };
   const numeroZ = iv ? 1 : validaZImmobile('f-z', proposta);
   if(numeroZ === null) return;
-  const coordinateManuali = leggiCampoCoordinate('f-coord');
-  if(coordinateManuali === false) return;
+  const lette=leggiCampoCoordinate('f-coord');
+  if(lette===false) return;
+  const coordinateManuali=lette || window._mapCreateCoord || null;
+  window._mapCreateCoord=null;
   let im;
   if(tf === 'censito'){
     im = { id:uid(), stato:'IMM', indirizzo:ind, z:1, citofono:cito, villa:iv, cognomeNome:'', telefono:'', residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, valutata:false, dataValutazione:null, schedaValutazione:null, createdAt:ad, updatedAt:ad };
@@ -4059,13 +4093,18 @@ function salvaNuovoImmobile(){
     const cn = nomeCogn(per);
     const stato = tf === 'pa' ? 'PA' : tf === 'nt' ? 'NT' : 'INK';
     im = { id:uid(), stato, indirizzo:ind, z:1, villa:iv, citofono:cito, cognomeNome:cn, telefono:tel2, residenza:'', proprietari:[], condominio:co, sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:gest, collegaNome:coll, valutata:false, dataValutazione:null, schedaValutazione:null, createdAt:ad, updatedAt:ad };
-    im.proprietari.push({ personaId:per.id, quota:'', principale:true, note:'', tipo:'Proprieta' });
+    if(ruolo==='CONDUTTORE') im.occupanti=[{personaId:per.id,tipo:'Inquilino'}];
+    else im.proprietari.push({ personaId:per.id, quota:'', principale:true, note:'', tipo:'Proprieta' });
     if(!iv) im.z = numeroZ;
   }
+  im.locazione={operazione};
+  im.citofonoInfo=citofonoInfo;
+  collegaOccupanteCitofono(im,citofonoInfo);
   DB.immobili.push(im);
   Storage.save(DB); chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita(); renderPersone();
   localizzaImmobile(im, coordinateManuali);
-  if(['NT','INK','VND'].includes(im.stato)){ setTimeout(() => apriPrezzi(im.id), 400); }
+  if(['affitto','entrambi'].includes(operazione)) setTimeout(()=>apriLocazioneImmobile(im.id),300);
+  else if(['NT','INK','VND'].includes(im.stato)){ setTimeout(() => apriPrezzi(im.id), 400); }
   else setTimeout(() => apriScheda(im.id), 180);
 }
 
@@ -4077,12 +4116,14 @@ function apriModifica(){
   h += `<div style="margin-bottom:8px;"><label class="form-label">Indirizzo</label><input class="form-input" id="mi-ind" value="${esc(im.indirizzo||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Condominio</label><input class="form-input" id="mi-cond" value="${esc(im.condominio||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Citofono</label><input class="form-input" id="mi-cit" value="${esc(im.citofono||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
+  h += campoOccupanteCitofono('mi',im);
   h += `<div id="mi-z-wrap" style="margin-bottom:8px;${im.villa?'display:none;':''}"><label class="form-label" for="mi-z">Numero Z</label><input class="form-input" id="mi-z" type="number" inputmode="numeric" min="1" max="99999" step="1" value="${Number(im.z)||1}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
-  h += `<div style="margin-bottom:8px;"><label class="form-label">Struttura</label><div style="display:flex;gap:6px;"><button type="button" id="mi-cond-btn" class="chip${!im.villa?' active':''}" onclick="setVillaMod(false)" style="flex:1;justify-content:center;">Condominio</button><button type="button" id="mi-villa-btn" class="chip${im.villa?' active':''}" onclick="setVillaMod(true)" style="flex:1;justify-content:center;">Villa</button></div></div>`;
+  h += `<div style="margin-bottom:8px;"><label class="form-label">Struttura</label><div style="display:flex;gap:6px;"><button type="button" id="mi-cond-btn" class="chip${!im.villa?' active':''}" onclick="setVillaMod(false)" style="flex:1;justify-content:center;">Condominio</button><button type="button" id="mi-villa-btn" class="chip${im.villa?' active':''}" onclick="setVillaMod(true)" style="flex:1;justify-content:center;">Singolo</button></div></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Gestito da</label><select class="form-select" id="mi-gest" style="background:var(--bg2);padding:10px 12px;border-radius:10px;" onchange="document.getElementById('mi-gest-coll-wrap').style.display=this.value==='collega'?'block':'none';"><option value="me"${(im.gestitoDa||'me')==='me'?' selected':''}>Io</option><option value="collega"${im.gestitoDa==='collega'?' selected':''}>Collega</option></select></div>`;
   h += `<div id="mi-gest-coll-wrap" style="margin-bottom:8px;display:${im.gestitoDa==='collega'?'block':'none'};"><label class="form-label">Nome collega</label><input class="form-input" id="mi-coll" value="${esc(im.collegaNome||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Note</label><textarea class="form-textarea" id="mi-note" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(im.note||'')}</textarea></div>`;
   h += campoCoordinate('mi-coord', coordValide(im)?{lat:im.lat,lng:im.lng,fonte:im.geoFonte||'sconosciuta',preciso:im.geoPreciso}:null);
+  h += `<button type="button" class="btn btn-secondary" style="margin-top:5px" onclick="scegliCoordinateSuMappa('${im.id}')">${ico('pin',15)} Seleziona sulla mappa</button>`;
   h += '</div>';
   h += '<div class="card"><h2>Zone</h2>' + ms('mi-zona', OPT_ZONE, im.zone) + '</div>';
   if(['NT','INK','VND'].includes(im.stato)){
@@ -4102,8 +4143,11 @@ function salvaModifica(){
   const proposta = {id:im.id, villa:nuovaVilla, indirizzo:nuovoIndirizzo, condominio:nuovoCondominio};
   const numeroZ = nuovaVilla ? im.z : validaZImmobile('mi-z', proposta);
   if(numeroZ === null) return;
+  const inputGeo=document.getElementById('mi-coord');
+  const testoGeo=inputGeo ? inputGeo.value.trim() : '';
   const manuali=leggiCampoCoordinate('mi-coord');
   if(manuali===false) return;
+  const campoGeoCambio=!!manuali && (!coordValide(im) || formatCoordinate(im)!==formatCoordinate(manuali));
   const indirizzoCambio=im.indirizzo!==nuovoIndirizzo || condoDi(im)!==nuovoCondominio || im.villa!==nuovaVilla;
   const avevaManuale=im.geoFonte==='manuale';
   im.villa = nuovaVilla;
@@ -4111,14 +4155,16 @@ function salvaModifica(){
   im.condominio = nuovoCondominio;
   if(!nuovaVilla) im.z = numeroZ;
   im.citofono = g('mi-cit').trim().toUpperCase();
+  im.citofonoInfo=leggiOccupanteCitofono('mi');
+  collegaOccupanteCitofono(im,im.citofonoInfo);
   im.note = g('mi-note');
   im.gestitoDa = g('mi-gest') || 'me';
   im.collegaNome = im.gestitoDa === 'collega' ? g('mi-coll').trim().toUpperCase() : '';
   im.zone = msVal('mi-zona');
   im.updatedAt = new Date().toISOString();
-  if(manuali || indirizzoCambio || avevaManuale){
-    if(!manuali){delete im.lat;delete im.lng;im.geoFonte='';im.geoPreciso=false;}
-    localizzaImmobile(im,manuali);
+  if(campoGeoCambio || indirizzoCambio || (avevaManuale && !testoGeo)){
+    if(!campoGeoCambio){delete im.lat;delete im.lng;im.geoFonte='';im.geoPreciso=false;}
+    localizzaImmobile(im,campoGeoCambio?manuali:null);
   }
   Storage.save(DB); renderListaImmobili(); apriScheda(im.id);
 }
@@ -4156,12 +4202,14 @@ function apriFormNuovoCondominio(){
   const nc = nomeCitta();
   const h = `<div class="form-group"><div class="form-row"><label class="form-label">Indirizzo</label><input class="form-input" id="nc-ind" placeholder="Via Roma 1, ${esc(nc)}"></div><div class="form-row"><label class="form-label">Anno</label><input class="form-input" id="nc-anno"></div><div class="form-row"><label class="form-label">Amministratore</label><input class="form-input" id="nc-amm"></div><div class="form-row"><label class="form-label">Telefono amm.</label><input class="form-input" id="nc-tel" type="tel"></div></div>${campoCoordinate("nc-coord")}<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoCondominio()">Crea</button></div>`;
   apriModal('Nuovo condominio', h);
+  if(window._mapCreateCoord){const e=document.getElementById('nc-coord'); if(e){e.value=formatCoordinate(window._mapCreateCoord); const d=e.closest('details'); if(d)d.open=true;}}
 }
 function salvaNuovoCondominio(){
   const i = normInd((document.getElementById('nc-ind')||{}).value);
   if(!i){ alert('Indirizzo obbligatorio'); return; }
   const manuali=leggiCampoCoordinate('nc-coord');
   if(manuali===false) return;
+  window._mapCreateCoord=null;
   if(DB.condomini && DB.condomini[i]){
     chiudiModal(); selCondo(i); return; // Esistente: non sovrascrivere amministratore, foto o note.
   }
@@ -4260,6 +4308,7 @@ function initMappa(){
   map = L.map('map', { center:c, zoom:14 });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19, attribution:'© OpenStreetMap' }).addTo(map);
   markersLayer = L.layerGroup().addTo(map);
+  map.on('contextmenu', e=>{ if(e && e.latlng) apriCreazioneDaMappa(e.latlng); });
   aggiornaMappa();
 }
 function apriPopImm(id){ chiudiModal(); apriScheda(id); }
@@ -4363,7 +4412,7 @@ function renderNpExtra(){
 function apriNuovaPersona(){
   _npR = [];
   let h = '<div class="zone-chips" id="np-ruoli">';
-  [['ACQUIRENTE','Acquirente'],['PROP','Venditore'],['LOCATORE','Locatore'],['CONDUTTORE','Conduttore'],['PROFESSIONISTA','Professionista']].forEach(r => h += `<button type="button" class="zone-chip" data-ruolo="${r[0]}" onclick="toggleNpR('${r[0]}')">${r[1]}</button>`);
+  [['ACQUIRENTE','Acquirente'],['RICERCA_LOCAZIONE','Cerca affitto'],['PROP','Venditore'],['LOCATORE','Locatore'],['CONDUTTORE','Conduttore'],['PROFESSIONISTA','Professionista']].forEach(r => h += `<button type="button" class="zone-chip" data-ruolo="${r[0]}" onclick="toggleNpR('${r[0]}')">${r[1]}</button>`);
   h += '</div>';
   h += '<div class="form-group" style="margin-top:10px;">';
   h += '<div class="form-row"><label class="form-label">Cognome</label><input class="form-input" id="np-cognome"></div>';
@@ -4386,11 +4435,9 @@ function salvaNuovaPersona(){
   const em = g('np-email').trim();
   const dup = DB.persone.find(p => (tel && p.telefono === tel) || (em && (p.email||'').toLowerCase() === em.toLowerCase()));
   if(dup){
-    if(!confirm(`Gia presente: ${nomeCompleto(dup)}\nOK = unisci ruoli`)) return;
-    _npR.forEach(r => { if((dup.ruoli||[]).indexOf(r) < 0) dup.ruoli.push(r); });
-    Storage.save(DB); chiudiModal(); renderPersone();
-    setTimeout(() => apriSchedaPersona(dup.id), 100);
-    return;
+    if(!confirm(`Esiste gia un contatto con lo stesso telefono o email: ${nomeCompleto(dup)}.\n\nVuoi creare questo secondo contatto e confrontare tutti i dati prima di unirli?\n\nOK = crea e confronta\nAnnulla = apri il contatto esistente`)){
+      chiudiModal();apriSchedaPersona(dup.id);return;
+    }
   }
   const ad = new Date().toISOString();
   const p = { id:uid(), nome:nom, cognome:cog, ruoli:_npR.slice(), telefono:tel, email:em, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
@@ -4401,11 +4448,12 @@ function salvaNuovaPersona(){
   if(_npR.indexOf('ACQUIRENTE') >= 0) pTab = 'acquirente';
   else if(_npR.indexOf('PROFESSIONISTA') >= 0) pTab = 'professionista';
   else if(_npR.indexOf('LOCATORE') >= 0) pTab = 'locatore';
+  else if(_npR.indexOf('RICERCA_LOCAZIONE') >= 0) pTab = 'ricercaAffitto';
   else if(_npR.indexOf('CONDUTTORE') >= 0) pTab = 'conduttore';
   else pTab = 'prop';
   aggiornaFiltroRuoloPersone();
   renderPersone();
-  setTimeout(() => apriSchedaPersona(p.id), 120);
+  setTimeout(() => { if(dup){apriUnione('persona',dup.id);const sel=document.getElementById('unione-source');if(sel){sel.value=p.id;mostraDifferenzeUnione(p.id);}}else if(_npR.includes('RICERCA_LOCAZIONE')) apriRichiestaLocazione(p.id); else apriSchedaPersona(p.id); }, 120);
 }
 
 function apriSchedaPersona(id){
@@ -4424,9 +4472,16 @@ function apriSchedaPersona(id){
   if(tel) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(tel)}')">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(tel)}')">${ico('whatsapp',15)}</button>`;
   if(p.email) h += `<button class="btn btn-secondary btn-icon" onclick="scriviEmail('${esc(p.email)}')">${ico('email',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" onclick="apriModificaPersona()">${ico('modifica',15)}</button>`;
-  h += `<button class="btn btn-secondary btn-icon" onclick="cambiaRuoliPersona()">${ico('aggiorna',15)}</button>`;
+  h += `<button class="btn btn-secondary btn-icon" title="Altre azioni" aria-label="Altre azioni" onclick="apriAltreAzioniPersona('${p.id}')"><span style="font-size:20px;line-height:1">⋯</span></button>`;
   h += '</div></div>';
   h += renderBoxAttivita(p, false);
+  if((p.ruoli||[]).includes('RICERCA_LOCAZIONE') || p.richiestaLocazione){
+    const lr=p.richiestaLocazione || {};
+    const rowsL=[];
+    [['budgetMin','Min'],['budgetMax','Max'],['zone','Zone'],['tipologie','Tipologie'],['mqMin','Mq min'],['localiMin','Locali min'],['persone','Persone'],['garanzie','Garanzie'],['animali','Animali'],['arredamento','Arredo'],['ingresso','Ingresso'],['durata','Durata'],['note','Note']].forEach(([k,t])=>{ if(lr[k]!==undefined && lr[k]!=='' && (!Array.isArray(lr[k])||lr[k].length)) rowsL.push([t,Array.isArray(lr[k])?lr[k].join(', '):lr[k]]); });
+    const contL=rowsL.map(([k,v])=>`<div class="info-row"><span class="label">${k}</span><span class="value">${esc(v)}</span></div>`).join('')+`<button class="btn btn-secondary" onclick="apriRichiestaLocazione('${p.id}')">${ico('modifica',14)} Modifica</button>`;
+    h+=collapsible('p_loc',ico('casa',13)+' Ricerca affitto',contL);
+  }
   if((p.ruoli||[]).indexOf('ACQUIRENTE') >= 0){
     const rq = p.richiesta || richiestaVuota();
     const rows = [];
@@ -4513,7 +4568,7 @@ function cambiaRuoliPersona(){
   const p = trovaPersona(personaAperta); if(!p) return;
   let h = '<div style="font-size:12.5px;color:var(--tx2);margin-bottom:10px;">Seleziona i ruoli.</div>';
   h += '<div class="zone-chips" id="cr-ruoli">';
-  [['ACQUIRENTE','Acquirente'],['PROP','Venditore'],['LOCATORE','Locatore'],['CONDUTTORE','Conduttore'],['PROFESSIONISTA','Professionista']].forEach(r => {
+  [['ACQUIRENTE','Acquirente'],['RICERCA_LOCAZIONE','Cerca affitto'],['PROP','Venditore'],['LOCATORE','Locatore'],['CONDUTTORE','Conduttore'],['PROFESSIONISTA','Professionista']].forEach(r => {
     const a = (p.ruoli||[]).indexOf(r[0]) >= 0;
     h += `<button type="button" class="zone-chip${a?' active':''}" data-ruolo="${r[0]}" onclick="this.classList.toggle('active')">${r[1]}</button>`;
   });
@@ -4673,6 +4728,249 @@ function salvaRichiesta(pid){
   });
   p.updatedAt = new Date().toISOString();
   Storage.save(DB); renderPersone(); apriSchedaPersona(pid);
+}
+
+
+/* ARANJO 1.33.0 — locazioni, duplicati e geolocalizzazione contestuale */
+function apriAltreAzioniPersona(id){
+ const p=trovaPersona(id);if(!p)return;
+ personaAperta=id;
+ let h=`<div class="context-actions"><button class="btn btn-secondary" onclick="cambiaRuoliPersona()">${ico('aggiorna',15)} Ruoli</button><button class="btn btn-secondary" onclick="apriRichiestaLocazione('${id}')">${ico('casa',15)} Richiesta affitto</button><button class="btn btn-secondary" onclick="apriUnione('persona','${id}')">${ico('aggiorna',15)} Unisci duplicato</button></div>`;
+ apriModal('Altre azioni',h);
+}
+
+const opLocazione=['','vendita','affitto','entrambi'];
+const opContratto=['','4+4','3+2','Transitorio','Studenti','Commerciale 6+6','Uso foresteria','Altro'];
+function inputLoc(id,label,value,type){
+  const attr=type==='date'?'type="date"':type==='num'?'type="text" inputmode="decimal"':'type="text"';
+  return `<div class="form-row"><label class="form-label" for="${id}">${esc(label)}</label><input class="form-input" id="${id}" ${attr} value="${esc(value||'')}"></div>`;
+}
+function selectLoc(id,label,value,arr){
+ return `<div class="form-row"><label class="form-label" for="${id}">${esc(label)}</label><select class="form-select" id="${id}">${arr.map(x=>`<option value="${esc(x)}"${x===value?' selected':''}>${esc(x||'—')}</option>`).join('')}</select></div>`;
+}
+function campoOccupanteCitofono(prefix, im){
+  const inf=im&&im.citofonoInfo || {};
+  return `<details class="fold"><summary>Persona sul citofono</summary><div style="padding:8px 0">
+    ${selectLoc(prefix+'-cit-ruolo','Chi abita qui?',inf.ruolo||'',['','Proprietario','Inquilino','Familiare','Altro','Non noto'])}
+    ${inputLoc(prefix+'-cit-nome','Nome sul citofono / inquilino',inf.nome||'')}
+    ${inputLoc(prefix+'-cit-tel','Telefono (se noto)',inf.telefono||'')}
+    <div class="geo-help">L'inquilino non viene assegnato come proprietario. Se inserisci nome e telefono, viene collegato come conduttore.</div>
+  </div></details>`;
+}
+function leggiOccupanteCitofono(prefix){
+ const g=id=>(document.getElementById(prefix+'-cit-'+id)||{}).value||'';
+ return {ruolo:g('ruolo'), nome:g('nome').trim().toUpperCase(),telefono:g('tel').trim()};
+}
+function collegaOccupanteCitofono(im, inf){
+ if(!im||!inf||inf.ruolo!=='Inquilino'||!(inf.nome||inf.telefono)) return;
+ const tel=inf.telefono.replace(/\s+/g,'');
+ let p=DB.persone.find(p=>(tel && String(p.telefono||'').replace(/\s+/g,'')===tel)||(inf.nome&&nomeCogn(p).toUpperCase()===inf.nome));
+ if(!p && !inf.nome) return;
+ if(!p){const n=inf.nome.trim().split(/\s+/);p={id:uid(),cognome:n.shift()||'',nome:n.join(' '),telefono:inf.telefono,ruoli:['CONDUTTORE'],attivita:[],foto:[],createdAt:new Date().toISOString()};DB.persone.push(p);}
+ p.ruoli=Array.from(new Set([...(p.ruoli||[]),'CONDUTTORE']));
+ if(!Array.isArray(im.occupanti))im.occupanti=[];
+ if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
+ inf.personaId=p.id;
+}
+function apriLocazioneImmobile(id){
+ const im=DB.immobili.find(x=>x.id===id); if(!im)return;
+ const o=im.locazione||{};
+ let h='<div class="form-group">';
+ h+=selectLoc('loc-op','Operazione',o.operazione||'',[...opLocazione]);
+ h+='<div id="loc-dettagli">';
+ h+=`<div class="box2">${inputLoc('loc-canoneRichiesto','Canone richiesto €/mese',o.canoneRichiesto,'num')}${inputLoc('loc-canoneConcordato','Canone concordato €/mese',o.canoneConcordato,'num')}</div>`;
+ h+=`<div class="box2">${inputLoc('loc-speseCondominiali','Spese condominiali €/mese',o.speseCondominiali,'num')}${inputLoc('loc-depositoMensilita','Deposito (mensilita)',o.depositoMensilita,'num')}</div>`;
+ h+=selectLoc('loc-stato','Situazione',o.stato||'',['','Da locare','Locato','In scadenza','Sospeso']);
+ h+=selectLoc('loc-contratto','Tipo contratto',o.contratto||'',opContratto);
+ h+=inputLoc('loc-durata','Durata / proroga',o.durata);
+ h+=`<div class="box2">${inputLoc('loc-disponibileDal','Disponibile dal',o.disponibileDal,'date')}${inputLoc('loc-scadenzaContratto','Scadenza contratto',o.scadenzaContratto,'date')}</div>`;
+ h+=`<div class="box2">${selectLoc('loc-arredamento','Arredamento',o.arredamento||'',['','Si','No','Parzialmente'])}${selectLoc('loc-animali','Animali ammessi',o.animali||'',['','Si','No','Da valutare'])}</div>`;
+ h+=`<div class="box2">${selectLoc('loc-cedolare','Cedolare secca',o.cedolare||'',['','Si','No','Da verificare'])}${selectLoc('loc-utenze','Utenze',o.utenze||'',['','A carico conduttore','Incluse','Da definire'])}</div>`;
+ h+=inputLoc('loc-garanzie','Garanzie richieste',o.garanzie);
+ h+=`<div class="form-row"><label class="form-label">Note locazione</label><textarea class="form-textarea" id="loc-note">${esc(o.note||'')}</textarea></div>`;
+ h+='</div></div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${id}')">Annulla</button><button class="btn btn-primary" onclick="salvaLocazioneImmobile('${id}')">Salva</button></div>`;
+ apriModal('Locazione immobile',h);
+ const sel=document.getElementById('loc-op');const upd=()=>{document.getElementById('loc-dettagli').hidden=!['affitto','entrambi'].includes(sel.value);};sel.addEventListener('change',upd);upd();
+}
+function salvaLocazioneImmobile(id){
+ const im=DB.immobili.find(x=>x.id===id);if(!im)return;
+ const g=k=>(document.getElementById('loc-'+k)||{}).value||'';
+ const op=g('op');
+ const fields=['stato','scadenzaContratto','canoneRichiesto','canoneConcordato','speseCondominiali','depositoMensilita','contratto','durata','disponibileDal','arredamento','animali','cedolare','utenze','garanzie','note'];
+ const o={...(im.locazione||{}),operazione:op};
+ fields.forEach(k=>o[k]=g(k).trim());
+ if(['affitto','entrambi'].includes(op)){
+  for(const k of ['canoneRichiesto','canoneConcordato','speseCondominiali','depositoMensilita']){if(o[k] && (!/^[\d.,\s]+$/.test(o[k]) || Number(o[k].replace(',','.').replace(/\s/g,''))<0)){alert('Verifica '+k);return;}}
+ }
+ im.locazione=o;im.updatedAt=new Date().toISOString();Storage.save(DB);renderListaImmobili();apriScheda(id);
+}
+function apriRichiestaLocazione(pid){
+ const p=trovaPersona(pid);if(!p)return;
+ const r=p.richiestaLocazione||{};
+ let h='<div class="form-group">';
+ h+=`<div class="box2">${inputLoc('rl-budgetMin','Canone min €/mese',r.budgetMin,'num')}${inputLoc('rl-budgetMax','Canone max €/mese',r.budgetMax,'num')}</div>`;
+ h+=`<div class="box2">${inputLoc('rl-mqMin','Mq minimi',r.mqMin,'num')}${inputLoc('rl-localiMin','Locali minimi',r.localiMin,'num')}</div>`;
+ h+=inputLoc('rl-zone','Zone cercate (separate da virgole)',Array.isArray(r.zone)?r.zone.join(', '):r.zone||'');
+ h+=inputLoc('rl-tipologie','Tipologie (separate da virgole)',Array.isArray(r.tipologie)?r.tipologie.join(', '):r.tipologie||'');
+ h+=`<div class="box2">${inputLoc('rl-persone','Persone occupanti',r.persone,'num')}${inputLoc('rl-ingresso','Data ingresso',r.ingresso,'date')}</div>`;
+ h+=selectLoc('rl-arredamento','Arredamento',r.arredamento||'',['','Si','No','Parzialmente','Indifferente']);
+ h+=selectLoc('rl-animali','Animali domestici',r.animali||'',['','Si','No']);
+ h+=selectLoc('rl-durata','Durata richiesta',r.durata||'',['','Transitorio','Lungo periodo','Studenti','Indifferente']);
+ h+=inputLoc('rl-garanzie','Garanzie / contratto di lavoro',r.garanzie);
+ h+=`<div class="form-row"><label class="form-label">Esigenze e note</label><textarea class="form-textarea" id="rl-note">${esc(r.note||'')}</textarea></div>`;
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona('${pid}')">Annulla</button><button class="btn btn-primary" onclick="salvaRichiestaLocazione('${pid}')">Salva</button></div>`;
+ apriModal('Richiesta di locazione',h);
+}
+function salvaRichiestaLocazione(pid){
+ const p=trovaPersona(pid);if(!p)return;
+ const g=k=>(document.getElementById('rl-'+k)||{}).value||'';
+ if(g('budgetMin') && g('budgetMax') && Number(g('budgetMin'))>Number(g('budgetMax'))){alert('Canone minimo superiore al massimo');return;}
+ p.richiestaLocazione={...(p.richiestaLocazione||{})};
+ p.ruoli=Array.from(new Set([...(p.ruoli||[]),'RICERCA_LOCAZIONE']));
+ ['budgetMin','budgetMax','mqMin','localiMin','persone','ingresso','arredamento','animali','durata','garanzie','note'].forEach(k=>p.richiestaLocazione[k]=g(k).trim());
+ for(const [key,form] of [['zone','zone'],['tipologie','tipologie']])p.richiestaLocazione[key]=g(form).split(',').map(x=>x.trim()).filter(Boolean);
+ p.updatedAt=new Date().toISOString();Storage.save(DB);renderPersone();apriSchedaPersona(pid);
+}
+/* Una fusione non si basa solo sul telefono: l'operatore sceglie esplicitamente il duplicato e i valori. */
+let _unione=null;
+function unioneValida(v){return v!==undefined&&v!==null&&v!==''&&!(Array.isArray(v)&&!v.length)&&!(typeof v==='object' && !Array.isArray(v)&&!Object.keys(v).length);}
+function unioneJson(v){try{return JSON.stringify(v??null)}catch(e){return String(v)}}
+function unioneClona(v){return JSON.parse(JSON.stringify(v));}
+function unioneElenco(t){return t==='persona'?DB.persone:DB.immobili;}
+function unioneTitolo(t,e){return t==='persona'?nomeCogn(e)+' · '+(e.telefono||e.telefono2||''):titoloImmobile(e)+' · '+(e.stato||'');}
+function unioneCampi(a,b,prefix,out){
+ const keys=new Set([...Object.keys(a||{}),...Object.keys(b||{})]);
+ const esclusi=new Set(['id','createdAt','updatedAt','attivita','foto','storicoPrezzo','proprietari','occupanti','ruoli','zone','mergedFrom','_svSyncSnapshot']);
+ for(const k of keys){ if(esclusi.has(k)||k.startsWith('_'))continue;
+   const x=a&&a[k],y=b&&b[k],path=prefix?prefix+'.'+k:k;
+   if(x&&y&&typeof x==='object'&&!Array.isArray(x)&&typeof y==='object'&&!Array.isArray(y)){unioneCampi(x,y,path,out);continue;}
+   if(unioneJson(x)===unioneJson(y)||(!unioneValida(x)&&!unioneValida(y)))continue;
+   out.push({path,a:x,b:y});
+ }
+}
+function apriUnione(tipo,id){
+ const a=unioneElenco(tipo).find(x=>x.id===id);if(!a)return;
+ _unione={tipo,id,sourceId:null,choices:{}};
+ const tel=String(a.telefono||'').replace(/\D/g,'');
+ const l=unioneElenco(tipo).filter(x=>x.id!==id).sort((x,y)=>{
+   if(tipo==='persona' && tel){let m=String(x.telefono||'').replace(/\D/g,'')===tel ? -1:0;let n=String(y.telefono||'').replace(/\D/g,'')===tel ? -1:0;if(m!==n)return m-n;}
+   if(tipo==='immobile'){let m=(x.indirizzo||'')===(a.indirizzo||'')?-1:0;let n=(y.indirizzo||'')===(a.indirizzo||'')?-1:0;if(m!==n)return m-n;}
+   return unioneTitolo(tipo,x).localeCompare(unioneTitolo(tipo,y),'it');
+ });
+ if(!l.length){alert('Nessun altro elemento da unire');return;}
+ let h=`<div class="unione-intro"><strong>Record da mantenere</strong><div>${esc(unioneTitolo(tipo,a))}</div><small>Il suo identificativo restera invariato; i collegamenti del secondo record saranno trasferiti.</small></div>`;
+ h+=`<div class="form-row"><label class="form-label">Unisci con</label><select class="form-select" id="unione-source" onchange="mostraDifferenzeUnione(this.value)"><option value="">Seleziona duplicato…</option>${l.map(x=>`<option value="${esc(x.id)}">${esc(unioneTitolo(tipo,x))}</option>`).join('')}</select></div>`;
+ h+='<div id="unione-differenze"></div>';
+ apriModal('Unisci '+(tipo==='persona'?'persone':'immobili'),h);
+}
+function unioneTesto(v){ if(v===null||v===undefined||v==='')return '—';if(Array.isArray(v))return v.join(' · ')||'—';if(typeof v==='object')return unioneJson(v);return String(v);}
+function mostraDifferenzeUnione(id){
+ const u=_unione;const box=document.getElementById('unione-differenze');if(!u||!box)return;
+ u.sourceId=id;u.choices={};
+ const a=unioneElenco(u.tipo).find(x=>x.id===u.id),b=unioneElenco(u.tipo).find(x=>x.id===id);
+ if(!a||!b){box.innerHTML='';return;}
+ const samePhone=u.tipo==='persona'&&a.telefono&&b.telefono&&a.telefono.replace(/\D/g,'')===b.telefono.replace(/\D/g,'');
+ const sameAddress=u.tipo==='immobile' && normInd(a.indirizzo)===normInd(b.indirizzo);
+ let h=`<div class="unione-warning">${samePhone?'Stesso telefono: controlla che siano davvero la stessa persona.':sameAddress?'Stesso indirizzo: verifica che siano la stessa unita, non due unita distinte.':'Attenzione: non c’e una corrispondenza certa. Unisci soltanto se hai verificato che i due record rappresentino la stessa entita.'}</div>`;
+ let dif=[];unioneCampi(a,b,'',dif);u.differenze=dif;
+ h+=`<p style="font-size:12px;color:var(--tx2)">Seleziona A o B per ciascun dettaglio in conflitto. Le informazioni presenti in un solo record vengono mantenute automaticamente; attivita, foto e collegamenti saranno raccolti.</p>`;
+ h+='<div class="unione-scroll">';
+ dif.forEach((c,i)=>{const va=unioneValida(c.a),vb=unioneValida(c.b);const scelta=!va&&vb?'b':'a';u.choices[c.path]=scelta;
+   h+=`<div class="unione-diff"><div class="unione-field">${esc(c.path.replace(/\./g,' › '))}</div><div class="unione-pair"><label><input type="radio" name="unione-${i}" value="a" ${scelta==='a'?'checked':''} onchange="scegliUnione(${i},'a')"><span>A · ${esc(unioneTesto(c.a).slice(0,145))}</span></label><label><input type="radio" name="unione-${i}" value="b" ${scelta==='b'?'checked':''} onchange="scegliUnione(${i},'b')"><span>B · ${esc(unioneTesto(c.b).slice(0,145))}</span></label></div></div>`;
+ });
+ h+='</div>';
+ h+=`<div class="btn-row"><button class="btn btn-secondary" onclick="apriUnione('${u.tipo}','${u.id}')">Indietro</button><button class="btn btn-primary" onclick="confermaUnione()">Unisci e conserva storico</button></div>`;
+ box.innerHTML=h;
+}
+function scegliUnione(i,choice){if(!_unione||!_unione.differenze||!_unione.differenze[i])return;_unione.choices[_unione.differenze[i].path]=choice;}
+function unioneSet(obj,path,val){const parts=path.split('.');let current=obj;for(let i=0;i<parts.length-1;i++){const k=parts[i];if(!current[k]||typeof current[k]!=='object'||Array.isArray(current[k]))current[k]={};current=current[k];}if(val===undefined)delete current[parts.at(-1)];else current[parts.at(-1)]=unioneClona(val);}
+function unioneUnique(arrA,arrB,field){const out=[];const keys=new Set();[...(arrA||[]),...(arrB||[])].forEach(x=>{const key=field&&x&&x[field]?x[field]:unioneJson(x);if(keys.has(key))return;keys.add(key);out.push(unioneClona(x));});return out;}
+function unioneRiferimenti(tipo,from,to){
+ const keys=tipo==='persona'?new Set(['personaId','clienteId','perId','ownerId','conduttoreId','locatoreId']):new Set(['immobileId','imId','propertyId']);
+ const aryKeys=tipo==='persona'?new Set(['personaIds','clientiIds']):new Set(['immobiliIds','propertyIds']);
+ const walk=(o,k,parent)=>{
+   if(!o||typeof o!=='object')return;
+   if(Array.isArray(o)){o.forEach((v,i)=>{if(typeof v==='string'&&aryKeys.has(k)&&v===from)o[i]=to;else walk(v,k,o);});return;}
+   Object.keys(o).forEach(key=>{
+     const v=o[key];
+     if(typeof v==='string' && v===from && (keys.has(key)||(key==='entId'&&o.entTipo===tipo)||(key==='idEntita'&&o.tipoEntita===tipo))){o[key]=to;return;}
+     if(v&&typeof v==='object')walk(v,key,o);
+   });
+ };
+ const roots=['immobili','persone','attivita','appuntamenti','chiamate','planning','rapportini'];
+ roots.forEach(k=>walk(DB[k],k,DB));
+}
+function confermaUnione(){
+ const u=_unione;if(!u||!u.sourceId||u.id===u.sourceId)return;
+ const list=unioneElenco(u.tipo),a=list.find(x=>x.id===u.id),b=list.find(x=>x.id===u.sourceId);
+ if(!a||!b){alert('Record non trovato');return;}
+ const descr=`${unioneTitolo(u.tipo,a)}\n+ ${unioneTitolo(u.tipo,b)}`;
+ if(!confirm('Confermi che si tratta della STESSA '+(u.tipo==='persona'?'persona':'unita immobiliare')+'?\n\n'+descr+'\n\nIl secondo record verra sostituito dal primo.'))return;
+ const origA=unioneClona(a),origB=unioneClona(b),merged=unioneClona(a);
+ // Mantieni i campi compilati in uno solo dei due record; poi applica tutte le preferenze.
+ (u.differenze||[]).forEach(c=>unioneSet(merged,c.path,(u.choices[c.path]==='b'?c.b:c.a)));
+ if(u.tipo==='immobile' && !merged.villa && DB.immobili.some(x=>x.id!==a.id&&x.id!==b.id&&!x.villa&&condoDi(x)===condoDi(merged)&&Number(x.z||1)===Number(merged.z||1))){alert('Esiste gia un altro immobile con lo stesso Z nel condominio. Scegli un numero Z diverso prima di unire.');return;}
+ // Unione delle raccolte storiche senza perdere gli elementi associati al secondo record.
+ for(const k of ['attivita','foto','storicoPrezzo','proprietari','occupanti','ruoli','zone']){
+   merged[k]=unioneUnique(origA[k],origB[k],k==='proprietari'||k==='occupanti'?'personaId':(k==='attivita'?'id':null));
+ }
+ merged.documenti={...(origB.documenti||{}),...(origA.documenti||{}),...(merged.documenti||{})};
+ for(const [k,v] of Object.entries(origB.documenti||{})){if(merged.documenti[k]===undefined||merged.documenti[k]===null)merged.documenti[k]=v;}
+ merged.mergedFrom=unioneUnique(origA.mergedFrom,[(origB.id),...(origB.mergedFrom||[])]);
+ merged.updatedAt=new Date().toISOString();
+ Object.keys(a).forEach(k=>delete a[k]);Object.assign(a,merged);
+ const at=list.indexOf(b);list.splice(at,1);
+ unioneRiferimenti(u.tipo,b.id,a.id);
+ // Elimina i duplicati dei legami della persona risultanti dalla sostituzione degli ID.
+ DB.immobili.forEach(im=>{for(const k of ['proprietari','occupanti'])if(Array.isArray(im[k]))im[k]=unioneUnique(im[k],[], 'personaId');});
+ if(!Array.isArray(DB.storicoUnioni))DB.storicoUnioni=[];
+ DB.storicoUnioni.push({tipo:u.tipo,data:new Date().toISOString(),mantenuto:a.id,eliminato:b.id,recordOrigineA:origA,recordOrigineB:origB,scelte:u.choices});
+ _unione=null;Storage.save(DB);renderPersone();renderListaImmobili();renderAttivita();aggiornaBadgeAttivita();if(map)aggiornaMappa();
+ if(u.tipo==='persona')apriSchedaPersona(a.id);else apriScheda(a.id);
+}
+function apriCreazioneDaMappa(latlng){
+ if(!coordValide(latlng))return;
+ const c={lat:Number(latlng.lat),lng:Number(latlng.lng)};
+ window._mapCreateCoord=c;
+ const h=`<div class="unione-intro"><strong>Punto selezionato</strong><div>${formatCoordinate(c)}</div><small>Le coordinate rimarranno esattamente quelle del punto toccato. L'indirizzo potra essere corretto prima del salvataggio.</small></div><div class="btn-row"><button class="btn btn-primary" onclick="creaDaMappa('immobile')">${ico('casa',15)} Immobile</button><button class="btn btn-primary" onclick="creaDaMappa('condominio')">${ico('condominio',15)} Condominio</button></div><button class="btn btn-secondary" style="margin-top:8px" onclick="window._mapCreateCoord=null;chiudiModal()">Annulla</button>`;
+ apriModal('Nuovo dalla mappa',h);
+}
+async function creaDaMappa(t){
+ const c=window._mapCreateCoord;if(!c)return;
+ // Esamina un indirizzo approssimato senza alterare la posizione scelta.
+ if(t==='condominio')apriFormNuovoCondominio();else{apriFormNuovo('');}
+ const selector=t==='condominio'?'nc-ind':'f-ind';
+ const el=document.getElementById(selector);
+ if(el)el.placeholder='Indirizzo da inserire (coordinate gia fissate)';
+ try{
+  const url=`https://nominatim.openstreetmap.org/reverse?lat=${encodeURIComponent(c.lat)}&lon=${encodeURIComponent(c.lng)}&format=json&addressdetails=1`;
+  const r=await fetch(url,{headers:{Accept:'application/json'}});
+  if(!r.ok)return;
+  const d=await r.json(),a=d.address||{};
+  const via=a.road||a.pedestrian||a.residential||a.hamlet||'';
+  const civ=a.house_number||'';
+  const indirizzo=via ? normInd((via+' '+civ).trim()) : '';
+  const inp=document.getElementById(selector);
+  if(inp && !inp.value && indirizzo){inp.value=indirizzo;if(t==='immobile')aggZPropostoNew();}
+ }catch(e){/* il posizionamento funziona anche offline se l'indirizzo viene scritto a mano */}
+}
+function scegliCoordinateSuMappa(id){
+ let outer=document.getElementById('mi-inline-map');
+ if(outer){outer.remove();return;}
+ const input=document.getElementById('mi-coord');if(!input)return;
+ const div=document.createElement('div');div.id='mi-inline-map';div.style.cssText='height:245px;border-radius:12px;overflow:hidden;margin-top:8px;border:1px solid var(--bd)';
+ const btn=document.querySelector('button[onclick^="scegliCoordinateSuMappa"]');
+ (btn&&btn.parentNode?btn.parentNode:input.parentNode).appendChild(div);
+ const im=DB.immobili.find(x=>x.id===id); const ctr=im&&coordValide(im)?[Number(im.lat),Number(im.lng)]:(_coordsCitta||CREMONA_CENTER);
+ if(!window.L){alert('Mappa non disponibile');return;}
+ const mini=L.map(div,{zoomControl:true,attributionControl:false}).setView(ctr,17);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(mini);
+ let marker=null;
+ if(im&&coordValide(im))marker=L.marker(ctr).addTo(mini);
+ mini.on('click',e=>{const c=e.latlng;input.value=formatCoordinate(c);input.dispatchEvent(new Event('input',{bubbles:true}));const d=input.closest('details');if(d)d.open=true;if(marker)marker.setLatLng(c);else marker=L.marker(c).addTo(mini);});
+ setTimeout(()=>mini.invalidateSize(),100);
 }
 
 let _recog = null, _mic = false;
@@ -5107,8 +5405,8 @@ function applicaIcone(){
   const auto = document.getElementById('th-auto'); if(auto) auto.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>';
   const dark = document.getElementById('th-dark'); if(dark) dark.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
 }
-function fabMenuImmobile(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriFormNuovo(); }
-function fabMenuCondominio(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriFormNuovoCondominio(); }
+function fabMenuImmobile(){ window._mapCreateCoord=null; fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriFormNuovo(); }
+function fabMenuCondominio(){ window._mapCreateCoord=null; fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriFormNuovoCondominio(); }
 function fabMenuPersona(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriNuovaPersona(); }
 function fabMenuAttivita(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriNuovaAttivitaGlobale(); }
 function fabMenuApp(){ fabMenuAperto = false; document.getElementById('fab-menu').classList.remove('open'); apriNuovoAppuntamentoGlobale(); }
