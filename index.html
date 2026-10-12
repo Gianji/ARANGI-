@@ -48,6 +48,13 @@ html{height:100%;overflow:hidden}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button,.item-card,.item-card-compact,.chip,.opt,.ms-opt,.att-item,.immobile-line,.quick-btn{touch-action:manipulation}
+/* Migliorie pratiche per l'uso da iPhone: controlli leggibili, focus visibile e meno tocchi accidentali. */
+button,input,select,textarea{font-family:inherit}
+input,select,textarea{max-width:100%}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[role="button"]:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+@media (max-width:380px){.app-header{padding-left:14px;padding-right:14px}.app-content{padding-left:10px;padding-right:10px}.btn{padding:12px 12px}.item-card{padding:12px}}
+.aranjo-error-toast{position:fixed;z-index:10000;left:12px;right:12px;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom) + 12px);padding:12px 14px;border-radius:12px;background:var(--ko);color:#fff;font-size:13px;font-weight:600;box-shadow:0 8px 24px #0003}
+.aranjo-error-toast button{margin-left:8px;border:0;background:transparent;color:#fff;font-size:18px;font-weight:700;float:right}
 
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .app-header{padding:14px 20px 10px;padding-top:calc(14px + env(safe-area-inset-top));flex-shrink:0;background:var(--bg);padding-bottom:8px}
@@ -836,7 +843,31 @@ const Storage = {
     });
     return db;
   },
-  save(d){ Storage2.set('db_v4',d).catch(e => console.error(e)); return true; },
+  _queue:Promise.resolve(),
+  _erroreMostrato:false,
+  _mostraErroreSalvataggio(e){
+    console.error('ARANJÒ: salvataggio non riuscito', e);
+    if(this._erroreMostrato) return;
+    this._erroreMostrato = true;
+    try{
+      let el = document.getElementById('aranjo-save-error');
+      if(!el){
+        el = document.createElement('div'); el.id='aranjo-save-error'; el.className='aranjo-error-toast';
+        el.setAttribute('role','alert');
+        el.innerHTML = '<span>ATTENZIONE: dati non salvati. Esporta un backup e verifica lo spazio disponibile.</span><button type="button" aria-label="Chiudi">×</button>';
+        el.querySelector('button').addEventListener('click',()=>{el.remove(); this._erroreMostrato=false;});
+        document.body.appendChild(el);
+      }
+    }catch(err){ try{ alert('ARANJÒ: errore di salvataggio. I dati potrebbero non essere stati salvati.'); }catch(_){} }
+  },
+  save(d){
+    let snapshot;
+    try{ snapshot = JSON.parse(JSON.stringify(d)); }
+    catch(e){ this._mostraErroreSalvataggio(e); return Promise.resolve(false); }
+    const write = this._queue.catch(()=>false).then(()=>Storage2.set('db_v4',snapshot));
+    this._queue = write.then(()=>true).catch(e=>{ this._mostraErroreSalvataggio(e); return false; });
+    return this._queue;
+  },
   loadAsync(){
     return Storage2.get('db_v4').then(d => {
       if(!d){
@@ -3073,7 +3104,7 @@ function eseguiCambioStato(ns){
 }
 function eliminaImmobile(){
   const i = DB.immobili.find(x => x.id === immobileAperto); if(!i) return;
-  if(!confirm(`Eliminare ${titoloImmobile(i)}?`)) return;
+  if(!confirm(`Eliminare ${titoloImmobile(i)}?\n\nLe attività e gli appuntamenti storici collegati non verranno cancellati automaticamente e potrebbero non mostrare più la scheda dell'immobile. Esporta un backup prima di procedere se hai dubbi.`)) return;
   DB.immobili = DB.immobili.filter(x => x.id !== immobileAperto);
   Storage.save(DB); immobileAperto = null; chiudiModal(); renderListaImmobili(); aggiornaBadgeAttivita();
   if(map) aggiornaMappa();
@@ -4210,37 +4241,82 @@ function b64ToBlob(b, m){
   return new Blob([a], { type:m || 'application/octet-stream' });
 }
 function esportaBackup(){
-  const bk = { versione:DB_VERSION, exportedAt:new Date().toISOString(), db:JSON.parse(JSON.stringify(DB)), foto:[], documenti:[] };
-  PhotoDB.keys().then(pk => { let ch = Promise.resolve(); pk.forEach(k => { ch = ch.then(() => PhotoDB.get(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.foto.push({ id:k, data:b, meta:r.meta||{} })); })); }); return ch.then(() => PhotoDB.docKeys()); })
-    .then(dk => { let ch2 = Promise.resolve(); dk.forEach(k => { ch2 = ch2.then(() => PhotoDB.getDoc(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.documenti.push({ id:k, data:b, meta:r.meta||{} })); })); }); return ch2; })
-    .then(() => { const d = JSON.stringify(bk); const b = new Blob([d], { type:'application/json' }); const u = URL.createObjectURL(b); const o = new Date(); const n = `aranjo_backup_${o.getFullYear()}-${pad2(o.getMonth()+1)}-${pad2(o.getDate())}.json`; const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(u); })
-    .catch(e => alert('Errore: ' + e.message));
+  const btn = document.getElementById('btn-export');
+  if(btn){ btn.disabled = true; btn.setAttribute('aria-busy','true'); }
+  Storage.save(DB).then(ok => {
+    if(ok === false) throw new Error('Il salvataggio dei dati non è riuscito. Backup interrotto per evitare un file incoerente.');
+    const bk = { formato:'ARANJO_BACKUP', versione:DB_VERSION, exportedAt:new Date().toISOString(), db:JSON.parse(JSON.stringify(DB)), foto:[], documenti:[] };
+    return PhotoDB.keys().then(pk => {
+      let ch = Promise.resolve();
+      pk.forEach(k => { ch = ch.then(() => PhotoDB.get(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.foto.push({ id:k, data:b, meta:r.meta||{} })); })); });
+      return ch.then(() => PhotoDB.docKeys());
+    }).then(dk => {
+      let ch2 = Promise.resolve();
+      dk.forEach(k => { ch2 = ch2.then(() => PhotoDB.getDoc(k).then(r => { if(!r || !r.blob) return; return blobToB64(r.blob).then(b => bk.documenti.push({ id:k, data:b, meta:r.meta||{} })); })); });
+      return ch2;
+    }).then(() => {
+      const d = JSON.stringify(bk); const b = new Blob([d], { type:'application/json' }); const u = URL.createObjectURL(b);
+      const o = new Date(); const n = `aranjo_backup_${o.getFullYear()}-${pad2(o.getMonth()+1)}-${pad2(o.getDate())}.json`;
+      const a = document.createElement('a'); a.href = u; a.download = n; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(u), 1500);
+      alert(`Backup creato.\nImmobili: ${(DB.immobili||[]).length}\nPersone: ${(DB.persone||[]).length}\nFoto: ${bk.foto.length}\nDocumenti: ${bk.documenti.length}\n\nConserva il file in un luogo sicuro.`);
+    });
+  }).catch(e => { console.error(e); alert('Backup non completato: ' + (e.message||e)); })
+    .finally(()=>{ if(btn){ btn.disabled = false; btn.removeAttribute('aria-busy'); } });
 }
 function importaBackup(e){
-  const f = e.target.files[0]; if(!f) return;
+  const f = e && e.target && e.target.files && e.target.files[0]; if(!f) return;
+  const input = e.target;
   const rd = new FileReader();
+  rd.onerror = () => { alert('Impossibile leggere il file selezionato.'); input.value=''; };
   rd.onload = ev => {
     try{
       const p = JSON.parse(ev.target.result);
-      if(!p || typeof p !== 'object') throw new Error('Formato');
-      if(!confirm('Sovrascrivere i dati?')) return;
-      const isNew = p.db && p.versione;
+      if(!p || typeof p !== 'object' || Array.isArray(p)) throw new Error('Il file non contiene un oggetto JSON valido.');
+      const isNew = !!(p.db && p.versione);
       const dd = isNew ? p.db : p;
-      DB = Storage.migra(dd);
-      if(!DB.coordinateCondomini) DB.coordinateCondomini = {};
-      if(!DB.condomini) DB.condomini = {};
-      if(!DB.pianificazioni) DB.pianificazioni = [];
-      if(!Array.isArray(DB.attivita)) DB.attivita = [];
-      if(!Array.isArray(DB.chiamate)) DB.chiamate = [];
-      if(!Array.isArray(DB.magazzino)) DB.magazzino = [];
-      if(!Array.isArray(DB.rapportini)) DB.rapportini = [];
+      if(!dd || typeof dd !== 'object' || Array.isArray(dd)) throw new Error('Nel file manca il database.');
+      const campi = ['immobili','persone','attivita','appuntamenti','pianificazioni','chiamate','magazzino','rapportini'];
+      if(!campi.some(k => Array.isArray(dd[k]))) throw new Error('Il file non sembra un backup ARANJÒ valido. Nessun dato è stato modificato.');
+      for(const k of ['immobili','persone','attivita','appuntamenti','pianificazioni','chiamate','magazzino','rapportini']){
+        if(dd[k] != null && !Array.isArray(dd[k])) throw new Error(`Il campo "${k}" non è valido. Nessun dato è stato modificato.`);
+      }
+      for(const k of ['foto','documenti']){
+        if(isNew && p[k] != null && !Array.isArray(p[k])) throw new Error(`La sezione "${k}" del backup non è valida.`);
+        if(isNew && Array.isArray(p[k]) && p[k].some(x => !x || typeof x.id !== 'string' || typeof x.data !== 'string')) throw new Error(`Un elemento della sezione "${k}" è incompleto.`);
+      }
+      const nImm = Array.isArray(dd.immobili)?dd.immobili.length:0;
+      const nPers = Array.isArray(dd.persone)?dd.persone.length:0;
+      if(!confirm(`IMPORTARE IL BACKUP?\n\nIl database attuale verrà sostituito.\nNel file: ${nImm} immobili e ${nPers} persone.\n\nPrima di continuare, assicurati di avere esportato il database attuale.`)) return;
+      let nuovoDB = Storage.migra(dd);
+      if(!nuovoDB.coordinateCondomini) nuovoDB.coordinateCondomini = {};
+      if(!nuovoDB.condomini) nuovoDB.condomini = {};
+      if(!nuovoDB.pianificazioni) nuovoDB.pianificazioni = [];
+      if(!Array.isArray(nuovoDB.attivita)) nuovoDB.attivita = [];
+      if(!Array.isArray(nuovoDB.chiamate)) nuovoDB.chiamate = [];
+      if(!Array.isArray(nuovoDB.magazzino)) nuovoDB.magazzino = [];
+      if(!Array.isArray(nuovoDB.rapportini)) nuovoDB.rapportini = [];
+      const oldDB = DB;
       let ch = Promise.resolve();
-      if(isNew && Array.isArray(p.foto)) p.foto.forEach(f2 => { ch = ch.then(() => { try{ const b = b64ToBlob(f2.data, (f2.meta && f2.meta.mime) || 'image/jpeg'); return PhotoDB.save(f2.id, b, f2.meta||{}); }catch(e){} }); });
-      if(isNew && Array.isArray(p.documenti)) p.documenti.forEach(f2 => { ch = ch.then(() => { try{ const b = b64ToBlob(f2.data, (f2.meta && f2.meta.mime) || 'application/octet-stream'); return PhotoDB.saveDoc(f2.id, b, f2.meta||{}); }catch(e){} }); });
-      ch.then(() => { Storage.save(DB); renderListaImmobili(); aggiornaInfoSistema(); if(map) aggiornaMappa(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderApp(); renderChiamateOggi(); renderMagazzino(); renderRapportini(); alert('OK'); });
-    }catch(err){ alert('Errore: ' + err.message); }
+      if(isNew && Array.isArray(p.foto)) p.foto.forEach(f2 => { ch = ch.then(() => { const b = b64ToBlob(f2.data, (f2.meta && f2.meta.mime) || 'image/jpeg'); return PhotoDB.save(f2.id, b, f2.meta||{}); }); });
+      if(isNew && Array.isArray(p.documenti)) p.documenti.forEach(f2 => { ch = ch.then(() => { const b = b64ToBlob(f2.data, (f2.meta && f2.meta.mime) || 'application/octet-stream'); return PhotoDB.saveDoc(f2.id, b, f2.meta||{}); }); });
+      ch.then(() => {
+        DB = nuovoDB;
+        return Storage.save(DB).then(ok => { if(ok === false) throw new Error('Salvataggio del database importato non riuscito.'); });
+      }).then(() => {
+        try{
+          renderListaImmobili(); aggiornaInfoSistema(); if(map) aggiornaMappa(); renderPersone(); renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); aggiornaHeaderApp(); renderChiamateOggi(); renderMagazzino(); renderRapportini();
+          schedulaNotifiche();
+        }catch(renderErr){ console.error('Errore aggiornamento interfaccia dopo importazione',renderErr); }
+        alert(`Importazione completata.\nImmobili: ${(DB.immobili||[]).length}\nPersone: ${(DB.persone||[]).length}\n\nNota: gli allegati presenti nel backup sono stati importati, ma quelli precedenti non inclusi nel file non vengono cancellati automaticamente.`);
+      }).catch(err => {
+        console.error('Importazione backup fallita',err);
+        DB = oldDB;
+        alert('Importazione non completata: ' + (err.message||err) + '\nIl database attivo è stato mantenuto, se l’errore è avvenuto prima del salvataggio. Verifica gli allegati e importa nuovamente da un backup valido.');
+      }).finally(()=>{ input.value=''; });
+    }catch(err){ alert('Backup non valido: ' + (err.message||err)); input.value=''; }
   };
-  rd.readAsText(f); e.target.value = '';
+  rd.readAsText(f);
 }
 function cancellaTutto(){
   if(!confirm('Cancellare TUTTI i dati?')) return;
@@ -4259,12 +4335,44 @@ function richiediPermessoNotifiche(sa){
   if(!('Notification' in window)){ if(sa) alert('Non supportate'); return Promise.resolve(false); }
   if(Notification.permission === 'granted'){ if(sa) alert('Già attive'); return Promise.resolve(true); }
   if(Notification.permission === 'denied'){ if(sa) alert('Bloccate'); return Promise.resolve(false); }
-  return Notification.requestPermission().then(p => { if(sa) alert(p === 'granted' ? 'OK' : 'Negato'); return p === 'granted'; });
+  return Notification.requestPermission().then(p => { if(p === 'granted') schedulaNotifiche(); if(sa) alert(p === 'granted' ? 'Notifiche attivate. Su iPhone il sito deve poter restare attivo: i timer del browser non equivalgono a notifiche push affidabili.' : 'Permesso negato'); return p === 'granted'; });
 }
+const _aranjoTimerNotifiche = new Map();
 function schedulaNotifiche(){
-  const ad = Date.now(); const fin = ad + 24*60*60*1000;
-  (DB.appuntamenti||[]).forEach(a => { if(a.stato === 'annullato' || a.stato === 'eseguito') return; const t = new Date(a.dataInizio).getTime(); if(t < ad || t > fin) return; const r = Math.max(1000, t - ad - 15*60*1000); setTimeout(() => notifica('Appuntamento 15 min', a.titolo), r); });
-  raccogliAtt().forEach(a => { if(a.tipo !== 'da_fare' || a.completata) return; const t = new Date(a.dataPrevista).getTime(); if(t < ad || t > fin) return; const r = Math.max(1000, t - ad); setTimeout(() => notifica('Attività', a.testo), r); });
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const ad = Date.now(), fin = ad + 24*60*60*1000;
+  const desiderate = new Map();
+  (DB.appuntamenti||[]).forEach(a => {
+    if(!a || !a.id || a.stato === 'annullato' || a.stato === 'eseguito') return;
+    const t = new Date(a.dataInizio).getTime(); if(!Number.isFinite(t) || t < ad-15*60*1000 || t > fin) return;
+    const quando = Math.max(ad+1000, t-15*60*1000);
+    desiderate.set('app:'+a.id, {quando, titolo:'Appuntamento tra 15 minuti', testo:a.titolo||'Appuntamento'});
+  });
+  raccogliAtt().forEach(a => {
+    if(!a || !a.id || a.tipo !== 'da_fare' || a.completata) return;
+    const t = new Date(a.dataPrevista).getTime(); if(!Number.isFinite(t) || t < ad || t > fin) return;
+    desiderate.set('att:'+a.id, {quando:Math.max(ad+1000,t), titolo:'Attività in programma', testo:a.testo||'Attività da fare'});
+  });
+  for(const [key, timer] of _aranjoTimerNotifiche.entries()){
+    const nuova = desiderate.get(key);
+    if(!nuova || nuova.quando !== timer.quando){ clearTimeout(timer.id); _aranjoTimerNotifiche.delete(key); }
+  }
+  for(const [key, info] of desiderate.entries()){
+    if(_aranjoTimerNotifiche.has(key)) continue;
+    const id = setTimeout(() => {
+      _aranjoTimerNotifiche.delete(key);
+      // Non mostrare notifiche obsolete dopo modifiche o completamenti.
+      if(key.startsWith('app:')){
+        const a = (DB.appuntamenti||[]).find(x=>('app:'+x.id)===key);
+        if(!a || a.stato === 'annullato' || a.stato === 'eseguito') return;
+      }else{
+        const a = raccogliAtt().find(x=>('att:'+x.id)===key);
+        if(!a || a.tipo !== 'da_fare' || a.completata) return;
+      }
+      notifica(info.titolo, info.testo);
+    }, Math.max(1000, info.quando-ad));
+    _aranjoTimerNotifiche.set(key,{id,quando:info.quando});
+  }
 }
 function notifica(t, b){ try{ if(Notification.permission === 'granted') new Notification(t, { body:b, icon:'./android-chrome-192x192.png' }); }catch(e){} }
 
@@ -4351,10 +4459,11 @@ function avviaBoot(){
       try{ history.replaceState({ _base:true }, ''); }catch(e){}
       window._modalStack = 0;
       window._aranjoCloseFromUI = false;
-      richiediPermessoNotifiche(false);
+      // Il permesso notifiche viene richiesto solo dopo un tocco esplicito sul pulsante dedicato.
       schedulaNotifiche();
       setInterval(() => { schedulaNotifiche(); aggiornaBadgeAttivita(); }, 60*60*1000);
       window.addEventListener('pagehide', () => { try{ Storage.save(DB); }catch(e){} });
+      document.addEventListener('visibilitychange', () => { if(!document.hidden){ schedulaNotifiche(); aggiornaBadgeAttivita(); } });
     }).catch(e => alert('Errore: ' + e.message));
   }).catch(e => alert('IndexedDB: ' + e.message));
 }
