@@ -519,6 +519,7 @@ details.fold .box2{gap:6px;}
 .map-filter-toolbar .filter-trigger{width:40px;height:36px;background:rgba(255,255,255,.96);}
 .map-filter-toolbar .filter-trigger.active{background:var(--blu);color:#fff;}
 
+.sv-dossier-summary{margin-top:12px;border:1px solid var(--line,#ddd);border-radius:10px;padding:10px}.sv-dossier-summary summary{cursor:pointer;font-weight:650;font-size:13px}.sv-dossier-rows{margin-top:8px}
 </style>
 </head>
 <body>
@@ -549,12 +550,8 @@ details.fold .box2{gap:6px;}
     </section>
 
     <section id="view-persone" class="view">
-      <div class="chips" id="persone-tabs" style="padding-bottom:8px;">
-        <button class="chip acc active" data-ptab="acquirente">Acquirenti</button>
-        <button class="chip acc" data-ptab="prop">Venditori</button>
-        <button class="chip acc" data-ptab="locatore">Locatori</button>
-        <button class="chip acc" data-ptab="conduttore">Conduttori</button>
-        <button class="chip acc" data-ptab="professionista">Professionisti</button>
+      <div id="persone-tabs" class="chips" style="padding-bottom:8px;">
+        <button class="chip filter-trigger" id="persone-ruolo-btn" type="button" onclick="apriFiltroRuoloPersone()" aria-label="Filtra persone per ruolo" title="Filtra persone per ruolo"><span id="persone-ruolo-icon"></span><span id="persone-ruolo-count" class="filter-count" hidden></span></button>
       </div>
       <div class="search-sticky"><input type="search" class="search-bar" id="search-persone" placeholder="Cerca contatti..."></div>
       <div id="filtro-persone-attivo" style="margin-bottom:6px;"></div>
@@ -679,7 +676,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.2</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.3</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -722,7 +719,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.31.2';
+const APP_VERSION = '1.31.3';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1518,7 +1515,7 @@ function cardImmobile(im, compact){
   if(ze.length) h2 += `<div class="item-sub">${ico('pin',11)} ${esc(ze.slice(0,3).join(' · '))}</div>`;
   if(ult) h2 += `<div class="item-meta"><span>${esc(ult.testo.slice(0,34))}${ult.testo.length>34?'…':''}</span><span>${fmtD(dataAtt(ult))}</span></div>`;
   /* Azioni secondarie raccolte in un solo comando contestuale. */
-  const haAzioniValutazione = ['NT','INK','VND'].includes(im.stato) || !!im.svPrimaCompilazioneAt || !!im.schedaValutazione;
+  const haAzioniValutazione = haSchedaValutazioneDisponibile(im);
   const haAzioniDossier = ['NT','INK','VND'].includes(im.stato);
   if(haAzioniValutazione || haAzioniDossier){
     h2 += `<div class="item-card-actions"><button class="item-more-btn" type="button" title="Altre azioni per ${esc(titoloImmobile(im))}" aria-label="Altre azioni per ${esc(titoloImmobile(im))}" onclick="event.stopPropagation();apriMenuAzioniImmobile('${im.id}')"><span aria-hidden="true">⋯</span></button></div>`;
@@ -1527,13 +1524,19 @@ function cardImmobile(im, compact){
   return h2;
 }
 
-function haSchedaValutazioneDisponibile(im){ return ['NT','INK','VND'].includes(im.stato) || !!im.svPrimaCompilazioneAt || !!im.schedaValutazione; }
+function haSchedaValutazioneCompilata(im){
+  if(!im) return false;
+  if(im.svPrimaCompilazioneAt) return true;
+  const sv = im.schedaValutazione;
+  return !!(sv && typeof sv === 'object' && Object.entries(sv).some(([k,v]) => k !== 'ambientiPresenti' ? (typeof v === 'string' ? !!v.trim() : Array.isArray(v) ? v.length > 0 : !!(v && typeof v === 'object' ? Object.values(v).some(Boolean) : v)) : !!(v && Object.values(v).some(Boolean))));
+}
+function haSchedaValutazioneDisponibile(im){ return !!im && (['NT','INK','VND'].includes(im.stato) || haSchedaValutazioneCompilata(im)); }
 function apriMenuAzioniImmobile(id){
   const im = DB.immobili.find(x => x.id === id);
   if(!im) return;
   immobileAperto = im.id;
   let h = `<div class="context-actions">`;
-  if(haSchedaValutazioneDisponibile(im) && !im.schedaValutazione){
+  if(haSchedaValutazioneDisponibile(im) && !haSchedaValutazioneCompilata(im)){
     h += `<button class="btn btn-primary" onclick="apriSchedaValutazione('${im.id}')">${ico('righello',15)} Avvia valutazione</button>`;
   } else if(haSchedaValutazioneDisponibile(im)){
     h += `<button class="btn btn-secondary" onclick="apriSchedaValutazione('${im.id}')">${ico('righello',15)} Scheda valutazione</button>`;
@@ -1573,14 +1576,23 @@ function wa(tel){ if(!tel) return; const p = tel.replace(/\D/g,''); if(!p) retur
 function navMaps(lat, lng, nome){ const ios = /iPad|iPhone|iPod/.test(navigator.userAgent); const enc = encodeURIComponent(nome||''); const u = ios ? `https://maps.apple.com/?daddr=${lat},${lng}${enc?'&q='+enc:''}` : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`; window.open(u, '_blank'); }
 
 let pTab = 'acquirente', pStatoRR = null, pTipoProf = null, pQ = '';
-document.querySelectorAll('#persone-tabs .chip').forEach(c => {
-  c.addEventListener('click', () => {
-    pTab = c.dataset.ptab; pStatoRR = null; pTipoProf = null; pQ = '';
-    const sp = document.getElementById('search-persone'); if(sp) sp.value = '';
-    document.querySelectorAll('#persone-tabs .chip').forEach(x => x.classList.toggle('active', x === c));
+function apriFiltroRuoloPersone(){
+  const opts = [{value:'tutti',label:'Tutti'}, {value:'acquirente',label:'Acquirenti'}, {value:'prop',label:'Venditori'}, {value:'locatore',label:'Locatori'}, {value:'conduttore',label:'Conduttori'}, {value:'professionista',label:'Professionisti'}];
+  apriFilterDD('Ruolo', opts, pTab, v => {
+    pTab = v || 'tutti'; pStatoRR = null; pTipoProf = null;
     renderPersone();
   });
-});
+}
+function aggiornaFiltroRuoloPersone(){
+  const b = document.getElementById('persone-ruolo-btn');
+  if(!b) return;
+  const labels={tutti:'Tutti',acquirente:'Acquirenti',prop:'Venditori',locatore:'Locatori',conduttore:'Conduttori',professionista:'Professionisti'};
+  b.title = 'Ruolo: '+(labels[pTab]||'Tutti');
+  b.setAttribute('aria-label',b.title);
+  b.classList.toggle('active',pTab !== 'tutti');
+  const i=document.getElementById('persone-ruolo-icon'); if(i) i.innerHTML=ico('filtro',15);
+  const c=document.getElementById('persone-ruolo-count'); if(c){c.hidden=pTab==='tutti';c.textContent='1';}
+}
 document.getElementById('search-persone').addEventListener('input', e => { pQ = e.target.value.toLowerCase().trim(); renderPersone(); });
 
 function filtroLabel(){
@@ -1599,14 +1611,15 @@ function apriFiltroPersone(){
 }
 function personePerTab(tab){
   const filters = { acquirente:['ACQUIRENTE'], prop:['PROP'], professionista:['PROFESSIONISTA'], locatore:['LOCATORE'], conduttore:['CONDUTTORE'] };
-  return DB.persone.filter(p => (p.ruoli||[]).some(r => (filters[tab]||[]).includes(r)));
+  return tab === 'tutti' ? DB.persone.slice() : DB.persone.filter(p => (p.ruoli||[]).some(r => (filters[tab]||[]).includes(r)));
 }
 function renderPersone(){
   const c = document.getElementById('lista-persone'); const b = document.getElementById('filtro-persone-attivo');
   if(!c) return;
+  aggiornaFiltroRuoloPersone();
   const fl = filtroLabel();
   const ia = (pTab === 'acquirente' && pStatoRR) || (pTab === 'professionista' && pTipoProf);
-  b.innerHTML = `<div class="chips" style="padding-bottom:0;"><button class="chip${ia?' active':''}" onclick="apriFiltroPersone()">${esc(fl)}</button>${ia?`<button class="chip" onclick="resetFiltroPersone()">${ico('x',11)}</button>`:''}</div>`;
+  b.innerHTML = (pTab === 'acquirente' || pTab === 'professionista') ? `<div class="chips" style="padding-bottom:0;"><button class="chip${ia?' active':''}" onclick="apriFiltroPersone()">${esc(fl)}</button>${ia?`<button class="chip" onclick="resetFiltroPersone()">${ico('x',11)}</button>`:''}</div>` : '';
   let l = personePerTab(pTab);
   if(pTab === 'acquirente' && pStatoRR) l = l.filter(p => p.statoRR === pStatoRR);
   if(pTab === 'professionista' && pTipoProf) l = l.filter(p => p.tipoProf === pTipoProf);
@@ -2609,7 +2622,7 @@ function apriScheda(id){
   if(hc) h += `<button class="btn btn-secondary btn-icon" onclick="navMaps(${im.lat},${im.lng},'${esc(im.indirizzo).replace(/'/g,'')}')">${ico('nav',15)}</button>`;
   h += '</div>';
   h += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">';
-  h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModificaDossier('${id}')">${ico('documento',14)} Dossier</button>`;
+  if(['NT','INK','VND'].includes(im.stato) || haSchedaValutazioneCompilata(im)) h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModificaDossier('${id}')">${ico('documento',14)} Dossier</button>`;
   if(haSchedaValutazioneDisponibile(im)) h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriSchedaValutazione('${id}')">${ico('righello',14)} Valutazione</button>`;
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriModifica()">${ico('modifica',14)} Anagrafica</button>`;
   h += `<button class="btn btn-secondary" style="flex:1;min-width:calc(50% - 3px);margin:0;padding:10px 6px;font-size:12px;" onclick="apriCambiaStato()">${ico('aggiorna',14)} Stato</button>`;
@@ -2763,7 +2776,7 @@ function svAmbienteAttivo(sv, k){
 function apriSchedaValutazione(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
   window._valId = id;
-  if(!['NT','INK','VND'].includes(im.stato) && !im.svPrimaCompilazioneAt && !im.schedaValutazione) return;
+  if(!haSchedaValutazioneDisponibile(im)) return;
   // Bozza indipendente: Annulla non altera i dati dell'immobile.
   window._svBozza = JSON.parse(JSON.stringify(im.schedaValutazione || {}));
   const sv = window._svBozza;
@@ -3673,7 +3686,16 @@ function apriModificaDossier(id){
   immobileAperto = im.id;
   if(!window.sezioneDossier){ alert('Dossier non disponibile'); return; }
   let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:8px;">${esc(titoloImmobile(im))}</div>`;
+  // Il dossier mostra sempre la scheda di valutazione corrente, non una vecchia copia.
+  if(haSchedaValutazioneCompilata(im)) applicaSchedaAlDossier(im);
   h += window.sezioneDossier('im', im.dettagli || {});
+  if(haSchedaValutazioneCompilata(im)){
+    const sv = im.schedaValutazione || {};
+    const labels = {annoCostruzione:'Anno costruzione',annoRistrutturazione:'Anno ristrutturazione',tipoImmobile:'Tipologia',statoImmobile:'Stato immobile',mqComplessivi:'Superficie',nCamere:'Camere',serviziBagno:'Bagni',speseCond:'Spese condominiali',richiestaValutazione:'Richiesta valutazione',note:'Note valutazione'};
+    let rows = Object.entries(labels).filter(([k]) => sv[k] !== undefined && sv[k] !== null && String(sv[k]).trim() !== '').map(([k,l]) => `<div class="info-row"><span class="label">${l}</span><span class="value">${esc(String(sv[k]))}</span></div>`).join('');
+    if(typeof SV_AMBIENTI !== 'undefined') SV_AMBIENTI.forEach(([k,l]) => { if(svAmbienteAttivo(sv,k)){ const v=sv[k]; const dim=v && typeof v==='object' ? [v.l,v.w].filter(Boolean).join(' × ') : ''; rows += `<div class="info-row"><span class="label">${esc(l)}</span><span class="value">${esc(dim ? dim+' m' : 'Presente')}</span></div>`; } });
+    h += `<details class="sv-dossier-summary" open><summary>Valutazione salvata</summary><div class="sv-dossier-rows">${rows || '<span>Nessun dettaglio aggiuntivo</span>'}</div></details>`;
+  }
   h += `<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="apriScheda('${im.id}')">Annulla</button><button class="btn btn-primary" onclick="salvaDossier('${im.id}')">Salva dossier</button></div>`;
   apriModal('Dossier immobile', h);
   setTimeout(() => {
@@ -3687,6 +3709,7 @@ function salvaDossier(id){
   im.dettagli = im.dettagli || {};
   const v = window.leggiDossier('im');
   Object.assign(im.dettagli, v.dati);
+  if(haSchedaValutazioneCompilata(im)) applicaSchedaAlDossier(im);
   im.updatedAt = new Date().toISOString();
   Storage.save(DB);
   renderListaImmobili();
@@ -3908,7 +3931,7 @@ function salvaNuovaPersona(){
   else if(_npR.indexOf('LOCATORE') >= 0) pTab = 'locatore';
   else if(_npR.indexOf('CONDUTTORE') >= 0) pTab = 'conduttore';
   else pTab = 'prop';
-  document.querySelectorAll('#persone-tabs .chip').forEach(c => c.classList.toggle('active', c.dataset.ptab === pTab));
+  aggiornaFiltroRuoloPersone();
   renderPersone();
   setTimeout(() => apriSchedaPersona(p.id), 120);
 }
