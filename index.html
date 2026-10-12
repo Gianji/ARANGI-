@@ -66,6 +66,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #header-prossimo-app-txt{font-size:10.5px;font-weight:700;color:var(--blu);line-height:1.25;margin-top:1px;overflow:hidden}
 .app-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:2px 14px calc(80px + env(safe-area-inset-bottom));min-height:0}
 .app-content.attivita-active{padding:2px 14px calc(60px + env(safe-area-inset-bottom))}
+.att-quick-actions{display:flex;gap:6px;margin:0 0 8px;flex-shrink:0}
+.att-quick-actions .btn{flex:1;min-width:0;padding:9px 5px;font-size:11px;white-space:nowrap}
+.att-history-list{display:flex;flex-direction:column;gap:7px}
+.att-history-row{padding:10px;border:1px solid var(--bd);border-radius:10px;display:flex;gap:9px;align-items:flex-start;cursor:pointer}
+.att-history-row:active{opacity:.72}
+.att-history-row .ahr-main{flex:1;min-width:0}
+.att-history-row .ahr-date{font-size:10px;color:var(--tx3);margin-bottom:3px}
+.att-history-row .ahr-text{font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.att-history-row .ahr-state{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+
 .app-content.agenda-mode{display:flex !important;flex-direction:column;padding:0 0 calc(var(--tab-h) + env(safe-area-inset-bottom)) 0 !important;overflow:hidden !important}
 
 .view{display:none}
@@ -484,6 +494,11 @@ details.fold .box2{gap:6px;}
     </section>
 
     <section id="view-attivita" class="view">
+      <div class="att-quick-actions" aria-label="Azioni rapide">
+        <button class="btn btn-primary" onclick="apriNuovaAttivitaGlobale()">＋ Attività</button>
+        <button class="btn btn-secondary" onclick="apriNuovaChiamata(null)">＋ Chiamata</button>
+        <button class="btn btn-secondary" onclick="apriNuovoAppuntamentoGlobale()">＋ Appuntamento</button>
+      </div>
       <div class="att-col">
         <div class="att-subtabs" id="att-subtabs">
           <div class="att-subtab scadute" data-att="scadute" onclick="setAttTab('scadute')"><div class="num" id="att-num-scadute">0</div><div class="lbl">Scadute</div></div>
@@ -605,9 +620,12 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.30.0</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
+        <button class="btn btn-secondary" style="width:100%;margin-top:8px;" onclick="eseguiDiagnosticaAranjo()">Controlla funzionamento</button>
+        <div id="sistema-diagnostica" style="display:none;margin-top:8px;font-size:12px;"></div>
       </div>
       <button class="btn btn-danger" onclick="cancellaTutto()" id="btn-reset"></button>
     </section>
@@ -645,6 +663,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
+const APP_VERSION = '1.30.0';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -2943,7 +2962,7 @@ function salvaAttP(){
 }
 function apriAzioniAttivita(idA){
   const i = DB.immobili.find(x => x.id === immobileAperto); if(!i) return;
-  if(!idA){ apriModal('Attività', `<div class="empty">Nessuna</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriScheda('${i.id}')">Chiudi</button></div>`); return; }
+  if(!idA){ apriStoricoAttivitaEntita('immobile', i.id); return; }
   const a = (i.attivita||[]).find(x => x.id === idA); if(!a) return;
   const df = a.tipo === 'da_fare' && !a.completata;
   let h = `<div class="card" style="padding:12px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">${df?'Da fare':'Fatta'} · ${fmtDT(dataAtt(a))}</div><div style="font-size:14px;">${esc(a.testo)}</div></div>`;
@@ -2955,7 +2974,7 @@ function apriAzioniAttivita(idA){
 }
 function apriAzioniAttivitaPersona(idA){
   const p = trovaPersona(personaAperta); if(!p) return;
-  if(!idA){ apriModal('Attività', `<div class="empty">Nessuna</div><div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona('${p.id}')">Chiudi</button></div>`); return; }
+  if(!idA){ apriStoricoAttivitaEntita('persona', p.id); return; }
   const a = (p.attivita||[]).find(x => x.id === idA); if(!a) return;
   const df = a.tipo === 'da_fare' && !a.completata;
   let h = `<div class="card" style="padding:12px;"><div style="font-size:10px;color:var(--tx3);text-transform:uppercase;font-weight:700;margin-bottom:4px;">${df?'Da fare':'Fatta'} · ${fmtDT(dataAtt(a))}</div><div style="font-size:14px;">${esc(a.testo)}</div></div>`;
@@ -2965,6 +2984,31 @@ function apriAzioniAttivitaPersona(idA){
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="apriSchedaPersona('${p.id}')">Chiudi</button></div>`;
   apriModal('Attività', h);
 }
+function apriStoricoAttivitaEntita(tipo, entId){
+  const ent = tipo === 'immobile' ? DB.immobili.find(x => x.id === entId) : trovaPersona(entId);
+  if(!ent) return;
+  const att = (ent.attivita || []).slice().sort((a,b) => {
+    const da = new Date(dataAtt(a) || a.data || 0).getTime() || 0;
+    const db = new Date(dataAtt(b) || b.data || 0).getTime() || 0;
+    return db - da;
+  });
+  const titolo = tipo === 'immobile' ? titoloImmobile(ent) : titoloPersona(ent);
+  let h = `<div style="font-size:12px;color:var(--tx3);margin-bottom:10px;">${esc(titolo)} · ${att.length} ${att.length === 1 ? 'attività' : 'attività'}</div>`;
+  if(!att.length) h += '<div class="empty">Nessuna attività registrata</div>';
+  else {
+    h += '<div class="att-history-list">';
+    att.forEach(a => {
+      const df = a.tipo === 'da_fare' && !a.completata;
+      const stato = df ? (new Date(a.dataPrevista) < new Date() ? 'Scaduta · da fare' : 'Da fare') : 'Fatta';
+      const data = dataAtt(a) || a.data || a.dataPrevista;
+      h += `<div class="att-history-row" onclick="${tipo === 'immobile' ? `apriAzioniAttivita('${a.id}')` : `apriAzioniAttivitaPersona('${a.id}')`}"><span class="att-dot ${df ? (new Date(a.dataPrevista) < new Date() ? 'scaduta' : 'prossima') : 'fatta'}"></span><div class="ahr-main"><div class="ahr-state">${esc(stato)}</div><div class="ahr-date">${data ? esc(fmtDT(data)) : 'Data non disponibile'}</div><div class="ahr-text">${esc(a.testo || '(attività senza testo)')}</div></div><span>${ico('freccia',13)}</span></div>`;
+    });
+    h += '</div>';
+  }
+  h += `<div class="btn-row"><button class="btn btn-secondary" onclick="${tipo === 'immobile' ? `apriScheda('${ent.id}')` : `apriSchedaPersona('${ent.id}')`}">Torna alla scheda</button></div>`;
+  apriModal('Tutte le attività', h);
+}
+
 function apriModificaAtt(tipo, idA){
   const ent = tipo === 'immobile' ? DB.immobili.find(x => x.id === immobileAperto) : trovaPersona(personaAperta);
   const a = ent && (ent.attivita||[]).find(x => x.id === idA); if(!a) return;
@@ -4208,9 +4252,9 @@ function eseguiRicerca(q){
   const qq = (q||'').toLowerCase().trim();
   if(qq.length < 2){ c.innerHTML = '<div class="empty" style="padding:20px 8px;font-size:12px;">Digita 2+ caratteri</div>'; return; }
   const res = { p:[], i:[], a:[], c:[] };
-  DB.persone.forEach(p => { const f = [nomeCompleto(p), p.telefono, p.email, p.cf]; if(f.some(x => (x||'').toLowerCase().indexOf(qq) >= 0)) res.p.push(p); });
-  DB.immobili.forEach(im => { const props = propsImmobile(im).map(x => nomeCogn(x.persona)); const f = [im.indirizzo, im.cognomeNome, im.telefono, im.citofono, im.condominio].concat(props); if(f.some(x => (x||'').toLowerCase().indexOf(qq) >= 0)) res.i.push(im); });
-  raccogliAtt().forEach(a => { if((a.testo||'').toLowerCase().indexOf(qq) >= 0) res.a.push(a); });
+  DB.persone.forEach(p => { const f = [nomeCompleto(p), p.telefono, p.email, p.cf].map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.p.push(p); });
+  DB.immobili.forEach(im => { const props = propsImmobile(im).map(x => nomeCogn(x.persona)); const f = [im.indirizzo, im.cognomeNome, im.telefono, im.citofono, im.condominio].concat(props).map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.i.push(im); });
+  raccogliAtt().forEach(a => { const f = [a.testo, a.entTitolo].map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.a.push(a); });
   for(const co in (DB.condomini||{})) if(co.toLowerCase().indexOf(qq) >= 0) res.c.push(co);
   let h = '';
   if(res.p.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 4px;">Persone</div>'; res.p.slice(0,8).forEach(p => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${p.id}'),100)"><span class="txt">${esc(nomeCogn(p))}</span></div>`); }
@@ -4376,7 +4420,31 @@ function schedulaNotifiche(){
 }
 function notifica(t, b){ try{ if(Notification.permission === 'granted') new Notification(t, { body:b, icon:'./android-chrome-192x192.png' }); }catch(e){} }
 
+function eseguiDiagnosticaAranjo(){
+  const box = document.getElementById('sistema-diagnostica');
+  if(!box) return;
+  box.style.display = 'block';
+  box.innerHTML = '<div style="color:var(--tx3);">Controllo in corso…</div>';
+  const checks = [];
+  const check = (nome, ok, dettaglio) => checks.push({nome,ok:!!ok,dettaglio:dettaglio||''});
+  try {
+    check('Database caricato', !!DB && typeof DB === 'object', '');
+    check('Archivio immobili', !!DB && Array.isArray(DB.immobili), Array.isArray(DB?.immobili) ? `${DB.immobili.length} record` : 'Sezione non valida');
+    check('Archivio persone', !!DB && Array.isArray(DB.persone), Array.isArray(DB?.persone) ? `${DB.persone.length} record` : 'Sezione non valida');
+    check('Archivio attività', !!DB && Array.isArray(DB.attivita), Array.isArray(DB?.attivita) ? `${DB.attivita.length} record principali` : 'Sezione non valida');
+    check('Archivio appuntamenti', !!DB && Array.isArray(DB.appuntamenti), Array.isArray(DB?.appuntamenti) ? `${DB.appuntamenti.length} record` : 'Sezione non valida');
+    check('IndexedDB disponibile', typeof indexedDB !== 'undefined', '');
+    check('Backup esportabile', typeof esportaBackup === 'function' && typeof importaBackup === 'function', 'Esportazione/importazione presenti');
+    const duplicateIds = [];
+    const ids = new Set();
+    (DB.attivita || []).forEach(a => { if(a && a.id){ if(ids.has(a.id)) duplicateIds.push(a.id); ids.add(a.id); } });
+    check('ID attività principali univoci', duplicateIds.length === 0, duplicateIds.length ? `${duplicateIds.length} duplicati rilevati` : '');
+  } catch(e) { check('Controllo dati', false, e.message || 'Errore inatteso'); }
+  box.innerHTML = checks.map(x => `<div style="display:flex;gap:7px;align-items:flex-start;padding:5px 0;border-bottom:1px solid var(--bd);"><span style="font-weight:800;color:${x.ok?'var(--ok)':'var(--vnd)'};">${x.ok?'✓':'!'}</span><div style="flex:1;"><div style="font-weight:650;">${esc(x.nome)}</div>${x.dettaglio?`<div style="font-size:11px;color:var(--tx3);">${esc(x.dettaglio)}</div>`:''}</div></div>`).join('') + '<div style="margin-top:8px;color:var(--tx3);font-size:11px;">Controllo locale indicativo: non sostituisce una prova completa di creazione, modifica, eliminazione e ripristino.</div>';
+}
+
 function aggiornaInfoSistema(){
+  const ver = document.getElementById('sistema-versione'); if(ver) ver.textContent = APP_VERSION;
   const el = document.getElementById('sistema-citta'); if(el) el.textContent = citta();
   const si = document.getElementById('storage-info');
   Storage2.get('db_v4').then(raw => { if(si) si.textContent = fmtBytes(raw ? JSON.stringify(raw).length : 0); });
@@ -5112,4 +5180,3 @@ window.salvaRichiesta = function(pid){
 
 </body>
 </html>
- 
