@@ -469,12 +469,9 @@ details.fold .box2{gap:6px;}
 .agenda-sett,.planning-sett{padding:9px 9px;}
 .agenda-sett h3,.planning-sett h3{margin-bottom:5px;}
 .agenda-sett h3 .nav-sett button,.planning-sett h3 .nav-sett button{width:28px;height:28px;}
-/* La schermata attività privilegia l'elenco operativo; agenda e pianificazione restano accessibili nella stessa vista. */
+/* I tre riquadri operativi mantengono sempre la stessa proporzione. */
 .app-content.attivita-active #view-attivita.active{height:100%;display:flex;flex-direction:column;gap:6px;overflow:hidden;}
-.app-content.attivita-active #view-attivita .att-col{flex:1 1 0;min-height:0;max-height:none;}
-.app-content.attivita-active #view-attivita .att-col:first-of-type{flex:1.55 1 0;}
-.app-content.attivita-active #view-attivita .att-col:nth-of-type(2),
-.app-content.attivita-active #view-attivita .att-col:nth-of-type(3){flex:.72 1 0;}
+.app-content.attivita-active #view-attivita > .att-col{flex:1 1 0 !important;min-height:0;max-height:none;width:100%;}
 .app-content.attivita-active #view-attivita .att-scroll{min-height:0;}
 .tabbar button{touch-action:manipulation;}
 .tabbar button:focus-visible,.fab:focus-visible,.fab-menu button:focus-visible{outline:2px solid var(--acc);outline-offset:-3px;}
@@ -488,18 +485,39 @@ details.fold .box2{gap:6px;}
 @media(max-height:720px){
   .app-header{padding-bottom:5px;padding-top:calc(9px + env(safe-area-inset-top));}
   .app-header h1{font-size:23px;}
-  .app-content.attivita-active #view-attivita .att-col:first-of-type{flex:1.35 1 0;}
-  .app-content.attivita-active #view-attivita .att-col:nth-of-type(2),
-  .app-content.attivita-active #view-attivita .att-col:nth-of-type(3){flex:.65 1 0;}
+  .app-content.attivita-active #view-attivita > .att-col{flex:1 1 0 !important;}
 }
 
 
-/* Il menu + resta vicino al pollice: le etichette appaiono solo quando viene aperto. */
-.fab-menu{right:18px;bottom:calc(var(--tab-h) + 84px + env(safe-area-inset-bottom));gap:6px;align-items:stretch;}
-.fab-menu button{width:min(184px,calc(100vw - 36px));height:42px;min-height:42px;padding:0 12px;border-radius:11px;justify-content:flex-start;gap:10px;font-size:12.5px;font-weight:600;white-space:nowrap;}
-.fab-menu button svg{width:18px;height:18px;flex:none;}
+/* Menu + compatto: solo icone, nessun testo ridondante per l'utente abituale. */
+.fab-menu{right:18px;bottom:calc(var(--tab-h) + 82px + env(safe-area-inset-bottom));gap:7px;align-items:flex-end;}
+.fab-menu button{width:42px;height:42px;min-height:42px;padding:0;border-radius:50%;justify-content:center;gap:0;font-size:0;box-shadow:0 5px 14px rgba(20,23,28,.12);}
+.fab-menu button span{display:none;}
+.fab-menu button svg{width:19px;height:19px;flex:none;}
 #planning-contenuto{min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .agenda-grid{min-height:0;}
+
+/* Filtri raggruppati: nella vista principale resta un solo comando compatto. */
+.filter-toolbar{align-items:center;gap:6px;min-height:34px;overflow:visible;padding-bottom:6px;}
+.filter-toolbar .filter-trigger{width:38px;min-width:38px;height:32px;padding:0;justify-content:center;position:relative;}
+.filter-trigger svg{width:16px;height:16px;}
+.filter-trigger.active{background:var(--blu);color:#fff;}
+.filter-count{position:absolute;top:-4px;right:-4px;min-width:15px;height:15px;padding:0 3px;border-radius:999px;background:var(--acc);color:#fff;font-size:9px;line-height:15px;font-weight:800;text-align:center;border:1.5px solid var(--bg);}
+.filter-count[hidden]{display:none!important;}
+.filter-section-title{font-size:10px;color:var(--tx3);font-weight:750;text-transform:uppercase;letter-spacing:.06em;margin:3px 0 7px;}
+.filter-status-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:14px;}
+.filter-status-option{min-width:0;border:1px solid var(--bd2);background:var(--bg2);color:var(--tx2);border-radius:10px;padding:10px 2px;font-family:inherit;font-size:12px;font-weight:650;cursor:pointer;}
+.filter-status-option.on,.filter-action.on{background:var(--blu-soft);color:var(--blu);border-color:var(--blu);}
+.filter-actions-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.filter-action{border:1px solid var(--bd2);background:var(--card);color:var(--tx2);border-radius:11px;min-height:44px;padding:8px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:inherit;font-size:10.5px;font-weight:600;cursor:pointer;}
+.filter-action svg{width:17px;height:17px;}
+.filter-modal-footer{display:flex;gap:8px;margin-top:14px;}
+.filter-modal-footer .btn{flex:1;margin:0;}
+.backup-icon-btn{min-width:42px!important;width:42px!important;height:38px!important;border-radius:11px!important;padding:0!important;}
+.backup-icon-btn svg{width:17px;height:17px;}
+.map-filter-toolbar{width:max-content;max-width:100%;}
+.map-filter-toolbar .filter-trigger{width:40px;height:36px;background:rgba(255,255,255,.96);}
+.map-filter-toolbar .filter-trigger.active{background:var(--blu);color:#fff;}
 
 </style>
 </head>
@@ -522,15 +540,9 @@ details.fold .box2{gap:6px;}
   <main class="app-content" id="app-content">
     <section id="view-immobili" class="view active">
       <div class="search-sticky"><input type="search" class="search-bar" id="search-immobili" placeholder="Cerca immobili..."></div>
-      <div class="chips" id="chips-immobili">
-        <button class="chip active" data-filtro="tutti">Tutti</button>
-        <button class="chip" data-filtro="IMM">IMM</button>
-        <button class="chip" data-filtro="PA">PA</button>
-        <button class="chip" data-filtro="NT">NT</button>
-        <button class="chip" data-filtro="INK">INK</button>
-        <button class="chip" data-filtro="VND">VND</button>
-        <button class="chip" data-filtro="COND" id="chip-cond"></button>
-        <button class="chip" data-filtro="ZONE" id="chip-zone"></button>
+      <div class="chips filter-toolbar" id="chips-immobili">
+        <button type="button" class="chip active" data-filtro="tutti" title="Azzera filtri">Tutti</button>
+        <button type="button" class="chip filter-trigger" id="btn-filtri-immobili" onclick="apriFiltriImmobili()" aria-label="Apri filtri immobili" title="Filtri"><span id="filtri-immobili-icon"></span><span class="filter-count" id="filtri-immobili-count" hidden></span></button>
       </div>
       <div id="filtro-attivo"></div>
       <div id="lista-immobili"></div>
@@ -600,13 +612,8 @@ details.fold .box2{gap:6px;}
       <div id="map-container">
         <div id="map"></div>
         <div class="map-overlay-top">
-          <div class="chips" id="map-chips" style="background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-radius:var(--rs);border:1px solid var(--bd);padding:6px 8px;margin-bottom:0;">
-            <button class="chip active" data-filtro="tutti">Tutti</button>
-            <button class="chip" data-filtro="IMM">IMM</button>
-            <button class="chip" data-filtro="PA">PA</button>
-            <button class="chip" data-filtro="NT">NT</button>
-            <button class="chip" data-filtro="INK">INK</button>
-            <button class="chip" data-filtro="VND">VND</button>
+          <div class="chips filter-toolbar map-filter-toolbar" id="map-chips" style="background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-radius:var(--rs);border:1px solid var(--bd);padding:6px 8px;margin-bottom:0;">
+            <button type="button" class="chip filter-trigger" id="map-filter-trigger" onclick="apriFiltriMappa()" aria-label="Filtra immobili sulla mappa" title="Filtri mappa"><span id="map-filter-icon"></span><span class="filter-count" id="map-filter-count" hidden></span></button>
           </div>
           <div class="map-status">
             <div><span class="count" id="map-count">0</span> <span style="color:var(--tx3);">/ <span id="map-tot">0</span></span></div>
@@ -664,14 +671,14 @@ details.fold .box2{gap:6px;}
           <button class="btn btn-secondary" style="flex:1;" onclick="apriImpostazioniCitta()" id="btn-citta"></button>
         </div>
         <div style="display:flex;gap:6px;margin-top:6px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="esportaBackup()" id="btn-export"></button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="document.getElementById('file-import').click()" id="btn-import"></button>
+          <button type="button" class="btn btn-secondary btn-icon backup-icon-btn" onclick="document.getElementById('file-import').click()" id="btn-import" aria-label="Importa backup" title="Importa backup"></button>
+          <button type="button" class="btn btn-secondary btn-icon backup-icon-btn" onclick="esportaBackup()" id="btn-export" aria-label="Esporta backup" title="Esporta backup"></button>
         </div>
         <input type="file" id="file-import" accept=".json" style="display:none" onchange="importaBackup(event)">
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.0</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.31.1</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Città</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -714,7 +721,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.31.0';
+const APP_VERSION = '1.31.1';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v3';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -776,6 +783,7 @@ const ICON_PATHS = {
   occhio:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
   valigetta:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
   upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  filtri:'<line x1="4" y1="6" x2="20" y2="6"/><circle cx="8" cy="6" r="2" fill="currentColor"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2" fill="currentColor"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="10" cy="18" r="2" fill="currentColor"/>' ,
   download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
   inbox:'<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
   landmark:'<line x1="3" y1="22" x2="21" y2="22"/><polygon points="12 2 20 7 4 7"/>',
@@ -802,6 +810,7 @@ const ICON_PATHS = {
   utente:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   utenti:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
   campanella:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  campanello:'<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
   condominio:'<rect x="3" y="2" width="11" height="20" rx="1"/><rect x="14" y="8" width="7" height="14" rx="1"/>',
   nav:'<polygon points="3 11 22 2 13 21 11 13 3 11"/>',
   ufficio:'<rect x="3" y="3" width="18" height="18" rx="2"/>',
@@ -1284,6 +1293,7 @@ function distanzaToLabel(metri){
   if(metri < 400) return '< 5 min'; if(metri < 800) return '5-10 min'; if(metri < 1500) return '10-20 min'; return '> 20 min';
 }
 let _coordsCitta = null;
+let _mappaNeedsCenter = true;
 function geocodificaCitta(){
   const n = nomeCitta();
   if(n.toLowerCase() === 'cremona'){ _coordsCitta = CREMONA_CENTER; return Promise.resolve(CREMONA_CENTER); }
@@ -1318,14 +1328,21 @@ function switchTab(tab){
   const fab = document.getElementById('fab'), fm = document.getElementById('fab-menu');
   if(tab === 'mappa'){
     fab.style.display = 'none'; fm.classList.remove('open');
-    setTimeout(() => { if(!map) initMappa(); else map.invalidateSize(); if(!_coordsCitta) geocodificaCitta().then(aggiornaMappa); else aggiornaMappa(); }, 100);
+    setTimeout(() => {
+      if(!map) initMappa(); else map.invalidateSize();
+      const aggiornaCentro = () => {
+        if(map && _mappaNeedsCenter){ map.setView(_coordsCitta || CREMONA_CENTER, 14); _mappaNeedsCenter = false; }
+        aggiornaMappa();
+      };
+      if(!_coordsCitta) geocodificaCitta().then(aggiornaCentro); else aggiornaCentro();
+    }, 100);
   } else if(tab === 'roundme'){
     fab.style.display = 'none'; fm.classList.remove('open'); roundMeRender();
   } else {
     fab.style.display = (tab==='immobili'||tab==='persone'||tab==='attivita') ? 'flex' : 'none';
     fm.classList.remove('open'); fabMenuAperto = false;
     if(tab === 'immobili') fm.innerHTML = `<button type="button" title="Nuovo immobile" aria-label="Nuovo immobile" onclick="fabMenuImmobile()">${ico('casa',18)}<span>Nuovo immobile</span></button><button type="button" title="Nuovo condominio" aria-label="Nuovo condominio" onclick="fabMenuCondominio()">${iconaCondo(18)}<span>Condominio</span></button>`;
-    else if(tab === 'attivita') fm.innerHTML = `<button type="button" title="Nuova chiamata" aria-label="Nuova chiamata" onclick="fabMenuChiamata()">${ico('telefono',18)}<span>Chiamata</span></button><button type="button" title="Nuova attività" aria-label="Nuova attività" onclick="fabMenuAttivita()">${ico('check',18)}<span>Attività</span></button><button type="button" title="Nuovo appuntamento" aria-label="Nuovo appuntamento" onclick="fabMenuApp()">${ico('calendario',18)}<span>Appuntamento</span></button>`;
+    else if(tab === 'attivita') fm.innerHTML = `<button type="button" title="Chiamata" aria-label="Nuova chiamata" onclick="fabMenuChiamata()">${ico('telefono',19)}</button><button type="button" title="Attività" aria-label="Nuova attività" onclick="fabMenuAttivita()">${ico('check',19)}</button><button type="button" title="Appuntamento" aria-label="Nuovo appuntamento" onclick="fabMenuApp()">${ico('calendario',19)}</button>`
     else if(tab === 'persone') fm.innerHTML = `<button type="button" title="Nuova persona" aria-label="Nuova persona" onclick="fabMenuPersona()">${ico('utente',18)}<span>Persona</span></button>`;
     else if(tab === 'altro') aggiornaInfoSistema();
     if(tab === 'attivita'){ renderAttivita(); aggiornaBadgeAttivita(); aggiornaAgendaSettimanale(); renderPlanning(); renderChiamateOggi(); }
@@ -1348,37 +1365,52 @@ function mostraView(id){
 let statoFil = null, zonaFil = null, vistaCond = false, condoFil = null, qRic = '', mapFilStato = null, condoEspansi = {}, gestFil = null;
 
 document.getElementById('search-immobili').addEventListener('input', e => { qRic = e.target.value.toLowerCase().trim(); renderListaImmobili(); });
-document.querySelectorAll('#chips-immobili .chip').forEach(c => {
-  c.addEventListener('click', () => {
-    const f = c.dataset.filtro;
-    if(f === 'tutti'){ statoFil = null; zonaFil = null; vistaCond = false; condoFil = null; gestFil = null; }
-    else if(f === 'COND'){ vistaCond = !vistaCond; condoFil = null; }
-    else if(f === 'ZONE'){ apriZone(); return; }
-    else if(f === 'GEST'){ apriFiltroGestione(); return; }
-    else statoFil = (statoFil === f) ? null : f;
-    aggiornaChips(); renderListaImmobili();
-  });
-});
-document.querySelectorAll('#map-chips .chip').forEach(c => {
-  c.addEventListener('click', () => {
-    const f = c.dataset.filtro;
-    mapFilStato = (f === 'tutti' || mapFilStato === f) ? null : f;
-    document.querySelectorAll('#map-chips .chip').forEach(x => x.classList.toggle('active', x.dataset.filtro === 'tutti' ? !mapFilStato : mapFilStato === x.dataset.filtro));
-    aggiornaMappa();
-  });
+document.querySelector('#chips-immobili [data-filtro="tutti"]').addEventListener('click', () => {
+  rimuoviFiltri();
 });
 function aggiornaChips(){
-  document.querySelectorAll('#chips-immobili .chip').forEach(c => {
-    const f = c.dataset.filtro;
-    if(f === 'tutti') c.classList.toggle('active', !statoFil && !zonaFil && !vistaCond && !condoFil && !gestFil);
-    else if(f === 'COND') c.classList.toggle('active', vistaCond);
-    else if(f === 'ZONE') c.classList.toggle('active', !!zonaFil);
-    else if(f === 'GEST') c.classList.toggle('active', !!gestFil);
-    else c.classList.toggle('active', statoFil === f);
+  const n = (statoFil ? 1 : 0) + (zonaFil ? 1 : 0) + ((vistaCond || condoFil) ? 1 : 0) + (gestFil ? 1 : 0);
+  const tutti = document.querySelector('#chips-immobili [data-filtro="tutti"]');
+  if(tutti) tutti.classList.toggle('active', n === 0);
+  const trigger = document.getElementById('btn-filtri-immobili');
+  if(trigger) trigger.classList.toggle('active', n > 0);
+  const badge = document.getElementById('filtri-immobili-count');
+  if(badge){ badge.textContent = n ? String(n) : ''; badge.hidden = !n; }
+}
+function apriFiltriImmobili(){
+  const stati = ['IMM','PA','NT','INK','VND'];
+  let h = '<div class="filter-section-title">Stato</div><div class="filter-status-grid">';
+  stati.forEach(f => h += `<button type="button" class="filter-status-option${statoFil===f?' on':''}" onclick="impostaFiltroStato('${f}')">${f}</button>`);
+  h += '</div><div class="filter-section-title">Altri filtri</div><div class="filter-actions-grid">';
+  h += `<button type="button" class="filter-action${vistaCond?' on':''}" onclick="toggleFiltroCondomini()">${iconaCondo(17)}<span>Condomini</span></button>`;
+  h += `<button type="button" class="filter-action${zonaFil?' on':''}" onclick="apriZone()">${ico('pin',17)}<span>${zonaFil?'Zona ✓':'Zona'}</span></button>`;
+  h += `<button type="button" class="filter-action${gestFil?' on':''}" onclick="apriFiltroGestione()">${ico('utenti',17)}<span>${gestFil==='me'?'Miei':gestFil==='collega'?'Colleghi':'Gestione'}</span></button>`;
+  h += '</div><div class="filter-modal-footer"><button type="button" class="btn btn-secondary" onclick="rimuoviFiltri();apriFiltriImmobili()">Azzera</button><button type="button" class="btn btn-primary" onclick="chiudiModal()">Fatto</button></div>';
+  apriModal('Filtri immobili', h);
+}
+function impostaFiltroStato(f){
+  statoFil = (statoFil === f) ? null : f;
+  aggiornaChips(); renderListaImmobili(); apriFiltriImmobili();
+}
+function toggleFiltroCondomini(){
+  vistaCond = !vistaCond; condoFil = null;
+  aggiornaChips(); renderListaImmobili(); apriFiltriImmobili();
+}
+function apriFiltriMappa(){
+  const opts = [{value:'tutti',label:'Tutti'}, {value:'IMM',label:'IMM'}, {value:'PA',label:'PA'}, {value:'NT',label:'NT'}, {value:'INK',label:'INK'}, {value:'VND',label:'VND'}];
+  apriFilterDD('Stato sulla mappa', opts, mapFilStato || 'tutti', v => {
+    mapFilStato = v === 'tutti' ? null : v;
+    aggiornaFiltroMappa(); aggiornaMappa();
   });
 }
+function aggiornaFiltroMappa(){
+  const trigger = document.getElementById('map-filter-trigger');
+  if(trigger) trigger.classList.toggle('active', !!mapFilStato);
+  const badge = document.getElementById('map-filter-count');
+  if(badge){ badge.textContent = mapFilStato ? '1' : ''; badge.hidden = !mapFilStato; }
+}
 function apriFiltroGestione(){
-  apriFilterDD('Gestione', [{value:'',label:'Tutti'},{value:'me',label:'Solo miei'},{value:'collega',label:'Solo colleghi'}], gestFil||'', v => { gestFil = v; aggiornaChips(); renderListaImmobili(); });
+  apriFilterDD('Gestione', [{value:'',label:'Tutti'},{value:'me',label:'Solo miei'},{value:'collega',label:'Solo colleghi'}], gestFil||'', v => { gestFil = v; aggiornaChips(); renderListaImmobili(); const mt = document.getElementById('modal-title'); if(document.getElementById('modal').classList.contains('open') && mt && mt.textContent === 'Filtri immobili') apriFiltriImmobili(); });
 }
 function matchRic(im, q){
   if(!q) return true;
@@ -1398,7 +1430,7 @@ function bannerFiltri(){
   if(!p.length){ c.innerHTML = ''; return; }
   c.innerHTML = `<div class="card" style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--blu);font-weight:500;margin-bottom:6px;"><span>${p.join(' · ')}</span><button style="background:transparent;border:none;color:var(--blu);cursor:pointer;padding:0;" onclick="rimuoviFiltri()">${ico('x',12)}</button></div>`;
 }
-function rimuoviFiltri(){ condoFil = null; zonaFil = null; gestFil = null; if(!vistaCond) statoFil = null; aggiornaChips(); renderListaImmobili(); }
+function rimuoviFiltri(){ statoFil = null; zonaFil = null; vistaCond = false; condoFil = null; gestFil = null; aggiornaChips(); renderListaImmobili(); }
 
 function renderListaImmobili(){
   const c = document.getElementById('lista-immobili'); if(!c) return;
@@ -3388,7 +3420,7 @@ function apriGestioneDoc1(imId, t){
   let h = `<div class="card" style="padding:12px;"><div style="font-size:13px;font-weight:600;">${esc(t)}</div></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Stato</label><select class="form-select" id="doc-stato" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${STATI_DOC.map(s => `<option value="${s}"${r.stato===s?' selected':''}>${STATI_DOC_LBL[s]}</option>`).join('')}</select></div>`;
   if(r.fileId) h += `<button class="btn btn-secondary" onclick="scaricaDoc('${r.fileId}')">${ico('download',14)} Scarica</button>`;
-  h += `<button class="btn btn-primary" onclick="apriPickDoc('${imId}','${esc(t).replace(/'/g,'')}')">${ico('uploadBox',14)} ${r.fileId ? 'Sostituisci' : 'Allega'}</button>`;
+  h += `<button class="btn btn-primary" onclick="apriPickDoc('${imId}','${esc(t).replace(/'/g,'')}')">${ico('upload',14)} ${r.fileId ? 'Sostituisci' : 'Allega'}</button>`;
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="apriGestioneDoc('${imId}')">Indietro</button><button class="btn btn-primary" onclick="salvaStatoDoc('${imId}','${esc(t).replace(/'/g,'')}')">Salva</button></div>`;
   apriModal('Documento', h);
 }
@@ -3767,7 +3799,7 @@ function aggiornaMappa(){
   const e1 = document.getElementById('map-count'); if(e1) e1.textContent = pt;
   const e2 = document.getElementById('map-tot'); if(e2) e2.textContent = DB.immobili.length;
 }
-function centraMappaSuCittaPrincipale(){ if(!map) return; if(!_coordsCitta) geocodificaCitta().then(() => map.setView(_coordsCitta, 14)); else map.setView(_coordsCitta, 14); }
+function centraMappaSuCittaPrincipale(){ if(!map) return; const centra = () => { map.setView(_coordsCitta || CREMONA_CENTER, 14); _mappaNeedsCenter = false; }; if(!_coordsCitta) geocodificaCitta().then(centra); else centra(); }
 function fitBoundsImmobili(){
   if(!map) return;
   let l = DB.immobili.filter(i => i.lat && i.lng);
@@ -4343,7 +4375,7 @@ function apriImpostazioniCitta(){
 function salvaCitta(){
   const v = ((document.getElementById('imp-c')||{}).value || '').trim().toUpperCase();
   if(!v){ alert('Inserisci'); return; }
-  DB.cittaPrincipale = v; Storage.save(DB); _coordsCitta = null;
+  DB.cittaPrincipale = v; Storage.save(DB); _coordsCitta = null; _mappaNeedsCenter = true;
   if(confirm('Svuota cache geocodifica?')){ geocodeCache = {}; salvaGeocodeCache(); }
   chiudiModal(); aggiornaInfoSistema(); if(map) aggiornaMappa();
 }
@@ -4536,8 +4568,10 @@ function applicaIcone(){
   const rg = document.getElementById('btn-ricerca-globale'); if(rg) rg.innerHTML = ico('lente',15) + ' Cerca';
   const nn = document.getElementById('btn-notif'); if(nn) nn.innerHTML = ico('campanella',15);
   const nc2 = document.getElementById('btn-citta'); if(nc2) nc2.innerHTML = ico('pin',15);
-  const ne = document.getElementById('btn-export'); if(ne) ne.innerHTML = ico('download',15);
-  const ni = document.getElementById('btn-import'); if(ni) ni.innerHTML = ico('uploadBox',15);
+  const ne = document.getElementById('btn-export'); if(ne) ne.innerHTML = ico('download',17);
+  const ni = document.getElementById('btn-import'); if(ni) ni.innerHTML = ico('upload',17);
+  const fi = document.getElementById('filtri-immobili-icon'); if(fi) fi.innerHTML = ico('filtri',16);
+  const fm = document.getElementById('map-filter-icon'); if(fm) fm.innerHTML = ico('filtri',17);
   const nr = document.getElementById('btn-reset'); if(nr) nr.innerHTML = ico('cestino',15) + ' Cancella tutto';
   const mc = document.getElementById('map-btn-casa'); if(mc) mc.innerHTML = ico('casa',17);
   const mt = document.getElementById('map-btn-target'); if(mt) mt.innerHTML = ico('target',17);
@@ -4579,8 +4613,9 @@ function avviaBoot(){
       if(!Array.isArray(DB.rapportini)) DB.rapportini = [];
       try{
         applicaIcone();
-        updateTemaBtn();
         aggiornaChips();
+        aggiornaFiltroMappa();
+        updateTemaBtn();
         renderListaImmobili();
         aggiornaInfoSistema();
         renderPersone();
