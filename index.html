@@ -603,11 +603,23 @@ details.fold .box2{gap:6px;}
 .unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
 #mi-inline-map{position:relative;z-index:1}
 
-/* ARANJO 1.34.1: elementi contrattuali compatti su schermi piccoli */
+/* ARANJO 1.34.2: elementi contrattuali compatti su schermi piccoli */
 #modal-body .info-row small{font-size:11px;line-height:1.5;overflow-wrap:anywhere;}
 #modal-body .info-row .label{min-width:0;overflow-wrap:anywhere;}
 #modal-body .geo-help{line-height:1.5;}
 #modal-body [hidden]{display:none!important;}
+</style>
+<style>
+/* ARANJO 1.34.2 — comandi backup e scheda condominio mappa */
+.backup-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.backup-actions .backup-icon-btn{box-sizing:border-box;width:100%!important;min-width:0!important;height:42px!important;min-height:42px!important;display:flex;align-items:center;justify-content:center;border-radius:11px!important}
+.backup-actions .backup-icon-btn svg{width:19px;height:19px}
+.condo-sheet-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-bottom:10px}
+.condo-sheet-count{margin-right:auto;font-size:12px;color:var(--tx2);font-weight:650}
+.condo-sheet-toolbar .btn-icon{width:38px;min-width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center}
+.condo-sheet-amm{font-size:12px;color:var(--tx2);margin-bottom:10px}
+.condo-sheet-compact{margin-left:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+.condo-sheet .item-card{margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -756,7 +768,7 @@ details.fold .box2{gap:6px;}
           <button class="btn btn-secondary" style="flex:1;" onclick="richiediPermessoNotifiche(true)" id="btn-notif"></button>
           <button class="btn btn-secondary" style="flex:1;" onclick="apriImpostazioniCitta()" id="btn-citta"></button>
         </div>
-        <div style="display:flex;gap:6px;margin-top:6px;">
+        <div class="backup-actions">
           <button type="button" class="btn btn-secondary btn-icon backup-icon-btn" onclick="document.getElementById('file-import').click()" id="btn-import" aria-label="Importa backup" title="Importa backup"></button>
           <button type="button" class="btn btn-secondary btn-icon backup-icon-btn" onclick="esportaBackup()" id="btn-export" aria-label="Esporta backup" title="Esporta backup"></button>
         </div>
@@ -764,7 +776,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.1</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.2</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -807,7 +819,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.34.1';
+const APP_VERSION = '1.34.2';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -4364,11 +4376,30 @@ function initMappa(){
 function apriPopImm(id){ chiudiModal(); apriScheda(id); }
 function apriPopCondoIdx(i){ const c = window._popCondo[i]; if(c) apriPopCondo(c); }
 function apriPopCondo(co){
-  // La scheda condominio e' la stessa usata in Immobili: niente modal alternativo.
   if(!co) return;
-  chiudiTutteModal();
-  switchTab('immobili');
-  selCondo(co);
+  const immobili = (DB.immobili || []).filter(im => !im.villa && condoDi(im) === co);
+  const censiti = immobili.filter(im => im.stato === 'IMM');
+  const altri = immobili.filter(im => im.stato !== 'IMM');
+  const ordine = { PA:1, NT:2, INK:3, VND:4 };
+  altri.sort((a,b) => (ordine[a.stato] || 9) - (ordine[b.stato] || 9));
+  const det = (DB.condomini || {})[co] || {};
+  const amm = det.amministratore && det.amministratore.nome;
+  let h = '<div class="condo-sheet">';
+  h += '<div class="condo-sheet-toolbar">';
+  h += `<span class="condo-sheet-count">${immobili.length} immobili</span>`;
+  h += `<button type="button" class="btn btn-secondary btn-icon" aria-label="Modifica condominio" title="Modifica condominio" onclick="apriModificaCondominio(${argEvento(co)})">${ico('modifica',16)}</button>`;
+  h += `<button type="button" class="btn btn-primary btn-icon" aria-label="Nuovo immobile in condominio" title="Nuovo immobile" onclick="apriFormNuovo(${argEvento(co)})">${ico('piu',18)}</button>`;
+  h += '</div>';
+  if(amm) h += `<div class="condo-sheet-amm">${esc(amm)}</div>`;
+  if(censiti.length){
+    h += '<div class="icc-list condo-sheet-compact">';
+    censiti.forEach(im => { h += cardImmobile(im, true); });
+    h += '</div>';
+  }
+  altri.forEach(im => { h += cardImmobile(im); });
+  if(!immobili.length) h += '<div class="empty">Nessun immobile in questo condominio.</div>';
+  h += '</div>';
+  apriModal(esc(co), h);
 }
 
 function aggiornaMappa(){
@@ -4822,7 +4853,7 @@ function collegaOccupanteCitofono(im, inf){
  if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
  inf.personaId=p.id;
 }
-/* ARANJO 1.34.1 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
+/* ARANJO 1.34.2 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
 const TIPI_DOC_LOCAZIONE=['Contratto firmato','Registrazione / ricevuta RLI','Proroga / rinnovo','Cessione / subentro','Disdetta / risoluzione','Deposito cauzionale','Verbale consegna / riconsegna','Inventario / arredi','Ricevute canoni','Comunicazioni','Altro'];
 function etichettaOperazione(op){ return op==='entrambi'?'Vendita e affitto':op==='affitto'?'Affitto':op==='vendita'?'Vendita':'Da definire'; }
 function locazioneInCorso(im){return !!(im && im.locazione && ['Locato','In scadenza'].includes(im.locazione.stato));}
@@ -5609,8 +5640,8 @@ function applicaIcone(){
   const rg = document.getElementById('btn-ricerca-globale'); if(rg) rg.innerHTML = ico('lente',15) + ' Cerca';
   const nn = document.getElementById('btn-notif'); if(nn) nn.innerHTML = ico('campanella',15);
   const nc2 = document.getElementById('btn-citta'); if(nc2) nc2.innerHTML = ico('pin',15);
-  const ne = document.getElementById('btn-export'); if(ne) ne.innerHTML = ico('download',17);
-  const ni = document.getElementById('btn-import'); if(ni) ni.innerHTML = ico('upload',17);
+  const ne = document.getElementById('btn-export'); if(ne) ne.innerHTML = ico('upload',19);
+  const ni = document.getElementById('btn-import'); if(ni) ni.innerHTML = ico('download',19);
   const fi = document.getElementById('filtri-immobili-icon'); if(fi) fi.innerHTML = ico('filtri',16);
   const fm = document.getElementById('map-filter-icon'); if(fm) fm.innerHTML = ico('filtri',17);
   const nr = document.getElementById('btn-reset'); if(nr) nr.innerHTML = ico('cestino',15) + ' Cancella tutto';
