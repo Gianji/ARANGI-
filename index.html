@@ -637,6 +637,41 @@ details.fold .box2{gap:6px;}
 </style><style>
 #persone-ruolo-btn{flex:0 0 auto!important;width:auto!important;min-width:42px!important;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:100px!important;display:inline-flex!important;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--bd)!important;box-shadow:none!important}
 #persone-ruolo-btn.active{background:var(--blu-soft)!important;border-color:var(--blu)!important}
+</style><style>
+/* 2.12.4: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
+#view-persone>.search-sticky{display:block!important;position:sticky;top:-2px;z-index:20;padding:6px 0 8px}
+#view-persone #search-persone{width:100%!important;height:auto!important;min-height:0!important;background:var(--bg2)!important;border:1px solid transparent!important;border-radius:14px!important;padding:11px 16px!important;margin:0!important;box-sizing:border-box!important}
+#view-persone #search-persone:focus{background:var(--card)!important;border-color:var(--bd2)!important}
+#chips-persone{display:flex!important;align-items:center!important;gap:6px!important;min-height:34px!important;overflow:visible!important;padding-bottom:6px!important}
+#chips-persone #persone-ruolo-btn{width:38px!important;min-width:38px!important;height:32px!important;min-height:32px!important;padding:0!important;justify-content:center!important;position:relative!important;border:0!important;background:var(--bg2)!important;border-radius:var(--rp)!important;box-shadow:none!important;color:var(--tx2)!important}
+#chips-persone #persone-ruolo-btn.active{background:var(--blu)!important;color:#fff!important;border:0!important}
+#chips-persone #persone-ruolo-btn svg{width:16px!important;height:16px!important}
+/* 2.12.4: ricerca globale, elementi compatibili, rapporti */
+#view-ricerca .search-sticky{position:sticky;top:-2px;z-index:20}
+#view-ricerca #gs-r{min-width:0;width:100%;padding-bottom:24px;overflow-wrap:anywhere}
+.global-group-title{font-size:11px;font-weight:700;color:var(--tx3);margin:18px 3px 7px;text-transform:uppercase;letter-spacing:.045em;display:flex;justify-content:space-between;align-items:center}
+.global-result{width:100%;min-width:0;border:1px solid var(--bd);border-radius:var(--r);background:var(--card);color:var(--tx);display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;font-family:inherit;padding:12px 13px;margin:0 0 6px;box-sizing:border-box}
+.global-result .global-text{flex:1;min-width:0;overflow-wrap:anywhere;display:block}
+.global-result .global-name{display:block;font-weight:600;font-size:13px;line-height:1.35;word-break:break-word}
+.global-result .global-sub{display:block;font-size:11px;color:var(--tx2);margin-top:3px;line-height:1.35;overflow-wrap:anywhere}
+.global-result .global-badge{flex:none;max-width:68px}
+.global-result>svg{flex:none;width:16px;height:16px;color:var(--tx3)}
+.rr-match-section-title{font-size:11px;font-weight:700;margin:10px 0 6px;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em}
+.rr-match-row{display:flex;gap:7px;align-items:stretch;padding:6px 0;border-bottom:1px solid var(--bd);min-width:0}
+.rr-match-row:last-child{border-bottom:0}
+.rr-match-open{flex:1;min-width:0;background:none;border:0;color:var(--tx);font-family:inherit;font-size:12px;text-align:left;cursor:pointer;padding:7px 2px;overflow-wrap:anywhere}
+.rr-match-open strong{display:block;font-size:12.5px}
+.rr-match-open small{display:block;font-size:11px;color:var(--tx3);margin-top:3px}
+.rr-link-btn{width:auto!important;min-width:70px!important;flex:none!important;margin:0!important;padding:8px 10px!important;font-size:11px!important;border-radius:9px!important}
+.rr-link-btn[disabled]{opacity:.55;cursor:default}
+.rp-mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 12px}
+.rp-mode-options label{display:block;border:1px solid var(--bd);background:var(--bg2);border-radius:12px;padding:12px 10px;cursor:pointer;line-height:1.4;font-size:12px}
+.rp-mode-options label:has(input:checked){background:var(--card);border-color:var(--blu)}
+.rp-mode-options strong{display:block;font-size:12.5px;margin-top:6px}
+.rp-mode-options small{display:block;color:var(--tx2);margin-top:4px}
+.rp-output-title{font-size:12px;font-weight:650;color:var(--tx2);padding:4px 0 9px;overflow-wrap:anywhere}
+.rp-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.rp-actions .btn{min-width:0;margin:0;padding:10px 5px;font-size:11px}
 </style></head>
 <body>
 
@@ -666,9 +701,10 @@ details.fold .box2{gap:6px;}
     </section>
 
     <section id="view-persone" class="view">
-      <div class="people-findbar search-sticky">
-        <input type="search" class="search-bar" id="search-persone" placeholder="Cerca persone…" aria-label="Cerca persone">
-        <button class="chip filter-trigger" id="persone-ruolo-btn" type="button" onclick="apriFiltroRuoloPersone()" aria-label="Filtra persone" title="Filtra persone"><span id="persone-ruolo-icon"></span><span id="persone-ruolo-count" class="filter-count" hidden></span></button>
+      <div class="search-sticky"><input type="search" class="search-bar" id="search-persone" placeholder="Cerca persone..." aria-label="Cerca persone"></div>
+      <div class="chips filter-toolbar" id="chips-persone">
+        <button type="button" class="chip" id="persone-tutti" onclick="azzeraTuttiFiltriPersone()" title="Azzera filtri">Tutti</button>
+        <button class="chip filter-trigger" id="persone-ruolo-btn" type="button" onclick="apriFiltroRuoloPersone()" aria-label="Filtra persone" title="Filtri"><span id="persone-ruolo-icon"></span><span id="persone-ruolo-count" class="filter-count" hidden></span></button>
       </div>
       <div id="filtro-persone-attivo" aria-live="polite"></div>
       <div id="lista-persone"></div>
@@ -795,7 +831,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.3</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.4</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -838,7 +874,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.12.3';
+const APP_VERSION = '2.12.4';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1383,7 +1419,7 @@ function richiestaVuota(){
     classeEnergetica:[], riscaldamento:'Indifferente', riscaldamentoTipo:[], raffrescamento:'', raffTipo:[],
     infissi:[], vista:[], zonaCaratt:[], cucina:[],
     zona:[], noteZona:'', mutuo:'', mutuoNote:'', scadenzaMutuo:'', tempistica:'', scadenzaRicerca:'',
-    cnCv:'', krKvKn:'', caratteristiche:[], esigenze:'', note:'', requisiti:{} };
+    cnCv:'', krKvKn:'', caratteristiche:[], esigenze:'', note:'', requisiti:{}, immobiliCollegati:[] };
 }
 
 window._collState = {};
@@ -1915,7 +1951,8 @@ function aggiornaFiltroRuoloPersone(){
   b.title = 'Filtra persone · '+o.label;
   b.setAttribute('aria-label',b.title);
   b.classList.toggle('active', count);
-  const i=document.getElementById('persone-ruolo-icon'); if(i) i.innerHTML=ico('filtro',17);
+  const tutti=document.getElementById('persone-tutti');if(tutti)tutti.classList.toggle('active',!count);
+  const i=document.getElementById('persone-ruolo-icon'); if(i) i.innerHTML=ico('filtri',17);
   const c=document.getElementById('persone-ruolo-count'); if(c){c.hidden=!count;c.textContent='';}
 }
 document.getElementById('search-persone').addEventListener('input', e => { pQ = e.target.value.toLowerCase().trim(); renderPersone(); });
@@ -3066,6 +3103,14 @@ function apriScheda(id){
   } else bp = '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Nessuno</div>';
   bp += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriGestioneProprietari('${im.id}')">${ico('modifica',14)} Gestisci proprietari</button>`;
   h += collapsible('im_prop', ico('utenti',13) + ' Proprietari', bp, props.length || null);
+  if(['NT','INK','VND'].includes(im.stato)){
+    const rrLinked=(DB.persone||[]).filter(p=>(p.richiesta?.immobiliCollegati||[]).some(id=>String(id)===String(im.id)));
+    if(rrLinked.length){
+      const body=rrLinked.map(p=>`<button type="button" class="global-result" onclick="apriSchedaPersona(${argEvento(p.id)})"><span class="global-text"><strong>${esc(nomeCogn(p))}</strong><small class="global-sub">${esc(p.telefono||p.telefono2||'')}</small></span>${ico('freccia',14)}</button>`).join('');
+      h+=collapsible('im_rr_link',ico('target',13)+' RR associate',body,rrLinked.length);
+    }
+  }
+
   const ze = zoneEff(im);
   if(ze.length) h += collapsible('im_zone', ico('pin',13) + ' Zone', `<div class="zone-chips">${ze.map(z => `<span class="zone-chip active">${esc(z)}</span>`).join('')}</div>`);
   if(['NT','INK','VND'].includes(im.stato)){
@@ -4679,6 +4724,79 @@ function salvaNuovaPersona(){
   setTimeout(() => { if(dup){apriUnione('persona',dup.id);const sel=document.getElementById('unione-source');if(sel){sel.value=p.id;mostraDifferenzeUnione(p.id);}}else if(_npR.includes('RICERCA_LOCAZIONE')) apriRichiestaLocazione(p.id); else apriSchedaPersona(p.id); }, 120);
 }
 
+
+/* 2.12.4: associazioni autonome fra RR e immobili NT/INK */
+function aggiornaSchedaDopoCollegaRR(pid){
+ if(document.getElementById('rr-pick-list')){filtraCollegaRRImmobile(pid);return;}
+ // Sostituisci il contenuto della scheda attuale senza impilarne una copia.
+ const n=window._schedePrecedenti.length;
+ apriSchedaPersona(pid);
+ if(window._schedePrecedenti.length>n)window._schedePrecedenti.pop();
+}
+function immobiliLegatiRR(p){
+ const ids=(p?.richiesta||{}).immobiliCollegati||[];
+ return [...new Set(ids)].map(id=>DB.immobili.find(i=>String(i.id)===String(id))).filter(Boolean);
+}
+function collegaRRImmobile(pid,id){
+ const p=trovaPersona(pid),im=DB.immobili.find(i=>String(i.id)===String(id));
+ if(!p||!im||!['NT','INK'].includes(im.stato))return;
+ if(!p.richiesta)p.richiesta=richiestaVuota();
+ if(!Array.isArray(p.richiesta.immobiliCollegati))p.richiesta.immobiliCollegati=[];
+ if(!p.richiesta.immobiliCollegati.some(x=>String(x)===String(im.id)))p.richiesta.immobiliCollegati.push(im.id);
+ p.updatedAt=new Date().toISOString();Storage.save(DB);aggiornaSchedaDopoCollegaRR(pid);
+}
+function scollegaRRImmobile(pid,id){
+ const p=trovaPersona(pid);if(!p||!p.richiesta)return;
+ p.richiesta.immobiliCollegati=(p.richiesta.immobiliCollegati||[]).filter(x=>String(x)!==String(id));
+ p.updatedAt=new Date().toISOString();Storage.save(DB);aggiornaSchedaDopoCollegaRR(pid);
+}
+function apriCollegaRRImmobile(pid){
+ const p=trovaPersona(pid);if(!p)return;
+ const q=(document.getElementById('rr-pick-q')?.value||'').trim().toLocaleLowerCase('it');
+ let h='<div class="search-sticky"><input class="search-bar" id="rr-pick-q" type="search" placeholder="Cerca indirizzo o proprietario…" oninput="filtraCollegaRRImmobile('+argEvento(pid)+')" value="'+esc(q)+'"></div><div id="rr-pick-list"></div>';
+ apriModal('Collega alla RR',h);
+ filtraCollegaRRImmobile(pid);
+}
+function filtraCollegaRRImmobile(pid){
+ const p=trovaPersona(pid);if(!p)return;
+ const q=(document.getElementById('rr-pick-q')?.value||'').trim().toLocaleLowerCase('it');
+ const linked=new Set(immobiliLegatiRR(p).map(i=>String(i.id)));
+ const items=(DB.immobili||[]).filter(im=>['INK','NT'].includes(im.stato)).filter(im=>!q||[im.indirizzo,...propsImmobile(im).map(x=>nomeCogn(x.persona))].join(' ').toLocaleLowerCase('it').includes(q));
+ const out=document.getElementById('rr-pick-list');if(!out)return;
+ let h='';
+ ['INK','NT'].forEach(st=>{
+   const list=items.filter(i=>i.stato===st).sort((a,b)=>String(a.indirizzo||'').localeCompare(String(b.indirizzo||''),'it'));
+   if(!list.length)return;
+   h+=`<div class="rr-match-section-title">${st} · ${list.length}</div>`;
+   list.forEach(im=>{const selected=linked.has(String(im.id));h+=`<div class="rr-match-row"><button type="button" class="rr-match-open" onclick="apriScheda(${argEvento(im.id)})"><strong>${esc(im.indirizzo||titoloImmobile(im))}</strong><small>${esc(propsImmobile(im).map(x=>nomeCogn(x.persona)).join(', '))}</small></button><button type="button" class="btn ${selected?'btn-secondary':'btn-primary'} rr-link-btn" onclick="${selected?'scollegaRRImmobile':'collegaRRImmobile'}(${argEvento(pid)},${argEvento(im.id)})">${selected?'Rimuovi':'Collega'}</button></div>`;});
+ });
+ out.innerHTML=h||'<div class="empty">Nessun immobile NT o INK trovato</div>';
+}
+function rrBloccoLegati(p){
+ const linked=immobiliLegatiRR(p);
+ let h='';
+ if(linked.length){h+='<div class="rr-match-section-title">Immobili associati alla richiesta</div>';
+   linked.forEach(im=>{h+=`<div class="rr-match-row"><button type="button" class="rr-match-open" onclick="apriScheda(${argEvento(im.id)})"><strong>${esc(im.stato)} — ${esc(im.indirizzo||'')}</strong><small>${esc(propsImmobile(im).map(x=>nomeCogn(x.persona)).join(', '))}</small></button><button type="button" class="btn btn-secondary rr-link-btn" onclick="scollegaRRImmobile(${argEvento(p.id)},${argEvento(im.id)})">Rimuovi</button></div>`;});
+ }else h+='<div style="font-size:12px;color:var(--tx3);margin-bottom:9px">Nessun immobile associato alla RR.</div>';
+ h+=`<button type="button" class="btn btn-secondary" style="margin-top:10px" onclick="apriCollegaRRImmobile(${argEvento(p.id)})">${ico('piu',14)} Collega NT / INK</button>`;
+ return h;
+}
+function rrBloccoCompatibili(p){
+ const mm=matchAcquirente(p).filter(m=>m.score>=30&&['INK','NT'].includes(m.immobile.stato));
+ const linked=new Set(immobiliLegatiRR(p).map(i=>String(i.id)));
+ let h='';
+ for(const st of ['INK','NT']){
+  const lst=mm.filter(m=>m.immobile.stato===st);
+  if(!lst.length)continue;
+  h+=`<div class="rr-match-section-title">${st} · ${lst.length}</div>`;
+  lst.slice(0,30).forEach(m=>{
+   const im=m.immobile,selected=linked.has(String(im.id));
+   h+=`<div class="rr-match-row"><button type="button" class="rr-match-open" onclick="apriScheda(${argEvento(im.id)})"><strong>${esc(im.indirizzo||titoloImmobile(im))}</strong><small>${esc(propsImmobile(im).map(x=>nomeCogn(x.persona)).join(', '))} · ${m.score}% compatibile</small></button><button type="button" class="btn ${selected?'btn-secondary':'btn-primary'} rr-link-btn" onclick="${selected?'scollegaRRImmobile':'collegaRRImmobile'}(${argEvento(p.id)},${argEvento(im.id)})">${selected?'Rimuovi':'Collega'}</button></div>`;
+  });
+ }
+ return {html:h,count:mm.length};
+}
+
 function apriSchedaPersona(id){
   const p = trovaPersona(id); if(!p) return;
   personaAperta = id;
@@ -4721,16 +4839,11 @@ function apriSchedaPersona(id){
     const body = rows.length ? rows.map(x => `<div class="info-row"><span class="label">${x[0]}</span><span class="value">${esc(x[1])}</span></div>`).join('') : '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Da compilare</div>';
     h += collapsible('p_req', ico('target',13) + ' Richiesta', body + `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriModificaRichiesta('${p.id}')">${ico('modifica',14)} Modifica</button>`, rows.length ? rows.length + ' criteri' : null);
     try{
-      const mm = matchAcquirente(p).filter(m => m.score >= 30);
-      if(mm.length){
-        const mb = mm.slice(0,10).map(m => {
-          const cls = m.score >= 70 ? 'high' : m.score >= 40 ? 'mid' : 'low';
-          const ko = (typeof matchNote === 'function') ? matchNote(m) : (m.ko && m.ko.length ? `<small>manca: ${m.ko.join(', ')}</small>` : '');
-          return `<div class="match-line" onclick="setTimeout(() => apriScheda('${m.immobile.id}'),100)"><div class="ml-name">${esc(m.immobile.indirizzo || titoloImmobile(m.immobile))}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
-        }).join('');
-        h += collapsible('p_match', ico('casa',13) + ' Compatibili', mb, mm.length);
-      }
-    }catch(e){ console.error(e); }
+      h += collapsible('p_rr_link', ico('casa',13) + ' Immobili associati', rrBloccoLegati(p), immobiliLegatiRR(p).length||null);
+      const compat=rrBloccoCompatibili(p);
+      if(compat.count) h+=collapsible('p_match',ico('target',13)+' Compatibili',compat.html,compat.count);
+    }catch(e){console.error(e);}
+
   }
   let bodyI = '';
   if(immP.length){
@@ -5531,62 +5644,123 @@ function fermaScanner(){ if(window._scanStream){ try{ window._scanStream.getTrac
 function renderRapportini(){
  const c=document.getElementById('rapportini-lista');if(!c)return;
  const today=ymd(new Date());
- c.innerHTML=`<div class="card"><h2>Rapporti</h2><div class="form-row"><label class="form-label">Dal</label><input class="form-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label">Al</label><input class="form-input" type="date" id="rp-to" value="${today}"></div><button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
+ c.innerHTML=`<div class="card"><h2>Rapporti</h2>
+ <div class="box2"><div class="form-row"><label class="form-label" for="rp-from">Dal</label><input class="form-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label" for="rp-to">Al</label><input class="form-input" type="date" id="rp-to" value="${today}"></div></div>
+ <div class="form-label" style="margin-top:12px">Tipo di rapporto</div>
+ <div class="rp-mode-options"><label><input type="radio" name="rp-mode" value="sintetico" checked><strong>Sintetico</strong><small>Attivita ed esiti essenziali</small></label><label><input type="radio" name="rp-mode" value="analitica"><strong>Analitico</strong><small>Dettaglio delle attivita e orari</small></label></div>
+ <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
 }
-function generaRapportoAttivita(){
- const da=document.getElementById('rp-from').value,al=document.getElementById('rp-to').value;
- if(!da||!al||da>al){alert('Seleziona un intervallo di date valido.');return;}
- const giorno=v=>{const d=String(v||'').slice(0,10).split('-');return d.length===3?d[2]+'/'+d[1]:'';};
- const visibile=a=>{
-   const d=String(dataAtt(a)||'').slice(0,10);
-   if(d<da||d>al)return false;
+function reportGiorno(v){
+ const txt=String(v||'');let m=txt.match(/^(\d{4})-(\d{2})-(\d{2})/);
+ if(m)return m[3]+'/'+m[2];
+ const d=new Date(v);return isNaN(d)?'':String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+}
+function reportOra(v){
+ const txt=String(v||'');if(!txt)return '';
+ const d=new Date(v);
+ if(!isNaN(d)&&(/Z$|[+-]\d\d:?\d\d$/.test(txt)))return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+ const m=txt.match(/(?:T|\s)(\d{2}):(\d{2})/);
+ return m?m[1]+':'+m[2]:(!isNaN(d)?d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'');
+}
+function reportTitoloGruppo(a){
+ if(a.entTipo==='immobile'){
+  const im=DB.immobili.find(i=>i.id===a.entId);
+  if(im){
+   const owners=propsImmobile(im).map(x=>x.persona).filter(Boolean);
+   const cognomi=[...new Set(owners.map(p=>String(p.cognome||p.ragioneSociale||'').trim().toUpperCase()).filter(Boolean))];
+   const prim=String(im.cognomeNome||'').trim().split(/\s+/)[0];
+   const c=cognomi.join(' / ')||prim.toUpperCase();
+   return `${im.stato}${c?' - '+c:''} x ${String(im.indirizzo||'').toUpperCase()}`;
+  }
+ }
+ if(a.entTipo==='persona'){
+  const p=trovaPersona(a.entId);
+  if(p){
+   const rr=(p.ruoli||[]).includes('ACQUIRENTE');
+   const anagrafica=nomeCogn(p).toUpperCase();
+   if(!rr)return anagrafica;
+   const phone=String(p.telefono||p.telefono2||'').trim();
+   const names=[...new Set(immobiliLegatiRR(p).map(im=>{
+     const owner=propPrinc(im)?.persona;
+     return String(owner?.cognome||owner?.ragioneSociale||im.cognomeNome||im.indirizzo||'').trim().split(/\s+/)[0].toUpperCase();
+   }).filter(Boolean))];
+   return `RR - ${anagrafica}${phone?' '+phone:''}${names.length?' x '+names.join(' / '):''}`;
+  }
+ }
+ return String(a.entTitolo||'Attivita');
+}
+function reportEsitoAppuntamento(a){
+ const raw=String(a.testo||'').trim();
+ // Le attivita di appuntamento sono salvate con "[data] - TIPO: Esito · note".
+ const m=raw.match(/^\[[^\]]+\]\s*[-–]\s*[^:]+:\s*([\s\S]+)$/);
+ if(m)return m[1].trim();
+ if(a.descrizioneEsito)return String(a.descrizioneEsito).trim();
+ return ''; // Mai riprodurre il solo appuntamento programmato.
+}
+function rapportoAttivitaDati(da,al,mode){
+ const analitico=mode==='analitica';
+ const righe=[];
+ const eliminare=/\bcambio\s+(di\s+)?stato\b|\bcambiamento\s+(di\s+)?stato\b|prima\s+compilazione\s+(della\s+)?scheda\s+(di\s+)?valutazione/i;
+ const elenco=raccogliAtt().filter(a=>{
+   const v=String(dataAtt(a)||'');if(!v)return false;
+   const dt=v.slice(0,10);if(dt<da||dt>al)return false;
    if(a.tipo==='da_fare'&&!a.completata)return false;
-   const im=a.immobileId?DB.immobili.find(i=>i.id===a.immobileId):null;
+   const im=a.immobileId?DB.immobili.find(x=>x.id===a.immobileId):null;
    if((im&&im.stato==='IMM')||(a.entTipo==='immobile'&&a.entStato==='IMM'))return false;
-   const t=String(a.testo||a.titolo||'').toLowerCase();
-   if(/cambio stato|cambiamento stato|prima compilazione scheda valutazione|prima compilazione della scheda valutazione/.test(t))return false;
-   if(a.tipoAtt==='APPUNTAMENTO'&&!(/:\s*[^:]+/.test(t)))return false;
+   if(eliminare.test(String(a.testo||a.titolo||'')))return false;
+   if(a.tipoAtt==='APPUNTAMENTO'&&!reportEsitoAppuntamento(a))return false;
    return true;
- };
- const elenco=raccogliAtt().filter(visibile).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
+ }).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
  const gruppi=new Map();
- elenco.forEach(a=>{
-   const key=String(a.entTipo||'altro')+':'+String(a.entId||a.entTitolo||'');
-   if(!gruppi.has(key)){
-     let titolo=a.entTitolo||'(senza contesto)';
-     if(a.entTipo==='immobile'){
-       const im=DB.immobili.find(i=>i.id===a.entId);
-       if(im)titolo=[['PA','NT','INK','VND'].includes(im.stato)?im.stato:'IMM',im.indirizzo||''].filter(Boolean).join(' — ');
-     }else if(a.entTipo==='persona'){
-       const p=trovaPersona(a.entId);
-       if(p)titolo=((p.ruoli||[]).includes('ACQUIRENTE')?'RR - ':'')+nomeCogn(p);
-     }
-     gruppi.set(key,{titolo,items:[]});
-   }
+ for(const a of elenco){
+   const key=(a.entTipo||'altro')+':'+(a.entId||a.entTitolo||'');
+   if(!gruppi.has(key))gruppi.set(key,{titolo:reportTitoloGruppo(a),items:[]});
    gruppi.get(key).items.push(a);
- });
- const righe=['RAPPORTO ATTIVITA ARANJO',`Periodo: ${giorno(da)} – ${giorno(al)}`,''];
+ }
+ const nome=analitico?'report attivita analitica':'report attivita sintetico';
+ const titolo=`${nome} - da ${reportGiorno(da)} a ${reportGiorno(al)}`;
+ righe.push(titolo.toUpperCase(),'');
  if(!elenco.length)righe.push('Nessuna attivita registrata nel periodo.');
  for(const g of gruppi.values()){
    righe.push(g.titolo);
-   g.items.forEach(a=>{
-     let descrizione=String(a.testo||a.titolo||'Attivita').replace(/\r\n?/g,'\n').trim();
-     if(a.tipoAtt==='APPUNTAMENTO'){
-       // L'attivita generata alla chiusura contiene "[data] - TIPO: ESITO · note".
-       const m=descrizione.match(/(?:^|\n)[^\n]*?\b[A-Z][A-Z0-9 ]*:\s*(.+)$/i);
-       if(m)descrizione=m[1].trim();
-       else if(a.descrizioneEsito)descrizione=a.descrizioneEsito;
-       else return;
-     }
-     descrizione=descrizione.replace(/^\[\d{1,2}\/\d{1,2}(?:\/\d{2,4})?[^\]]*\]\s*[-–]?\s*/,'');
-     righe.push(`${giorno(dataAtt(a))} — ${descrizione}`);
-   });
+   for(const a of g.items){
+     let descrizione=a.tipoAtt==='APPUNTAMENTO'?reportEsitoAppuntamento(a):String(a.testo||a.titolo||'Attivita').trim();
+     descrizione=descrizione.replace(/^\[[^\]]+\]\s*[-–]?\s*/,'').replace(/\r\n?/g,'\n').trim();
+     if(!descrizione)continue;
+     const date=reportGiorno(dataAtt(a));
+     const ora=analitico?reportOra(dataAtt(a)):'';
+     righe.push(`${date}${ora?' '+ora:''} — ${descrizione}`);
+   }
    righe.push('');
  }
- const testo=righe.join('\n').trimEnd();
- const out=document.getElementById('rp-output');
- out.innerHTML=`<div class="card"><textarea class="form-textarea" id="rp-text" rows="15" readonly></textarea><button class="btn btn-secondary" style="width:100%;margin-top:8px" onclick="navigator.clipboard.writeText(document.getElementById('rp-text').value).then(()=>alert('Rapporto copiato')).catch(()=>{document.getElementById('rp-text').select();document.execCommand('copy')})">Copia testo</button></div>`;
- document.getElementById('rp-text').value=testo;
+ return {titolo,testo:righe.join('\n').trimEnd(),totale:elenco.length};
+}
+function generaRapportoAttivita(){
+ const da=document.getElementById('rp-from')?.value,al=document.getElementById('rp-to')?.value;
+ if(!da||!al||da>al){alert('Seleziona un intervallo di date valido.');return;}
+ const mode=document.querySelector('input[name="rp-mode"]:checked')?.value||'sintetico';
+ const r=rapportoAttivitaDati(da,al,mode);
+ const out=document.getElementById('rp-output');if(!out)return;
+ out.innerHTML=`<div class="card"><div class="rp-output-title">${esc(r.titolo)}</div><textarea class="form-textarea" id="rp-text" rows="16" readonly></textarea><div class="rp-actions"><button class="btn btn-secondary" onclick="copiaRapporto()">${ico('documento',14)} Copia</button><button class="btn btn-secondary" onclick="condividiRapporto()">${ico('upload',14)} Invia</button><button class="btn btn-secondary" onclick="scaricaRapporto()">${ico('download',14)} TXT</button></div></div>`;
+ document.getElementById('rp-text').value=r.testo;
+ window._rapportoCorrente=r;
+}
+function copiaRapporto(){
+ const el=document.getElementById('rp-text');if(!el)return;
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(el.value).then(()=>alert('Rapporto copiato')).catch(()=>{el.select();document.execCommand('copy');alert('Rapporto copiato');});}
+ else{el.select();document.execCommand('copy');alert('Rapporto copiato');}
+}
+async function condividiRapporto(){
+ const el=document.getElementById('rp-text');if(!el)return;
+ const titolo=window._rapportoCorrente?.titolo||'Rapporto attivita';
+ if(navigator.share){try{await navigator.share({title:titolo,text:el.value});return;}catch(e){if(e.name==='AbortError')return;}}
+ copiaRapporto();
+}
+function scaricaRapporto(){
+ const el=document.getElementById('rp-text');if(!el)return;
+ const name=(window._rapportoCorrente?.titolo||'rapporto').replace(/[\\/:*?"<>|]/g,'-')+'.txt';
+ const url=URL.createObjectURL(new Blob([el.value],{type:'text/plain;charset=utf-8'}));
+ const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 function apriRubrica(){
@@ -5609,6 +5783,7 @@ const AR_ZONE={
  'VIA MILANO':['via milano','incrociatello','via galletti','via barosi'],
  'SAN PAOLO':['piazza san paolo','via bissolati','via ruggero manna','via milazzo','via dei rustici','via villa glori'],
  'VIA MASSAROTTI':['via massarotti','via bissolati','via ruggero manna','via massarotti nord','penny'],
+ 'CORSO GARIBALDI':[],'VIA PALESTRO':[],
  'CAVATIGOZZI':[],'MIGLIARO':[],'CAMBONINO':[],'BOSCHETTO':[]
  },
  'Altrui':{
@@ -5643,12 +5818,12 @@ function zonaMatch(z,filter){
 }
 function zonaEditor(id,initial,filter=false){
  const z=zonaNormalizza(initial);
- const t=z.competenza||'ZdF';
+ const t=z.competenza||'';
  const idAttr=esc(id);
  let h=`<div class="zone-editor" id="${idAttr}" data-filter="${filter?'1':'0'}"><div class="form-label">Competenza · scelta esclusiva</div><div class="zone-chips">`;
  for(const k of Object.keys(AR_ZONE))h+=`<button type="button" class="zone-chip ${k===z.competenza?'active':''}" data-zt="${esc(k)}" onclick="zonaEditorTipo('${id}',${argEvento(k)})">${k==='ZdF'?'ZONA ZdF':k==='Altrui'?'ZONA altrui':'ZONA Libera'}</button>`;
  h+='</div><div class="zone-editor-detail">';
- h+=zonaEditorDettagli(id,t,z.macro,z.micro);
+ if(t)h+=zonaEditorDettagli(id,t,z.macro,z.micro);
  h+='</div></div>';return h;
 }
 function zonaEditorDettagli(id,t,macro,micro){
@@ -5706,21 +5881,24 @@ function apriRicercaGlobale(){
   setTimeout(()=>document.getElementById('gs-i')?.focus(),50);
 }
 function eseguiRicerca(q){
-  const c = document.getElementById('gs-r'); if(!c) return;
-  const qq = (q||'').toLowerCase().trim();
-  if(qq.length < 2){ c.innerHTML = '<div class="empty" style="padding:20px 8px;font-size:12px;">Digita 2+ caratteri</div>'; return; }
-  const res = { p:[], i:[], a:[], c:[] };
-  DB.persone.forEach(p => { const f = [nomeCompleto(p), p.telefono, p.email, p.cf].map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.p.push(p); });
-  DB.immobili.forEach(im => { const props = propsImmobile(im).map(x => nomeCogn(x.persona)); const f = [im.indirizzo, im.cognomeNome, im.telefono, im.citofono, im.condominio].concat(props).map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.i.push(im); });
-  raccogliAtt().forEach(a => { const f = [a.testo, a.entTitolo].map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.a.push(a); });
-  for(const co in (DB.condomini||{})) if(co.toLowerCase().indexOf(qq) >= 0) res.c.push(co);
-  let h = '';
-  if(res.p.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 4px;">Persone</div>'; res.p.slice(0,8).forEach(p => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriSchedaPersona('${p.id}'),100)"><span class="txt">${esc(nomeCogn(p))}</span></div>`); }
-  if(res.i.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Immobili</div>'; res.i.slice(0,8).forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`); }
-  if(res.a.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Attivita</div>'; res.a.slice(0,8).forEach(a => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}'),100)"><span class="txt">${esc(a.testo.slice(0,50))}</span></div>`); }
-  if(res.c.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Condomini</div>'; res.c.slice(0,8).forEach(co => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="switchTab('immobili');selCondo(${argEvento(co)})"><span class="txt">${esc(co)}</span></div>`); }
-  if(!res.p.length && !res.i.length && !res.a.length && !res.c.length) h = '<div class="empty" style="padding:20px 8px;font-size:12px;">Nessun risultato</div>';
-  c.innerHTML = h;
+ const c=document.getElementById('gs-r');if(!c)return;
+ const qq=String(q||'').trim().toLocaleLowerCase('it');
+ if(qq.length<2){c.innerHTML='<div class="empty" style="padding:24px 10px">Scrivi almeno 2 caratteri</div>';return;}
+ const contains=v=>String(v==null?'':v).toLocaleLowerCase('it').includes(qq);
+ const res={p:[],i:[],a:[],c:[]};
+ (DB.persone||[]).forEach(p=>{if([nomeCompleto(p),nomeCogn(p),p.ragioneSociale,p.telefono,p.telefono2,p.email,p.cf,p.partitaIVA].some(contains))res.p.push(p);});
+ (DB.immobili||[]).forEach(im=>{if([im.indirizzo,im.cognomeNome,im.telefono,im.citofono,im.condominio,im.stato,...propsImmobile(im).map(x=>nomeCogn(x.persona))].some(contains))res.i.push(im);});
+ raccogliAtt().forEach(a=>{if([a.testo,a.entTitolo].some(contains))res.a.push(a);});
+ const condomini=new Set([...Object.keys(DB.condomini||{}),...(DB.immobili||[]).filter(im=>!im.villa).map(im=>condoDi(im)).filter(Boolean)]);
+ for(const co of condomini)if(contains(co))res.c.push(co);
+ const row=(tit,sub,action,badge='')=>`<button type="button" class="global-result" onclick="${action}"><span class="global-text"><span class="global-name">${esc(tit)}</span>${sub?`<span class="global-sub">${esc(sub)}</span>`:''}</span>${badge?`<span class="badge badge-${esc(badge)} global-badge">${esc(badge)}</span>`:ico('freccia',14)}</button>`;
+ const group=(tit,items)=>items.length?`<div class="global-group-title">${tit}<span>${items.length}${items.length>=15?'+':''}</span></div>${items.join('')}`:'';
+ let h='';
+ h+=group('Persone',res.p.slice(0,15).map(p=>row(nomeCogn(p),[p.telefono||p.telefono2,p.email].filter(Boolean).join(' · '),`apriSchedaPersona(${argEvento(p.id)})`)));
+ h+=group('Immobili',res.i.slice(0,15).map(im=>row(titoloImmobile(im),im.condominio||'',`apriScheda(${argEvento(im.id)})`,im.stato)));
+ h+=group('Attivita',res.a.slice(0,15).map(a=>row(a.testo||'Attivita',a.entTitolo||'',`apriAzioniAttGlob(${argEvento(a.id)},${argEvento(a.entTipo)},${argEvento(a.entId)})`)));
+ h+=group('Condomini',res.c.slice(0,15).map(co=>row(co,'Condominio',`apriPopCondo(${argEvento(co)})`)));
+ c.innerHTML=h||'<div class="empty" style="padding:24px 10px">Nessun risultato</div>';
 }
 
 function apriImpostazioniCitta(){
