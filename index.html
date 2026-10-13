@@ -792,7 +792,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.1</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -835,7 +835,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.12';
+const APP_VERSION = '2.12.1';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -5531,18 +5531,41 @@ function fermaScanner(){ if(window._scanStream){ try{ window._scanStream.getTrac
 function renderRapportini(){
  const c=document.getElementById('rapportini-lista');if(!c)return;
  const today=ymd(new Date());
- c.innerHTML=`<div class="card"><h2>Rapporto attivita</h2><div class="form-row"><label class="form-label">Dal</label><input class="form-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label">Al</label><input class="form-input" type="date" id="rp-to" value="${today}"></div><button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
+ c.innerHTML=`<div class="card"><h2>Rapporti</h2><div class="form-row"><label class="form-label">Dal</label><input class="form-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label">Al</label><input class="form-input" type="date" id="rp-to" value="${today}"></div><button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
 }
 function generaRapportoAttivita(){
  const da=document.getElementById('rp-from').value,al=document.getElementById('rp-to').value;
  if(!da||!al||da>al){alert('Seleziona un intervallo di date valido.');return;}
  const elenco=raccogliAtt().filter(a=>{const d=String(dataAtt(a)||'').slice(0,10);return d>=da&&d<=al;}).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
- const testo=`RAPPORTO ATTIVITA ARANJO\\nPeriodo: ${da} – ${al}\\nAttivita registrate: ${elenco.length}\\n\\n`+
- (elenco.length?elenco.map((a,i)=>`${i+1}. ${String(dataAtt(a)).slice(0,10)} — ${a.testo||a.titolo||'Attivita'}${a.entTitolo?' — '+a.entTitolo:''}`).join('\\n'):'Nessuna attivita registrata nel periodo.');
+ // Raggruppa per immobile/persona, senza mescolare le attivita di soggetti differenti.
+ const gruppi=new Map();
+ elenco.forEach(a=>{
+   const key=String(a.entTipo||'altro')+':'+String(a.entId||a.entTitolo||'');
+   if(!gruppi.has(key)) gruppi.set(key,{tipo:a.entTipo,titolo:a.entTitolo||'(senza contesto)',items:[]});
+   gruppi.get(key).items.push(a);
+ });
+ const righe=[
+   'RAPPORTO ATTIVITA ARANJO',
+   `Periodo: ${da} – ${al}`,
+   `Attivita registrate: ${elenco.length}`,
+   ''
+ ];
+ if(!elenco.length)righe.push('Nessuna attivita registrata nel periodo.');
+ for(const g of gruppi.values()){
+   righe.push(`${g.tipo==='immobile'?'IMMOBILE':g.tipo==='persona'?'PERSONA':'ALTRO'} — ${g.titolo}`);
+   g.items.forEach((a,i)=>{
+     const data=String(dataAtt(a)||'').slice(0,10);
+     const descrizione=String(a.testo||a.titolo||'Attivita').replace(/\r\n?/g,'\n').trim();
+     righe.push(`${i+1}. ${data} — ${descrizione}`);
+   });
+   righe.push(''); // riga vuota fra immobili/persone differenti
+ }
+ const testo=righe.join('\n').trimEnd();
  const out=document.getElementById('rp-output');
  out.innerHTML=`<div class="card"><textarea class="form-textarea" id="rp-text" rows="15" readonly></textarea><button class="btn btn-secondary" style="width:100%;margin-top:8px" onclick="navigator.clipboard.writeText(document.getElementById('rp-text').value).then(()=>alert('Rapporto copiato')).catch(()=>{document.getElementById('rp-text').select();document.execCommand('copy')})">Copia testo</button></div>`;
  document.getElementById('rp-text').value=testo;
 }
+
 function apriRubrica(){
  mostraView('view-rubrica');
  renderRubrica();
@@ -5808,7 +5831,7 @@ function applicaIcone(){
   const bs = document.getElementById('btn-scan-barcode'); if(bs) bs.innerHTML = ico('barcode',16) + ' Scansiona';
   
   const im1 = document.getElementById('ico-mag'); if(im1) im1.innerHTML = ico('pacco',16) + ' Magazzino';
-  const im2 = document.getElementById('ico-rapp'); if(im2) im2.innerHTML = ico('documento',16) + ' Rapportini';
+  const im2 = document.getElementById('ico-rapp'); if(im2) im2.innerHTML = ico('documento',16) + ' Rapporti';
   const im3 = document.getElementById('ico-chiam'); if(im3) im3.innerHTML = ico('utenti',16) + ' Rubrica';
   const rg = document.getElementById('btn-ricerca-globale'); if(rg) rg.innerHTML = ico('lente',15) + ' Cerca';
   const nn = document.getElementById('btn-notif'); if(nn) nn.innerHTML = ico('campanella',15);
