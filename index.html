@@ -634,6 +634,9 @@ details.fold .box2{gap:6px;}
 .people-filter-btn:active{transform:scale(.97)}
 .people-filter-indicator{position:absolute;top:2px;right:2px}
 .np-company[hidden]{display:none!important}
+</style><style>
+#persone-ruolo-btn{flex:0 0 auto!important;width:auto!important;min-width:42px!important;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:100px!important;display:inline-flex!important;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--bd)!important;box-shadow:none!important}
+#persone-ruolo-btn.active{background:var(--blu-soft)!important;border-color:var(--blu)!important}
 </style></head>
 <body>
 
@@ -665,7 +668,7 @@ details.fold .box2{gap:6px;}
     <section id="view-persone" class="view">
       <div class="people-findbar search-sticky">
         <input type="search" class="search-bar" id="search-persone" placeholder="Cerca persone…" aria-label="Cerca persone">
-        <button class="people-filter-btn" id="persone-ruolo-btn" type="button" onclick="apriFiltroRuoloPersone()" aria-label="Filtra persone" title="Filtra persone"><span id="persone-ruolo-icon"></span><span id="persone-ruolo-count" class="people-filter-indicator" hidden></span></button>
+        <button class="chip filter-trigger" id="persone-ruolo-btn" type="button" onclick="apriFiltroRuoloPersone()" aria-label="Filtra persone" title="Filtra persone"><span id="persone-ruolo-icon"></span><span id="persone-ruolo-count" class="filter-count" hidden></span></button>
       </div>
       <div id="filtro-persone-attivo" aria-live="polite"></div>
       <div id="lista-persone"></div>
@@ -792,7 +795,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.1</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.3</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -835,7 +838,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.12.1';
+const APP_VERSION = '2.12.3';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1319,12 +1322,8 @@ const titoloPersona = p => {
 };
 const statoRR = p => { if(!p || (p.ruoli||[]).indexOf('ACQUIRENTE')<0) return null; return STATI_RR.find(s => s.id === p.statoRR) || STATI_RR[0]; };
 const condoDi = im => im.villa ? null : (im.condominio || normInd(im.indirizzo));
-function zoneEff(im){
-  if(im.villa) return im.zone || [];
-  const c = condoDi(im); if(!c) return im.zone || [];
-  const d = (DB.condomini && DB.condomini[c]) || {};
-  return (d.zone && d.zone.length > 0) ? d.zone : (im.zone || []);
-}
+function zoneEff(im){return zonaEtichette(zonaImmobile(im));}
+
 function dettagliCondo(c){ 
   if(!DB.condomini) DB.condomini = {}; 
   if(!DB.condomini[c]) DB.condomini[c] = { zone:[], foto:[], datiStrutturali:{} }; 
@@ -1663,7 +1662,7 @@ function bannerFiltri(){
   const c = document.getElementById('filtro-attivo'); const p = [];
   if(condoFil) p.push(condoFil);
   if(statoFil) p.push(statoFil);
-  if(zonaFil) p.push(zonaFil);
+  if(zonaFil) p.push(zonaEtichette(zonaFil).join(', ')||'Zona');
   if(gestFil === 'me') p.push('Miei');
   if(gestFil === 'collega') p.push('Colleghi');
   if(!p.length){ c.innerHTML = ''; return; }
@@ -1677,7 +1676,7 @@ function renderListaImmobili(){
   let l = DB.immobili.slice();
   if(condoFil) l = l.filter(i => condoDi(i) === condoFil);
   if(statoFil) l = l.filter(i => i.stato === statoFil);
-  if(zonaFil) l = l.filter(i => zoneEff(i).indexOf(zonaFil) >= 0);
+  if(zonaFil) l = l.filter(i => zonaMatch(zonaImmobile(i),zonaFil));
   if(gestFil === 'me') l = l.filter(i => (i.gestitoDa||'me') === 'me');
   if(gestFil === 'collega') l = l.filter(i => i.gestitoDa === 'collega');
   if(qRic) l = l.filter(i => matchRic(i, qRic));
@@ -1832,6 +1831,7 @@ function renderListaCondomini(c){
     g[co].push(i);
   });
   const l = Object.keys(g).filter(co => {
+    if(zonaFil&&!zonaMatch(zonaCondominio(co),zonaFil))return false;
     if(!qRic) return true;
     const d = (DB.condomini || {})[co] || {};
     return [co, d.amministratore && d.amministratore.nome, d.amministratore && d.amministratore.telefono]
@@ -1858,13 +1858,9 @@ function selCondo(co){
 }
 
 function apriZone(){
-  let h = '<div class="zone-chips">';
-  OPT_ZONE.forEach(z => { const a = zonaFil === z; h += `<button type="button" class="zone-chip${a?' active':''}" onclick="selZona('${z.replace(/'/g,'')}')">${z}</button>`; });
-  h += '</div><div class="btn-row" style="margin-top:14px;"><button class="btn btn-secondary" onclick="azzeraZone()">Azzera</button><button class="btn btn-primary" onclick="chiudiModal();aggiornaChips();renderListaImmobili();">OK</button></div>';
-  apriModal('Zona', h);
+ const h=zonaEditor('im-filtro-zona',zonaFil,true)+`<div class="btn-row" style="margin-top:14px"><button class="btn btn-secondary" onclick="zonaFil=null;aggiornaChips();renderListaImmobili();apriZone()">Azzera</button><button class="btn btn-primary" onclick="zonaFil=zonaEditorVal('im-filtro-zona');if(!zonaFil.competenza&&!zonaFil.macro.length&&!zonaFil.micro.length)zonaFil=null;aggiornaChips();renderListaImmobili();chiudiModal()">Applica</button></div>`;
+ apriModal('Zone',h);
 }
-function selZona(z){ zonaFil = (zonaFil === z) ? null : z; apriZone(); }
-function azzeraZone(){ zonaFil = null; apriZone(); }
 
 const chiama = tel => { if(tel) window.location.href = 'tel:' + tel.replace(/\s+/g,''); };
 const scriviEmail = e => { if(e) window.location.href = 'mailto:' + e; };
@@ -1919,7 +1915,7 @@ function aggiornaFiltroRuoloPersone(){
   b.title = 'Filtra persone · '+o.label;
   b.setAttribute('aria-label',b.title);
   b.classList.toggle('active', count);
-  const i=document.getElementById('persone-ruolo-icon'); if(i) i.innerHTML=ico('filtro',18);
+  const i=document.getElementById('persone-ruolo-icon'); if(i) i.innerHTML=ico('filtro',17);
   const c=document.getElementById('persone-ruolo-count'); if(c){c.hidden=!count;c.textContent='';}
 }
 document.getElementById('search-persone').addEventListener('input', e => { pQ = e.target.value.toLowerCase().trim(); renderPersone(); });
@@ -4237,7 +4233,7 @@ function apriModifica(){
   h += campoCoordinate('mi-coord', coordValide(im)?{lat:im.lat,lng:im.lng,fonte:im.geoFonte||'sconosciuta',preciso:im.geoPreciso}:null);
   h += `<button type="button" class="btn btn-secondary" style="margin-top:5px" onclick="scegliCoordinateSuMappa('${im.id}')">${ico('pin',15)} Seleziona sulla mappa</button>`;
   h += '</div>';
-  h += '<div class="card"><h2>Zone</h2>' + ms('mi-zona', OPT_ZONE, im.zone) + '</div>';
+  h += '<div class="card"><h2>Zone</h2>' + (im.villa?zonaEditor('mi-zone',im.zonaCompetenza||im.zone):'<div class="item-sub">La zona e determinata dal condominio. Modificala nella scheda del condominio.</div>') + '</div>';
   if(['NT','INK','VND'].includes(im.stato)){
     h += `<button class="btn btn-secondary" onclick="apriGestioneDoc('${im.id}')">${ico('documento',15)} Gestisci documenti</button>`;
   }
@@ -4272,7 +4268,7 @@ function salvaModifica(){
   im.note = g('mi-note');
   im.gestitoDa = g('mi-gest') || 'me';
   im.collegaNome = im.gestitoDa === 'collega' ? g('mi-coll').trim().toUpperCase() : '';
-  im.zone = msVal('mi-zona');
+  if(nuovaVilla){im.zonaCompetenza=zonaEditorVal('mi-zone');im.zone=zonaEtichette(im.zonaCompetenza);}
   im.updatedAt = new Date().toISOString();
   if(campoGeoCambio || indirizzoCambio || (avevaManuale && !testoGeo)){
     if(!campoGeoCambio){delete im.lat;delete im.lng;im.geoFonte='';im.geoPreciso=false;}
@@ -4354,6 +4350,7 @@ function apriModificaCondominio(co){
   h += `<div class="cx-campo"><label class="form-label">Androne</label><select class="form-select" id="cd-andr" style="${st}">${['','Signorile','Normale','Modesto'].map(x => `<option value="${x}"${(ds.androne||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div></div>`;
   h += `<div class="cx-campo"><label class="form-label">Piscina</label><select class="form-select" id="cd-pisc" style="${st}">${['','Condominiale','Privata'].map(x => `<option value="${x}"${(ds.piscina||'')===x?' selected':''}>${x||'—'}</option>`).join('')}</select></div>`;
   h += '</div></details>';
+  h += '<div class="card"><h2>Zone del condominio</h2>'+zonaEditor('cd-zone',d.zonaCompetenza||d.zone)+'</div>';
   h += campoCoordinate('cd-coord',coordCondominio(co));
   h += `<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaCondominio('${esc(co).replace(/'/g,'')}')">Salva</button></div>`;
   h += `<button class="btn btn-danger" style="margin-top:6px;" onclick="eliminaCondominio('${esc(co).replace(/'/g,'')}')">${ico('cestino',15)} Elimina</button>`;
@@ -4372,7 +4369,7 @@ function salvaCondominio(co){
     createdAt:prev.createdAt || new Date().toISOString(), updatedAt:new Date().toISOString(),
     annoCostruzione:g('cd-anno').trim(), 
     amministratore:{ nome:g('cd-amm').trim().toUpperCase(), telefono:g('cd-tel') }, 
-    zone:pz, foto:pf,
+    zone:zonaEtichette(zonaEditorVal('cd-zone')), zonaCompetenza:zonaEditorVal('cd-zone'), foto:pf,
     datiStrutturali:{
       cappotto:g('cd-cappotto'),
       isolamentoAcustico:g('cd-isol'),
@@ -4915,6 +4912,7 @@ function apriModificaRichiesta(pid){
   h += `<div class="box2" style="margin-bottom:8px;"><div><label class="form-label">Budget minimo €</label><input class="form-input" id="rq-budgetMin" inputmode="numeric" value="${esc(r.budgetMin||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div><div><label class="form-label">Budget massimo €</label><input class="form-input" id="rq-budget" inputmode="numeric" value="${esc(r.budget||'')}" style="background:var(--bg2);padding:11px 12px;border-radius:10px;"></div></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Arredamento</label><select class="form-select" id="rq-arredamento" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${OPT_ARREDAMENTO_RIC.map(o => `<option value="${o}"${(r.arredamento||'Indifferente')===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
   h += '</div>';
+  h += '<div class="card"><h2>Zone di ricerca</h2>'+zonaEditor('rq-zone',r.zonaCompetenza||r.zona)+'</div>';
   h += '<div class="card"><h2>Caratteristiche</h2>';
   h += `<div class="mq-row" style="margin-bottom:8px;"><div><label class="form-label">Mq min</label><input id="rq-mqMin" placeholder="Min" inputmode="numeric" value="${esc(r.mqMin||'')}"></div><div><label class="form-label">Mq max</label><input id="rq-mqMax" placeholder="Max" inputmode="numeric" value="${esc(r.mqMax||'')}"></div></div>`;
   h += `<div style="margin-bottom:8px;"><label class="form-label">Classe energetica</label>${ms('rq-classeEnergetica', OPT_CLASSE_RICERCA, r.classeEnergetica)}</div>`;
@@ -4938,6 +4936,8 @@ function salvaRichiesta(pid){
   const prev = p.richiesta || {};
   p.richiesta = Object.assign(prev, {
     scopo:msVal('rq-scopo') || prev.scopo || [],
+    zonaCompetenza:zonaEditorVal('rq-zone'),
+    zona:zonaEtichette(zonaEditorVal('rq-zone')),
     budgetMin:g('rq-budgetMin').trim(),
     budget:g('rq-budget').trim(),
     arredamento:g('rq-arredamento') || 'Indifferente',
@@ -5536,29 +5536,52 @@ function renderRapportini(){
 function generaRapportoAttivita(){
  const da=document.getElementById('rp-from').value,al=document.getElementById('rp-to').value;
  if(!da||!al||da>al){alert('Seleziona un intervallo di date valido.');return;}
- const elenco=raccogliAtt().filter(a=>{const d=String(dataAtt(a)||'').slice(0,10);return d>=da&&d<=al;}).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
- // Raggruppa per immobile/persona, senza mescolare le attivita di soggetti differenti.
+ const giorno=v=>{const d=String(v||'').slice(0,10).split('-');return d.length===3?d[2]+'/'+d[1]:'';};
+ const visibile=a=>{
+   const d=String(dataAtt(a)||'').slice(0,10);
+   if(d<da||d>al)return false;
+   if(a.tipo==='da_fare'&&!a.completata)return false;
+   const im=a.immobileId?DB.immobili.find(i=>i.id===a.immobileId):null;
+   if((im&&im.stato==='IMM')||(a.entTipo==='immobile'&&a.entStato==='IMM'))return false;
+   const t=String(a.testo||a.titolo||'').toLowerCase();
+   if(/cambio stato|cambiamento stato|prima compilazione scheda valutazione|prima compilazione della scheda valutazione/.test(t))return false;
+   if(a.tipoAtt==='APPUNTAMENTO'&&!(/:\s*[^:]+/.test(t)))return false;
+   return true;
+ };
+ const elenco=raccogliAtt().filter(visibile).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
  const gruppi=new Map();
  elenco.forEach(a=>{
    const key=String(a.entTipo||'altro')+':'+String(a.entId||a.entTitolo||'');
-   if(!gruppi.has(key)) gruppi.set(key,{tipo:a.entTipo,titolo:a.entTitolo||'(senza contesto)',items:[]});
+   if(!gruppi.has(key)){
+     let titolo=a.entTitolo||'(senza contesto)';
+     if(a.entTipo==='immobile'){
+       const im=DB.immobili.find(i=>i.id===a.entId);
+       if(im)titolo=[['PA','NT','INK','VND'].includes(im.stato)?im.stato:'IMM',im.indirizzo||''].filter(Boolean).join(' — ');
+     }else if(a.entTipo==='persona'){
+       const p=trovaPersona(a.entId);
+       if(p)titolo=((p.ruoli||[]).includes('ACQUIRENTE')?'RR - ':'')+nomeCogn(p);
+     }
+     gruppi.set(key,{titolo,items:[]});
+   }
    gruppi.get(key).items.push(a);
  });
- const righe=[
-   'RAPPORTO ATTIVITA ARANJO',
-   `Periodo: ${da} – ${al}`,
-   `Attivita registrate: ${elenco.length}`,
-   ''
- ];
+ const righe=['RAPPORTO ATTIVITA ARANJO',`Periodo: ${giorno(da)} – ${giorno(al)}`,''];
  if(!elenco.length)righe.push('Nessuna attivita registrata nel periodo.');
  for(const g of gruppi.values()){
-   righe.push(`${g.tipo==='immobile'?'IMMOBILE':g.tipo==='persona'?'PERSONA':'ALTRO'} — ${g.titolo}`);
-   g.items.forEach((a,i)=>{
-     const data=String(dataAtt(a)||'').slice(0,10);
-     const descrizione=String(a.testo||a.titolo||'Attivita').replace(/\r\n?/g,'\n').trim();
-     righe.push(`${i+1}. ${data} — ${descrizione}`);
+   righe.push(g.titolo);
+   g.items.forEach(a=>{
+     let descrizione=String(a.testo||a.titolo||'Attivita').replace(/\r\n?/g,'\n').trim();
+     if(a.tipoAtt==='APPUNTAMENTO'){
+       // L'attivita generata alla chiusura contiene "[data] - TIPO: ESITO · note".
+       const m=descrizione.match(/(?:^|\n)[^\n]*?\b[A-Z][A-Z0-9 ]*:\s*(.+)$/i);
+       if(m)descrizione=m[1].trim();
+       else if(a.descrizioneEsito)descrizione=a.descrizioneEsito;
+       else return;
+     }
+     descrizione=descrizione.replace(/^\[\d{1,2}\/\d{1,2}(?:\/\d{2,4})?[^\]]*\]\s*[-–]?\s*/,'');
+     righe.push(`${giorno(dataAtt(a))} — ${descrizione}`);
    });
-   righe.push(''); // riga vuota fra immobili/persone differenti
+   righe.push('');
  }
  const testo=righe.join('\n').trimEnd();
  const out=document.getElementById('rp-output');
@@ -5596,6 +5619,72 @@ const AR_ZONE={
  'SPINADESCO':[],'VESCOVATO':[],'PERSICO DOSIMO':[],'PADERNO PONCHIELLI':[],'BONEMERSE':[],'SAN DANIELE PO':[],'OLMENETA':[],'MONTICELLI D’ONGINA':[],'CASTELVETRO PIACENTINO':[],'STAGNO LOMBARDO':[],'PIEVE D’OLMI':[],'SOSPIRO':[],'MALAGNINO':[],'CICOGNOLO':[],'GRONTARDO':[]
  }
 };
+
+function zonaNormalizza(v){
+ if(!v)return {competenza:'',macro:[],micro:[]};
+ if(typeof v==='object'&&!Array.isArray(v))return {competenza:v.competenza||'',macro:Array.isArray(v.macro)?v.macro:[],micro:Array.isArray(v.micro)?v.micro:[]};
+ const arr=Array.isArray(v)?v:[v], clean=arr.map(x=>String(x).toLocaleLowerCase('it').trim());
+ for(const [t,macros] of Object.entries(AR_ZONE)){
+  const m=Object.keys(macros).filter(k=>clean.includes(k.toLocaleLowerCase('it')));
+  const micro=[...new Set(Object.values(macros).flat())].filter(k=>clean.includes(k.toLocaleLowerCase('it')));
+  if(m.length||micro.length)return {competenza:t,macro:m,micro};
+ }
+ return {competenza:'',macro:[],micro:[]};
+}
+function zonaEtichette(v){
+ const z=zonaNormalizza(v);return [z.competenza?('ZONA '+(z.competenza==='Altrui'?'altrui':z.competenza)):null,...z.macro,...z.micro].filter(Boolean);
+}
+function zonaMatch(z,filter){
+ if(!filter||(!filter.competenza&&!filter.macro.length&&!filter.micro.length))return true;
+ const a=zonaNormalizza(z);
+ return (!filter.competenza||a.competenza===filter.competenza)
+ && (!filter.macro.length||filter.macro.some(k=>a.macro.includes(k)))
+ && (!filter.micro.length||filter.micro.some(k=>a.micro.includes(k)));
+}
+function zonaEditor(id,initial,filter=false){
+ const z=zonaNormalizza(initial);
+ const t=z.competenza||'ZdF';
+ const idAttr=esc(id);
+ let h=`<div class="zone-editor" id="${idAttr}" data-filter="${filter?'1':'0'}"><div class="form-label">Competenza · scelta esclusiva</div><div class="zone-chips">`;
+ for(const k of Object.keys(AR_ZONE))h+=`<button type="button" class="zone-chip ${k===z.competenza?'active':''}" data-zt="${esc(k)}" onclick="zonaEditorTipo('${id}',${argEvento(k)})">${k==='ZdF'?'ZONA ZdF':k==='Altrui'?'ZONA altrui':'ZONA Libera'}</button>`;
+ h+='</div><div class="zone-editor-detail">';
+ h+=zonaEditorDettagli(id,t,z.macro,z.micro);
+ h+='</div></div>';return h;
+}
+function zonaEditorDettagli(id,t,macro,micro){
+ let h='<div class="form-label" style="margin-top:12px">Macro zone · selezione multipla</div><div class="zone-chips">';
+ for(const m of Object.keys(AR_ZONE[t]||{}))h+=`<button type="button" class="zone-chip ${macro.includes(m)?'active':''}" data-zm="${esc(m)}" onclick="zonaEditorToggle('${id}','macro',${argEvento(m)})">${esc(m)}</button>`;
+ h+='</div>';
+ const all=[...new Set((macro.length?macro:Object.keys(AR_ZONE[t]||{})).flatMap(m=>AR_ZONE[t][m]||[]))];
+ if(all.length){h+='<div class="form-label" style="margin-top:12px">Micro zone · selezione multipla</div><div class="zone-chips">';for(const m of all)h+=`<button type="button" class="zone-chip ${micro.includes(m)?'active':''}" data-zu="${esc(m)}" onclick="zonaEditorToggle('${id}','micro',${argEvento(m)})">${esc(m)}</button>`;h+='</div>';}
+ return h;
+}
+function zonaEditorVal(id){
+ const e=document.getElementById(id);if(!e)return {competenza:'',macro:[],micro:[]};
+ return {competenza:e.querySelector('[data-zt].active')?.dataset.zt||'',macro:[...e.querySelectorAll('[data-zm].active')].map(x=>x.dataset.zm),micro:[...e.querySelectorAll('[data-zu].active')].map(x=>x.dataset.zu)};
+}
+function zonaEditorTipo(id,t){
+ const e=document.getElementById(id);if(!e)return;
+ const was=zonaEditorVal(id);
+ e.querySelectorAll('[data-zt]').forEach(b=>b.classList.toggle('active',b.dataset.zt===t&&was.competenza!==t));
+ const selected=was.competenza===t?'':t;
+ e.querySelector('.zone-editor-detail').innerHTML=selected?zonaEditorDettagli(id,selected,[],[]):'';
+}
+function zonaEditorToggle(id,kind,value){
+ const e=document.getElementById(id);if(!e)return;
+ const z=zonaEditorVal(id),t=z.competenza;if(!t)return;
+ const arr=kind==='macro'?z.macro:z.micro;
+ const next=arr.includes(value)?arr.filter(x=>x!==value):[...arr,value];
+ if(kind==='macro')z.macro=next;else z.micro=next;
+ const allowed=new Set((z.macro.length?z.macro:Object.keys(AR_ZONE[t])).flatMap(m=>AR_ZONE[t][m]||[]));
+ z.micro=z.micro.filter(x=>allowed.has(x));
+ e.querySelector('.zone-editor-detail').innerHTML=zonaEditorDettagli(id,t,z.macro,z.micro);
+}
+function zonaCondominio(co){return zonaNormalizza(((DB.condomini||{})[co]||{}).zonaCompetenza||((DB.condomini||{})[co]||{}).zone);}
+function zonaImmobile(im){
+ if(!im.villa&&condoDi(im)){const co=condoDi(im);const d=(DB.condomini||{})[co];if(d&&(d.zonaCompetenza||((d.zone||[]).length)))return zonaCondominio(co);}
+ return zonaNormalizza(im.zonaCompetenza||im.zone);
+}
 let arZonaTipo='ZdF',arZoneMacro=new Set(),arZoneMicro=new Set();
 function arZonaTipoSet(tipo){arZonaTipo=tipo;arZoneMacro.clear();arZoneMicro.clear();renderZoneCompetenza();}
 function arZonaMacroToggle(m){arZoneMacro.has(m)?arZoneMacro.delete(m):arZoneMacro.add(m);arZoneMicro=new Set([...arZoneMicro].filter(z=>[...arZoneMacro].some(k=>AR_ZONE[arZonaTipo][k].includes(z))));renderZoneCompetenza();}
@@ -5605,7 +5694,7 @@ function renderZoneCompetenza(){
  let h='<div class="card"><div class="form-label">Competenza · scelta esclusiva</div><div class="zone-chips">';
  Object.keys(AR_ZONE).forEach(t=>h+=`<button class="zone-chip ${t===arZonaTipo?'active':''}" onclick="arZonaTipoSet('${t}')">${t==='ZdF'?'ZONA ZdF':t==='Altrui'?'ZONA altrui':'ZONA Libera'}</button>`);
  h+='</div><div class="form-label" style="margin-top:15px">Macro zone · selezione multipla</div><div class="zone-chips">';
- Object.keys(AR_ZONE[arZonaTipo]).forEach(m=>h+=`<button class="zone-chip ${arZoneMacro.has(m)?'active':''}" onclick="arZonaMacroToggle(${JSON.stringify(m)})">${esc(m)}</button>`);
+ Object.keys(AR_ZONE[arZonaTipo]).forEach(m=>h+=`<button class="zone-chip ${arZoneMacro.has(m)?'active':''}" onclick="arZonaMacroToggle(${argEvento(m)})">${esc(m)}</button>`);
  h+='</div>';
  const micros=[...new Set([...arZoneMacro].flatMap(m=>AR_ZONE[arZonaTipo][m]))];
  if(micros.length){h+='<div class="form-label" style="margin-top:15px">Micro zone · selezione multipla</div><div class="zone-chips">';micros.forEach(z=>h+=`<button class="zone-chip ${arZoneMicro.has(z)?'active':''}" onclick="arZonaMicroToggle(${JSON.stringify(z)})">${esc(z)}</button>`);h+='</div>';}
