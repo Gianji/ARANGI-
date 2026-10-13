@@ -603,14 +603,14 @@ details.fold .box2{gap:6px;}
 .unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
 #mi-inline-map{position:relative;z-index:1}
 
-/* ARANJO 1.34.2: elementi contrattuali compatti su schermi piccoli */
+/* ARANJO 1.34.3: elementi contrattuali compatti su schermi piccoli */
 #modal-body .info-row small{font-size:11px;line-height:1.5;overflow-wrap:anywhere;}
 #modal-body .info-row .label{min-width:0;overflow-wrap:anywhere;}
 #modal-body .geo-help{line-height:1.5;}
 #modal-body [hidden]{display:none!important;}
 </style>
 <style>
-/* ARANJO 1.34.2 — comandi backup e scheda condominio mappa */
+/* ARANJO 1.34.3 — comandi backup e scheda condominio mappa */
 .backup-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .backup-actions .backup-icon-btn{box-sizing:border-box;width:100%!important;min-width:0!important;height:42px!important;min-height:42px!important;display:flex;align-items:center;justify-content:center;border-radius:11px!important}
 .backup-actions .backup-icon-btn svg{width:19px;height:19px}
@@ -621,7 +621,13 @@ details.fold .box2{gap:6px;}
 .condo-sheet-compact{margin-left:0;grid-template-columns:repeat(2,minmax(0,1fr))}
 .condo-sheet .item-card{margin-bottom:8px}
 </style>
-</head>
+<style>
+.round-nearby{width:100%;border:1px solid var(--bd);background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px;text-align:left;color:var(--tx);font-family:inherit;cursor:pointer}
+.round-nearby strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.round-nearby small{display:block;color:var(--tx2);font-size:11px;margin-top:3px}
+.round-distance{font-size:12px;font-weight:700;color:var(--blu);white-space:nowrap}
+.leaflet-control-layers{border-radius:11px!important}
+</style></head>
 <body>
 
 <div class="app">
@@ -726,7 +732,7 @@ details.fold .box2{gap:6px;}
     </section>
 
     <section id="view-roundme" class="view">
-      <button class="btn btn-primary" onclick="roundMeToggle()" id="btn-roundme-start" style="margin-bottom:10px;">▶ GPS</button>
+      <button class="btn btn-primary" onclick="roundMeToggle()" id="btn-roundme-start" style="margin-bottom:10px;">Avvia GPS</button>
       <div id="roundme-contenuto"></div>
     </section>
 
@@ -776,7 +782,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.2</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.3</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -819,7 +825,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.34.2';
+const APP_VERSION = '1.34.3';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -4364,11 +4370,90 @@ function creaIcona(info){
   if(info.tipo === 'dot') return L.divIcon({ className:'aranjo-pin', html:`<div class="pin-dot" style="background:${info.colore};">${esc(info.label)}</div>`, iconSize:[32,32], iconAnchor:[16,16], popupAnchor:[0,-16] });
   return L.divIcon({ className:'aranjo-pin', html:`<div class="pin-wrap"><div class="pin-body" style="background:${info.colore};"><div class="pin-label">${info.numero}</div></div></div>`, iconSize:[32,40], iconAnchor:[16,40], popupAnchor:[0,-40] });
 }
+
+// Round — modalita di lavoro sul territorio, geolocalizzazione e immobili vicini.
+let _roundWatchId = null;
+let _roundLastPosition = null;
+let _roundError = '';
+function roundMeToggle(){
+  if(_roundWatchId !== null){
+    navigator.geolocation.clearWatch(_roundWatchId);
+    _roundWatchId = null;
+    _roundError = '';
+    roundMeRender();
+    return;
+  }
+  if(!navigator.geolocation){
+    _roundError = 'Geolocalizzazione non disponibile in questo browser.';
+    roundMeRender();
+    return;
+  }
+  _roundError = '';
+  _roundWatchId = navigator.geolocation.watchPosition(
+    pos => {
+      _roundLastPosition = {lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy,at:Date.now()};
+      _roundError = '';
+      roundMeRender();
+    },
+    err => {
+      _roundError = err.code===1 ? 'Consenti la posizione nelle impostazioni di Safari e usa il sito tramite HTTPS.' :
+        err.code===2 ? 'Posizione non disponibile. Controlla GPS e connessione.' : 'Tempo scaduto: riprova all’aperto.';
+      if(_roundWatchId !== null){navigator.geolocation.clearWatch(_roundWatchId);_roundWatchId=null;}
+      roundMeRender();
+    },
+    {enableHighAccuracy:true,maximumAge:5000,timeout:20000}
+  );
+  roundMeRender();
+}
+function roundMeDistance(a,b,c,d){
+  const r=Math.PI/180, v=Math.sin((c-a)*r/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2;
+  return Math.round(12742000*Math.asin(Math.min(1,Math.sqrt(v))));
+}
+function roundMeRender(){
+  const host=document.getElementById('roundme-contenuto');
+  const btn=document.getElementById('btn-roundme-start');
+  if(!host) return;
+  if(btn){btn.textContent=_roundWatchId===null?'Avvia GPS':'Ferma GPS';btn.setAttribute('aria-pressed',String(_roundWatchId!==null));}
+  let h='';
+  if(_roundError) h+=`<div class="card" role="alert" style="color:var(--vnd)">${esc(_roundError)}</div>`;
+  if(!_roundLastPosition){
+    h+='<div class="card"><strong>Round · lavoro in zona</strong><p style="font-size:13px;color:var(--tx2);margin-top:8px">Attiva il GPS per vedere gli immobili e i condomini vicini, senza dover cercare l’indirizzo.</p></div>';
+    host.innerHTML=h;return;
+  }
+  const p=_roundLastPosition;
+  h+=`<div class="card" style="display:flex;justify-content:space-between;gap:8px;align-items:center"><div><strong>Posizione rilevata</strong><div style="font-size:12px;color:var(--tx2)">Precisione indicativa ±${Math.round(p.accuracy)} m</div></div><button type="button" class="btn btn-secondary btn-icon" style="width:40px;margin:0" title="Aggiorna elenco" aria-label="Aggiorna elenco" onclick="roundMeRender()">${ico('aggiorna',17)}</button></div>`;
+  const groups=new Map();
+  (DB.immobili||[]).forEach(im=>{
+    const co=im.villa?'':condoDi(im);
+    let pt=null;
+    if(co) pt=coordCondominio(co);
+    if(!pt && im.lat!=null && im.lng!=null) pt={lat:im.lat,lng:im.lng};
+    if(!pt && im.coordinate) pt=im.coordinate;
+    if(!pt) return;
+    const lat=Number(pt.lat??pt[0]), lng=Number(pt.lng??pt.lon??pt[1]);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180)return;
+    const key=co||String(im.id), label=co||im.indirizzo||'Immobile';
+    if(!groups.has(key))groups.set(key,{co,label,dist:roundMeDistance(p.lat,p.lng,lat,lng),items:[]});
+    groups.get(key).items.push(im);
+  });
+  const near=[...groups.values()].sort((a,b)=>a.dist-b.dist).slice(0,30);
+  h+=`<div style="font-size:12px;color:var(--tx2);margin:10px 2px">Immobili e condomini vicini · ${near.length} risultati</div>`;
+  if(!near.length)h+='<div class="card">Non risultano immobili geolocalizzati. Aggiungi le coordinate alle schede per vederli qui.</div>';
+  near.forEach(g=>{
+    h+=`<button type="button" class="round-nearby" onclick="${g.co?`apriPopCondo(${argEvento(g.co)})`:`apriScheda(${argEvento(g.items[0].id)})`}"><span style="flex:1;min-width:0"><strong>${esc(g.label)}</strong><small>${g.items.length} ${g.items.length===1?'immobile':'immobili'}</small></span><span class="round-distance">${g.dist<1000?g.dist+' m':(g.dist/1000).toFixed(1)+' km'}</span></button>`;
+  });
+  host.innerHTML=h;
+}
+
 function initMappa(){
   if(map) return;
   const c = _coordsCitta || CREMONA_CENTER;
   map = L.map('map', { center:c, zoom:14 });
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19, attribution:'© OpenStreetMap' }).addTo(map);
+  const strade = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap contributors'});
+  const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, maxNativeZoom:19, attribution:'Imagery © Esri, Maxar, Earthstar Geographics, and the GIS User Community'});
+  (localStorage.getItem('aranjo_map_layer') === 'satellite' ? satellite : strade).addTo(map);
+  L.control.layers({'Strade':strade,'Satellite':satellite},null,{position:'topright',collapsed:true}).addTo(map);
+  map.on('baselayerchange', e => { try {localStorage.setItem('aranjo_map_layer', e.name==='Satellite'?'satellite':'strade');}catch(_){} });
   markersLayer = L.layerGroup().addTo(map);
   map.on('contextmenu', e=>{ if(e && e.latlng) apriCreazioneDaMappa(e.latlng); });
   aggiornaMappa();
@@ -4853,7 +4938,7 @@ function collegaOccupanteCitofono(im, inf){
  if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
  inf.personaId=p.id;
 }
-/* ARANJO 1.34.2 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
+/* ARANJO 1.34.3 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
 const TIPI_DOC_LOCAZIONE=['Contratto firmato','Registrazione / ricevuta RLI','Proroga / rinnovo','Cessione / subentro','Disdetta / risoluzione','Deposito cauzionale','Verbale consegna / riconsegna','Inventario / arredi','Ricevute canoni','Comunicazioni','Altro'];
 function etichettaOperazione(op){ return op==='entrambi'?'Vendita e affitto':op==='affitto'?'Affitto':op==='vendita'?'Vendita':'Da definire'; }
 function locazioneInCorso(im){return !!(im && im.locazione && ['Locato','In scadenza'].includes(im.locazione.stato));}
