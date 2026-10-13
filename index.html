@@ -638,7 +638,7 @@ details.fold .box2{gap:6px;}
 #persone-ruolo-btn{flex:0 0 auto!important;width:auto!important;min-width:42px!important;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:100px!important;display:inline-flex!important;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--bd)!important;box-shadow:none!important}
 #persone-ruolo-btn.active{background:var(--blu-soft)!important;border-color:var(--blu)!important}
 </style><style>
-/* 2.12.5: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
+/* 2.12.6: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
 #view-persone>.search-sticky{display:block!important;position:sticky;top:-2px;z-index:20;padding:6px 0 8px}
 #view-persone #search-persone{width:100%!important;height:auto!important;min-height:0!important;background:var(--bg2)!important;border:1px solid transparent!important;border-radius:14px!important;padding:11px 16px!important;margin:0!important;box-sizing:border-box!important}
 #view-persone #search-persone:focus{background:var(--card)!important;border-color:var(--bd2)!important}
@@ -646,7 +646,7 @@ details.fold .box2{gap:6px;}
 #chips-persone #persone-ruolo-btn{width:38px!important;min-width:38px!important;height:32px!important;min-height:32px!important;padding:0!important;justify-content:center!important;position:relative!important;border:0!important;background:var(--bg2)!important;border-radius:var(--rp)!important;box-shadow:none!important;color:var(--tx2)!important}
 #chips-persone #persone-ruolo-btn.active{background:var(--blu)!important;color:#fff!important;border:0!important}
 #chips-persone #persone-ruolo-btn svg{width:16px!important;height:16px!important}
-/* 2.12.5: ricerca globale, elementi compatibili, rapporti */
+/* 2.12.6: ricerca globale, elementi compatibili, rapporti */
 #view-ricerca .search-sticky{position:sticky;top:-2px;z-index:20}
 #view-ricerca #gs-r{min-width:0;width:100%;padding-bottom:24px;overflow-wrap:anywhere}
 .global-group-title{font-size:11px;font-weight:700;color:var(--tx3);margin:18px 3px 7px;text-transform:uppercase;letter-spacing:.045em;display:flex;justify-content:space-between;align-items:center}
@@ -674,13 +674,49 @@ details.fold .box2{gap:6px;}
 .rp-actions .btn{min-width:0;margin:0;padding:10px 5px;font-size:11px}
 </style>
 <style>
-.rp-range{display:grid;grid-template-columns:1fr;gap:10px}
-.rp-date-input{width:100%;box-sizing:border-box;min-width:0}
-.rp-mode-options{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
-.rp-mode-options label{display:block;padding:10px 12px;border:1px solid var(--bd);border-radius:14px;background:var(--card)}
-.rp-mode-options strong{display:block;font-size:13px}
-.rp-mode-options small{display:block;color:var(--tx2);margin-top:2px;font-size:11px}
-@media (min-width:720px){.rp-range{grid-template-columns:1fr 1fr}}
+/* 2.12.6 — Ripristino della composizione originale dei rapporti.
+   Le colonne e i controlli data devono rispettare sempre il contenitore. */
+.rp-range{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  width:100%;
+  min-width:0;
+}
+.rp-range .form-row{
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  padding:11px 0;
+}
+.rp-range .rp-date-input{
+  display:block;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:42px;
+  box-sizing:border-box!important;
+  overflow:hidden;
+  border:0;
+  border-radius:10px;
+  padding:8px 7px!important;
+  margin:0;
+  background:var(--bg2);
+  color:var(--tx);
+  font-size:14px!important;
+  font-family:inherit;
+  font-weight:500;
+}
+/* Le parti interne del date input Safari non devono imporre una larghezza maggiore. */
+.rp-date-input::-webkit-date-and-time-value{min-width:0;text-align:left}
+.rp-date-input::-webkit-datetime-edit{min-width:0;max-width:100%;padding:0;overflow:hidden}
+.rp-date-input::-webkit-calendar-picker-indicator{margin:0;padding:0;width:13px;flex:none}
+.rp-mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 12px}
+.rp-mode-options label{min-width:0;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 10px;cursor:pointer;line-height:1.4;font-size:12px}
+.rp-mode-options label:has(input:checked){background:var(--card);border-color:var(--blu)}
+.rp-mode-options strong{display:block;font-size:12.5px;margin-top:6px}
+.rp-mode-options small{display:block;color:var(--tx2);font-size:11px;margin-top:4px}
+@media(max-width:345px){.rp-range{gap:6px}.rp-range .rp-date-input{font-size:12px!important;padding:8px 5px!important}}
 </style>
 
 </head>
@@ -842,7 +878,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.5</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.6</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -885,7 +921,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.12.5';
+const APP_VERSION = '2.12.6';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -4736,7 +4772,7 @@ function salvaNuovaPersona(){
 }
 
 
-/* 2.12.5: associazioni autonome fra RR e immobili NT/INK */
+/* 2.12.6: associazioni autonome fra RR e immobili NT/INK */
 function aggiornaSchedaDopoCollegaRR(pid){
  if(document.getElementById('rr-pick-list')){filtraCollegaRRImmobile(pid);return;}
  // Sostituisci il contenuto della scheda attuale senza impilarne una copia.
@@ -5654,24 +5690,14 @@ function fermaScanner(){ if(window._scanStream){ try{ window._scanStream.getTrac
 
 
 function renderRapportini(){
- const c=document.getElementById('rapportini-lista'); if(!c) return;
+ const c=document.getElementById('rapportini-lista');if(!c)return;
  const today=ymd(new Date());
- const mese=today.slice(0,8)+'01';
- c.innerHTML=`<div class="card rp-card">
-   <h2>Rapporti</h2>
-   <div class="rp-range">
-     <div class="form-row"><label class="form-label">Dal</label><input class="form-input rp-date-input" type="date" id="rp-from" value="${mese}"></div>
-     <div class="form-row"><label class="form-label">Al</label><input class="form-input rp-date-input" type="date" id="rp-to" value="${today}"></div>
-   </div>
-   <div class="form-label" style="margin-top:12px">Tipo di rapporto</div>
-   <div class="rp-mode-options">
-     <label><input type="radio" name="rp-mode" value="sintetico" checked> <strong>Sintetico</strong><small>Report sintetico, senza orari</small></label>
-     <label><input type="radio" name="rp-mode" value="analitica"> <strong>Analitica</strong><small>Ogni attivita con orario</small></label>
-   </div>
-   <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="generaRapportoAttivita()">Genera rapporto</button>
- </div><div id="rp-output"></div>`;
+ c.innerHTML=`<div class="card rp-card"><h2>Rapporti</h2>
+ <div class="rp-range"><div class="form-row"><label class="form-label" for="rp-from">Dal</label><input class="form-input rp-date-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label" for="rp-to">Al</label><input class="form-input rp-date-input" type="date" id="rp-to" value="${today}"></div></div>
+ <div class="form-label" style="margin-top:12px">Tipo di rapporto</div>
+ <div class="rp-mode-options"><label><input type="radio" name="rp-mode" value="sintetico" checked><strong>Sintetico</strong><small>Attivita ed esiti essenziali</small></label><label><input type="radio" name="rp-mode" value="analitica"><strong>Analitico</strong><small>Dettaglio delle attivita e orari</small></label></div>
+ <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
 }
-
 function reportGiorno(v){
  const txt=String(v||'');
  const m=txt.match(/^(\d{4})-(\d{2})-(\d{2})/);
