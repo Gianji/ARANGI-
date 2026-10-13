@@ -604,14 +604,14 @@ details.fold .box2{gap:6px;}
 .unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
 #mi-inline-map{position:relative;z-index:1}
 
-/* ARANJO 1.34.8: elementi contrattuali compatti su schermi piccoli */
+/* ARANJO 2.12: elementi contrattuali compatti su schermi piccoli */
 #modal-body .info-row small{font-size:11px;line-height:1.5;overflow-wrap:anywhere;}
 #modal-body .info-row .label{min-width:0;overflow-wrap:anywhere;}
 #modal-body .geo-help{line-height:1.5;}
 #modal-body [hidden]{display:none!important;}
 </style>
 <style>
-/* ARANJO 1.34.8 — comandi backup e scheda condominio mappa */
+/* ARANJO 2.12 — comandi backup e scheda condominio mappa */
 .backup-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .backup-actions .backup-icon-btn{box-sizing:border-box;width:100%!important;min-width:0!important;height:42px!important;min-height:42px!important;display:flex;align-items:center;justify-content:center;border-radius:11px!important}
 .backup-actions .backup-icon-btn svg{width:19px;height:19px}
@@ -628,6 +628,12 @@ details.fold .box2{gap:6px;}
 .round-nearby small{display:block;color:var(--tx2);font-size:11px;margin-top:3px}
 .round-distance{font-size:12px;font-weight:700;color:var(--blu);white-space:nowrap}
 .leaflet-control-layers{border-radius:11px!important}
+</style><style>
+.people-findbar{display:grid!important;grid-template-columns:minmax(0,1fr) 44px!important;gap:8px!important;align-items:center}
+.people-filter-btn{width:44px!important;height:44px!important;min-width:44px!important;border:1px solid var(--bd)!important;border-radius:12px!important;background:var(--card)!important;display:flex!important;align-items:center;justify-content:center;padding:0!important;box-shadow:none!important}
+.people-filter-btn:active{transform:scale(.97)}
+.people-filter-indicator{position:absolute;top:2px;right:2px}
+.np-company[hidden]{display:none!important}
 </style></head>
 <body>
 
@@ -732,11 +738,13 @@ details.fold .box2{gap:6px;}
       </div>
     </section>
 
-    <section id="view-roundme" class="view">
-      <button class="btn btn-primary" onclick="roundMeToggle()" id="btn-roundme-start" style="margin-bottom:10px;">Avvia GPS</button>
-      <div id="roundme-contenuto"></div>
+    <section id="view-ricerca" class="view">
+      <div class="search-sticky"><input type="search" class="search-bar" id="gs-i" placeholder="Cerca persone, immobili, attivita, condomini..." oninput="eseguiRicerca(this.value)" autocomplete="off"></div>
+      <div id="gs-r"><div class="empty">Cerca in tutto ARANJO</div></div>
     </section>
 
+    <section id="view-zone" class="view"><h2 style="margin-bottom:12px">Zone di competenza</h2><div id="zone-lista"></div></section>
+    <section id="view-rubrica" class="view"><div class="search-sticky"><input type="search" class="search-bar" id="rubrica-q" placeholder="Cerca nella rubrica..." oninput="renderRubrica()"></div><div id="rubrica-lista"></div></section>
     <section id="view-magazzino" class="view">
       <div class="search-sticky" style="display:flex;gap:6px;">
         <input type="search" class="search-bar" id="search-magazzino" placeholder="Cerca articolo..." style="flex:1;">
@@ -747,7 +755,7 @@ details.fold .box2{gap:6px;}
     </section>
 
     <section id="view-rapportini" class="view">
-      <button class="btn btn-primary" onclick="apriNuovoRapportino()" id="btn-new-rapportino" style="margin-bottom:10px;"></button>
+
       <div id="rapportini-lista"></div>
     </section>
 
@@ -755,12 +763,13 @@ details.fold .box2{gap:6px;}
       <div class="card">
         <h2>Strumenti</h2>
         <div style="display:flex;gap:6px;">
-          <button class="btn btn-secondary" style="flex:1;" onclick="mostraView('view-magazzino')"><span id="ico-mag"></span></button>
+          
           <button class="btn btn-secondary" style="flex:1;" onclick="mostraView('view-rapportini')"><span id="ico-rapp"></span></button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="apriViewChiamate()"><span id="ico-chiam"></span></button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="apriRubrica()"><span id="ico-chiam"></span></button>
         </div>
       </div>
-      <button class="btn btn-secondary" onclick="apriRicercaGlobale()" id="btn-ricerca-globale"></button>
+
+      <button type="button" class="btn btn-secondary" style="width:100%;margin-bottom:12px" onclick="mostraView('view-zone');renderZoneCompetenza()">Zone di competenza</button>
       <div class="card">
         <h2>Aspetto</h2>
         <div style="display:flex;gap:6px;">
@@ -783,7 +792,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.8</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -802,7 +811,7 @@ details.fold .box2{gap:6px;}
     <button data-tab="persone" aria-label="Persone" title="Persone"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></button>
     <button data-tab="attivita" aria-label="Attivita" title="Attivita"><svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></button>
     <button data-tab="mappa" aria-label="Mappa" title="Mappa"><svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></button>
-    <button data-tab="roundme" aria-label="Zona e GPS" title="Zona e GPS"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="22"/></svg></button>
+    <button data-tab="ricerca" aria-label="Ricerca globale" title="Ricerca globale"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="16" y1="16" x2="22" y2="22"/></svg></button>
     <button data-tab="altro" aria-label="Altro e impostazioni" title="Altro e impostazioni"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 10v6M4.22 4.22l4.24 4.24m7.08 7.08l4.24 4.24M1 12h6m10 0h6M4.22 19.78l4.24-4.24m7.08-7.08l4.24-4.24"/></svg></button>
   </nav>
 </div>
@@ -826,7 +835,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.34.8';
+const APP_VERSION = '2.12';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1297,7 +1306,7 @@ let fabMenuAperto = false;
 const seq = () => { if(typeof DB.nextSeq !== 'number') DB.nextSeq = 1; const s = DB.nextSeq; DB.nextSeq = s+1; return s; };
 
 const nomeCompleto = p => !p ? '' : (p.nome || p.cognome) ? `${p.nome||''} ${p.cognome||''}`.trim() : (p.cognomeNome || '');
-const nomeCogn = p => !p ? '' : (p.cognome || p.nome) ? `${p.cognome||''} ${p.nome||''}`.trim() : (p.cognomeNome || '');
+const nomeCogn = p => !p ? '' : p.tipoSoggetto==='societa' ? (p.ragioneSociale||p.cognome||'') : (p.cognome || p.nome) ? `${p.cognome||''} ${p.nome||''}`.trim() : (p.cognomeNome || '');
 const trovaPersona = id => DB.persone.find(p => p.id === id);
 const propsImmobile = im => { if(!im) return []; if(!Array.isArray(im.proprietari)) im.proprietari = []; return im.proprietari.map(pr => ({ personaId:pr.personaId, quota:pr.quota, principale:pr.principale, note:pr.note, tipo:pr.tipo||'Proprieta', persona:trovaPersona(pr.personaId) })).filter(x => x.persona); };
 const propPrinc = im => { const ps = propsImmobile(im); return ps.find(x => x.principale) || ps[0] || null; };
@@ -1565,8 +1574,8 @@ function switchTab(tab){
       };
       if(!_coordsCitta) geocodificaCitta().then(aggiornaCentro); else aggiornaCentro();
     }, 100);
-  } else if(tab === 'roundme'){
-    fab.style.display = 'none'; fm.classList.remove('open'); roundMeRender();
+  } else if(tab === 'ricerca'){
+    fab.style.display = 'none'; fm.classList.remove('open');
   } else {
     fab.style.display = (tab==='immobili'||tab==='persone'||tab==='attivita') ? 'flex' : 'none';
     fm.classList.remove('open'); fabMenuAperto = false;
@@ -1584,6 +1593,7 @@ tabBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab))
 function mostraView(id){
   let tab = id.replace('view-', '');
   if(id === 'view-agenda' || id === 'view-planning' || id === 'view-chiamate') tab = 'attivita';
+  if(id==='view-rubrica'||id==='view-zone')tab='altro';
   switchTab(tab);
   views.forEach(v => v.classList.toggle('active', v.id === id));
   const ac = document.getElementById('app-content');
@@ -2344,8 +2354,8 @@ function apriSchedaApp(id){
   if(a.luogo) h += `<div class="info-row" style="padding:10px 14px;border-bottom:1px solid var(--bd);"><span class="label">Luogo</span><span class="value">${esc(a.luogo)}</span></div>`;
   if(a.note) h += `<div class="info-row" style="padding:10px 14px;"><span class="label">Note</span><span class="value">${esc(a.note)}</span></div>`;
   h += '</div>';
-  if(im) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`;
-  if(per) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${per.id}'),100)"><span class="txt">${esc(titoloPersona(per))}</span></div>`;
+  if(im) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`;
+  if(per) h += `<div class="immobile-line" style="margin-bottom:6px;" onclick="setTimeout(() => apriSchedaPersona('${per.id}'),100)"><span class="txt">${esc(titoloPersona(per))}</span></div>`;
   const passato = new Date(a.dataFine) < new Date();
   const em = !!t.esito_obbligatorio && !a.esito && a.stato !== 'eseguito';
   if((a.stato !== 'eseguito' && a.stato !== 'annullato' && passato && t.esiti) || em) h += `<button class="btn btn-primary" onclick="apriChiusuraApp('${a.id}')">${ico('check',15)} Chiudi con esito</button>`;
@@ -3083,7 +3093,7 @@ function apriScheda(id){
         const mb = mm.slice(0,10).map(m => {
           const cls = m.score >= 70 ? 'high' : m.score >= 40 ? 'mid' : 'low';
           const ko = (typeof matchNote === 'function') ? matchNote(m) : (m.ko && m.ko.length ? `<small>manca: ${m.ko.join(', ')}</small>` : '');
-          return `<div class="match-line" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${m.persona.id}'),100)"><div class="ml-name">${esc(nomeCogn(m.persona))}${m.persona.telefono?' · '+m.persona.telefono:''}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
+          return `<div class="match-line" onclick="setTimeout(() => apriSchedaPersona('${m.persona.id}'),100)"><div class="ml-name">${esc(nomeCogn(m.persona))}${m.persona.telefono?' · '+m.persona.telefono:''}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
         }).join('');
         h += collapsible('im_match', ico('target',13) + ' Acquirenti compatibili', mb, mm.length);
       }
@@ -3303,7 +3313,7 @@ function apriSchedaValutazione(id){
   h += `<label for="sv-valutata" style="cursor:pointer;">Immobile valutato</label></div>`;
   h += '<div style="font-size:11.5px;color:var(--tx2);margin-top:4px;padding-left:30px;">Al salvataggio, i dati verranno copiati nel dossier dell\'immobile</div></div>';
 
-  h += `<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="chiudiModal();setTimeout(() => apriScheda('${id}'),80)">Annulla</button><button class="btn btn-primary" onclick="salvaSchedaValutazione('${id}')">${ico('check',15)} Salva e compila dossier</button></div>`;
+  h += `<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="setTimeout(() => apriScheda('${id}'),80)">Annulla</button><button class="btn btn-primary" onclick="salvaSchedaValutazione('${id}')">${ico('check',15)} Salva e compila dossier</button></div>`;
 
   apriModal('Scheda valutazione', h);
   svRendiAmbienti();
@@ -4620,9 +4630,11 @@ function apriNuovaPersona(){
   let h = '<div class="zone-chips" id="np-ruoli">';
   [['ACQUIRENTE','Acquirente'],['RICERCA_LOCAZIONE','Cerca affitto'],['PROP','Venditore'],['LOCATORE','Locatore'],['CONDUTTORE','Conduttore'],['PROFESSIONISTA','Professionista']].forEach(r => h += `<button type="button" class="zone-chip" data-ruolo="${r[0]}" onclick="toggleNpR('${r[0]}')">${r[1]}</button>`);
   h += '</div>';
+  h += '<div class="form-row"><label class="form-label">Tipo anagrafica</label><select id="np-tipo" class="form-select" onchange="npAggiornaTipo()"><option value="persona">Persona fisica</option><option value="societa">Societa / persona giuridica</option></select></div>';
   h += '<div class="form-group" style="margin-top:10px;">';
   h += '<div class="form-row"><label class="form-label">Cognome</label><input class="form-input" id="np-cognome"></div>';
   h += '<div class="form-row"><label class="form-label">Nome</label><input class="form-input" id="np-nome"></div>';
+  h += '<div class="form-row np-company" hidden><label class="form-label">Partita IVA</label><input class="form-input" id="np-piva"></div><div class="form-row np-company" hidden><label class="form-label">PEC</label><input class="form-input" id="np-pec"></div><div class="form-row np-company" hidden><label class="form-label">Referente</label><input class="form-input" id="np-referente"></div>';
   h += '<div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="np-telefono" type="tel"></div>';
   h += '<div class="form-row"><label class="form-label">Email</label><input class="form-input" id="np-email" type="email"></div>';
   h += '</div>';
@@ -4631,11 +4643,19 @@ function apriNuovaPersona(){
   apriModal('Nuovo contatto', h);
   renderNpExtra();
 }
+function npAggiornaTipo(){
+ const societa=document.getElementById('np-tipo')?.value==='societa';
+ document.querySelectorAll('.np-company').forEach(e=>e.hidden=!societa);
+ const c=document.getElementById('np-cognome'),n=document.getElementById('np-nome');
+ if(c)c.placeholder=societa?'Ragione sociale':'Cognome';
+ if(n){n.closest('.form-row').hidden=societa;if(societa)n.value='';}
+}
 function salvaNuovaPersona(){
   const g = id => (document.getElementById(id)||{}).value || '';
   const cog = g('np-cognome').trim().toUpperCase();
   const nom = g('np-nome').trim().toUpperCase();
-  if(!cog || !nom){ alert('Cognome e Nome obbligatori'); return; }
+  const societa=g('np-tipo')==='societa';
+  if(!cog || (!societa&&!nom)){ alert(societa?'Inserisci la ragione sociale':'Cognome e Nome obbligatori'); return; }
   if(!_npR.length){ alert('Seleziona almeno un ruolo'); return; }
   const tel = g('np-telefono').trim();
   const em = g('np-email').trim();
@@ -4646,7 +4666,7 @@ function salvaNuovaPersona(){
     }
   }
   const ad = new Date().toISOString();
-  const p = { id:uid(), nome:nom, cognome:cog, ruoli:_npR.slice(), telefono:tel, email:em, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
+  const p = { id:uid(), tipoSoggetto:societa?'societa':'persona', ragioneSociale:societa?cog:'', partitaIVA:societa?g('np-piva').trim():'', pec:societa?g('np-pec').trim():'', referente:societa?g('np-referente').trim():'', nome:nom, cognome:cog, ruoli:_npR.slice(), telefono:tel, email:em, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
   if(_npR.indexOf('PROFESSIONISTA') >= 0) p.tipoProf = g('np-tipoProf') || 'altro';
   if(_npR.indexOf('ACQUIRENTE') >= 0){ p.statoRR = g('np-statoRR') || 'attiva'; p.richiesta = richiestaVuota(); }
   DB.persone.push(p);
@@ -4709,7 +4729,7 @@ function apriSchedaPersona(id){
         const mb = mm.slice(0,10).map(m => {
           const cls = m.score >= 70 ? 'high' : m.score >= 40 ? 'mid' : 'low';
           const ko = (typeof matchNote === 'function') ? matchNote(m) : (m.ko && m.ko.length ? `<small>manca: ${m.ko.join(', ')}</small>` : '');
-          return `<div class="match-line" onclick="chiudiModal();setTimeout(() => apriScheda('${m.immobile.id}'),100)"><div class="ml-name">${esc(m.immobile.indirizzo || titoloImmobile(m.immobile))}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
+          return `<div class="match-line" onclick="setTimeout(() => apriScheda('${m.immobile.id}'),100)"><div class="ml-name">${esc(m.immobile.indirizzo || titoloImmobile(m.immobile))}${ko}</div><div class="ml-score ${cls}">${m.score}%</div></div>`;
         }).join('');
         h += collapsible('p_match', ico('casa',13) + ' Compatibili', mb, mm.length);
       }
@@ -4721,7 +4741,7 @@ function apriSchedaPersona(id){
       const pr = (im.proprietari||[]).find(x => x.personaId === p.id);
       const q = pr && pr.quota ? ' · ' + pr.quota + '%' : '';
       const tp = pr && pr.tipo && pr.tipo !== 'Proprieta' ? ' · ' + pr.tipo : '';
-      bodyI += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${ico('casa',12)} ${esc(im.indirizzo||'')}${esc(q+tp)}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`;
+      bodyI += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${ico('casa',12)} ${esc(im.indirizzo||'')}${esc(q+tp)}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`;
     });
   } else bodyI = '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Nessuno collegato</div>';
   bodyI += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriLinkImmobili('${p.id}')">${ico('piu',14)} Aggiungi immobile</button>`;
@@ -4978,7 +4998,7 @@ function collegaOccupanteCitofono(im, inf){
  if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
  inf.personaId=p.id;
 }
-/* ARANJO 1.34.8 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
+/* ARANJO 2.12 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
 const TIPI_DOC_LOCAZIONE=['Contratto firmato','Registrazione / ricevuta RLI','Proroga / rinnovo','Cessione / subentro','Disdetta / risoluzione','Deposito cauzionale','Verbale consegna / riconsegna','Inventario / arredi','Ricevute canoni','Comunicazioni','Altro'];
 function etichettaOperazione(op){ return op==='entrambi'?'Vendita e affitto':op==='affitto'?'Affitto':op==='vendita'?'Vendita':'Da definire'; }
 function locazioneInCorso(im){return !!(im && im.locazione && ['Locato','In scadenza'].includes(im.locazione.stato));}
@@ -5509,41 +5529,69 @@ function scanBarcode(){
 function fermaScanner(){ if(window._scanStream){ try{ window._scanStream.getTracks().forEach(t => t.stop()); }catch(e){} window._scanStream = null; } chiudiModal(); }
 
 function renderRapportini(){
-  const c = document.getElementById('rapportini-lista'); if(!c) return;
-  if(!DB.rapportini) DB.rapportini = [];
-  const l = DB.rapportini.slice().sort((a,b) => (b.data||'').localeCompare(a.data||''));
-  if(!l.length){ c.innerHTML = `<div class="empty">${ico('documento',28)}Nessun rapportino</div>`; return; }
-  let h = '';
-  l.forEach(r => h += `<div class="item-card" onclick="apriRapportino('${r.id}')"><div class="item-title">${esc(r.titolo || ('Rapportino ' + r.data))}</div><div class="item-sub">${fmtD(r.data)}</div></div>`);
-  c.innerHTML = h;
+ const c=document.getElementById('rapportini-lista');if(!c)return;
+ const today=ymd(new Date());
+ c.innerHTML=`<div class="card"><h2>Rapporto attivita</h2><div class="form-row"><label class="form-label">Dal</label><input class="form-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label">Al</label><input class="form-input" type="date" id="rp-to" value="${today}"></div><button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
 }
-function apriNuovoRapportino(){
-  const h = `<div class="form-group"><div class="form-row"><label class="form-label">Titolo</label><input class="form-input" id="rp-t"></div><div class="form-row"><label class="form-label">Data</label><input class="form-input" type="date" id="rp-d" value="${ymd(new Date())}"></div><div class="form-row"><label class="form-label">Ore</label><input class="form-input" id="rp-o" inputmode="decimal"></div><div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="rp-n"></textarea></div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaRapportino()">Salva</button></div>`;
-  apriModal('Rapportino', h);
+function generaRapportoAttivita(){
+ const da=document.getElementById('rp-from').value,al=document.getElementById('rp-to').value;
+ if(!da||!al||da>al){alert('Seleziona un intervallo di date valido.');return;}
+ const elenco=raccogliAtt().filter(a=>{const d=String(dataAtt(a)||'').slice(0,10);return d>=da&&d<=al;}).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
+ const testo=`RAPPORTO ATTIVITA ARANJO\\nPeriodo: ${da} – ${al}\\nAttivita registrate: ${elenco.length}\\n\\n`+
+ (elenco.length?elenco.map((a,i)=>`${i+1}. ${String(dataAtt(a)).slice(0,10)} — ${a.testo||a.titolo||'Attivita'}${a.entTitolo?' — '+a.entTitolo:''}`).join('\\n'):'Nessuna attivita registrata nel periodo.');
+ const out=document.getElementById('rp-output');
+ out.innerHTML=`<div class="card"><textarea class="form-textarea" id="rp-text" rows="15" readonly></textarea><button class="btn btn-secondary" style="width:100%;margin-top:8px" onclick="navigator.clipboard.writeText(document.getElementById('rp-text').value).then(()=>alert('Rapporto copiato')).catch(()=>{document.getElementById('rp-text').select();document.execCommand('copy')})">Copia testo</button></div>`;
+ document.getElementById('rp-text').value=testo;
 }
-function salvaRapportino(id){
-  const g = x => (document.getElementById(x)||{}).value || '';
-  if(!DB.rapportini) DB.rapportini = [];
-  if(id){ const r = DB.rapportini.find(x => x.id === id); if(!r) return; r.titolo = g('rp-t'); r.data = g('rp-d'); r.ore_manodopera = parseFloat(g('rp-o'))||0; r.note = g('rp-n'); r.updatedAt = new Date().toISOString(); }
-  else DB.rapportini.push({ id:uid(), titolo:g('rp-t'), data:g('rp-d'), ore_manodopera:parseFloat(g('rp-o'))||0, note:g('rp-n'), createdAt:new Date().toISOString() });
-  Storage.save(DB); chiudiModal(); renderRapportini();
+function apriRubrica(){
+ mostraView('view-rubrica');
+ renderRubrica();
 }
-function apriRapportino(id){
-  const r = DB.rapportini.find(x => x.id === id); if(!r) return;
-  let h = `<div class="card" style="padding:14px;"><div class="info-row"><span class="label">Data</span><span class="value">${fmtD(r.data)}</span></div>${r.ore_manodopera?`<div class="info-row"><span class="label">Ore</span><span class="value">${r.ore_manodopera} h</span></div>`:''}${r.note?`<div class="info-row"><span class="label">Note</span><span class="value">${esc(r.note)}</span></div>`:''}</div>`;
-  h += `<button class="btn btn-danger" onclick="eliminaRapportino('${id}')">${ico('cestino',15)}</button><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>`;
-  apriModal(r.titolo || 'Rapportino', h);
+function renderRubrica(){
+ const c=document.getElementById('rubrica-lista');if(!c)return;
+ const q=(document.getElementById('rubrica-q')?.value||'').toLocaleLowerCase('it');
+ const l=(DB.persone||[]).filter(p=>p.telefono||p.telefono2).filter(p=>[nomeCogn(p),p.telefono,p.telefono2].join(' ').toLocaleLowerCase('it').includes(q)).sort((a,b)=>nomeCogn(a).localeCompare(nomeCogn(b),'it'));
+ c.innerHTML=l.length?l.map(p=>`<div class="item-card" style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0" onclick="apriSchedaPersona('${p.id}')"><strong>${esc(nomeCogn(p))}</strong><div class="item-sub">${esc([p.telefono,p.telefono2].filter(Boolean).join(' · '))}</div></div><a class="btn btn-secondary btn-icon" aria-label="Chiama" href="tel:${esc(String(p.telefono||p.telefono2).replace(/[^+\\d]/g,''))}">${ico('telefono',17)}</a></div>`).join(''):'<div class="empty">Nessun numero disponibile</div>';
 }
-function eliminaRapportino(id){
-  if(!confirm('Eliminare?')) return;
-  DB.rapportini = DB.rapportini.filter(x => x.id !== id);
-  Storage.save(DB); chiudiModal(); renderRapportini();
+
+
+const AR_ZONE={
+ 'ZdF':{
+ 'CASTELLO':['castello','via ghinaglia','porta milano','via massarotti nord','penny'],
+ 'SANT’AMBROGIO':['via bergamo','san zeno','via filzi','via castelleone','via sesto'],
+ 'STAZIONE':['via dante ovest','stazione','porta milano'],
+ 'VIA MILANO':['via milano','incrociatello','via galletti','via barosi'],
+ 'SAN PAOLO':['piazza san paolo','via bissolati','via ruggero manna','via milazzo','via dei rustici','via villa glori'],
+ 'VIA MASSAROTTI':['via massarotti','via bissolati','via ruggero manna','via massarotti nord','penny'],
+ 'CAVATIGOZZI':[],'MIGLIARO':[],'CAMBONINO':[],'BOSCHETTO':[]
+ },
+ 'Altrui':{
+ 'CR1A6':['borgo loreto','san bernardo','naviglio','maristella','zaist','lucchini','stadio','annona','porta romana','largo pagliari','san felice','san savino','novati','cascinetto','villetta','concordia'],
+ 'CR1A8':['po','parco','trebbia','canottieri','cristo re','giordano','cadore','bagnara','battaglione','san rocco','gerre de caprioli']
+ },
+ 'Libera':{
+ 'SPINADESCO':[],'VESCOVATO':[],'PERSICO DOSIMO':[],'PADERNO PONCHIELLI':[],'BONEMERSE':[],'SAN DANIELE PO':[],'OLMENETA':[],'MONTICELLI D’ONGINA':[],'CASTELVETRO PIACENTINO':[],'STAGNO LOMBARDO':[],'PIEVE D’OLMI':[],'SOSPIRO':[],'MALAGNINO':[],'CICOGNOLO':[],'GRONTARDO':[]
+ }
+};
+let arZonaTipo='ZdF',arZoneMacro=new Set(),arZoneMicro=new Set();
+function arZonaTipoSet(tipo){arZonaTipo=tipo;arZoneMacro.clear();arZoneMicro.clear();renderZoneCompetenza();}
+function arZonaMacroToggle(m){arZoneMacro.has(m)?arZoneMacro.delete(m):arZoneMacro.add(m);arZoneMicro=new Set([...arZoneMicro].filter(z=>[...arZoneMacro].some(k=>AR_ZONE[arZonaTipo][k].includes(z))));renderZoneCompetenza();}
+function arZonaMicroToggle(z){arZoneMicro.has(z)?arZoneMicro.delete(z):arZoneMicro.add(z);renderZoneCompetenza();}
+function renderZoneCompetenza(){
+ const c=document.getElementById('zone-lista');if(!c)return;
+ let h='<div class="card"><div class="form-label">Competenza · scelta esclusiva</div><div class="zone-chips">';
+ Object.keys(AR_ZONE).forEach(t=>h+=`<button class="zone-chip ${t===arZonaTipo?'active':''}" onclick="arZonaTipoSet('${t}')">${t==='ZdF'?'ZONA ZdF':t==='Altrui'?'ZONA altrui':'ZONA Libera'}</button>`);
+ h+='</div><div class="form-label" style="margin-top:15px">Macro zone · selezione multipla</div><div class="zone-chips">';
+ Object.keys(AR_ZONE[arZonaTipo]).forEach(m=>h+=`<button class="zone-chip ${arZoneMacro.has(m)?'active':''}" onclick="arZonaMacroToggle(${JSON.stringify(m)})">${esc(m)}</button>`);
+ h+='</div>';
+ const micros=[...new Set([...arZoneMacro].flatMap(m=>AR_ZONE[arZonaTipo][m]))];
+ if(micros.length){h+='<div class="form-label" style="margin-top:15px">Micro zone · selezione multipla</div><div class="zone-chips">';micros.forEach(z=>h+=`<button class="zone-chip ${arZoneMicro.has(z)?'active':''}" onclick="arZonaMicroToggle(${JSON.stringify(z)})">${esc(z)}</button>`);h+='</div>';}
+ h+='</div>';c.innerHTML=h;
 }
 
 function apriRicercaGlobale(){
-  const h = `<input type="search" class="search-bar" id="gs-i" placeholder="Cerca..." style="margin-bottom:10px;"><div id="gs-r"><div class="empty" style="padding:20px 8px;font-size:12px;">Digita 2+ caratteri</div></div><div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Chiudi</button></div>`;
-  apriModal('Cerca', h);
-  setTimeout(() => { const i = document.getElementById('gs-i'); if(i){ i.focus(); i.addEventListener('input', e => eseguiRicerca(e.target.value)); } }, 80);
+  switchTab('ricerca');
+  setTimeout(()=>document.getElementById('gs-i')?.focus(),50);
 }
 function eseguiRicerca(q){
   const c = document.getElementById('gs-r'); if(!c) return;
@@ -5555,10 +5603,10 @@ function eseguiRicerca(q){
   raccogliAtt().forEach(a => { const f = [a.testo, a.entTitolo].map(x => String(x == null ? '' : x).toLowerCase()); if(f.some(x => x.indexOf(qq) >= 0)) res.a.push(a); });
   for(const co in (DB.condomini||{})) if(co.toLowerCase().indexOf(qq) >= 0) res.c.push(co);
   let h = '';
-  if(res.p.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 4px;">Persone</div>'; res.p.slice(0,8).forEach(p => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriSchedaPersona('${p.id}'),100)"><span class="txt">${esc(nomeCogn(p))}</span></div>`); }
-  if(res.i.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Immobili</div>'; res.i.slice(0,8).forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`); }
-  if(res.a.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Attivita</div>'; res.a.slice(0,8).forEach(a => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}'),100)"><span class="txt">${esc(a.testo.slice(0,50))}</span></div>`); }
-  if(res.c.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Condomini</div>'; res.c.slice(0,8).forEach(co => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();switchTab('immobili');selCondo(${argEvento(co)})"><span class="txt">${esc(co)}</span></div>`); }
+  if(res.p.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:6px 0 4px;">Persone</div>'; res.p.slice(0,8).forEach(p => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriSchedaPersona('${p.id}'),100)"><span class="txt">${esc(nomeCogn(p))}</span></div>`); }
+  if(res.i.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Immobili</div>'; res.i.slice(0,8).forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span></div>`); }
+  if(res.a.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Attivita</div>'; res.a.slice(0,8).forEach(a => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="setTimeout(() => apriAzioniAttGlob('${a.id}','${a.entTipo}','${a.entId}'),100)"><span class="txt">${esc(a.testo.slice(0,50))}</span></div>`); }
+  if(res.c.length){ h += '<div style="font-size:10.5px;font-weight:700;color:var(--tx3);text-transform:uppercase;margin:12px 0 4px;">Condomini</div>'; res.c.slice(0,8).forEach(co => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="switchTab('immobili');selCondo(${argEvento(co)})"><span class="txt">${esc(co)}</span></div>`); }
   if(!res.p.length && !res.i.length && !res.a.length && !res.c.length) h = '<div class="empty" style="padding:20px 8px;font-size:12px;">Nessun risultato</div>';
   c.innerHTML = h;
 }
@@ -5758,10 +5806,10 @@ function applicaIcone(){
   const nc = document.getElementById('btn-new-chiamata'); if(nc) nc.innerHTML = ico('piu',16);
   const ba = document.getElementById('btn-add-articolo'); if(ba) ba.innerHTML = ico('piu',16);
   const bs = document.getElementById('btn-scan-barcode'); if(bs) bs.innerHTML = ico('barcode',16) + ' Scansiona';
-  const bn = document.getElementById('btn-new-rapportino'); if(bn) bn.innerHTML = ico('piu',16) + ' Nuovo rapportino';
+  
   const im1 = document.getElementById('ico-mag'); if(im1) im1.innerHTML = ico('pacco',16) + ' Magazzino';
   const im2 = document.getElementById('ico-rapp'); if(im2) im2.innerHTML = ico('documento',16) + ' Rapportini';
-  const im3 = document.getElementById('ico-chiam'); if(im3) im3.innerHTML = ico('telefono',16) + ' Chiamate';
+  const im3 = document.getElementById('ico-chiam'); if(im3) im3.innerHTML = ico('utenti',16) + ' Rubrica';
   const rg = document.getElementById('btn-ricerca-globale'); if(rg) rg.innerHTML = ico('lente',15) + ' Cerca';
   const nn = document.getElementById('btn-notif'); if(nn) nn.innerHTML = ico('campanella',15);
   const nc2 = document.getElementById('btn-citta'); if(nc2) nc2.innerHTML = ico('pin',15);
