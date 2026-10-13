@@ -604,14 +604,14 @@ details.fold .box2{gap:6px;}
 .unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
 #mi-inline-map{position:relative;z-index:1}
 
-/* ARANJO 1.34.4: elementi contrattuali compatti su schermi piccoli */
+/* ARANJO 1.34.5: elementi contrattuali compatti su schermi piccoli */
 #modal-body .info-row small{font-size:11px;line-height:1.5;overflow-wrap:anywhere;}
 #modal-body .info-row .label{min-width:0;overflow-wrap:anywhere;}
 #modal-body .geo-help{line-height:1.5;}
 #modal-body [hidden]{display:none!important;}
 </style>
 <style>
-/* ARANJO 1.34.4 — comandi backup e scheda condominio mappa */
+/* ARANJO 1.34.5 — comandi backup e scheda condominio mappa */
 .backup-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
 .backup-actions .backup-icon-btn{box-sizing:border-box;width:100%!important;min-width:0!important;height:42px!important;min-height:42px!important;display:flex;align-items:center;justify-content:center;border-radius:11px!important}
 .backup-actions .backup-icon-btn svg{width:19px;height:19px}
@@ -783,7 +783,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.4</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.5</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -826,7 +826,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.34.4';
+const APP_VERSION = '1.34.5';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -3139,6 +3139,28 @@ function svRaccogliDettagli(){
     sv[k]=arr[0]||{l:'',w:''}; // compatibilita con valutazioni precedenti
   });
 }
+const SV_LOCALI_APPARTAMENTO = new Set(['ingresso','soggiorno','salaPranzo','cucinaAbitabile','angoloCottura','tinello','cameraGrande','cameraMedia','cameraPiccola','bagnoAmbiente','studio']);
+function svMisuraNumero(v){const n=Number(String(v??'').trim().replace(',','.'));return Number.isFinite(n)&&n>0?n:0;}
+function svCalcolaMqAppartamento(){
+  const sv=window._svBozza;if(!sv)return {mq:0,completi:0};
+  let mq=0,completi=0;
+  SV_LOCALI_APPARTAMENTO.forEach(k=>{
+    if(!svAmbienteAttivo(sv,k))return;
+    const q=svNumeroAmbienti(sv,k),arr=svDettagliAmbiente(sv,k);
+    for(let i=0;i<q;i++){
+      const l=document.getElementById(`sv-room-${k}-${i}-l`),w=document.getElementById(`sv-room-${k}-${i}-w`);
+      const a=svMisuraNumero(l?l.value:arr[i]?.l),b=svMisuraNumero(w?w.value:arr[i]?.w);
+      if(a&&b){mq+=a*b;completi++;}
+    }
+  });
+  return {mq:Math.round(mq*100)/100,completi};
+}
+function svAggiornaMqAppartamento(){
+  const t=svCalcolaMqAppartamento(),el=document.getElementById('sv-mq');
+  if(el)el.value=t.completi?String(t.mq).replace('.',','):'';
+  const info=document.getElementById('sv-mq-info');
+  if(info)info.textContent=t.completi?`${t.completi} ${t.completi===1?'locale misurato':'locali misurati'} · solo superficie interna dell’appartamento`:'Inserisci lunghezza e profondita dei locali per calcolare il totale.';
+}
 function svRendiAmbienti(){
   const sv=window._svBozza; const target=document.getElementById('sv-ambienti-dettaglio');
   if(!sv||!target)return;
@@ -3152,7 +3174,7 @@ function svRendiAmbienti(){
       html+=`<div class="sv-room-card"><div class="sv-room-top"><strong>${SV_NOMI[k]}</strong><div class="sv-room-counter"><button type="button" title="Meno ${SV_NOMI[k]}" aria-label="Riduci ${SV_NOMI[k]}" onclick="svCambiaQuantita('${k}',-1)" ${q<=1?'disabled':''}>−</button><b>${q}</b><button type="button" title="Piu ${SV_NOMI[k]}" aria-label="Aggiungi ${SV_NOMI[k]}" onclick="svCambiaQuantita('${k}',1)" ${q>=30?'disabled':''}>+</button></div></div>`;
       for(let i=0;i<q;i++){
         const v=arr[i]||{};
-        html+=`<div class="sv-room-line"><span>${q>1?i+1:''}</span><label><small>L (m)</small><input class="form-input" id="sv-room-${k}-${i}-l" inputmode="decimal" value="${esc(v.l||'')}"></label><label><small>P (m)</small><input class="form-input" id="sv-room-${k}-${i}-w" inputmode="decimal" value="${esc(v.w||'')}"></label></div>`;
+        html+=`<div class="sv-room-line"><span>${q>1?i+1:''}</span><label><small>L (m)</small><input class="form-input" id="sv-room-${k}-${i}-l" inputmode="decimal" oninput="svAggiornaMqAppartamento()" value="${esc(v.l||'')}"></label><label><small>P (m)</small><input class="form-input" id="sv-room-${k}-${i}-w" inputmode="decimal" oninput="svAggiornaMqAppartamento()" value="${esc(v.w||'')}"></label></div>`;
       }
       html+='</div>';
     });
@@ -3163,6 +3185,7 @@ function svRendiAmbienti(){
   const bagni=svNumeroAmbienti(sv,'bagnoAmbiente');
   const sum=document.getElementById('sv-room-summary');
   if(sum)sum.textContent=[camere?camere+' camere':'',bagni?bagni+' bagni':''].filter(Boolean).join(' · ');
+  svAggiornaMqAppartamento();
 }
 function svCambiaQuantita(k, delta){
   const sv=window._svBozza;if(!sv||!svAmbienteAttivo(sv,k))return;
@@ -3222,7 +3245,8 @@ function apriSchedaValutazione(id){
   /* 3. Caratteristiche: un chip per tipo, quantita e dimensioni per ciascuna istanza */
   h += '<details class="fold" open><summary>3. Caratteristiche</summary><div>';
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Piano</label><input class="form-input" id="sv-piano" value="${esc(sv.piano||'')}"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Mq complessivi</label><input class="form-input" id="sv-mq" value="${esc(sv.mqComplessivi||'')}" inputmode="decimal"></div></div>`;
+  h += `<div class="cx-campo"><label class="form-label">Mq complessivi</label><input class="form-input" id="sv-mq" value="${esc(sv.mqComplessivi||'')}" inputmode="decimal" readonly aria-label="Mq complessivi appartamento calcolati automaticamente"></div></div>`;
+  h += '<div id="sv-mq-info" style="font-size:11px;color:var(--tx2);margin:5px 0 10px;">Solo locali interni, escluse pertinenze ed esterni.</div>';
   h += '<div class="form-label" style="margin-top:10px;">Ambienti presenti</div>';
   SV_CATEGORIE.forEach(([titolo,chiavi])=>{
     h += `<div class="sv-room-category">${titolo}</div><div class="sv-quick sv-room-chips">`;
@@ -3334,6 +3358,8 @@ function salvaSchedaValutazione(id){
     if(el) sv[{anno:'annoCostruzione',annorist:'annoRistrutturazione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare',libdal:'liberoDal',affdal:'affittatoDal'}[x]] = el.value;
   });
   svRaccogliDettagli();
+  const totaleAppartamento=svCalcolaMqAppartamento();
+  sv.mqComplessivi=totaleAppartamento.completi?String(totaleAppartamento.mq):'';
   SV_AMBIENTI_DIM.forEach(k=>{
     if(!svAmbienteAttivo(sv,k)){
       sv[k]=null;
@@ -4945,7 +4971,7 @@ function collegaOccupanteCitofono(im, inf){
  if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
  inf.personaId=p.id;
 }
-/* ARANJO 1.34.4 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
+/* ARANJO 1.34.5 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
 const TIPI_DOC_LOCAZIONE=['Contratto firmato','Registrazione / ricevuta RLI','Proroga / rinnovo','Cessione / subentro','Disdetta / risoluzione','Deposito cauzionale','Verbale consegna / riconsegna','Inventario / arredi','Ricevute canoni','Comunicazioni','Altro'];
 function etichettaOperazione(op){ return op==='entrambi'?'Vendita e affitto':op==='affitto'?'Affitto':op==='vendita'?'Vendita':'Da definire'; }
 function locazioneInCorso(im){return !!(im && im.locazione && ['Locato','In scadenza'].includes(im.locazione.stato));}
