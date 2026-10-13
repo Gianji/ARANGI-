@@ -603,7 +603,7 @@ details.fold .box2{gap:6px;}
 .unione-pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}.unione-pair label{display:flex;align-items:flex-start;gap:6px;border:1px solid var(--bd2);padding:8px;border-radius:9px;min-width:0;font-size:12px;cursor:pointer;overflow-wrap:anywhere;line-height:1.4}.unione-pair label:has(input:checked){border-color:var(--blu);background:var(--bg2)}.unione-pair input{flex-shrink:0;margin-top:2px;accent-color:var(--blu)}
 #mi-inline-map{position:relative;z-index:1}
 
-/* ARANJO 1.34.0: elementi contrattuali compatti su schermi piccoli */
+/* ARANJO 1.34.1: elementi contrattuali compatti su schermi piccoli */
 #modal-body .info-row small{font-size:11px;line-height:1.5;overflow-wrap:anywhere;}
 #modal-body .info-row .label{min-width:0;overflow-wrap:anywhere;}
 #modal-body .geo-help{line-height:1.5;}
@@ -764,7 +764,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.0</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">1.34.1</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -788,7 +788,7 @@ details.fold .box2{gap:6px;}
   </nav>
 </div>
 
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)chiudiModal()">
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)chiudiTutteModal()">
   <div class="modal-sheet">
     <div class="modal-header">
       <h2 id="modal-title"></h2>
@@ -807,7 +807,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '1.34.0';
+const APP_VERSION = '1.34.1';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1084,26 +1084,57 @@ function processImg(f){
 
 window._modalStack = 0;
 window._aranjoCloseFromUI = false;
+window._schedePrecedenti = [];
+function salvaSchedaPrecedente(){
+  const mo=document.getElementById('modal');
+  if(!mo.classList.contains('open')) return;
+  // I picker gestiscono gia' autonomamente il ritorno alla scheda chiamante.
+  if(document.getElementById('pk-s')) return;
+  const body=document.getElementById('modal-body');
+  window._schedePrecedenti.push({
+    titolo:document.getElementById('modal-title').innerHTML,
+    contenuto:body.innerHTML,
+    scroll:body.scrollTop,
+    immobile:typeof immobileAperto!=='undefined'?immobileAperto:null
+  });
+}
 function apriModal(titolo, html){
   const mo = document.getElementById('modal');
+  salvaSchedaPrecedente();
   document.getElementById('modal-title').innerHTML = titolo;
   document.getElementById('modal-body').innerHTML = html;
   document.getElementById('modal-body').scrollTop = 0;
   mo.classList.add('open');
   try{ if(!history.state || !history.state._modal){ history.pushState({ _modal:true },''); window._modalStack++; } }catch(e){}
 }
-function chiudiModal(fromBack){
+function chiudiTutteModal(fromBack){
+  window._schedePrecedenti=[];
   window._mapCreateCoord=null;
-  const mo = document.getElementById('modal');
-  const wasOpen = mo.classList.contains('open');
+  const mo=document.getElementById('modal');
+  const wasOpen=mo.classList.contains('open');
   mo.classList.remove('open');
-  document.getElementById('modal-body').innerHTML = '';
-  window._pickerSavedParent = null; window._pickerCb = null;
-  if(wasOpen && !fromBack && window._modalStack > 0){
+  document.getElementById('modal-body').innerHTML='';
+  window._pickerSavedParent=null; window._pickerCb=null;
+  if(wasOpen && !fromBack && window._modalStack>0){
     window._modalStack--;
-    window._aranjoCloseFromUI = true;
-    try{ history.back(); }catch(e){}
+    window._aranjoCloseFromUI=true;
+    try{history.back();}catch(e){}
   }
+}
+function chiudiModal(fromBack){
+  if(window._pickerSavedParent && document.getElementById('pk-s')){
+    annullaPicker(); return;
+  }
+  const precedente=window._schedePrecedenti.pop();
+  if(precedente){
+    document.getElementById('modal-title').innerHTML=precedente.titolo;
+    const body=document.getElementById('modal-body');
+    body.innerHTML=precedente.contenuto;
+    body.scrollTop=precedente.scroll;
+    if(precedente.immobile!=null && typeof immobileAperto!=='undefined') immobileAperto=precedente.immobile;
+    return;
+  }
+  chiudiTutteModal(fromBack);
 }
 
 window._filterDDBack = null;
@@ -4333,13 +4364,13 @@ function initMappa(){
 function apriPopImm(id){ chiudiModal(); apriScheda(id); }
 function apriPopCondoIdx(i){ const c = window._popCondo[i]; if(c) apriPopCondo(c); }
 function apriPopCondo(co){
-  const l = DB.immobili.filter(x => !x.villa && condoDi(x) === co);
-  let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:10px;">${esc(co)}</div>`;
-  l.forEach(im => h += `<div class="immobile-line" style="margin-bottom:5px;" onclick="chiudiModal();setTimeout(() => apriScheda('${im.id}'),100)"><span class="txt">${esc(titoloImmobile(im))}</span><span class="badge badge-${im.stato}">${im.stato}</span></div>`);
-  h += `<button class="btn btn-primary" style="margin-top:8px;" onclick="chiudiModal();switchTab('immobili');selCondo(${argEvento(co)})">${ico('casa',14)} Apri condominio</button>`;
-  h += `<button class="btn btn-secondary" style="margin-top:6px;" onclick="apriModificaCondominio(${argEvento(co)})">${ico('modifica',14)} Modifica</button>`;
-  apriModal(co, h);
+  // La scheda condominio e' la stessa usata in Immobili: niente modal alternativo.
+  if(!co) return;
+  chiudiTutteModal();
+  switchTab('immobili');
+  selCondo(co);
 }
+
 function aggiornaMappa(){
   if(!map || !markersLayer) return;
   markersLayer.clearLayers();
@@ -4791,7 +4822,7 @@ function collegaOccupanteCitofono(im, inf){
  if(!im.occupanti.some(o=>o.personaId===p.id))im.occupanti.push({personaId:p.id,tipo:'Inquilino'});
  inf.personaId=p.id;
 }
-/* ARANJO 1.34.0 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
+/* ARANJO 1.34.1 — operazione, occupazione, conduttori e archivio contrattuale indipendenti */
 const TIPI_DOC_LOCAZIONE=['Contratto firmato','Registrazione / ricevuta RLI','Proroga / rinnovo','Cessione / subentro','Disdetta / risoluzione','Deposito cauzionale','Verbale consegna / riconsegna','Inventario / arredi','Ricevute canoni','Comunicazioni','Altro'];
 function etichettaOperazione(op){ return op==='entrambi'?'Vendita e affitto':op==='affitto'?'Affitto':op==='vendita'?'Vendita':'Da definire'; }
 function locazioneInCorso(im){return !!(im && im.locazione && ['Locato','In scadenza'].includes(im.locazione.stato));}
