@@ -638,7 +638,7 @@ details.fold .box2{gap:6px;}
 #persone-ruolo-btn{flex:0 0 auto!important;width:auto!important;min-width:42px!important;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:100px!important;display:inline-flex!important;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--bd)!important;box-shadow:none!important}
 #persone-ruolo-btn.active{background:var(--blu-soft)!important;border-color:var(--blu)!important}
 </style><style>
-/* 2.12.4: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
+/* 2.12.5: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
 #view-persone>.search-sticky{display:block!important;position:sticky;top:-2px;z-index:20;padding:6px 0 8px}
 #view-persone #search-persone{width:100%!important;height:auto!important;min-height:0!important;background:var(--bg2)!important;border:1px solid transparent!important;border-radius:14px!important;padding:11px 16px!important;margin:0!important;box-sizing:border-box!important}
 #view-persone #search-persone:focus{background:var(--card)!important;border-color:var(--bd2)!important}
@@ -646,7 +646,7 @@ details.fold .box2{gap:6px;}
 #chips-persone #persone-ruolo-btn{width:38px!important;min-width:38px!important;height:32px!important;min-height:32px!important;padding:0!important;justify-content:center!important;position:relative!important;border:0!important;background:var(--bg2)!important;border-radius:var(--rp)!important;box-shadow:none!important;color:var(--tx2)!important}
 #chips-persone #persone-ruolo-btn.active{background:var(--blu)!important;color:#fff!important;border:0!important}
 #chips-persone #persone-ruolo-btn svg{width:16px!important;height:16px!important}
-/* 2.12.4: ricerca globale, elementi compatibili, rapporti */
+/* 2.12.5: ricerca globale, elementi compatibili, rapporti */
 #view-ricerca .search-sticky{position:sticky;top:-2px;z-index:20}
 #view-ricerca #gs-r{min-width:0;width:100%;padding-bottom:24px;overflow-wrap:anywhere}
 .global-group-title{font-size:11px;font-weight:700;color:var(--tx3);margin:18px 3px 7px;text-transform:uppercase;letter-spacing:.045em;display:flex;justify-content:space-between;align-items:center}
@@ -672,7 +672,18 @@ details.fold .box2{gap:6px;}
 .rp-output-title{font-size:12px;font-weight:650;color:var(--tx2);padding:4px 0 9px;overflow-wrap:anywhere}
 .rp-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
 .rp-actions .btn{min-width:0;margin:0;padding:10px 5px;font-size:11px}
-</style></head>
+</style>
+<style>
+.rp-range{display:grid;grid-template-columns:1fr;gap:10px}
+.rp-date-input{width:100%;box-sizing:border-box;min-width:0}
+.rp-mode-options{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+.rp-mode-options label{display:block;padding:10px 12px;border:1px solid var(--bd);border-radius:14px;background:var(--card)}
+.rp-mode-options strong{display:block;font-size:13px}
+.rp-mode-options small{display:block;color:var(--tx2);margin-top:2px;font-size:11px}
+@media (min-width:720px){.rp-range{grid-template-columns:1fr 1fr}}
+</style>
+
+</head>
 <body>
 
 <div class="app">
@@ -831,7 +842,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.4</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.5</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -874,7 +885,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.12.4';
+const APP_VERSION = '2.12.5';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -4725,7 +4736,7 @@ function salvaNuovaPersona(){
 }
 
 
-/* 2.12.4: associazioni autonome fra RR e immobili NT/INK */
+/* 2.12.5: associazioni autonome fra RR e immobili NT/INK */
 function aggiornaSchedaDopoCollegaRR(pid){
  if(document.getElementById('rr-pick-list')){filtraCollegaRRImmobile(pid);return;}
  // Sostituisci il contenuto della scheda attuale senza impilarne una copia.
@@ -5641,126 +5652,159 @@ function scanBarcode(){
 }
 function fermaScanner(){ if(window._scanStream){ try{ window._scanStream.getTracks().forEach(t => t.stop()); }catch(e){} window._scanStream = null; } chiudiModal(); }
 
+
 function renderRapportini(){
- const c=document.getElementById('rapportini-lista');if(!c)return;
+ const c=document.getElementById('rapportini-lista'); if(!c) return;
  const today=ymd(new Date());
- c.innerHTML=`<div class="card"><h2>Rapporti</h2>
- <div class="box2"><div class="form-row"><label class="form-label" for="rp-from">Dal</label><input class="form-input" type="date" id="rp-from" value="${today.slice(0,8)}01"></div><div class="form-row"><label class="form-label" for="rp-to">Al</label><input class="form-input" type="date" id="rp-to" value="${today}"></div></div>
- <div class="form-label" style="margin-top:12px">Tipo di rapporto</div>
- <div class="rp-mode-options"><label><input type="radio" name="rp-mode" value="sintetico" checked><strong>Sintetico</strong><small>Attivita ed esiti essenziali</small></label><label><input type="radio" name="rp-mode" value="analitica"><strong>Analitico</strong><small>Dettaglio delle attivita e orari</small></label></div>
- <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
+ const mese=today.slice(0,8)+'01';
+ c.innerHTML=`<div class="card rp-card">
+   <h2>Rapporti</h2>
+   <div class="rp-range">
+     <div class="form-row"><label class="form-label">Dal</label><input class="form-input rp-date-input" type="date" id="rp-from" value="${mese}"></div>
+     <div class="form-row"><label class="form-label">Al</label><input class="form-input rp-date-input" type="date" id="rp-to" value="${today}"></div>
+   </div>
+   <div class="form-label" style="margin-top:12px">Tipo di rapporto</div>
+   <div class="rp-mode-options">
+     <label><input type="radio" name="rp-mode" value="sintetico" checked> <strong>Sintetico</strong><small>Report sintetico, senza orari</small></label>
+     <label><input type="radio" name="rp-mode" value="analitica"> <strong>Analitica</strong><small>Ogni attivita con orario</small></label>
+   </div>
+   <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="generaRapportoAttivita()">Genera rapporto</button>
+ </div><div id="rp-output"></div>`;
 }
+
 function reportGiorno(v){
- const txt=String(v||'');let m=txt.match(/^(\d{4})-(\d{2})-(\d{2})/);
- if(m)return m[3]+'/'+m[2];
- const d=new Date(v);return isNaN(d)?'':String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+ const txt=String(v||'');
+ const m=txt.match(/^(\d{4})-(\d{2})-(\d{2})/);
+ if(m) return m[3]+'/'+m[2];
+ const d=new Date(v);
+ return isNaN(d)?'':String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
 }
 function reportOra(v){
- const txt=String(v||'');if(!txt)return '';
+ const txt=String(v||'');
+ const m=txt.match(/T(\d{2}):(\d{2})/);
+ if(m) return m[1]+':'+m[2];
  const d=new Date(v);
- if(!isNaN(d)&&(/Z$|[+-]\d\d:?\d\d$/.test(txt)))return d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
- const m=txt.match(/(?:T|\s)(\d{2}):(\d{2})/);
- return m?m[1]+':'+m[2]:(!isNaN(d)?d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'');
-}
-function reportTitoloGruppo(a){
- if(a.entTipo==='immobile'){
-  const im=DB.immobili.find(i=>i.id===a.entId);
-  if(im){
-   const owners=propsImmobile(im).map(x=>x.persona).filter(Boolean);
-   const cognomi=[...new Set(owners.map(p=>String(p.cognome||p.ragioneSociale||'').trim().toUpperCase()).filter(Boolean))];
-   const prim=String(im.cognomeNome||'').trim().split(/\s+/)[0];
-   const c=cognomi.join(' / ')||prim.toUpperCase();
-   return `${im.stato}${c?' - '+c:''} x ${String(im.indirizzo||'').toUpperCase()}`;
-  }
- }
- if(a.entTipo==='persona'){
-  const p=trovaPersona(a.entId);
-  if(p){
-   const rr=(p.ruoli||[]).includes('ACQUIRENTE');
-   const anagrafica=nomeCogn(p).toUpperCase();
-   if(!rr)return anagrafica;
-   const phone=String(p.telefono||p.telefono2||'').trim();
-   const names=[...new Set(immobiliLegatiRR(p).map(im=>{
-     const owner=propPrinc(im)?.persona;
-     return String(owner?.cognome||owner?.ragioneSociale||im.cognomeNome||im.indirizzo||'').trim().split(/\s+/)[0].toUpperCase();
-   }).filter(Boolean))];
-   return `RR - ${anagrafica}${phone?' '+phone:''}${names.length?' x '+names.join(' / '):''}`;
-  }
- }
- return String(a.entTitolo||'Attivita');
+ return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
 }
 function reportEsitoAppuntamento(a){
- const raw=String(a.testo||'').trim();
- // Le attivita di appuntamento sono salvate con "[data] - TIPO: Esito · note".
- const m=raw.match(/^\[[^\]]+\]\s*[-–]\s*[^:]+:\s*([\s\S]+)$/);
- if(m)return m[1].trim();
- if(a.descrizioneEsito)return String(a.descrizioneEsito).trim();
- return ''; // Mai riprodurre il solo appuntamento programmato.
+ const raw = String(a.descrizioneEsito || a.esito || a.noteEsito || a.testo || a.titolo || '').trim();
+ if(!raw) return '';
+ let t = raw.replace(/\r\n?/g,'\n').trim();
+ let m = t.match(/(?:^|\n)[^\n]*?\b[A-ZA-Y][A-ZA-Y0-9 ]*:\s*(.+)$/);
+ if(m) t = m[1].trim();
+ t = t.replace(/^\[[^\]]+\]\s*[-–]?\s*/,'').trim();
+ t = t.replace(/^(APPUNTAMENTO|VISITA|INCONTRO)\s*[-:]\s*/i,'').trim();
+ return t;
 }
-function rapportoAttivitaDati(da,al,mode){
- const analitico=mode==='analitica';
- const righe=[];
- const eliminare=/\bcambio\s+(di\s+)?stato\b|\bcambiamento\s+(di\s+)?stato\b|prima\s+compilazione\s+(della\s+)?scheda\s+(di\s+)?valutazione/i;
- const elenco=raccogliAtt().filter(a=>{
-   const v=String(dataAtt(a)||'');if(!v)return false;
-   const dt=v.slice(0,10);if(dt<da||dt>al)return false;
-   if(a.tipo==='da_fare'&&!a.completata)return false;
-   const im=a.immobileId?DB.immobili.find(x=>x.id===a.immobileId):null;
-   if((im&&im.stato==='IMM')||(a.entTipo==='immobile'&&a.entStato==='IMM'))return false;
-   if(eliminare.test(String(a.testo||a.titolo||'')))return false;
-   if(a.tipoAtt==='APPUNTAMENTO'&&!reportEsitoAppuntamento(a))return false;
+function reportOwnerCognome(im){
+ const pr = typeof propPrinc==='function' ? propPrinc(im) : null;
+ const p = pr && pr.persona ? pr.persona : null;
+ const raw = String((p && (p.cognome || p.ragioneSociale)) || im.cognomeNome || '').trim();
+ if(!raw) return '';
+ return raw.split(/\s+/)[0].toUpperCase();
+}
+function reportTitoloEntita(a){
+ if(a.entTipo==='immobile' || a.immobileId){
+   const im = (DB.immobili||[]).find(x => x.id === (a.entId || a.immobileId));
+   if(im){
+     const owner = reportOwnerCognome(im);
+     const ind = String(im.indirizzo || '').toUpperCase();
+     return `${im.stato || ''}${owner ? ' - ' + owner : ''}${ind ? ' x ' + ind : ''}`.trim();
+   }
+ }
+ if(a.entTipo==='persona'){
+   const p = typeof trovaPersona==='function' ? trovaPersona(a.entId) : null;
+   if(p){
+     const rr = (p.ruoli||[]).includes('ACQUIRENTE');
+     const anag = String((typeof nomeCogn==='function'?nomeCogn(p):(p.cognome+' '+p.nome))).trim().toUpperCase();
+     if(!rr) return anag;
+     const phone = String(p.telefono || p.telefono2 || '').trim();
+     const linked = typeof immobiliLegatiRR==='function' ? immobiliLegatiRR(p) : [];
+     const owners = [...new Set(linked.map(im => reportOwnerCognome(im)).filter(Boolean))];
+     return `RR - ${anag}${phone ? ' ' + phone : ''}${owners.length ? ' x ' + owners.join(' / ') : ''}`;
+   }
+ }
+ return String(a.entTitolo || 'ATTIVITA').trim().toUpperCase();
+}
+function reportDescrizione(a, analitico){
+ let t = String(a.testo || a.titolo || '').replace(/\r\n?/g,'\n').trim();
+ if(a.tipoAtt==='APPUNTAMENTO'){
+   t = reportEsitoAppuntamento(a);
+   if(!t) return '';
+ }
+ t = t.replace(/^\[[^\]]+\]\s*[-–]?\s*/,'').trim();
+ return t;
+}
+function rapportoAttivitaDati(da, al, mode){
+ const analitico = mode === 'analitica';
+ const titolo = `report attivita ${analitico ? 'analitica' : 'sintetico'} - da ${reportGiorno(da)} a ${reportGiorno(al)}`;
+ const eliminaSempre = /\bcambio\s+(di\s+)?stato\b|\bcambiamento\s+(di\s+)?stato\b|prima\s+compilazione\s+(della\s+)?scheda\s+(di\s+)?valutazione/i;
+ const eliminaSintetico = /stato\s+notizia\s*:\s*(valutata|non\s+ancora\s+valutata)|\b(fissato|fissata|fissare|fisso)\b.*\bappuntament|\bappuntament\w*\b.*\b(fissato|fissata|fissare|fisso)\b/i;
+ const elenco = raccogliAtt().filter(a => {
+   const v = String(dataAtt(a) || '');
+   if(!v) return false;
+   const dt = v.slice(0,10);
+   if(dt < da || dt > al) return false;
+   if(a.tipo==='da_fare' && !a.completata) return false;
+   const im = a.immobileId ? (DB.immobili||[]).find(x => x.id === a.immobileId) : null;
+   if((im && im.stato==='IMM') || (a.entTipo==='immobile' && a.entStato==='IMM')) return false;
+   const txt = String(a.testo || a.titolo || '');
+   if(eliminaSempre.test(txt)) return false;
+   if(!analitico && eliminaSintetico.test(txt)) return false;
+   if(a.tipoAtt==='APPUNTAMENTO' && !reportEsitoAppuntamento(a)) return false;
    return true;
- }).sort((a,b)=>String(dataAtt(a)).localeCompare(String(dataAtt(b))));
- const gruppi=new Map();
+ }).sort((a,b) => String(dataAtt(a)).localeCompare(String(dataAtt(b))));
+ const gruppi = new Map();
  for(const a of elenco){
-   const key=(a.entTipo||'altro')+':'+(a.entId||a.entTitolo||'');
-   if(!gruppi.has(key))gruppi.set(key,{titolo:reportTitoloGruppo(a),items:[]});
+   const key = String(a.entTipo || 'altro') + ':' + String(a.entId || a.immobileId || a.entTitolo || '');
+   if(!gruppi.has(key)) gruppi.set(key, {titolo: reportTitoloEntita(a), items: []});
    gruppi.get(key).items.push(a);
  }
- const nome=analitico?'report attivita analitica':'report attivita sintetico';
- const titolo=`${nome} - da ${reportGiorno(da)} a ${reportGiorno(al)}`;
- righe.push(titolo.toUpperCase(),'');
- if(!elenco.length)righe.push('Nessuna attivita registrata nel periodo.');
+ const righe = [
+   titolo.toUpperCase(),
+   ''
+ ];
+ if(!elenco.length) righe.push('Nessuna attivita registrata nel periodo.');
  for(const g of gruppi.values()){
    righe.push(g.titolo);
-   for(const a of g.items){
-     let descrizione=a.tipoAtt==='APPUNTAMENTO'?reportEsitoAppuntamento(a):String(a.testo||a.titolo||'Attivita').trim();
-     descrizione=descrizione.replace(/^\[[^\]]+\]\s*[-–]?\s*/,'').replace(/\r\n?/g,'\n').trim();
-     if(!descrizione)continue;
-     const date=reportGiorno(dataAtt(a));
-     const ora=analitico?reportOra(dataAtt(a)):'';
-     righe.push(`${date}${ora?' '+ora:''} — ${descrizione}`);
-   }
+   g.items.forEach(a => {
+     const descr = reportDescrizione(a, analitico);
+     if(!descr) return;
+     const prefix = analitico ? `${reportGiorno(dataAtt(a))} ${reportOra(dataAtt(a))}` : `${reportGiorno(dataAtt(a))}`;
+     righe.push(`${prefix} — ${descr}`);
+   });
    righe.push('');
  }
- return {titolo,testo:righe.join('\n').trimEnd(),totale:elenco.length};
+ return {titolo, testo: righe.join('\n').trimEnd(), totale: elenco.length};
 }
 function generaRapportoAttivita(){
- const da=document.getElementById('rp-from')?.value,al=document.getElementById('rp-to')?.value;
- if(!da||!al||da>al){alert('Seleziona un intervallo di date valido.');return;}
- const mode=document.querySelector('input[name="rp-mode"]:checked')?.value||'sintetico';
- const r=rapportoAttivitaDati(da,al,mode);
- const out=document.getElementById('rp-output');if(!out)return;
- out.innerHTML=`<div class="card"><div class="rp-output-title">${esc(r.titolo)}</div><textarea class="form-textarea" id="rp-text" rows="16" readonly></textarea><div class="rp-actions"><button class="btn btn-secondary" onclick="copiaRapporto()">${ico('documento',14)} Copia</button><button class="btn btn-secondary" onclick="condividiRapporto()">${ico('upload',14)} Invia</button><button class="btn btn-secondary" onclick="scaricaRapporto()">${ico('download',14)} TXT</button></div></div>`;
- document.getElementById('rp-text').value=r.testo;
- window._rapportoCorrente=r;
+ const da = document.getElementById('rp-from')?.value;
+ const al = document.getElementById('rp-to')?.value;
+ if(!da || !al || da > al){ alert('Seleziona un intervallo di date valido.'); return; }
+ const mode = document.querySelector('input[name="rp-mode"]:checked')?.value || 'sintetico';
+ const r = rapportoAttivitaDati(da, al, mode);
+ const out = document.getElementById('rp-output'); if(!out) return;
+ out.innerHTML = `<div class="card"><div class="rp-output-title">${esc(r.titolo)}<div class="rp-output-actions"><button class="btn btn-secondary btn-icon" aria-label="Copia rapporto" title="Copia rapporto" onclick="copiaRapporto()">${ico('copia',14)}</button><button class="btn btn-secondary btn-icon" aria-label="Condividi rapporto" title="Condividi rapporto" onclick="condividiRapporto()">${ico('condividi',14)}</button><button class="btn btn-secondary btn-icon" aria-label="Scarica TXT" title="Scarica TXT" onclick="scaricaRapporto()">${ico('download',14)} TXT</button></div></div><textarea class="form-textarea" id="rp-text" rows="16" readonly></textarea></div>`;
+ document.getElementById('rp-text').value = r.testo;
+ window._rapportoCorrente = r;
 }
 function copiaRapporto(){
- const el=document.getElementById('rp-text');if(!el)return;
- if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(el.value).then(()=>alert('Rapporto copiato')).catch(()=>{el.select();document.execCommand('copy');alert('Rapporto copiato');});}
- else{el.select();document.execCommand('copy');alert('Rapporto copiato');}
+ const el = document.getElementById('rp-text'); if(!el) return;
+ navigator.clipboard.writeText(el.value).then(()=>alert('Rapporto copiato')).catch(()=>{ el.select(); document.execCommand('copy'); });
 }
 async function condividiRapporto(){
- const el=document.getElementById('rp-text');if(!el)return;
- const titolo=window._rapportoCorrente?.titolo||'Rapporto attivita';
- if(navigator.share){try{await navigator.share({title:titolo,text:el.value});return;}catch(e){if(e.name==='AbortError')return;}}
+ const el = document.getElementById('rp-text'); if(!el) return;
+ const titolo = window._rapportoCorrente?.titolo || 'Rapporto attivita';
+ if(navigator.share){
+   try{ await navigator.share({title:titolo, text:el.value}); return; }catch(e){ if(e.name==='AbortError') return; }
+ }
  copiaRapporto();
 }
 function scaricaRapporto(){
- const el=document.getElementById('rp-text');if(!el)return;
- const name=(window._rapportoCorrente?.titolo||'rapporto').replace(/[\\/:*?"<>|]/g,'-')+'.txt';
- const url=URL.createObjectURL(new Blob([el.value],{type:'text/plain;charset=utf-8'}));
- const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ const el = document.getElementById('rp-text'); if(!el) return;
+ const name = (window._rapportoCorrente?.titolo || 'rapporto').replace(/[\\/:*?"<>|]/g,'-') + '.txt';
+ const url = URL.createObjectURL(new Blob([el.value], {type:'text/plain;charset=utf-8'}));
+ const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
 }
 
 function apriRubrica(){
