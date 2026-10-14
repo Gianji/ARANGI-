@@ -638,7 +638,7 @@ details.fold .box2{gap:6px;}
 #persone-ruolo-btn{flex:0 0 auto!important;width:auto!important;min-width:42px!important;height:38px!important;min-height:38px!important;padding:0 12px!important;border-radius:100px!important;display:inline-flex!important;align-items:center;justify-content:center;background:var(--card)!important;border:1px solid var(--bd)!important;box-shadow:none!important}
 #persone-ruolo-btn.active{background:var(--blu-soft)!important;border-color:var(--blu)!important}
 </style><style>
-/* 2.12.6: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
+/* 2.12.9: la barra di ricerca e il chip filtro Persone riusano il layout Immobili */
 #view-persone>.search-sticky{display:block!important;position:sticky;top:-2px;z-index:20;padding:6px 0 8px}
 #view-persone #search-persone{width:100%!important;height:auto!important;min-height:0!important;background:var(--bg2)!important;border:1px solid transparent!important;border-radius:14px!important;padding:11px 16px!important;margin:0!important;box-sizing:border-box!important}
 #view-persone #search-persone:focus{background:var(--card)!important;border-color:var(--bd2)!important}
@@ -646,7 +646,7 @@ details.fold .box2{gap:6px;}
 #chips-persone #persone-ruolo-btn{width:38px!important;min-width:38px!important;height:32px!important;min-height:32px!important;padding:0!important;justify-content:center!important;position:relative!important;border:0!important;background:var(--bg2)!important;border-radius:var(--rp)!important;box-shadow:none!important;color:var(--tx2)!important}
 #chips-persone #persone-ruolo-btn.active{background:var(--blu)!important;color:#fff!important;border:0!important}
 #chips-persone #persone-ruolo-btn svg{width:16px!important;height:16px!important}
-/* 2.12.6: ricerca globale, elementi compatibili, rapporti */
+/* 2.12.9: ricerca globale, elementi compatibili, rapporti */
 #view-ricerca .search-sticky{position:sticky;top:-2px;z-index:20}
 #view-ricerca #gs-r{min-width:0;width:100%;padding-bottom:24px;overflow-wrap:anywhere}
 .global-group-title{font-size:11px;font-weight:700;color:var(--tx3);margin:18px 3px 7px;text-transform:uppercase;letter-spacing:.045em;display:flex;justify-content:space-between;align-items:center}
@@ -674,7 +674,7 @@ details.fold .box2{gap:6px;}
 .rp-actions .btn{min-width:0;margin:0;padding:10px 5px;font-size:11px}
 </style>
 <style>
-/* 2.12.6 — Ripristino della composizione originale dei rapporti.
+/* 2.12.9 — Ripristino della composizione originale dei rapporti.
    Le colonne e i controlli data devono rispettare sempre il contenitore. */
 .rp-range{
   display:grid;
@@ -719,6 +719,73 @@ details.fold .box2{gap:6px;}
 @media(max-width:345px){.rp-range{gap:6px}.rp-range .rp-date-input{font-size:12px!important;padding:8px 5px!important}}
 </style>
 
+<style>
+/* ARANJO 2.12.9 — rapporto generato e acquirenti legati */
+#rp-output,.rp-result{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+.rp-result{overflow:hidden;padding:12px!important}
+.rp-result .rp-output-title{display:block;width:100%;min-width:0;max-width:100%;padding:2px 2px 11px;font-size:12px;font-weight:700;line-height:1.45;overflow-wrap:anywhere;word-break:normal;color:var(--tx)}
+.rp-result .rp-result-text{display:block;box-sizing:border-box;width:100%!important;max-width:100%!important;min-width:0;height:265px;min-height:175px;max-height:70vh;margin:0;padding:12px;border:1px solid var(--bd);border-radius:11px;background:var(--bg2);color:var(--tx);font-family:inherit;font-size:12px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:hidden;overflow-y:auto;resize:vertical;-webkit-overflow-scrolling:touch}
+.rp-result .rp-output-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:10px;min-width:0}
+.rp-result .rp-output-actions .btn{box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:5px;width:100%!important;min-width:0!important;min-height:41px;margin:0;padding:9px 3px!important;font-size:12px!important;line-height:1.2;white-space:nowrap;border-radius:10px}
+.rp-result .rp-output-actions .btn svg{flex:0 0 auto}
+@media(max-width:350px){.rp-result .rp-output-actions{gap:5px}.rp-result .rp-output-actions .btn{font-size:11px!important;padding:9px 2px!important}}
+.im-rr-linked{display:block;width:100%;padding:11px 3px;border-bottom:1px solid var(--bd)}
+.im-rr-linked:last-child{border-bottom:none}
+.im-rr-linked strong{font-size:13px;overflow-wrap:anywhere}
+.im-rr-linked small{display:block;font-size:11px;margin-top:4px;color:var(--tx2)}
+.im-rr-empty{font-size:12px;color:var(--tx3);padding:8px 0;line-height:1.5}
+</style>
+
+<style>
+/* ARANJO 2.12.9: riquadro rapporto indipendente dai controlli circolari del sistema */
+#rp-output .rp-result-v2{
+  display:block!important; position:relative; box-sizing:border-box;
+  width:100%; min-width:0; max-width:100%; overflow:hidden;
+  padding:14px 12px 12px!important;
+}
+#rp-output .rp-result-v2 .rp-output-title{
+  margin:0 0 12px!important; padding:0!important; display:block;
+  font-size:12px; font-weight:700; line-height:1.45;
+  color:var(--tx); overflow-wrap:anywhere; word-break:normal;
+}
+#rp-output .rp-result-v2 .rp-display-text{
+  box-sizing:border-box; display:block; width:100%; max-width:100%;
+  height:250px; max-height:52vh; min-height:140px;
+  padding:12px; background:var(--bg2); color:var(--tx);
+  border:1px solid var(--bd); border-radius:11px;
+  font:400 12px/1.55 inherit; font-family:inherit; font-size:12px; line-height:1.55;
+  white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word;
+  overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  user-select:text; -webkit-user-select:text;
+}
+#rp-output .rp-result-v2 .rp-export-buffer{
+  position:absolute!important; width:1px!important; height:1px!important;
+  opacity:0!important; overflow:hidden!important; padding:0!important;
+  margin:0!important; border:0!important; pointer-events:none!important;
+  left:0; top:0;
+}
+#rp-output .rp-result-v2 .rp-result-buttons{
+  box-sizing:border-box; display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px; width:100%; min-width:0; margin:12px 0 0!important;
+  padding:0!important; align-items:stretch;
+}
+#rp-output .rp-result-v2 .rp-result-action{
+  -webkit-appearance:none!important; appearance:none!important;
+  box-sizing:border-box!important; position:static!important;
+  display:flex!important; align-items:center!important; justify-content:center!important;
+  width:100%!important; min-width:0!important;
+  height:41px!important; min-height:41px!important; max-height:41px!important;
+  margin:0!important; padding:0 7px!important;
+  border:1px solid var(--bd2)!important; border-radius:10px!important;
+  background:var(--card)!important; color:var(--blu)!important;
+  box-shadow:none!important; outline-offset:2px;
+  font-family:inherit!important; font-size:12px!important; font-weight:650!important;
+  font-style:normal!important; line-height:1!important; letter-spacing:normal!important;
+  text-align:center!important; white-space:nowrap!important;
+  cursor:pointer; touch-action:manipulation;
+}
+#rp-output .rp-result-v2 .rp-result-action:active{opacity:.72}
+</style>
 </head>
 <body>
 
@@ -878,7 +945,7 @@ details.fold .box2{gap:6px;}
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.6</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.12.9</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -921,7 +988,7 @@ details.fold .box2{gap:6px;}
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.12.6';
+const APP_VERSION = '2.12.9';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -2286,10 +2353,11 @@ window._pickerSavedParent = null;
 function apriPicker(te, cb, sigla){
   const modal = document.getElementById('modal');
   const wasOpen = modal.classList.contains('open');
+  const modalBody = document.getElementById('modal-body');
   window._pickerSavedParent = wasOpen ? {
     title:document.getElementById('modal-title').innerHTML,
-    body:document.getElementById('modal-body').innerHTML,
-    scrollTop:document.getElementById('modal-body').scrollTop
+    nodes:Array.from(modalBody.childNodes),
+    scrollTop:modalBody.scrollTop
   } : null;
   window._pickerCb = cb;
   const h = `${sigla?`<div style="font-size:12px;color:var(--tx3);margin-bottom:8px;">${esc(sigla)}</div>`:''}<input type="search" class="search-bar" id="pk-s" placeholder="Cerca..." style="margin-bottom:10px;"><div id="pk-r"></div><div class="btn-row"><button class="btn btn-secondary" onclick="annullaPicker()">Annulla</button></div>`;
@@ -2308,7 +2376,7 @@ function annullaPicker(){
   window._pickerSavedParent = null; window._pickerCb = null;
   if(saved){
     document.getElementById('modal-title').innerHTML = saved.title;
-    document.getElementById('modal-body').innerHTML = saved.body;
+    document.getElementById('modal-body').replaceChildren(...saved.nodes);
     document.getElementById('modal-body').scrollTop = saved.scrollTop;
   } else chiudiModal();
 }
@@ -2346,7 +2414,7 @@ function selPicker(t, id){
   const entity = t === 'immobile' ? DB.immobili.find(x => x.id === id) : trovaPersona(id);
   if(saved){
     document.getElementById('modal-title').innerHTML = saved.title;
-    document.getElementById('modal-body').innerHTML = saved.body;
+    document.getElementById('modal-body').replaceChildren(...saved.nodes);
     document.getElementById('modal-body').scrollTop = saved.scrollTop;
   } else chiudiModal();
   setTimeout(() => cb(entity), 40);
@@ -3150,13 +3218,6 @@ function apriScheda(id){
   } else bp = '<div style="font-size:12.5px;color:var(--tx3);padding:4px 0;">Nessuno</div>';
   bp += `<button class="btn btn-primary" style="margin-top:8px;" onclick="apriGestioneProprietari('${im.id}')">${ico('modifica',14)} Gestisci proprietari</button>`;
   h += collapsible('im_prop', ico('utenti',13) + ' Proprietari', bp, props.length || null);
-  if(['NT','INK','VND'].includes(im.stato)){
-    const rrLinked=(DB.persone||[]).filter(p=>(p.richiesta?.immobiliCollegati||[]).some(id=>String(id)===String(im.id)));
-    if(rrLinked.length){
-      const body=rrLinked.map(p=>`<button type="button" class="global-result" onclick="apriSchedaPersona(${argEvento(p.id)})"><span class="global-text"><strong>${esc(nomeCogn(p))}</strong><small class="global-sub">${esc(p.telefono||p.telefono2||'')}</small></span>${ico('freccia',14)}</button>`).join('');
-      h+=collapsible('im_rr_link',ico('target',13)+' RR associate',body,rrLinked.length);
-    }
-  }
 
   const ze = zoneEff(im);
   if(ze.length) h += collapsible('im_zone', ico('pin',13) + ' Zone', `<div class="zone-chips">${ze.map(z => `<span class="zone-chip active">${esc(z)}</span>`).join('')}</div>`);
@@ -3174,6 +3235,20 @@ function apriScheda(id){
     }
   }
   if(im.note) h += collapsible('im_note', ico('nota',13) + ' Note', `<div style="font-size:13px;white-space:pre-wrap;">${esc(im.note)}</div>`);
+  // Collegamenti effettivi salvati nelle richieste RR: non sono i risultati della compatibilita.
+  if(['NT','INK','VND'].includes(im.stato)){
+    const rrLinked = (DB.persone||[]).filter(p => (p.richiesta?.immobiliCollegati||[]).some(x=>String(x)===String(im.id)));
+    let bl = '';
+    if(rrLinked.length){
+      bl = rrLinked.sort((a,b)=>nomeCogn(a).localeCompare(nomeCogn(b),'it')).map(p => {
+        const telefono=String(p.telefono||p.telefono2||'').trim();
+        return `<button type="button" class="rr-match-open im-rr-linked" onclick="apriSchedaPersona(${argEvento(p.id)})"><strong>${esc(nomeCogn(p))}</strong>${telefono?`<small>${esc(telefono)}</small>`:''}</button>`;
+      }).join('');
+    } else {
+      bl = '<div class="im-rr-empty">Nessun acquirente legato. Puoi associare un immobile dalla relativa RR.</div>';
+    }
+    h += collapsible('im_rr_link',ico('utenti',13)+' Acquirenti legati',bl,rrLinked.length||null);
+  }
   if(['NT','INK'].includes(im.stato)){
     try{
       const mm = matchImmobile(im).filter(m => m.score >= 30 && !['ha-comprato','non-attiva','rogitato'].includes(m.persona.statoRR));
@@ -4168,11 +4243,17 @@ function apriFotoViewer(pid){
   });
 }
 
-function apriFormNuovo(contesto){
+function apriFormNuovo(contesto, opzioni){
+  // Puo essere aperto dalla scheda Persona: nessun record IMM viene creato in anticipo.
+  const opt = opzioni || {};
   window._villaNew = false;
-  window._nuovoCondoContesto = contesto !== undefined ? contesto : (condoFil || ''); // Usato solo se l'utente si trova in un condominio.
+  window._nuovoCondoContesto = contesto !== undefined ? contesto : (condoFil || '');
+  window._fPickId = opt.proprietarioId && trovaPersona(opt.proprietarioId) ? opt.proprietarioId : null;
+  window._sellerMode = 'existing';
+  window._sellerRuolo = 'vend';
   let h = `<div class="form-group"><div class="form-row"><label class="form-label">Tipo</label><select class="form-select" id="f-t" onchange="aggFormNew()"><option value="censito">Censito (IMM)</option><option value="pa">PA</option><option value="nt">NT</option><option value="ink">INK</option></select></div></div><div id="f-c"></div>${campoCoordinate("f-coord")}<div class="btn-row"><button class="btn btn-secondary" onclick="chiudiModal()">Annulla</button><button class="btn btn-primary" onclick="salvaNuovoImmobile()">Salva</button></div>`;
   apriModal('Nuovo immobile', h);
+  if(opt.stato && ['censito','pa','nt','ink'].includes(opt.stato)) document.getElementById('f-t').value = opt.stato;
   aggFormNew();
   if(window._mapCreateCoord){ const x=document.getElementById('f-coord'); if(x){x.value=formatCoordinate(window._mapCreateCoord); const fold=x.closest('details');if(fold)fold.open=true;} }
 }
@@ -4219,11 +4300,17 @@ function aggFormNew(){
     h += '<label class="form-label">Cerca anche casa da comprare?</label><select class="form-select" id="f-cerca" style="background:var(--bg2);padding:10px 12px;border-radius:10px;"><option value="no">No</option><option value="si">Si — anche acquirente</option></select>';
     h += '</div>';
     h += '<div id="f-existing-fields" style="display:none;">';
-    h += '<div style="cursor:pointer;padding:10px 12px;background:var(--bg2);border-radius:10px;" onclick="apriPicker(\'persona\',per => {window._fPickId=per.id;const e=document.getElementById(\'f-picked\');if(e)e.innerHTML=\'✓ \'+escapeHtml(nomeCogn(per));})"><span id="f-picked" style="font-size:13px;">Tocca per cercare…</span></div>';
+    h += '<div style="cursor:pointer;padding:10px 12px;background:var(--bg2);border-radius:10px;" onclick="apriPicker(\'persona\',per => {if(!per)return;window._fPickId=per.id;const e=document.getElementById(\'f-picked\');if(e)e.textContent=\'✓ \'+nomeCogn(per);})"><span id="f-picked" style="font-size:13px;">'+(window._fPickId&&trovaPersona(window._fPickId)?'✓ '+esc(nomeCogn(trovaPersona(window._fPickId))):'Tocca per cercare…')+'</span></div>';
     h += '</div></div>';
   }
   c.innerHTML = h;
-  if(t !== 'censito'){ window._sellerRuolo = 'vend'; window._sellerMode = 'existing'; window._fPickId = null; setModeNew('existing'); }
+  // Cambiare stato/struttura non deve azzerare il proprietario gia selezionato.
+  if(t !== 'censito'){
+    if(!['vend','cond'].includes(window._sellerRuolo)) window._sellerRuolo = 'vend';
+    if(!['new','existing'].includes(window._sellerMode)) window._sellerMode = 'existing';
+    setModeNew(window._sellerMode);
+    setRuoloNew(window._sellerRuolo);
+  }
   const gs = document.getElementById('f-gest');
   if(gs) gs.addEventListener('change', () => { const cd = document.getElementById('f-gest-coll-wrap'); if(cd) cd.style.display = gs.value === 'collega' ? 'block' : 'none'; });
 }
@@ -4772,7 +4859,7 @@ function salvaNuovaPersona(){
 }
 
 
-/* 2.12.6: associazioni autonome fra RR e immobili NT/INK */
+/* 2.12.9: associazioni autonome fra RR e immobili NT/INK */
 function aggiornaSchedaDopoCollegaRR(pid){
  if(document.getElementById('rr-pick-list')){filtraCollegaRRImmobile(pid);return;}
  // Sostituisci il contenuto della scheda attuale senza impilarne una copia.
@@ -5027,12 +5114,12 @@ function linkImmobile(pid, iid){
 }
 function apriNuovoImmobilePerPersona(pid){
   const p = trovaPersona(pid); if(!p) return;
-  const ad = new Date().toISOString();
-  const im = { id:uid(), stato:'IMM', indirizzo:'', z:1, villa:false, citofono:'', cognomeNome:nomeCogn(p).toUpperCase(), telefono:p.telefono||'', proprietari:[{ personaId:pid, quota:'', principale:true, note:'', tipo:'Proprieta' }], condominio:'', sottotipo:'', note:'', zone:[], dettagli:{}, catasto:{}, procura:{ presente:false }, ipoteca:{ presente:false }, prezzi:{}, storicoPrezzo:[], documenti:{}, attivita:[], foto:[], gestitoDa:'me', collegaNome:'', valutata:false, dataValutazione:null, schedaValutazione:null, createdAt:ad, updatedAt:ad };
-  DB.immobili.push(im);
-  Storage.save(DB);
-  apriModificaImmobile(im.id);
+  // Dalla scheda Persona e possibile creare direttamente PA, NT e INK.
+  // Il proprietario e gia associato, ma la creazione avviene solo al salvataggio.
+  personaAperta = pid;
+  apriFormNuovo('', {proprietarioId:pid, stato:'nt'});
 }
+
 function apriModificaImmobile(iid){
   const im = DB.immobili.find(x => x.id === iid); if(!im) return;
   immobileAperto = iid;
@@ -5698,29 +5785,43 @@ function renderRapportini(){
  <div class="rp-mode-options"><label><input type="radio" name="rp-mode" value="sintetico" checked><strong>Sintetico</strong><small>Attivita ed esiti essenziali</small></label><label><input type="radio" name="rp-mode" value="analitica"><strong>Analitico</strong><small>Dettaglio delle attivita e orari</small></label></div>
  <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="generaRapportoAttivita()">Genera rapporto</button></div><div id="rp-output"></div>`;
 }
+function reportDataLocale(v){
+ if(v instanceof Date) return Number.isNaN(v.getTime())?null:v;
+ const raw=String(v??'').trim();
+ if(!raw)return null;
+ // Date-only values are calendar dates and must not be interpreted as midnight UTC.
+ const dOnly=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+ if(dOnly){
+   const d=new Date(+dOnly[1],+dOnly[2]-1,+dOnly[3]);
+   return d.getFullYear()===+dOnly[1]&&d.getMonth()+1===+dOnly[2]&&d.getDate()===+dOnly[3]?d:null;
+ }
+ const d=new Date(raw);
+ return Number.isNaN(d.getTime())?null:d;
+}
+function reportDataChiave(v){
+ const d=reportDataLocale(v);
+ return d?ymd(d):'';
+}
 function reportGiorno(v){
- const txt=String(v||'');
- const m=txt.match(/^(\d{4})-(\d{2})-(\d{2})/);
- if(m) return m[3]+'/'+m[2];
- const d=new Date(v);
- return isNaN(d)?'':String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+ const d=reportDataLocale(v);
+ return d?pad2(d.getDate())+'/'+pad2(d.getMonth()+1):'';
 }
 function reportOra(v){
- const txt=String(v||'');
- const m=txt.match(/T(\d{2}):(\d{2})/);
- if(m) return m[1]+':'+m[2];
- const d=new Date(v);
- return isNaN(d)?'':String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+ const raw=String(v??'').trim();
+ // No time stored means no time can be reported.
+ if(!(v instanceof Date)&&!/(?:T|\s)\d{1,2}:\d{2}/.test(raw))return '';
+ const d=reportDataLocale(v);
+ return d?pad2(d.getHours())+':'+pad2(d.getMinutes()):'';
 }
 function reportEsitoAppuntamento(a){
- const raw = String(a.descrizioneEsito || a.esito || a.noteEsito || a.testo || a.titolo || '').trim();
- if(!raw) return '';
- let t = raw.replace(/\r\n?/g,'\n').trim();
- let m = t.match(/(?:^|\n)[^\n]*?\b[A-ZA-Y][A-ZA-Y0-9 ]*:\s*(.+)$/);
- if(m) t = m[1].trim();
- t = t.replace(/^\[[^\]]+\]\s*[-–]?\s*/,'').trim();
- t = t.replace(/^(APPUNTAMENTO|VISITA|INCONTRO)\s*[-:]\s*/i,'').trim();
- return t;
+ const raw=String(a.testo||a.titolo||'').replace(/\r\n?/g,'\n').trim();
+ // A creation/booking log has no outcome and must not enter the report.
+ const match=raw.match(/^\[[^\]]+\]\s*[-–]\s*[^:\n]+:\s*([\s\S]+)$/);
+ if(match)return match[1].trim();
+ // Also accept explicitly saved outcomes on historical records.
+ if(a.descrizioneEsito)return String(a.descrizioneEsito).trim();
+ if(a.esito)return String(a.esito).trim();
+ return '';
 }
 function reportOwnerCognome(im){
  const pr = typeof propPrinc==='function' ? propPrinc(im) : null;
@@ -5765,12 +5866,11 @@ function rapportoAttivitaDati(da, al, mode){
  const analitico = mode === 'analitica';
  const titolo = `report attivita ${analitico ? 'analitica' : 'sintetico'} - da ${reportGiorno(da)} a ${reportGiorno(al)}`;
  const eliminaSempre = /\bcambio\s+(di\s+)?stato\b|\bcambiamento\s+(di\s+)?stato\b|prima\s+compilazione\s+(della\s+)?scheda\s+(di\s+)?valutazione/i;
- const eliminaSintetico = /stato\s+notizia\s*:\s*(valutata|non\s+ancora\s+valutata)|\b(fissato|fissata|fissare|fisso)\b.*\bappuntament|\bappuntament\w*\b.*\b(fissato|fissata|fissare|fisso)\b/i;
+ const eliminaSintetico = /stato\s+notizia\s*[:\-–]?\s*(?:→\s*)?(?:valutata|non\s+ancora\s+valutata)|\b(fissato|fissata|fissare|fisso)\b.*\bappuntament|\bappuntament\w*\b.*\b(fissato|fissata|fissare|fisso)\b/i;
  const elenco = raccogliAtt().filter(a => {
-   const v = String(dataAtt(a) || '');
-   if(!v) return false;
-   const dt = v.slice(0,10);
-   if(dt < da || dt > al) return false;
+   const v = dataAtt(a);
+   const dt = reportDataChiave(v);
+   if(!dt || dt < da || dt > al) return false;
    if(a.tipo==='da_fare' && !a.completata) return false;
    const im = a.immobileId ? (DB.immobili||[]).find(x => x.id === a.immobileId) : null;
    if((im && im.stato==='IMM') || (a.entTipo==='immobile' && a.entStato==='IMM')) return false;
@@ -5796,7 +5896,8 @@ function rapportoAttivitaDati(da, al, mode){
    g.items.forEach(a => {
      const descr = reportDescrizione(a, analitico);
      if(!descr) return;
-     const prefix = analitico ? `${reportGiorno(dataAtt(a))} ${reportOra(dataAtt(a))}` : `${reportGiorno(dataAtt(a))}`;
+     const dt=reportGiorno(dataAtt(a)),ora=analitico?reportOra(dataAtt(a)):'';
+     const prefix=dt+(ora?' '+ora:'');
      righe.push(`${prefix} — ${descr}`);
    });
    righe.push('');
@@ -5810,13 +5911,23 @@ function generaRapportoAttivita(){
  const mode = document.querySelector('input[name="rp-mode"]:checked')?.value || 'sintetico';
  const r = rapportoAttivitaDati(da, al, mode);
  const out = document.getElementById('rp-output'); if(!out) return;
- out.innerHTML = `<div class="card"><div class="rp-output-title">${esc(r.titolo)}<div class="rp-output-actions"><button class="btn btn-secondary btn-icon" aria-label="Copia rapporto" title="Copia rapporto" onclick="copiaRapporto()">${ico('copia',14)}</button><button class="btn btn-secondary btn-icon" aria-label="Condividi rapporto" title="Condividi rapporto" onclick="condividiRapporto()">${ico('condividi',14)}</button><button class="btn btn-secondary btn-icon" aria-label="Scarica TXT" title="Scarica TXT" onclick="scaricaRapporto()">${ico('download',14)} TXT</button></div></div><textarea class="form-textarea" id="rp-text" rows="16" readonly></textarea></div>`;
+ out.innerHTML = `<div class="card rp-result rp-result-v2"><div class="rp-output-title">${esc(r.titolo)}</div><div class="rp-display-text" id="rp-report-preview" role="region" aria-label="Testo del rapporto" tabindex="0"></div><textarea class="rp-export-buffer" id="rp-text" aria-hidden="true" tabindex="-1" readonly></textarea><div class="rp-result-buttons"><button type="button" class="rp-result-action" onclick="copiaRapporto()" aria-label="Copia rapporto">Copia</button><button type="button" class="rp-result-action" onclick="condividiRapporto()" aria-label="Condividi rapporto">Invia</button><button type="button" class="rp-result-action" onclick="scaricaRapporto()" aria-label="Scarica TXT">TXT</button></div></div>`;
  document.getElementById('rp-text').value = r.testo;
+ document.getElementById('rp-report-preview').textContent = r.testo;
  window._rapportoCorrente = r;
 }
 function copiaRapporto(){
  const el = document.getElementById('rp-text'); if(!el) return;
- navigator.clipboard.writeText(el.value).then(()=>alert('Rapporto copiato')).catch(()=>{ el.select(); document.execCommand('copy'); });
+ if(navigator.clipboard && navigator.clipboard.writeText){
+   navigator.clipboard.writeText(el.value).then(()=>alert('Rapporto copiato')).catch(()=>copiaRapportoCompat(el));
+ }else copiaRapportoCompat(el);
+}
+function copiaRapportoCompat(el){
+ const previousDisplay=el.style.display;
+ el.style.display='block'; el.select(); el.setSelectionRange(0,el.value.length);
+ try{ document.execCommand('copy'); alert('Rapporto copiato'); }
+ catch(e){ alert('Seleziona il testo del rapporto e copialo.'); }
+ el.style.display=previousDisplay;
 }
 async function condividiRapporto(){
  const el = document.getElementById('rp-text'); if(!el) return;
