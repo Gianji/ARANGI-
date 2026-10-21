@@ -1028,48 +1028,111 @@ input.ar-search-has-clear::-webkit-search-cancel-button{-webkit-appearance:none;
 #ep-q-row[hidden],#ep-pr-row[hidden]{display:none!important}
 @media(max-width:350px){.ar-agenzia-grid{grid-template-columns:1fr}}
 </style><style>
-/* ARANJO 2.20.0 - Responsive reale e comandi iOS */
+/* ARANJÒ 2.21 — layout coerente con la grafica originale, più spazio dove serve. */
 @media(min-width:768px){
  :root{--maxw:1440px}
  body{background:var(--bg)}
- .app{width:100%;max-width:1440px;min-height:100dvh;box-shadow:0 0 48px rgba(0,0,0,.035);border:0}
- .app-header{padding-left:clamp(20px,3vw,44px);padding-right:clamp(20px,3vw,44px)}
- .app-content:not(.agenda-mode){padding-left:clamp(20px,3vw,44px);padding-right:clamp(20px,3vw,44px)}
- .tabbar{width:min(100%,1440px);max-width:1440px}
- .modal-sheet{max-width:min(92vw,900px)}
- #lista-immobili,#lista-persone,#gs-r{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;align-content:start}
- #lista-immobili>.item-card,#lista-persone>.item-card,#gs-r>.global-result{margin:0;min-width:0}
+ .app{max-width:1440px;width:100%;margin:auto;border:0;background:var(--bg)}
+ .app-header{padding-left:clamp(18px,2.5vw,36px);padding-right:clamp(18px,2.5vw,36px)}
+ .app-content:not(.agenda-mode){padding-left:clamp(18px,2.5vw,36px);padding-right:clamp(18px,2.5vw,36px)}
+ .tabbar{max-width:1440px;width:100%}
+ .fab{right:calc(max(0px,(100vw - 1440px)/2) + 18px)}
+ .fab-menu{right:calc(max(0px,(100vw - 1440px)/2) + 24px)}
+ #lista-immobili,#lista-persone{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;align-content:start}
+ #lista-immobili>.item-card,#lista-persone>.item-card{min-width:0;margin:0}
+ #gs-r{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px}
  #gs-r>.global-group-title,#gs-r>.empty{grid-column:1/-1}
- #view-ricerca #pratiche-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 14px}
- #pratiche-dashboard>.practice-head,#pratiche-dashboard>.geo-help,#pratiche-dashboard>.empty,#pratiche-dashboard>.practice-archive{grid-column:1/-1}
- .app-content.attivita-active #view-attivita.active{display:grid!important;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:12px;height:100%}
- .app-content.attivita-active #view-attivita>.att-col{min-height:0;max-height:none!important;height:100%}
- .ag-bottombar{left:max(0px,calc((100vw - 1440px)/2));right:auto}
- .modal-body{padding:18px 22px 24px}
+ #view-ricerca #pratiche-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px}
+ #pratiche-dashboard>.practice-head,#pratiche-dashboard>.geo-help,#pratiche-dashboard>.practice-archive,#pratiche-dashboard>.empty{grid-column:1/-1}
+ .app-content.attivita-active #view-attivita.active{display:grid!important;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,1fr));gap:10px;height:100%}
+ .app-content.attivita-active #view-attivita>.att-col{height:100%;max-height:none!important;min-height:0}
+ .modal-sheet{max-width:min(92vw,840px)}
+ .modal-body{padding:14px 19px 23px}
 }
-@media(min-width:1120px){#lista-immobili,#lista-persone{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(min-width:768px) and (max-width:1010px){.app-content.attivita-active #view-attivita.active{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr 1fr}.app-content.attivita-active #view-attivita>.att-col:first-child{grid-row:span 2}}
+@media(min-width:1220px){#lista-immobili,#lista-persone{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:768px) and (max-width:1050px){.app-content.attivita-active #view-attivita.active{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}.app-content.attivita-active #view-attivita>.att-col:first-child{grid-row:span 2}}
 @media(max-width:767px){.app,.app-content,.modal-sheet{max-width:100%}.modal-sheet{max-height:calc(100dvh - env(safe-area-inset-top))}}
-.sv-shape-select{min-width:108px;max-width:100%;border:1px solid var(--bd2);border-radius:9px;background:var(--card);color:var(--tx);padding:8px;font-size:13px}
-.sv-dimension{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
-.sv-dimension>label{display:flex;flex-direction:column;gap:4px;min-width:0;color:var(--tx2);font-size:11px}
-.sv-dimension input{width:100%;border:1px solid var(--bd2);border-radius:8px;padding:9px;background:var(--card);color:var(--tx);font-size:16px}
-.sv-area-result{color:var(--blu);font-size:11px;font-weight:700;margin-top:5px}
-.sv-room-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.sv-room-head .sv-room-note-btn{margin-left:auto}
-.sv-vincoli{padding:8px 0 4px}
-.sv-vincoli[hidden]{display:none!important}
-.sv-vincoli-hint{font-size:11px;color:var(--tx3);line-height:1.45;padding:5px 0}
-.ar-quick-actions{display:flex;gap:7px;margin:9px 0 5px}
-.ar-quick-actions button{border:1px solid var(--bd2);background:var(--blu-soft);color:var(--blu);border-radius:10px;flex:1;padding:10px 7px;min-height:43px;font-size:12px;font-weight:750;cursor:pointer}
-.ar-dossier-advanced{margin:10px 0;border:1px solid var(--bd);border-radius:11px;background:var(--bg2)}
-.ar-dossier-advanced>summary{padding:10px 12px;font-size:11px;color:var(--tx2);cursor:pointer;font-weight:650}
-.ar-dossier-advanced>div{padding:5px 10px}
+/* Schede operative: una gerarchia, senza grandi riquadri/colorazioni decorative. */
+@media(max-width:767px){.ar-editor-card .form-input,.ar-editor-card .form-select,.ar-editor-details .form-input,.ar-editor-details .form-select{font-size:16px!important}}
+.ar-editor-intro{padding:1px 2px 12px;font-size:11px;color:var(--tx2);line-height:1.45}
+.ar-editor-intro strong{color:var(--tx);font-weight:650}
+.ar-editor-card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:13px;margin-bottom:8px;min-width:0}
+.ar-editor-card h3{font-size:13px;font-weight:700;letter-spacing:-.01em;color:var(--tx);margin:0 0 11px}
+.ar-editor-card h3 small{font-size:10px;font-weight:500;color:var(--tx3);margin-left:7px}
+.ar-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 11px;min-width:0}
+.ar-editor-grid>*{min-width:0;margin:0!important}
+.ar-editor-grid .ar-editor-wide{grid-column:1/-1}
+.ar-editor-card .cx-campo{margin-bottom:0}
+.ar-editor-card .cx-campo .form-label,.ar-editor-card label.ar-editor-label{display:block;margin-bottom:5px;font-size:11px;font-weight:550;color:var(--tx2)}
+.ar-editor-card .form-input,.ar-editor-card .form-select,.ar-editor-card .form-textarea,
+.ar-editor-card .ms-btn{width:100%;height:40px;min-height:40px;box-sizing:border-box;border:1px solid var(--bd);background:var(--bg2);padding:9px 10px;border-radius:10px;color:var(--tx);font-size:14px;font-weight:500;line-height:1.25}
+.ar-editor-card .form-textarea{height:auto;min-height:72px;resize:vertical;line-height:1.45}
+.ar-editor-card .form-input:focus,.ar-editor-card .form-select:focus{border-color:var(--blu);outline:none;background:var(--card)}
+.ar-editor-card .ms-btn{display:flex;align-items:center;justify-content:space-between;text-align:left}
+.ar-editor-details{background:var(--card);border:1px solid var(--bd);border-radius:13px;margin-bottom:8px;overflow:hidden}
+.ar-editor-details>summary{display:flex;gap:8px;justify-content:space-between;align-items:center;list-style:none;padding:13px;font-size:12.5px;font-weight:650;cursor:pointer;color:var(--tx)}
+.ar-editor-details>summary::-webkit-details-marker{display:none}
+.ar-editor-details>summary::after{content:'⌄';margin-left:auto;font-size:15px;font-weight:500;color:var(--tx3)}
+.ar-editor-details[open]>summary::after{transform:rotate(180deg)}
+.ar-editor-details .ar-editor-inner{border-top:1px solid var(--bd);padding:12px}
+.ar-editor-details .ar-editor-inner .cx-campo{min-width:0}
+.ar-editor-details .ar-editor-inner .form-label{display:block;margin-bottom:5px;font-size:11px;color:var(--tx2)}
+.ar-editor-details .ar-editor-inner .form-input,.ar-editor-details .ar-editor-inner .form-select,.ar-editor-details .ar-editor-inner .form-textarea,.ar-editor-details .ar-editor-inner .ms-btn{width:100%;border:1px solid var(--bd);background:var(--bg2);border-radius:9px;padding:9px 10px;min-height:40px;font-size:14px;color:var(--tx);box-sizing:border-box}
+.ar-editor-details .ar-editor-inner .form-textarea{min-height:70px}
+.ar-editor-details .ar-editor-inner .ms-btn{display:flex;justify-content:space-between;align-items:center;text-align:left}
+.ar-editor-details .ar-editor-inner .ar-editor-grid{gap:10px}
+.ar-editor-details .ar-editor-inner .ar-editor-grid .cx-campo{margin-bottom:0}
+.ar-editor-hint{font-size:10.5px;color:var(--tx3);line-height:1.45;margin:8px 1px 0}
+.ar-editor-minor{color:var(--tx3);font-size:10px;font-weight:500;white-space:nowrap}
+.ar-editor-tags{display:flex;flex-wrap:wrap;gap:5px}
+.ar-editor-tag{display:inline-flex;align-items:center;justify-content:center;gap:4px;border:1px solid var(--bd2);border-radius:9px;background:var(--card);padding:8px 10px;min-height:36px;color:var(--tx2);font:600 11.5px inherit;font-family:inherit;cursor:pointer;touch-action:manipulation;white-space:normal;text-align:center}
+.ar-editor-tag.active,.ar-editor-tag[data-state="Si"]{border-color:var(--blu);background:var(--blu-soft);color:var(--blu)}
+.ar-editor-tag[data-state="No"]{color:var(--tx3);background:var(--bg2);border-color:var(--bd)}
+.ar-editor-tag .ar-editor-flag-icon{font-weight:750;font-size:12px}
+.ar-editor-tag .sv-chip-quantity:not(:empty){background:var(--blu);color:#fff;font-size:9px;padding:0 5px;border-radius:7px;margin-left:2px}
+.ar-editor-tag .sv-chip-quantity:empty{display:none}
+.ar-editor-card [hidden],.ar-editor-details [hidden]{display:none!important}
+.ar-d-flag-section{margin-bottom:12px}
+.ar-d-flag-section:last-child{margin-bottom:0}
+.ar-d-flag-section>div:first-child{font-size:10px;font-weight:650;color:var(--tx3);margin-bottom:7px}
+.ar-d-group-item{margin-bottom:7px;border:1px solid var(--bd);border-radius:10px;padding:9px}
+.ar-d-group-item:last-child{margin-bottom:0}
+.ar-d-group-item>summary{list-style:none;font-size:12px;font-weight:600;color:var(--tx2);padding:3px;cursor:pointer}
+.ar-d-group-item>summary::-webkit-details-marker{display:none}
+.ar-d-group-item>div{padding-top:9px}
+.ar-editor-room-total{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--bd);background:var(--bg2);border-radius:10px;padding:9px 11px;margin:9px 0;font-size:11px;color:var(--tx2)}
+.ar-editor-room-total strong{font-size:15px;color:var(--blu);font-weight:700}
+.sv-quick.ar-editor-tags{gap:5px;margin:3px 0 0}
+.sv-quick.ar-editor-tags button{flex:0 0 auto;min-width:0!important;min-height:36px;padding:8px 10px!important;margin:0!important;border-radius:9px;font-size:11.5px!important}
+.ar-sv-extra{width:100%;height:40px;border:1px dashed var(--bd2);border-radius:9px;background:var(--card);color:var(--blu);font-size:12px;padding:7px 10px;margin:7px 0 0}
+.sv-room-group{margin:10px 0 0}
+.sv-room-category{font-size:10px;color:var(--tx3);letter-spacing:0;margin-bottom:7px;text-transform:uppercase;font-weight:700}
+.sv-room-card{margin:0 0 7px;padding:10px;background:var(--bg2);border:1px solid var(--bd);border-radius:11px}
+.sv-room-top{min-height:29px;gap:8px}
+.sv-room-top strong{font-size:12.5px;font-weight:650}
+.sv-room-counter{border:1px solid var(--bd);border-radius:9px}
+.sv-room-counter button{width:32px;height:32px;min-height:32px}
+.sv-room-item{min-width:0;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
+.sv-room-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,140px) auto;gap:6px;align-items:center}
+.sv-room-head .form-label{margin:0!important}
+.sv-shape-select{width:100%;min-width:0;height:36px;padding:5px 7px;border:1px solid var(--bd2);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px}
+.sv-dimension{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}
+.sv-dimension>label{display:flex;flex-direction:column;gap:4px;min-width:0;color:var(--tx2);font-size:10px}
+.sv-dimension input{background:var(--card)!important;border:1px solid var(--bd2)!important;border-radius:8px!important;width:100%;padding:8px 9px;font-size:16px!important;min-height:39px}
+.sv-area-result{margin-top:6px;font-size:11px;color:var(--blu);font-weight:650}
+.sv-room-note-btn{min-width:34px!important;padding:6px!important}
+.sv-room-note-btn span{display:none}
+.sv-room-note-box{margin:8px 0 2px!important}
+.sv-vincoli{padding:10px 0 0}
+.sv-vincoli-hint{font-size:10.5px;color:var(--tx3);line-height:1.45;padding:4px 0}
+.ar-quick-actions{display:flex;gap:6px;margin:9px 0 4px}
+.ar-quick-actions button{flex:1;border:1px solid var(--bd2);background:var(--bg2);color:var(--blu);border-radius:10px;padding:9px;min-height:40px;font-size:12px;font-weight:700}
 .ar-cf-actions{display:flex;align-items:center;gap:8px;margin:7px 0}
 .ar-cf-actions .btn{width:auto;flex:1}
 .ar-cf-status{font-size:11px;color:var(--tx2);line-height:1.4}
 .ar-tutela-toggle{display:flex;align-items:center;gap:9px;padding:11px 12px;margin:8px 0;border-radius:11px;background:var(--bg2);font-size:12px;font-weight:600}
 .ar-tutela-toggle input{width:18px;height:18px;accent-color:var(--acc)}
+@media(max-width:380px){.ar-editor-grid{gap:8px}.ar-editor-card{padding:10px}.sv-room-head{grid-template-columns:minmax(0,1fr) 112px 36px}.ar-editor-tag{padding:7px 8px}}
 </style></head>
 <body>
 
@@ -1231,7 +1294,7 @@ input.ar-search-has-clear::-webkit-search-cancel-button{-webkit-appearance:none;
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.20.0</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.21.0</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -1274,7 +1337,7 @@ input.ar-search-has-clear::-webkit-search-cancel-button{-webkit-appearance:none;
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.20.0';
+const APP_VERSION = '2.21.0';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1324,7 +1387,7 @@ const OPT_MUTUO = ['Si','No','Da valutare'];
 const OPT_TEMPISTICA = ['Immediata','Entro 3 mesi','Entro 6 mesi','Oltre 6 mesi'];
 const OPT_CNCV = ['CN','CV'];
 const OPT_ZONE = ['CASTELLO','GHINAGLIA','PIAZZA RISORGIMENTO','VIA DANTE','STAZIONE','SANT AMBROGIO','SAN ZENO','VIA FILZI','VIA BERGAMO','CASTELLEONE','VIA MILANO','SAN PAOLO','CENTRO','BORGO SAN GIACOMO','CAVATIGOZZI','MIGLIARO','SAN FELICE','PERSICO','PORTA ROMANA','VIA GIORDANO','ZONA ZdF','ZONA Libera','ZONA ZdF altrui'];
-const TIPI_VALUTAZIONE = ['Appartamento','Condominio','Stabile','Villa singola','Villa schiera','Rustico','Villa bifamiliare','Cantiere','Negozio','Terreno','Edilizia agevolata'];
+const TIPI_VALUTAZIONE = ['Appartamento','Condominio','Stabile','Villa singola','Villa schiera','Rustico','Villa bifamiliare','Cantiere','Negozio','Ufficio','Capannone','Laboratorio','Magazzino','Terreno','Edilizia agevolata'];
 const DISP_VALUTAZIONE = ['Libero','Chiavi','Occupato dal proprietario','Affittato'];
 
 const ICON_PATHS = {
@@ -4002,9 +4065,10 @@ function svCalcolaMqAppartamento(){
 }
 function svAggiornaMqAppartamento(){
  const t=svCalcolaMqAppartamento(),el=document.getElementById('sv-mq');
- if(el)el.value=t.completi?String(t.mq).replace('.',','):'';
+ if(el && t.completi && !t.mancanti)el.value=String(t.mq).replace('.',',');
  const info=document.getElementById('sv-mq-info');
- if(info)info.textContent=`Interni ${t.mq.toLocaleString('it-IT')} m² · pertinenze/esterni ${t.accessori.toLocaleString('it-IT')} m² · complessivi misurati ${t.totali.toLocaleString('it-IT')} m²${t.mancanti?' · '+t.mancanti+' ambienti ancora da misurare':''}. Le superfici commerciali vanno ponderate separatamente.`;
+ if(info)info.textContent=`Interni ${t.mq.toLocaleString('it-IT')} m² · pertinenze ${t.accessori.toLocaleString('it-IT')} m²${t.mancanti?' · '+t.mancanti+' da misurare':''}`;
+ const total=document.getElementById('sv-mq-total');if(total)total.textContent=t.completi?t.totali.toLocaleString('it-IT',{maximumFractionDigits:2})+' m²'+(t.mancanti?' parziali':''):'—';
  document.querySelectorAll('.sv-room-item').forEach(item=>{
   const k=item.dataset.roomKey,i=Number(item.dataset.roomIndex),sv=window._svBozza;
   const v={...(svDettagliAmbiente(sv,k)[i]||{})},sel=item.querySelector('.sv-shape-select');
@@ -4053,7 +4117,7 @@ function svApriNoteAmbiente(k,i,btn){
   if(open)document.getElementById(`sv-room-${k}-${i}-note`)?.focus();
 }
 function svNotaCambiata(k,i,el){
-  const b=document.querySelector(`.sv-room-line button[aria-controls="sv-room-${k}-${i}-note-box"]`);
+  const b=document.querySelector(`.sv-room-head button[aria-controls="sv-room-${k}-${i}-note-box"]`);
   if(b)b.classList.toggle('has-note',Boolean(el.value.trim()));
 }
 function svCambiaQuantita(k, delta){
@@ -4074,111 +4138,114 @@ function svAmbienteAttivo(sv, k){
   return v === 'Si';
 }
 
+/* Valutazione 2.21: dati essenziali visibili, variabili pertinenti su richiesta. */
+function svImpostaCampo(k,el){
+ const sv=window._svBozza;if(!sv)return;
+ // Se cambia categoria tra terreno e fabbricato non riciclare una vecchia misura come superficie del terreno.
+ if(k==='tipoImmobile' && (sv.tipoImmobile==='Terreno') !== (el.value==='Terreno')){
+   sv.mqCommercialiManuali='';
+   const area=document.getElementById('sv-mqcommerciali');if(area)area.value='';
+ }
+ sv[k]=el.value;
+ svAggiornaCampiCondizionali();
+}
+function svTagCheck(k,l,sv){
+ const state=sv[k]==='Si'?'Si':sv[k]==='No'?'No':'';
+ return `<button type="button" class="ar-editor-tag" data-state="${state}" onclick="svToggle('${k}',this)" aria-label="${esc(l)}: ${state||'da verificare'}"><span class="ar-editor-flag-icon">${state==='Si'?'✓':state==='No'?'−':''}</span>${esc(l)}</button>`;
+}
+function svInput(id,label,value,type='text',extra=''){
+ return `<div class="cx-campo ${extra}"><label class="form-label" for="${id}">${label}</label><input class="form-input" id="${id}" type="${type}" value="${esc(value??'')}" ${type==='text'?'autocomplete="off"':''} ${type==='number'?'inputmode="decimal"':''}></div>`;
+}
+function svScelta(id,label,opts,val,change=''){
+ const all=val&&!opts.includes(val)?[val,...opts]:opts;
+ return `<div class="cx-campo"><label class="form-label" for="${id}">${label}</label><select class="form-select" id="${id}" ${change}>${['',...all].map(o=>`<option value="${esc(o)}"${o===val?' selected':''}>${esc(o||'Da verificare')}</option>`).join('')}</select></div>`;
+}
 function apriSchedaValutazione(id){
-  const im = DB.immobili.find(x => x.id === id); if(!im) return;
-  window._valId = id;
-  window._svNoteAperte = {};
-  if(!haSchedaValutazioneDisponibile(im)) return;
-  // Bozza indipendente: Annulla non altera i dati dell'immobile.
-  window._svBozza = JSON.parse(JSON.stringify(im.schedaValutazione || {}));
-  const sv = window._svBozza;
-  if(typeof sv.disponibilita === 'string') sv.disponibilita = sv.disponibilita ? [sv.disponibilita] : [];
-  if(!Array.isArray(sv.disponibilita)) sv.disponibilita = [];
-
-  let h = `<div style="font-size:12.5px;color:var(--tx2);margin-bottom:8px;">${esc(titoloImmobile(im))} · Scheda tecnica per valutazione</div>`;
-
-  /* 1. Classificazione */
-  h += '<div class="card"><h2>1. Tipo e stato</h2>';
-  h += '<div class="form-label">Tipo immobile</div><div class="sv-quick" id="sv-grp-tipoImmobile">';
-  TIPI_VALUTAZIONE.forEach(t => h += `<button type="button" class="${sv.tipoImmobile===t?'active':''}" onclick="svSel('tipoImmobile','${t.replace(/'/g,"\\'")}',this)">${t}</button>`);
-  h += '</div>';
-  h += '<div class="form-label" style="margin-top:10px;">Stato</div><div class="sv-quick" id="sv-grp-statoImmobile">';
-  OPT_STATO_IMMOBILE.forEach(t => h += `<button type="button" class="${sv.statoImmobile===t?'active':''}" onclick="svSel('statoImmobile','${t.replace(/'/g,"\\'")}',this)">${t}</button>`);
-  h += '</div></div>';
-
-  /* 2. Fabbricato */
-  h += '<details class="fold" open><summary>2. Fabbricato</summary><div>';
-  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Anno costruzione</label><input class="form-input" id="sv-anno" value="${esc(sv.annoCostruzione||'')}" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Anno ristrutturazione</label><input class="form-input" id="sv-annorist" value="${esc(sv.annoRistrutturazione||'')}" inputmode="numeric"></div></div>`;
-  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">N. appartamenti</label><input class="form-input" id="sv-napp" value="${esc(sv.nAppartamenti||'')}" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Piani f.t.</label><input class="form-input" id="sv-piani" value="${esc(sv.pianiFuoriTerra||'')}" inputmode="numeric"></div></div>`;
-  h += `<div class="cx-row2 sv-heating"><div class="cx-campo"><label class="form-label">Tipologia impianto</label><select class="form-select" id="sv-risc-tipo">${['',...new Set([...OPT_RISC_TIPO_AUT,...OPT_RISC_TIPO_CEN])].map(o=>`<option value="${esc(o)}"${sv.riscaldamentoTipo===o?' selected':''}>${esc(o||'Non specificato')}</option>`).join('')}</select></div><div class="cx-campo"><label class="form-label">Gestione riscaldamento</label><select class="form-select" id="sv-risc"><option value="">Non indicato</option>${['Autonomo','Centralizzato','Esente'].map(o=>`<option value="${o}"${sv.riscaldamento===o?' selected':''}>${o}</option>`).join('')}</select></div></div>`;
-  h += '<div class="form-label" style="margin-top:6px;">Presenza</div><div class="sv-quick">';
-  [['ascensore','Ascensore'],['portineria','Portineria'],['lavanderia','Lavanderia'],['postoMacchina','Posto macchina']].forEach(([k,l]) => {
-    h += `<button type="button" class="${sv[k]==='Si'?'active':''}" onclick="svToggle('${k}',this)">${l}</button>`;
-  });
-  h += '</div>';
-  h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Cortile (mq)</label><input class="form-input" id="sv-cort" value="${esc(sv.cortileMq||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Giardino (mq)</label><input class="form-input" id="sv-giard" value="${esc(sv.giardinoMq||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
-  h += '</div></details>';
-
-  /* 3. Caratteristiche: un chip per tipo, quantita e dimensioni per ciascuna istanza */
-  h += '<details class="fold" open><summary>3. Caratteristiche</summary><div>';
-  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Piano</label><input class="form-input" id="sv-piano" value="${esc(sv.piano||'')}"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Mq complessivi</label><input class="form-input" id="sv-mq" value="${esc(sv.mqComplessivi||'')}" inputmode="decimal" readonly aria-label="Mq complessivi appartamento calcolati automaticamente"></div></div>`;
-  h += '<div id="sv-mq-info" style="font-size:11px;color:var(--tx2);margin:5px 0 10px;">Solo locali interni, escluse pertinenze ed esterni.</div>';
-  h += '<div class="form-label" style="margin-top:10px;">Ambienti presenti</div>';
-  SV_CATEGORIE.forEach(([titolo,chiavi])=>{
-    h += `<div class="sv-room-category">${titolo}</div><div class="sv-quick sv-room-chips">`;
-    chiavi.forEach(k=>{
-      const att=svAmbienteAttivo(sv,k),n=svNumeroAmbienti(sv,k);
-      h+=`<button type="button" data-sv-room="${k}" class="${att?'active':''}" aria-pressed="${att}" onclick="svToggleAmbiente('${k}',this)">${SV_NOMI[k]}<span class="sv-chip-quantity">${att?n:''}</span></button>`;
-    });
-    h+='</div>';
-  });
-  h += '<div id="sv-ambienti-dettaglio"></div><div class="sv-room-summary" id="sv-room-summary"></div>';
-  h += '</div></details>';
-
-  /* 4. Disponibilita — MULTI SELECT */
-  h += '<details class="fold"><summary>4. Disponibilita</summary><div>';
-  h += '<div class="form-label">Situazione (selezione multipla)</div>';
-  h += '<div class="sv-quick" id="sv-grp-disponibilita">';
-  DISP_VALUTAZIONE.forEach(t => {
-    const att = sv.disponibilita.includes(t);
-    h += `<button type="button" class="${att?'active':''}" onclick="svSelMulti('disponibilita','${t.replace(/'/g,"\\'")}',this)">${t}</button>`;
-  });
-  h += '</div>';
-  h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Spese cond. €/mese</label><input class="form-input" id="sv-spese" value="${esc(sv.speseCond||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Amministratore</label><input class="form-input" id="sv-amm" value="${esc(sv.amministratore||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div></div>`;
-  h += `<div class="cx-row2" style="margin-top:6px;"><div class="cx-campo"><label class="form-label">Libero dal</label><input class="form-input" id="sv-libdal" value="${esc(sv.liberoDal||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Affittato dal</label><input class="form-input" id="sv-affdal" value="${esc(sv.affittatoDal||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="date"></div></div>`;
-  h += '</div></details>';
-
-  /* 5. Ipoteche */
-  h += '<details class="fold"><summary>5. Ipoteche / Oneri</summary><div>';
-  h += '<div class="sv-quick">';
-  [['libero','Libero'],['ipoteche','Ipoteche'],['vincoli','Vincoli'],['servitu','Servitu']].forEach(([k,l]) => h += `<button type="button" class="${sv[k]==='Si'?'active':''}" onclick="svToggle('${k}',this)">${l}</button>`);
-  h += '</div>';
-  h += `<div class="cx-row2" id="sv-mutuo-fields" style="margin-top:6px;${sv.ipoteche==='Si'?'':'display:none;'}"><div class="cx-campo"><label class="form-label">Importo mutuo (€)</label><input class="form-input" id="sv-mutimp" value="${esc(sv.mutuoResiduoImporto||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Rata mensile (€)</label><input class="form-input" id="sv-mutrata" value="${esc(sv.mutuoResiduoRata||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
-  h += `<div id="sv-vincoli-details" class="sv-vincoli" ${sv.vincoli==='Si'?'':'hidden'}><label class="form-label">Tipologie di vincolo (selezione multipla)</label>${ms('sv-vincoli-tipi', AR_VINCOLI, sv.vincoliTipi||[])}<p class="sv-vincoli-hint">Elenco operativo non esaustivo: verifica titoli, atti, registri, norme regionali e competenze degli enti. Inserisci solo vincoli documentati o da verificare.</p><input class="form-input" id="sv-vincoli-altro" placeholder="Altro vincolo / riferimento" value="${esc(sv.vincoliAltro||'')}" style="background:var(--bg2);padding:9px;border-radius:9px"></div>`;
-  h += '</div></details>';
-
-  /* 6. Valutazione */
-  h += '<div class="card" style="margin-top:8px;"><h2>6. Valutazione</h2>';
-  h += `<div style="margin-bottom:8px;"><label class="form-label">Richiesta valutazione (€)</label><input class="form-input" id="sv-rich" value="${esc(sv.richiestaValutazione||'')}" style="background:var(--bg2);padding:10px 12px;border-radius:10px;" inputmode="numeric"></div>`;
-  h += `<div style="margin-bottom:8px;"><label class="form-label">Lavori urgenti</label><textarea class="form-textarea" id="sv-lavurg" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(sv.lavoriUrgenti||'')}</textarea></div>`;
-  h += `<div style="margin-bottom:8px;"><label class="form-label">Note</label><textarea class="form-textarea" id="sv-note" style="background:var(--bg2);padding:10px 12px;border-radius:10px;">${esc(sv.note||'')}</textarea></div>`;
-  h += '</div>';
-
-  /* 7. Orari visite */
-  h += '<details class="fold"><summary>7. Orari visite</summary><div>';
-  h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">Dalle</label><input class="form-input" id="sv-visdal" value="${esc(sv.visiteDalle||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="time"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Alle</label><input class="form-input" id="sv-visalle" value="${esc(sv.visiteAlle||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" type="time"></div></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Giorni</label><input class="form-input" id="sv-visgiorni" value="${esc(sv.visiteGiorni||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" placeholder="es. Lun-Ven"></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Contattare</label><input class="form-input" id="sv-viscont" value="${esc(sv.visiteContattare||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;"></div>`;
-  h += '</div></details>';
-
-  h += '<div class="card" style="background:var(--blu-soft);margin-top:8px;"><div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--blu);font-weight:600;">';
-  h += `<input type="checkbox" id="sv-valutata" ${im.valutata?'checked':''} style="width:22px;height:22px;">`;
-  h += `<label for="sv-valutata" style="cursor:pointer;">Immobile valutato</label></div>`;
-  h += '<div style="font-size:11.5px;color:var(--tx2);margin-top:4px;padding-left:30px;">Al salvataggio, i dati verranno copiati nel dossier dell\'immobile</div></div>';
-
-  h += `<div class="btn-row" style="margin-top:12px;"><button class="btn btn-secondary" onclick="setTimeout(() => apriScheda('${id}'),80)">Annulla</button><button class="btn btn-primary" onclick="salvaSchedaValutazione('${id}')">${ico('check',15)} Salva e compila dossier</button></div>`;
-
-  apriModal('Scheda valutazione', h);
-  svRendiAmbienti();
-  svAggiornaCampiCondizionali();
+ const im=DB.immobili.find(x=>x.id===id);if(!im||!haSchedaValutazioneDisponibile(im))return;
+ window._valId=id;window._svNoteAperte={};
+ window._svBozza=JSON.parse(JSON.stringify(im.schedaValutazione||{}));
+ const sv=window._svBozza,d=im.dettagli||{};
+ if(typeof sv.disponibilita==='string')sv.disponibilita=sv.disponibilita?[sv.disponibilita]:[];
+ if(!Array.isArray(sv.disponibilita))sv.disponibilita=[];
+ if(!sv.tipoImmobile){const tipo=Array.isArray(d.tipologia)?d.tipologia[0]:d.tipologia;if(tipo==='Terreno')sv.tipoImmobile='Terreno';else if(tipo==='Villa')sv.tipoImmobile='Villa singola';else if(tipo==='Locale Commerciale')sv.tipoImmobile=(Array.isArray(d.sottotipologia)&&['Negozio','Ufficio','Capannone','Laboratorio','Magazzino'].includes(d.sottotipologia[0]))?d.sottotipologia[0]:'Negozio';else if(tipo==='Appartamento')sv.tipoImmobile='Appartamento';}
+ if(!sv.statoImmobile && Array.isArray(d.statoConservativo))sv.statoImmobile=d.statoConservativo[0]||'';
+ if(!sv.riscaldamento)sv.riscaldamento=Array.isArray(d.riscaldamento)?d.riscaldamento[0]||'':d.riscaldamento||'';
+ if(!sv.riscaldamentoTipo)sv.riscaldamentoTipo=Array.isArray(d.riscaldamentoTipo)?d.riscaldamentoTipo[0]||'':d.riscaldamentoTipo||'';
+ if(!sv.mqCommercialiManuali)sv.mqCommercialiManuali=sv.tipoImmobile==='Terreno'?(d.mqTerreno||''):(d.mqCommerciali||'');
+ if(!sv.categoriaCatastale)sv.categoriaCatastale=d.categoriaCatastale||'';
+ if(!sv.provenienza)sv.provenienza=d.provenienza||'';
+ if(!sv.conformitaUrbanistica)sv.conformitaUrbanistica=d.conformitaUrbanistica||'';
+ if(!sv.classeEnergetica)sv.classeEnergetica=Array.isArray(d.classeEnergetica)?d.classeEnergetica[0]||'':d.classeEnergetica||'';
+ if(!sv.certEnergetica)sv.certEnergetica=Array.isArray(d.certEnergetica)?d.certEnergetica[0]||'':d.certEnergetica||'';
+ let h=`<div class="ar-editor-intro"><strong>${esc(titoloImmobile(im))}</strong> · Compila quello che rilevi. I dati non conosciuti restano da verificare.</div>`;
+ h+='<section class="ar-editor-card"><h3>Immobile <small>Dati principali</small></h3><div class="ar-editor-grid">';
+ h+=svScelta('sv-tipo','Tipologia',TIPI_VALUTAZIONE,sv.tipoImmobile,`onchange="svImpostaCampo('tipoImmobile',this)"`);
+ h+=svScelta('sv-stato','Stato',OPT_STATO_IMMOBILE.concat(OPT_STATO_TERRENO),sv.statoImmobile,`onchange="svImpostaCampo('statoImmobile',this)"`);
+ h+=svInput('sv-anno','Anno costruzione',sv.annoCostruzione,'text','sv-built-only');
+ h+=svInput('sv-piano','Piano',sv.piano,'text','sv-built-only');
+ h+=svInput('sv-camere','Camere',sv.nCamere,'number','sv-built-only');
+ h+=svInput('sv-bagni','Bagni',sv.serviziBagno,'number','sv-built-only');
+ h+=svInput('sv-mqcommerciali','M² commerciali · se conosciuti',sv.mqCommercialiManuali,'text','ar-editor-wide');
+ h+='</div><p class="ar-editor-hint">La superficie commerciale non viene confusa con quella calpestabile rilevata.</p></section>';
+ h+='<section class="ar-editor-card" id="sv-ambienti-panel"><h3>Ambienti e misure <small>Rilievo rapido</small></h3>';
+ const quick=['ingresso','soggiorno','cucinaAbitabile','angoloCottura','cameraGrande','cameraMedia','cameraPiccola','bagnoAmbiente','ripostiglio','balcone','terrazzo','giardinoAmbiente','cantina','soffitta','box'];
+ h+='<div class="sv-quick ar-editor-tags" id="sv-quick-ambienti">';
+ quick.forEach(k=>{const on=svAmbienteAttivo(sv,k);h+=`<button type="button" class="ar-editor-tag ${on?'active':''}" data-sv-room="${k}" aria-pressed="${on}" onclick="svToggleAmbiente('${k}',this)">${esc(SV_NOMI[k])}<span class="sv-chip-quantity">${on?svNumeroAmbienti(sv,k):''}</span></button>`;});
+ h+='</div><div class="sv-quick ar-editor-tags" id="sv-others-chosen" style="margin-top:6px">';
+ SV_AMBIENTI.forEach(([k,nome])=>{if(quick.includes(k)||!svAmbienteAttivo(sv,k))return;h+=`<button type="button" class="ar-editor-tag active" data-sv-room="${k}" aria-pressed="true" onclick="svToggleAmbiente('${k}',this)">${esc(nome)}<span class="sv-chip-quantity">${svNumeroAmbienti(sv,k)}</span></button>`;});
+ h+='</div><select class="ar-sv-extra" aria-label="Aggiungi altri tipi di ambiente" onchange="svAggiungiAltro(this)"><option value="">+ Altro ambiente o pertinenza</option>';
+ SV_AMBIENTI.filter(([k])=>!quick.includes(k)).forEach(([k,n])=>h+=`<option value="${k}">${esc(n)}</option>`);
+ h+='</select><div id="sv-ambienti-dettaglio"></div><div class="ar-editor-room-total"><span id="sv-mq-info">Superfici misurate</span><strong id="sv-mq-total">—</strong></div>';
+ h+=`<input type="hidden" id="sv-mq" value="${esc(sv.mqComplessivi||'')}"><div id="sv-room-summary" class="ar-editor-hint"></div></section>`;
+ h+='<section class="ar-editor-card" id="sv-impianti-panel"><h3>Impianti e dotazioni</h3><div class="ar-editor-grid">';
+ h+=svScelta('sv-risc-tipo','Tipologia impianto',[...new Set([...OPT_RISC_TIPO_AUT,...OPT_RISC_TIPO_CEN])],sv.riscaldamentoTipo);
+ h+=svScelta('sv-risc','Riscaldamento',['Autonomo','Centralizzato','Esente'],sv.riscaldamento,`onchange="svImpostaCampo('riscaldamento',this)"`);
+ h+=svScelta('sv-classe','Classe energetica',OPT_CLASSE_ENERG,sv.classeEnergetica);
+ h+=svScelta('sv-cert','Certificazione energetica',OPT_CERT_ENERG,sv.certEnergetica);
+ h+='</div><div class="ar-editor-hint" style="margin:10px 0 6px">Dotazioni rilevate</div><div class="ar-editor-tags">';
+ [['ascensore','Ascensore'],['portineria','Portineria'],['lavanderia','Lavanderia'],['postoMacchina','Posto auto']].forEach(([k,l])=>h+=svTagCheck(k,l,sv));
+ h+='</div></section>';
+ h+='<section class="ar-editor-card"><h3>Disponibilità e situazione</h3><div class="ar-editor-hint" style="margin:0 0 8px">Situazione attuale</div><div class="ar-editor-tags">';
+ DISP_VALUTAZIONE.forEach(v=>h+=`<button type="button" class="ar-editor-tag ${sv.disponibilita.includes(v)?'active':''}" data-sv-availability="${esc(v)}" onclick="svSelMulti('disponibilita','${esc(v)}',this)">${esc(v)}</button>`);
+ h+='</div><div class="ar-editor-grid" style="margin-top:10px">';
+ h+=svInput('sv-libdal','Libero dal',sv.liberoDal,'date');
+ h+=svInput('sv-affdal','Affittato dal',sv.affittatoDal,'date');
+ if(!im.villa) {h+=svInput('sv-spese','Spese condominiali €/mese',sv.speseCond);h+=svInput('sv-amm','Amministratore',sv.amministratore);}
+ h+='</div><div class="ar-editor-hint" style="margin:12px 0 7px">Oneri e vincoli (tap: sì → no → da verificare)</div><div class="ar-editor-tags">';
+ [['libero','Libero da oneri'],['ipoteche','Ipoteche'],['vincoli','Vincoli'],['servitu','Servitù']].forEach(([k,l])=>h+=svTagCheck(k,l,sv));
+ h+='</div><div id="sv-mutuo-fields" class="ar-editor-grid" style="margin-top:10px">';
+ h+=svInput('sv-mutimp','Mutuo residuo (€)',sv.mutuoResiduoImporto);h+=svInput('sv-mutrata','Rata (€)',sv.mutuoResiduoRata);h+='</div>';
+ h+=`<div id="sv-vincoli-details" class="sv-vincoli" ${sv.vincoli==='Si'?'':'hidden'}><label class="ar-editor-label">Tipi di vincolo riscontrati</label>${ms('sv-vincoli-tipi',AR_VINCOLI,sv.vincoliTipi||[])}${svInput('sv-vincoli-altro','Riferimento o altro vincolo',sv.vincoliAltro)}<p class="ar-editor-hint">Identifica il vincolo; la verifica giuridica richiede gli atti e gli enti competenti.</p></div>`;
+ h+='</section>';
+ h+='<section class="ar-editor-card"><h3>Valutazione</h3><div class="ar-editor-grid">';
+ h+=svInput('sv-rich','Prezzo richiesto (€)',sv.richiestaValutazione,'text','ar-editor-wide');
+ h+='</div><div style="margin-top:9px"><label class="ar-editor-label" for="sv-note">Note sopralluogo</label><textarea id="sv-note" class="form-textarea" placeholder="Solo le informazioni utili alla valutazione">'+esc(sv.note||'')+'</textarea></div>';
+ h+='</section>';
+ h+='<details class="ar-editor-details"><summary>Dati catastali e verifiche</summary><div class="ar-editor-inner ar-editor-grid">';
+ h+=svInput('sv-catcat','Categoria catastale',sv.categoriaCatastale);
+ h+=svScelta('sv-provenienza','Provenienza',['Acquisto','Successione','Donazione','Asta','Costruzione diretta'],sv.provenienza);
+ h+=svScelta('sv-conformita','Conformità urbanistica',['Conforme','Non conforme','Da verificare'],sv.conformitaUrbanistica);
+ h+='</div></details>';
+ h+='<details class="ar-editor-details"><summary>Ulteriori dettagli fabbricato</summary><div class="ar-editor-inner ar-editor-grid">';
+ h+=svInput('sv-annorist','Anno ristrutturazione',sv.annoRistrutturazione);
+ h+=svInput('sv-napp','N. appartamenti',sv.nAppartamenti);
+ h+=svInput('sv-piani','Piani fuori terra',sv.pianiFuoriTerra);
+ h+=svInput('sv-cort','Cortile m²',sv.cortileMq);
+ h+=svInput('sv-giard','Giardino m²',sv.giardinoMq);
+ h+='</div></details>';
+ h+='<details class="ar-editor-details"><summary>Orari e organizzazione visite</summary><div class="ar-editor-inner ar-editor-grid">';
+ h+=svInput('sv-visdal','Dalle',sv.visiteDalle,'time');
+ h+=svInput('sv-visalle','Alle',sv.visiteAlle,'time');
+ h+=svInput('sv-visgiorni','Giorni',sv.visiteGiorni);
+ h+=svInput('sv-viscont','Contattare',sv.visiteContattare);
+ h+='</div></details>';
+ h+='<details class="ar-editor-details"><summary>Lavori urgenti e approfondimenti</summary><div class="ar-editor-inner">';
+ h+=`<label class="form-label" for="sv-lavurg">Lavori urgenti</label><textarea class="form-textarea" id="sv-lavurg">${esc(sv.lavoriUrgenti||'')}</textarea>`;
+ h+='</div></details>';
+ h+=`<div class="ar-editor-card"><label style="display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600"><input type="checkbox" id="sv-valutata" ${im.valutata?'checked':''} style="width:18px;height:18px;accent-color:var(--acc)">Immobile valutato</label></div>`;
+ h+=`<div class="btn-row" style="margin-top:12px"><button type="button" class="btn btn-secondary" onclick="apriScheda('${id}')">Annulla</button><button type="button" class="btn btn-primary" onclick="salvaSchedaValutazione('${id}')">Salva valutazione</button></div>`;
+ apriModal('Scheda valutazione',h);
+ svRendiAmbienti();svAggiornaCampiCondizionali();
 }
 
 function svSel(campo, valore, btn){
@@ -4191,31 +4258,55 @@ function svSel(campo, valore, btn){
     if(nuovo) btn.classList.add('active');
   }
 }
-function svSelMulti(campo, valore, btn){
-  const im = DB.immobili.find(x => x.id === window._valId); if(!im || !window._svBozza) return;
-  let arr = window._svBozza[campo];
-  if(typeof arr === 'string') arr = arr ? [arr] : [];
-  if(!Array.isArray(arr)) arr = [];
-  const i = arr.indexOf(valore);
-  if(i >= 0) arr.splice(i, 1); else arr.push(valore);
-  window._svBozza[campo] = arr;
-  if(btn) btn.classList.toggle('active', arr.includes(valore));
-  svAggiornaCampiCondizionali();
+function svSelMulti(campo,valore,btn){
+ const sv=window._svBozza;if(!sv)return;
+ let arr=Array.isArray(sv[campo])?sv[campo].slice():typeof sv[campo]==='string'&&sv[campo]?[sv[campo]]:[];
+ const was=arr.includes(valore);
+ if(campo==='disponibilita'&&valore!=='Chiavi')arr=arr.filter(x=>x==='Chiavi');
+ else arr=arr.filter(x=>x!==valore);
+ if(!was)arr.push(valore);
+ sv[campo]=arr;
+ if(campo==='disponibilita')document.querySelectorAll('[data-sv-availability]').forEach(b=>b.classList.toggle('active',arr.includes(b.dataset.svAvailability)));
+ else if(btn)btn.classList.toggle('active',arr.includes(valore));
+ svAggiornaCampiCondizionali();
 }
 function svToggle(campo, btn){
   const im = DB.immobili.find(x => x.id === window._valId); if(!im || !window._svBozza) return;
   const cur = window._svBozza[campo];
-  window._svBozza[campo] = (cur === 'Si') ? 'No' : 'Si';
-  if(btn) btn.classList.toggle('active', window._svBozza[campo] === 'Si');
+  window._svBozza[campo] = cur==='Si'?'No':cur==='No'?'':'Si';
+  if(btn){const status=window._svBozza[campo];btn.dataset.state=status;btn.classList.toggle('active',status==='Si');
+    btn.querySelector('.ar-editor-flag-icon')&&(btn.querySelector('.ar-editor-flag-icon').textContent=status==='Si'?'✓':status==='No'?'−':'');
+    btn.setAttribute('aria-label',btn.textContent.trim()+': '+(status||'da verificare'));
+  }
   svAggiornaCampiCondizionali();
 }
 function svAggiornaCampiCondizionali(){
-  const sv=window._svBozza;if(!sv)return;
-  const mort=document.getElementById('sv-mutuo-fields');if(mort)mort.style.display=sv.ipoteche==='Si'?'':'none';
-  const aff=document.getElementById('sv-affdal')?.closest('.cx-campo');if(aff)aff.style.display=(sv.disponibilita||[]).includes('Affittato')?'':'none';
-  const lib=document.getElementById('sv-libdal')?.closest('.cx-campo');if(lib)lib.style.display=(sv.disponibilita||[]).includes('Libero')?'':'none';
-  const condo=document.getElementById('sv-spese')?.closest('.cx-row2');if(condo)condo.style.display='';
-  const vincoli=document.getElementById('sv-vincoli-details');if(vincoli)vincoli.hidden=sv.vincoli!=='Si';
+ const sv=window._svBozza;if(!sv)return;
+ const mutuo=document.getElementById('sv-mutuo-fields');if(mutuo)mutuo.hidden=sv.ipoteche!=='Si';
+ const aff=document.getElementById('sv-affdal')?.closest('.cx-campo');if(aff)aff.hidden=!sv.disponibilita?.includes('Affittato');
+ const lib=document.getElementById('sv-libdal')?.closest('.cx-campo');if(lib)lib.hidden=!sv.disponibilita?.includes('Libero');
+ const vincoli=document.getElementById('sv-vincoli-details');if(vincoli)vincoli.hidden=sv.vincoli!=='Si';
+ const tipo=sv.tipoImmobile||'';
+ const terreno=tipo==='Terreno';
+ const commerciale=['Negozio','Ufficio','Capannone','Laboratorio','Magazzino'].includes(tipo);
+ document.querySelectorAll('.sv-built-only').forEach(el=>el.hidden=terreno||(commerciale&&!!el.querySelector('#sv-camere')));
+ const lab=document.querySelector('label[for="sv-mqcommerciali"]');if(lab)lab.textContent=terreno?'Superficie terreno m² (rilevata)':'M² commerciali · se conosciuti';
+ document.querySelectorAll('#sv-quick-ambienti [data-sv-room]').forEach(el=>{const k=el.dataset.svRoom;el.hidden=commerciale&&!['bagnoAmbiente','ripostiglio','cantina','postoAuto','box'].includes(k)&&!svAmbienteAttivo(sv,k);});
+ const rooms=document.getElementById('sv-ambienti-panel');if(rooms)rooms.hidden=terreno;
+ const imp=document.getElementById('sv-impianti-panel');if(imp)imp.hidden=terreno;
+ const tip=document.getElementById('sv-risc-tipo');
+ if(tip){
+  const prev=tip.value||sv.riscaldamentoTipo||'';
+  const opts=sv.riscaldamento==='Autonomo'?OPT_RISC_TIPO_AUT:sv.riscaldamento==='Centralizzato'?OPT_RISC_TIPO_CEN:[...new Set([...OPT_RISC_TIPO_AUT,...OPT_RISC_TIPO_CEN])];
+  const sig=opts.join('|');
+  if(tip.dataset.opts!==sig){
+   tip.innerHTML='<option value="">Da verificare</option>'+opts.map(o=>`<option value="${esc(o)}">${esc(o)}</option>`).join('');
+   tip.dataset.opts=sig;
+   if(opts.includes(prev))tip.value=prev;
+   else if(prev){tip.add(new Option(prev+' (da verificare)',prev));tip.value=prev;}
+  }
+  const wrap=tip.closest('.cx-campo');if(wrap)wrap.hidden=sv.riscaldamento==='Esente';
+ }
 }
 function svToggleAmbiente(k, btn){
   const sv = window._svBozza; if(!sv) return;
@@ -4228,6 +4319,7 @@ function svToggleAmbiente(k, btn){
   if(btn){btn.classList.toggle('active',nuovo);btn.setAttribute('aria-pressed',String(nuovo));
     const count=btn.querySelector('.sv-chip-quantity');if(count)count.textContent=nuovo?String(svNumeroAmbienti(sv,k)):'';
   }
+  if(!nuovo && btn && btn.closest('#sv-others-chosen')) btn.remove();
   svRendiAmbienti();
 }
 
@@ -4235,9 +4327,9 @@ function salvaSchedaValutazione(id){
   const im = DB.immobili.find(x => x.id === id); if(!im) return;
   const sv = window._svBozza; if(!sv || window._valId !== id) return;
   const primaCompilazione = !im.svPrimaCompilazioneAt && !im.schedaValutazione;
-  ['anno','annorist','napp','piani','risc','cort','giard','piano','mq','camere','bagni','spese','amm','mutimp','mutrata','rich','lavurg','note','visdal','visalle','visgiorni','viscont','libdal','affdal'].forEach(x => {
+  ['anno','annorist','napp','piani','risc','cort','giard','piano','mq','mqcommerciali','classe','cert','catcat','provenienza','conformita','camere','bagni','spese','amm','mutimp','mutrata','rich','lavurg','note','visdal','visalle','visgiorni','viscont','libdal','affdal'].forEach(x => {
     const el = document.getElementById('sv-'+x);
-    if(el) sv[{anno:'annoCostruzione',annorist:'annoRistrutturazione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare',libdal:'liberoDal',affdal:'affittatoDal'}[x]] = el.value;
+    if(el) sv[{anno:'annoCostruzione',annorist:'annoRistrutturazione',napp:'nAppartamenti',piani:'pianiFuoriTerra',risc:'riscaldamento',cort:'cortileMq',giard:'giardinoMq',piano:'piano',mq:'mqComplessivi',mqcommerciali:'mqCommercialiManuali',classe:'classeEnergetica',cert:'certEnergetica',catcat:'categoriaCatastale',provenienza:'provenienza',conformita:'conformitaUrbanistica',camere:'nCamere',bagni:'serviziBagno',spese:'speseCond',amm:'amministratore',mutimp:'mutuoResiduoImporto',mutrata:'mutuoResiduoRata',rich:'richiestaValutazione',lavurg:'lavoriUrgenti',note:'note',visdal:'visiteDalle',visalle:'visiteAlle',visgiorni:'visiteGiorni',viscont:'visiteContattare',libdal:'liberoDal',affdal:'affittatoDal'}[x]] = el.value;
   });
   if(sv.ipoteche!=='Si'){
     if(sv.mutuoResiduoImporto||sv.mutuoResiduoRata){
@@ -4249,12 +4341,15 @@ function salvaSchedaValutazione(id){
   if(!Array.isArray(sv.disponibilita)||!sv.disponibilita.includes('Libero'))sv.liberoDal='';
   sv.vincoliTipi=sv.vincoli==='Si'?msVal('sv-vincoli-tipi'):[];
   sv.vincoliAltro=sv.vincoli==='Si'?(document.getElementById('sv-vincoli-altro')?.value||'').trim():'';
-  sv.riscaldamentoTipo=document.getElementById('sv-risc-tipo')?.value||'';
+  sv.riscaldamentoTipo=sv.riscaldamento==='Esente'?'':(document.getElementById('sv-risc-tipo')?.value||'');
   svRaccogliDettagli();
   const totaleAppartamento=svCalcolaMqAppartamento();
-  sv.mqComplessivi=totaleAppartamento.completi?String(totaleAppartamento.mq):'';
-  sv.mqPertinenzeEsterni=totaleAppartamento.completi?String(totaleAppartamento.accessori):'';
-  sv.mqTotaliRilevati=totaleAppartamento.completi?String(totaleAppartamento.totali):'';
+  if(totaleAppartamento.completi && !totaleAppartamento.mancanti){
+    sv.mqComplessivi=String(totaleAppartamento.mq);
+    sv.mqPertinenzeEsterni=String(totaleAppartamento.accessori);
+    sv.mqTotaliRilevati=String(totaleAppartamento.totali);
+  }
+  if(totaleAppartamento.mancanti)sv.misureDaCompletare=totaleAppartamento.mancanti;else delete sv.misureDaCompletare;
   SV_AMBIENTI_DIM.forEach(k=>{
     if(!svAmbienteAttivo(sv,k)){
       sv[k]=null;
@@ -4301,7 +4396,7 @@ function tipologiaDaValutazione(tipo){
     'Stabile':['Appartamento','Palazzo'], 'Villa singola':['Villa','Villa singola'],
     'Villa schiera':['Villa',"La schiera"], 'Villa bifamiliare':['Villa','Bifamiliare'],
     'Rustico':['Rustico/Cascina/Casa','Rustico'], 'Cantiere':['Appartamento',null],
-    'Negozio':['Locale Commerciale','Negozio'],'Terreno':['Terreno',null],
+    'Negozio':['Locale Commerciale','Negozio'],'Ufficio':['Locale Commerciale','Ufficio'],'Capannone':['Locale Commerciale','Capannone'],'Laboratorio':['Locale Commerciale','Laboratorio'],'Magazzino':['Locale Commerciale','Magazzino'],'Terreno':['Terreno',null],
     'Edilizia agevolata':['Appartamento',null]
   };
   return map[tipo] || null;
@@ -4325,7 +4420,7 @@ function htmlLocaliDossier(d){
   let h='<div class="dossier-rooms"><div class="dossier-rooms-heading">Ambienti rilevati</div>';
   rooms.forEach(r=>{
     const nome=esc(String(r.nome||r.tipo||'Ambiente'))+(r.quantita>1?' '+Number(r.numero||1):'');
-    const dimensioni=r.misure ? esc(Object.entries(r.misure).filter(x=>x[1]).map(x=>x[0]+': '+x[1]).join(' · ')||'—') : ((r.l||r.p) ? esc([r.l,r.p].filter(Boolean).join(' × '))+' m' : '—');
+    const dimensioni=r.misure ? esc(Object.entries(r.misure).filter(x=>x[1]).map(x=>({l:'L',w:'P',base:'Base',altezza:'H',diametro:'Ø',asseMaggiore:'Asse max',asseMinore:'Asse min',baseMaggiore:'Base max',baseMinore:'Base min',diagMaggiore:'D max',diagMinore:'D min',l2:'L₂',w2:'P₂',mqManuali:'m²'}[x[0]]||x[0])+': '+x[1]).join(' · ')||'—') : ((r.l||r.p) ? esc([r.l,r.p].filter(Boolean).join(' × '))+' m' : '—');
     h+=`<div class="dossier-room-row"><span>${nome}${r.forma?` <small>(${esc(r.forma)})</small>`:''}</span><strong>${dimensioni}</strong>${r.mq!==null&&r.mq!==undefined?`<small>${esc(String(r.mq))} m²</small>`:''}${r.note?`<span class="dossier-room-note">${esc(r.note)}</span>`:''}</div>`;
   });
   if(tot>0)h+=`<div class="dossier-room-total">Somma superfici misurate <strong>${tot.toFixed(2)} m²</strong></div>`;
@@ -4375,14 +4470,23 @@ function applicaSchedaAlDossier(im){
   if(sv.cortileMq){ d.cortile = 'Si'; }
   if(sv.giardinoMq){ d.giardino = 'Si'; d.mqGiardino = sv.giardinoMq; }
   if(sv.piano) d.piano = [sv.piano];
-  if(sv.mqComplessivi){
-    const m = parseNum(sv.mqComplessivi);
-    if(m !== null && m > 0){ d.mqCommerciali = sv.mqComplessivi; if(!d.mqCalpestabili) d.mqCalpestabili = sv.mqComplessivi; }
-  }
+  if(sv.mqComplessivi && !sv.misureDaCompletare){const m=parseNum(sv.mqComplessivi);if(m!==null&&m>0)d.mqCalpestabili=sv.mqComplessivi;}
+  if(sv.mqCommercialiManuali!==undefined && String(sv.mqCommercialiManuali).trim()!=='') {if(sv.tipoImmobile==='Terreno')d.mqTerreno=sv.mqCommercialiManuali;else d.mqCommerciali=sv.mqCommercialiManuali;}
+  if(sv.classeEnergetica)d.classeEnergetica=[sv.classeEnergetica];
+  if(sv.certEnergetica)d.certEnergetica=[sv.certEnergetica];
+  if(sv.categoriaCatastale)d.categoriaCatastale=sv.categoriaCatastale;
+  if(sv.provenienza)d.provenienza=sv.provenienza;
+  if(sv.conformitaUrbanistica)d.conformitaUrbanistica=sv.conformitaUrbanistica;
   if(sv.riscaldamentoTipo)d.riscaldamentoTipo=[sv.riscaldamentoTipo];
   if(sv.vincoliTipi?.length)d.vincoliTipo=[...sv.vincoliTipi];
   if(sv.vincoliAltro)d.vincoliNote=sv.vincoliAltro;
   d.mqPertinenzeEsterni=sv.mqPertinenzeEsterni||'';d.mqTotaliRilevati=sv.mqTotaliRilevati||'';
+  // Misure geometriche per locale: solo misure complete, senza coefficienti commerciali automatici.
+  [['giardinoAmbiente','giardino','mqGiardino'],['terrazzo','terrazzo','mqTerrazzo'],['balcone','balcone','mqBalcone'],['cantina','cantina','mqCantina'],['box','box','mqBox'],['corte','cortile','mqCortile'],['soffitta','soffitta','mqSoffitta']].forEach(([r,k,mq])=>{
+    if(!svAmbienteAttivo(sv,r))return;
+    const rr=svDettagliAmbiente(sv,r),q=svNumeroAmbienti(sv,r),all=rr.slice(0,q).map(v=>svArea(v));
+    d[k]='Si';if(all.length===q&&all.every(v=>v!==null))d[mq]=String(Math.round(all.reduce((a,v)=>a+v,0)*100)/100);
+  });
   if(sv.riscaldamento){
     const r = sv.riscaldamento.toLowerCase();
     if(r.indexOf('autonom') >= 0) d.riscaldamento = ['Autonomo'];
@@ -4392,10 +4496,10 @@ function applicaSchedaAlDossier(im){
   if(svAmbienteAttivo(sv,'studio')) d.studio = 'Si';
   if(svAmbienteAttivo(sv,'cucinaAbitabile')) d.cucina = ['Abitabile'];
   else if(svAmbienteAttivo(sv,'angoloCottura')) d.cucina = ['Angolo cottura'];
-  d.terrazzo = svAmbienteAttivo(sv,'terrazzo') ? 'Si' : 'No';
-  d.balcone = svAmbienteAttivo(sv,'balcone') ? 'Si' : 'No';
-  d.box = svAmbienteAttivo(sv,'box') ? 'Si' : 'No';
-  d.postoAuto = svAmbienteAttivo(sv,'postoAuto') ? 'Si' : 'No';
+  [['terrazzo','terrazzo'],['balcone','balcone'],['box','box'],['postoAuto','postoAuto'],['giardinoAmbiente','giardino'],['cantina','cantina'],['soffitta','soffitta'],['ripostiglio','ripostiglio']].forEach(([room,key])=>{
+    if(svAmbienteAttivo(sv,room))d[key]='Si';
+    else if(sv.ambientiPresenti&&Object.prototype.hasOwnProperty.call(sv.ambientiPresenti,room))d[key]='No';
+  });
   if(sv.speseCond) d.speseCond = sv.speseCond;
   if(sv.ipoteche) d.ipotecaPresente = sv.ipoteche === 'Si' ? 'Si' : 'No';
 
@@ -8435,7 +8539,7 @@ window.matchAcquirente = per => {
 };
 
 const ST = 'background:var(--bg2);padding:8px 10px;border-radius:8px;';
-const opt = (arr,sel,vuoto) => (vuoto !== undefined ? `<option value="">${vuoto}</option>` : '') + arr.map(o => `<option value="${esc(o)}"${o === sel ? ' selected' : ''}>${esc(o)}</option>`).join('');
+const opt = (arr,sel,vuoto) => (vuoto !== undefined ? `<option value="">${vuoto}</option>` : '') + (sel&&!arr.includes(sel)?`<option value="${esc(sel)}" selected>${esc(sel)} (valore precedente)</option>`:'') + arr.map(o => `<option value="${esc(o)}"${o === sel ? ' selected' : ''}>${esc(o)}</option>`).join('');
 
 function impSel(f,r){
   const salvato = LEG[r.requisiti && r.requisiti[f.k]] || (r.requisiti && r.requisiti[f.k]) || '';
@@ -8458,7 +8562,58 @@ function campo(f,ctx,src){
   const imp = (rq && f.t !== 'dato' && f.ui !== 'im' && f.ui !== 'none') ? impSel(f,src) : '';
   return `<div class="cx-campo" data-cx-key="${f.k}" data-cx-ctx="${ctx}"><label class="form-label">${f.l}</label>${c}${imp}</div>`;
 }
+
+/* Dossier 2.21: elementi chiave in alto, il catalogo integrale a richiesta.
+   Le selezioni non compilate significano "da verificare", MAI "No". */
+const AR_CORE_KEYS=['tipologia','sottotipologia','statoConservativo','mqCalpestabili','mqCommerciali','locali','camere','bagni','piano','annoCostruzione'];
+const AR_OPER_KEYS=['riscaldamento','riscaldamentoTipo','classeEnergeticaUI','certEnergetica','occupazione','categoriaCatastale','rendita','provenienza','conformitaUrbanistica','catastaleConforme','ipotecaPresente','speseCond','vincoli'];
+const arValPieno=v=>Array.isArray(v)?v.some(Boolean):(v!==null&&v!==undefined&&String(v).trim()!=='');
+function arGridFields(list,src){
+ const out=list.map(f=>campo(f,'im',src));
+ return `<div class="ar-editor-grid">${out.join('')}</div>`;
+}
+function arDossierFlags(fields,src){
+ const groups=Object.entries(fields.reduce((acc,f)=>{(acc[f.g]||(acc[f.g]=[])).push(f);return acc;},{}));
+ return groups.map(([code,fs])=>{
+  const label=GRUPPI.find(g=>g[0]===code)?.[1]||'Dotazioni';
+  return `<div class="ar-d-flag-section"><div>${esc(label)}</div><div class="ar-editor-tags">${fs.map(f=>{
+   const value=src[ik(f)]==='Si'?'Si':src[ik(f)]==='No'?'No':'';
+   const icon=value==='Si'?'✓':value==='No'?'−':'';
+   return `<div data-cx-key="${esc(f.k)}" data-cx-ctx="im"><input type="hidden" id="cx-im-${esc(f.k)}" value="${esc(value)}"><button type="button" data-state="${value}" class="ar-editor-tag" onclick="arDossierToggleFlag(this)"><span class="ar-editor-flag-icon">${icon}</span>${esc(f.l)}</button></div>`;
+  }).join('')}</div></div>`;
+ }).join('');
+}
+window.arDossierToggleFlag=function(btn){
+ const row=btn.closest('[data-cx-key]'),input=row&&row.querySelector('input');if(!input)return;
+ const val=input.value==='Si'?'No':input.value==='No'?'':'Si';input.value=val;
+ btn.dataset.state=val;btn.querySelector('.ar-editor-flag-icon').textContent=val==='Si'?'✓':val==='No'?'−':'';
+ dossierDepRefresh('im',DB.immobili.find(i=>i.id===immobileAperto)?.dettagli||{});
+};
+function arDossierImmobile(src){
+ const used=new Set(),cKey=AR_CORE_KEYS.map(k=>CAT.find(f=>f.k===k)).filter(f=>f&&usa(f,'im')&&f.ui!=='none');
+ cKey.forEach(f=>used.add(f.k));
+ const major=AR_OPER_KEYS.map(k=>CAT.find(f=>f.k===k)).filter(f=>f&&usa(f,'im')&&f.ui!=='none'&&!used.has(f.k));
+ major.forEach(f=>used.add(f.k));
+ const flags=CAT.filter(f=>!used.has(f.k)&&usa(f,'im')&&f.ui!=='none'&&f.t==='sn');
+ flags.forEach(f=>used.add(f.k));
+ const others=CAT.filter(f=>!used.has(f.k)&&usa(f,'im')&&f.ui!=='none');
+ const filled=CAT.filter(f=>usa(f,'im')&&f.ui!=='none'&&arValPieno(src[ik(f)])).length;
+ let h=`<div class="ar-editor-intro"><strong>Dati dell'immobile</strong> · ${filled} informazioni compilate. I campi vuoti restano non rilevati, non vengono considerati assenti.</div>`;
+ h+=`<section class="ar-editor-card"><h3>Caratteristiche principali</h3>${arGridFields(cKey,src)}</section>`;
+ if(src.ambientiRilevati?.length)h+=`<section class="ar-editor-card"><h3>Dimensioni e spazi <small>rilevati</small></h3>${htmlLocaliDossier(src)}<p class="ar-editor-hint">Superficie interna misurata e pertinenze non equivalgono automaticamente ai m² commerciali. Per correggere le singole misure, apri la scheda valutazione.</p></section>`;
+ h+=`<details class="ar-editor-details" open><summary>Stato, impianti e documentazione <span class="ar-editor-minor">${major.filter(f=>arValPieno(src[ik(f)])).length}/${major.length}</span></summary><div class="ar-editor-inner">${arGridFields(major,src)}</div></details>`;
+ h+=`<details class="ar-editor-details"><summary>Dotazioni e presenze <span class="ar-editor-minor">${flags.filter(f=>arValPieno(src[ik(f)])).length} registrate</span></summary><div class="ar-editor-inner"><p class="ar-editor-hint" style="margin:0 0 10px">Tocca una voce: ✓ presente, − assente, vuota = da verificare. Puoi selezionare più voci.</p>${arDossierFlags(flags,src)}</div></details>`;
+ const grouped=GRUPPI.map(([code,title])=>({code,title,items:others.filter(f=>f.g===code)})).filter(g=>g.items.length);
+ const extraFilled=others.filter(f=>arValPieno(src[ik(f)])).length;
+ h+=`<details class="ar-editor-details"><summary>Altre informazioni <span class="ar-editor-minor">${extraFilled} compilate · ${others.length} disponibili</span></summary><div class="ar-editor-inner"><p class="ar-editor-hint" style="margin:0 0 10px">Apri soltanto l'argomento che ti serve. Le altre variabili restano disponibili senza appesantire la scheda.</p>`;
+ grouped.forEach(g=>{
+  const n=g.items.filter(f=>arValPieno(src[ik(f)])).length;
+  h+=`<details class="ar-d-group-item" data-cx-group="${g.code}"><summary>${esc(g.title)} <span class="ar-editor-minor">${n?' · '+n+' compilate':''}</span></summary><div>${arGridFields(g.items,src)}</div></details>`;
+ });h+='</div></details>';
+ return h;
+}
 function sezione(ctx,src){
+  if(ctx==='im')return arDossierImmobile(src);
   let h = '';
   GRUPPI.forEach(g => {
     const code = g[0];
@@ -8527,8 +8682,8 @@ function dossierDepRefresh(ctx, src){
     if(f.ui==='none'||!usa(f,ctx))return;
     const id=`cx-${ctx}-${f.k}`;
     let value;
-    if(f.t==='multi'||f.t==='multiNo')value=msVal(id);
-    else {const el=document.getElementById(id);if(el)value=el.value;}
+    if(f.t==='multi'||f.t==='multiNo'){if(document.getElementById('ms-btn-'+id))value=msVal(id);}
+    else {const el=document.getElementById(id);if(el&&!el.disabled)value=el.value;}
     if(value!==undefined) current[ctx==='rq'?rk(f):ik(f)]=value;
   });
   container.querySelectorAll(`[data-cx-ctx="${ctx}"]`).forEach(el=>{
@@ -8563,9 +8718,14 @@ function leggi(ctx){
     if(f.ui === 'none') return;
     const id = `cx-${ctx}-${f.k}`;
     if(usa(f,ctx)){
-      if(f.t === 'multi' || f.t === 'multiNo') dati[ctx === 'rq' ? rk(f) : ik(f)] = msVal(id);
-      else if(f.t === 'num' && ctx === 'rq'){ dati[f.rqMin || f.k+'Min'] = (gv(id+'-min') || '').trim(); dati[f.rqMax || f.k+'Max'] = (gv(id+'-max') || '').trim(); }
-      else dati[ctx === 'rq' ? rk(f) : ik(f)] = (gv(id) || '').trim();
+      const element=document.getElementById(id);
+      const multiple=document.getElementById('ms-btn-'+id);
+      if((f.t === 'multi' || f.t === 'multiNo') && multiple && !multiple.disabled) dati[ctx === 'rq' ? rk(f) : ik(f)] = msVal(id);
+      else if(f.t === 'num' && ctx === 'rq'){
+        if(document.getElementById(id+'-min'))dati[f.rqMin || f.k+'Min'] = (gv(id+'-min') || '').trim();
+        if(document.getElementById(id+'-max'))dati[f.rqMax || f.k+'Max'] = (gv(id+'-max') || '').trim();
+      }
+      else if(element && !element.disabled) dati[ctx === 'rq' ? rk(f) : ik(f)] = (gv(id) || '').trim();
     }
     const v = gv(id+'-imp'); if(v !== undefined) imp[f.k] = v;
   });
@@ -9416,7 +9576,7 @@ function scaricaCompleannoICS(id){
 }
 </script>
 <script>
-/* ARANJO 2.20.0 - azioni operative, tutela e codice fiscale assistito */
+/* ARANJO 2.21.0 - azioni operative, tutela e codice fiscale assistito */
 function svAggiungiAltro(select){
  const k=select?.value,sv=window._svBozza;
  if(!k||!sv||!SV_NOMI[k])return;
@@ -9426,8 +9586,8 @@ function svAggiungiAltro(select){
  if(!sv.ambientiQuantita[k])sv.ambientiQuantita[k]=1;
  const chosen=select.previousElementSibling;
  if(chosen&&!chosen.querySelector('[data-sv-room="'+k+'"]')){
-   const b=document.createElement('button');b.type='button';b.className='active';b.dataset.svRoom=k;b.setAttribute('aria-pressed','true');
-   b.textContent=SV_NOMI[k];b.onclick=()=>svToggleAmbiente(k,b);chosen.appendChild(b);
+   const b=document.createElement('button');b.type='button';b.className='ar-editor-tag active';b.dataset.svRoom=k;b.setAttribute('aria-pressed','true');
+   b.innerHTML=esc(SV_NOMI[k])+'<span class="sv-chip-quantity">1</span>';b.onclick=()=>svToggleAmbiente(k,b);chosen.appendChild(b);
  }
  select.value='';svRendiAmbienti();
 }
