@@ -2,7 +2,7 @@
 <html lang="it" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ARANJO">
@@ -1027,6 +1027,49 @@ input.ar-search-has-clear::-webkit-search-cancel-button{-webkit-appearance:none;
 .ar-altre-agenzie-card{padding:12px!important}.ar-occupazione{padding:3px 0 7px}.ar-occupazione #mi-cit-persona[hidden],.ar-occupazione #f-cit-persona[hidden],.ar-altre-agenzie [hidden]{display:none!important}
 #ep-q-row[hidden],#ep-pr-row[hidden]{display:none!important}
 @media(max-width:350px){.ar-agenzia-grid{grid-template-columns:1fr}}
+</style><style>
+/* ARANJO 2.20.0 - Responsive reale e comandi iOS */
+@media(min-width:768px){
+ :root{--maxw:1440px}
+ body{background:var(--bg)}
+ .app{width:100%;max-width:1440px;min-height:100dvh;box-shadow:0 0 48px rgba(0,0,0,.035);border:0}
+ .app-header{padding-left:clamp(20px,3vw,44px);padding-right:clamp(20px,3vw,44px)}
+ .app-content:not(.agenda-mode){padding-left:clamp(20px,3vw,44px);padding-right:clamp(20px,3vw,44px)}
+ .tabbar{width:min(100%,1440px);max-width:1440px}
+ .modal-sheet{max-width:min(92vw,900px)}
+ #lista-immobili,#lista-persone,#gs-r{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;align-content:start}
+ #lista-immobili>.item-card,#lista-persone>.item-card,#gs-r>.global-result{margin:0;min-width:0}
+ #gs-r>.global-group-title,#gs-r>.empty{grid-column:1/-1}
+ #view-ricerca #pratiche-dashboard{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 14px}
+ #pratiche-dashboard>.practice-head,#pratiche-dashboard>.geo-help,#pratiche-dashboard>.empty,#pratiche-dashboard>.practice-archive{grid-column:1/-1}
+ .app-content.attivita-active #view-attivita.active{display:grid!important;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:12px;height:100%}
+ .app-content.attivita-active #view-attivita>.att-col{min-height:0;max-height:none!important;height:100%}
+ .ag-bottombar{left:max(0px,calc((100vw - 1440px)/2));right:auto}
+ .modal-body{padding:18px 22px 24px}
+}
+@media(min-width:1120px){#lista-immobili,#lista-persone{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:768px) and (max-width:1010px){.app-content.attivita-active #view-attivita.active{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:1fr 1fr}.app-content.attivita-active #view-attivita>.att-col:first-child{grid-row:span 2}}
+@media(max-width:767px){.app,.app-content,.modal-sheet{max-width:100%}.modal-sheet{max-height:calc(100dvh - env(safe-area-inset-top))}}
+.sv-shape-select{min-width:108px;max-width:100%;border:1px solid var(--bd2);border-radius:9px;background:var(--card);color:var(--tx);padding:8px;font-size:13px}
+.sv-dimension{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px}
+.sv-dimension>label{display:flex;flex-direction:column;gap:4px;min-width:0;color:var(--tx2);font-size:11px}
+.sv-dimension input{width:100%;border:1px solid var(--bd2);border-radius:8px;padding:9px;background:var(--card);color:var(--tx);font-size:16px}
+.sv-area-result{color:var(--blu);font-size:11px;font-weight:700;margin-top:5px}
+.sv-room-head{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.sv-room-head .sv-room-note-btn{margin-left:auto}
+.sv-vincoli{padding:8px 0 4px}
+.sv-vincoli[hidden]{display:none!important}
+.sv-vincoli-hint{font-size:11px;color:var(--tx3);line-height:1.45;padding:5px 0}
+.ar-quick-actions{display:flex;gap:7px;margin:9px 0 5px}
+.ar-quick-actions button{border:1px solid var(--bd2);background:var(--blu-soft);color:var(--blu);border-radius:10px;flex:1;padding:10px 7px;min-height:43px;font-size:12px;font-weight:750;cursor:pointer}
+.ar-dossier-advanced{margin:10px 0;border:1px solid var(--bd);border-radius:11px;background:var(--bg2)}
+.ar-dossier-advanced>summary{padding:10px 12px;font-size:11px;color:var(--tx2);cursor:pointer;font-weight:650}
+.ar-dossier-advanced>div{padding:5px 10px}
+.ar-cf-actions{display:flex;align-items:center;gap:8px;margin:7px 0}
+.ar-cf-actions .btn{width:auto;flex:1}
+.ar-cf-status{font-size:11px;color:var(--tx2);line-height:1.4}
+.ar-tutela-toggle{display:flex;align-items:center;gap:9px;padding:11px 12px;margin:8px 0;border-radius:11px;background:var(--bg2);font-size:12px;font-weight:600}
+.ar-tutela-toggle input{width:18px;height:18px;accent-color:var(--acc)}
 </style></head>
 <body>
 
@@ -1188,7 +1231,7 @@ input.ar-search-has-clear::-webkit-search-cancel-button{-webkit-appearance:none;
       </div>
       <div class="card">
         <h2>Sistema</h2>
-        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.19.9</span></div>
+        <div class="info-row"><span class="label">Versione sito</span><span class="value" id="sistema-versione">2.20.0</span></div>
         <div class="info-row"><span class="label">Dati</span><span class="value" id="storage-info">0 B</span></div>
         <div class="info-row"><span class="label">Citta</span><span class="value" id="sistema-citta"></span></div>
         <div class="info-row"><span class="label">Persistenza</span><span class="value" id="sistema-persist" style="color:var(--vnd);">No</span></div>
@@ -1231,7 +1274,7 @@ input.ar-search-has-clear::-webkit-search-cancel-button{-webkit-appearance:none;
 <script>
 'use strict';
 const DB_VERSION = 8;
-const APP_VERSION = '2.19.9';
+const APP_VERSION = '2.20.0';
 const DB_KEY = 'aranjo_db_v1';
 const GEOCODE_CACHE_KEY = 'aranjo_geocode_cache_v4';
 const CITTA_DEFAULT = 'CREMONA, CR, 26100';
@@ -1723,6 +1766,7 @@ const TIPI_APP = [
   { sigla:'CONTRO PROP', nome:'Controproposta', chi:'vend', icona:'penna', colore:'#000000', sezione:'trattativa', richiede:'INK_proposta', esiti:[{id:'contro-acc',label:'Accettata',tipo:'ok'},{id:'contro-rif',label:'Rifiutata',tipo:'ko'}] },
   { sigla:'ACC PROP', nome:'Accettazione', chi:'vend', icona:'checkCerchio', colore:'#FF7B40', sezione:'trattativa', richiede:'INK_proposta', esiti:[{id:'accprop-acc',label:'Accettata',tipo:'ok'},{id:'accprop-contro',label:'Controproposta',tipo:'neutral'},{id:'accprop-rif',label:'Rifiutata senza controproposta',tipo:'ko'},{id:'accprop-tratt',label:'In corso',tipo:'neutral'}] },
   { sigla:'NOT ACC', nome:'Notifica acc.', chi:'acq', icona:'inbox', colore:'#B70094', sezione:'trattativa', richiede:'RR_proposta_acc', esiti:[{id:'notacc-ok',label:'Notificata',tipo:'ok'},{id:'notacc-ko',label:'Non notif.',tipo:'ko'}] },
+  { sigla:'ATTO TUTELA', nome:'Atto preliminare soggetto a tutela', chi:'entrambi', icona:'landmark', colore:'#8B5CF6', sezione:'trattativa', richiede:'RR_INK_proposta_acc', esiti:[{id:'tutela-ok',label:'Atto stipulato / fase tutela avviata',tipo:'ok'},{id:'tutela-rinviato',label:'Rinviato',tipo:'neutral'},{id:'tutela-annullato',label:'Annullato',tipo:'ko'}] },
   { sigla:'ATTO', nome:'Atto', chi:'entrambi', icona:'landmark', colore:'#B70094', sezione:'trattativa', richiede:'RR_INK_proposta_acc', esiti:[{id:'atto-ok',label:'Rogitato',tipo:'ok'},{id:'atto-rinviato',label:'Rinviato',tipo:'neutral'},{id:'atto-annullato',label:'Annullato',tipo:'ko'}] },
   { sigla:'G UFF', nome:'Gestione Ufficio', chi:'solo', icona:'ufficio', colore:'#000000', sezione:'ufficio', richiede:null, esiti:null, senza_tag:true },
   { sigla:'GENERICO', nome:'Generico', chi:'gen', icona:'calendario', colore:'#999999', sezione:'ufficio', richiede:'RR_o_immobile', esito_obbligatorio:true, esiti:[{id:'gen-ok',label:'Positivo',tipo:'ok'},{id:'gen-neutral',label:'Neutro',tipo:'neutral'},{id:'gen-ko',label:'Negativo',tipo:'ko'},{id:'gen-richiama',label:'Richiamare',tipo:'neutral'}], senza_tag:true },
@@ -1785,7 +1829,7 @@ function titoloImmobile(im){
 const normalizzaSigla = s => { if(!s) return s; const u = String(s).toUpperCase(); return (u==='LIBERO'||u==='LIBERA'||u==='UFFICIO') ? 'G UFF' : s; };
 const getTipoApp = s => { const n = normalizzaSigla(s); return TIPI_APP.find(t => t.sigla === n) || TIPI_APP[TIPI_APP.length-1]; };
 
-const APP_FLUSSO = ['APP','RIT PROP','ACC PROP','CONTRO PROP','NOT ACC','ATTO'];
+const APP_FLUSSO = ['APP','RIT PROP','ACC PROP','CONTRO PROP','NOT ACC','ATTO TUTELA','ATTO'];
 function appCollegati(p,im){
  return Boolean(p&&im&&(p.ruoli||[]).includes('ACQUIRENTE')&&['NT','INK'].includes(im.stato) &&
  (p.richiesta?.immobiliCollegati||[]).some(x=>String(x)===String(im.id)));
@@ -1817,7 +1861,8 @@ function appCoppiaValida(tipo,im,p){
  if(tipo==='ACC PROP')return (!acc||acc.esito==='accprop-tratt')&&!contro;
  if(tipo==='CONTRO PROP')return !!acc&&acc.esito==='accprop-contro'&&!contro;
  if(tipo==='NOT ACC')return !!((acc&&acc.esito==='accprop-acc')||(contro&&contro.esito==='contro-acc')) && !(not&&not.esito==='notacc-ok');
- if(tipo==='ATTO')return !!(not&&not.esito==='notacc-ok');
+ if(tipo==='ATTO TUTELA'){const pr=(DB.pratiche||[]).find(x=>String(x.immobileId)===String(im.id)&&String(x.acquirenteId)===String(p.id));return !!pr?.soprintendenzaPrevista && !!(not&&not.esito==='notacc-ok');}
+ if(tipo==='ATTO'){const pr=(DB.pratiche||[]).find(x=>String(x.immobileId)===String(im.id)&&String(x.acquirenteId)===String(p.id));if(pr?.soprintendenzaPrevista&&!seq.some(a=>a.tipo==='ATTO TUTELA'&&a.stato==='eseguito'&&a.esito==='tutela-ok'))return false;return !!(not&&not.esito==='notacc-ok');}
  return false;
 }
 function appTipoPossibile(tipo,im,per){
@@ -2378,7 +2423,17 @@ function apriZone(){
  apriModal('Zone',h);
 }
 
-const chiama = tel => { if(tel) window.location.href = 'tel:' + tel.replace(/\s+/g,''); };
+function chiama(tel,contesto,id){
+ if(!tel)return;
+ try{
+   if(contesto==='persona'&&id){personaAperta=id;apriNuovaAttivitaPersona();}
+   else if(contesto==='immobile'&&id){immobileAperto=id;apriNuovaAttivita();}
+   else if(immobileAperto && (DB.immobili||[]).some(x=>String(x.id)===String(immobileAperto)))apriNuovaAttivita();
+   else if(personaAperta && trovaPersona(personaAperta))apriNuovaAttivitaPersona();
+   else apriNuovaAttivitaGlobale();
+ }catch(e){console.warn('Scheda attivita dopo chiamata',e);}
+ window.location.href='tel:'+String(tel).replace(/[^+0-9*#]/g,'');
+}
 const scriviEmail = e => { if(e) window.location.href = 'mailto:' + e; };
 function wa(tel){ if(!tel) return; const p = tel.replace(/\D/g,''); if(!p) return; const n = p.startsWith('39') ? p : '39'+p; window.open('https://wa.me/' + n, '_blank'); }
 function navMaps(lat, lng, nome){ const ios = /iPad|iPhone|iPod/.test(navigator.userAgent); const enc = encodeURIComponent(nome||''); const u = ios ? `https://maps.apple.com/?daddr=${lat},${lng}${enc?'&q='+enc:''}` : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`; window.open(u, '_blank'); }
@@ -2935,6 +2990,7 @@ const APP_CAMPI_ESITO={
  'ACC PROP':[['prezzo','Prezzo concordato / discusso (€)','number'],['motivazione','Motivazione dell’esito','text'],['termine','Termine per la risposta','date']],
  'CONTRO PROP':[['prezzo','Prezzo controproposto (€)','number'],['caparra','Caparra richiesta (€)','number'],['conMutuo','Mutuo previsto?','select'],['mutuo','Condizioni mutuo','text'],['banca','Banca (se nota)','text'],['importoMutuo','Importo mutuo (€)','number'],['consegna','Consegna','date'],['scadenza','Termine controproposta','date'],['condizioni','Altre condizioni','text']],
  'NOT ACC':[['dataNotifica','Data notifica','date'],['modalita','Modalita di comunicazione','text'],['ricevuta','Conferma / ricevuta','text']],
+ 'ATTO TUTELA':[['notaio','Notaio','text'],['atto','Atto / estremi','text'],['denuncia','Denuncia di trasferimento / iter tutela','text'],['noteVincolo','Vincolo e provvedimenti','text']],
  'ATTO':[['notaio','Notaio','text'],['repertorio','Repertorio / riferimenti','text'],['prezzo','Prezzo definitivo (€)','number'],['saldo','Saldo / pagamenti','text'],['consegna','Consegna chiavi','date']],
  'GENERICO':[['motivo','Motivo incontro','text'],['accordi','Accordi / prossime azioni','text']]
 };
@@ -3635,7 +3691,7 @@ function apriScheda(id){
   if(im.valutata) h += `<div class="top-sub" style="color:var(--ink);font-weight:600;">${ico('check',12)} Valutato il ${im.dataValutazione?fmtD(im.dataValutazione):'—'}</div>`;
   if(!im.villa && co && dc.amministratore && dc.amministratore.nome) h += `<div class="top-sub">${iconaCondo(12)} ${esc(dc.amministratore.nome)}</div>`;
   h += '<div class="top-actions" style="flex-wrap:wrap;">';
-  if(telP) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(telP)}')">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(telP)}')">${ico('whatsapp',15)}</button>`;
+  if(telP) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(telP)}','immobile',${argEvento(im.id)})">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(telP)}')">${ico('whatsapp',15)}</button>`;
   if(hc) h += `<button class="btn btn-secondary btn-icon" onclick="navMaps(${geoNav.lat},${geoNav.lng},'${esc(im.indirizzo).replace(/'/g,'')}')">${ico('nav',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" title="Altre azioni" aria-label="Altre azioni" onclick="apriMenuAzioniImmobile('${id}')"><span style="font-size:20px;line-height:1">⋯</span></button>`;
   h += '</div>';
@@ -3649,6 +3705,7 @@ function apriScheda(id){
 
   h += '</div></div>';
   h += renderBoxAttivita(im, true);
+  if(im.stato==='IMM') h += `<div class="ar-quick-actions" role="group" aria-label="Attivita veloci"><button type="button" onclick="creaAttivitaRapidaCensito(${argEvento(im.id)},'NS')">NS · Non sa nulla</button><button type="button" onclick="creaAttivitaRapidaCensito(${argEvento(im.id)},'NR')">NR · Non risposto</button></div>`;
   if(im.schedaValutazione && Object.keys(im.schedaValutazione).length > 0){
     const sv = im.schedaValutazione;
     let bodyV = '';
@@ -3823,20 +3880,41 @@ function apriScheda(id){
   apriModal(titoloImmobile(im), h);
 }
 
+const AR_VINCOLI=[
+ 'Vincolo storico-artistico / bene culturale (D.Lgs. 42/2004)','Vincolo archeologico','Vincolo paesaggistico',
+ 'Vincolo ambientale / area protetta','Vincolo idrogeologico','Vincolo idraulico / PAI / PGRA','Vincolo rischio frana / alluvione',
+ 'Vincolo sismico / normativa tecnica','Vincolo forestale / boschivo','Vincolo demaniale / uso pubblico','Vincolo civico / uso civico',
+ 'Vincolo urbanistico / destinazione d’uso','Vincolo edificabilità / inedificabilità','Vincolo fascia di rispetto stradale',
+ 'Vincolo fascia di rispetto ferroviaria','Vincolo cimiteriale','Vincolo aeroportuale / ENAC','Vincolo elettrodotto',
+ 'Vincolo gasdotto / acquedotto','Vincolo corsi d’acqua / coste','Vincolo militare / servitù militare',
+ 'Vincolo condominiale / regolamento contrattuale','Vincolo pertinenziale','Vincolo convenzionale / PEEP / edilizia convenzionata',
+ 'Vincolo prezzo massimo di cessione','Vincolo prezzo / canone agevolato','Vincolo locazione / occupazione / prelazione legale',
+ 'Vincolo diritto di superficie','Vincolo usufrutto / uso / abitazione','Vincolo servitù attiva o passiva',
+ 'Vincolo di non alienazione / temporanea inalienabilità','Vincolo derivante da donazione / successione',
+ 'Vincolo fallimentare / concorsuale','Vincolo giudiziale / pignoramento / sequestro','Vincolo trascrizione domanda giudiziale',
+ 'Vincolo ipotecario','Vincolo edilizio / abuso / sanatoria','Vincolo fideiussorio / contributi pubblici','Vincolo fiscale',
+ 'Vincolo bonifica / contaminazione','Vincolo agricolo / prelazione agraria','Vincolo agriturismo / ruralità',
+ 'Vincolo impianti tecnologici / infrastrutture','Vincolo energetico / incentivo','Altro vincolo'
+];
 /* ============ SCHEDA VALUTAZIONE — VELOCE ============ */
 const SV_AMBIENTI = [
   ['ingresso','Ingresso'],['soggiorno','Soggiorno'],['salaPranzo','Sala pranzo'],
   ['cucinaAbitabile','Cucina ab.'],['angoloCottura','Angolo cottura'],['tinello','Tinello'],
   ['cameraGrande','Camera grande'],['cameraMedia','Camera media'],['cameraPiccola','Camera piccola'],
   ['bagnoAmbiente','Bagno'],['disimpegno','Disimpegno'],['studio','Studio'],
-  ['terrazzo','Terrazzo'],['balcone','Balcone'],['postoAuto','Posto auto'],['box','Box']
+  ['ripostiglio','Ripostiglio'],['terrazzo','Terrazzo'],['balcone','Balcone'],['postoAuto','Posto auto'],['box','Box'],
+  ['giardinoAmbiente','Giardino'],['cantina','Cantina'],['soffitta','Soffitta'],['lavanderiaAmbiente','Lavanderia'],
+  ['taverna','Taverna'],['mansardaAmbiente','Mansarda'],['veranda','Veranda'],['portico','Portico'],
+  ['loggia','Loggia'],['corte','Corte'],['lastricoSolare','Lastrico solare'],['magazzinoAmbiente','Magazzino'],
+  ['localeTecnico','Locale tecnico'],['sottotetto','Sottotetto'],['soppalco','Soppalco'],['piscina','Piscina'],['altroAmbiente','Altro ambiente']
 ];
 const SV_AMBIENTI_DIM = SV_AMBIENTI.map(a => a[0]);
 const SV_NOMI = Object.fromEntries(SV_AMBIENTI);
 const SV_CATEGORIE = [
   ['Zona giorno',['ingresso','soggiorno','salaPranzo','cucinaAbitabile','angoloCottura','tinello']],
-  ['Zona notte e servizi',['cameraGrande','cameraMedia','cameraPiccola','bagnoAmbiente','disimpegno','studio']],
-  ['Esterni e pertinenze',['terrazzo','balcone','postoAuto','box']]
+  ['Zona notte e servizi',['cameraGrande','cameraMedia','cameraPiccola','bagnoAmbiente','disimpegno','studio','ripostiglio']],
+  ['Esterni e pertinenze',['terrazzo','balcone','postoAuto','box','giardinoAmbiente','cantina','soffitta']],
+  ['Altri ambienti',['lavanderiaAmbiente','taverna','mansardaAmbiente','veranda','portico','loggia','corte','lastricoSolare','magazzinoAmbiente','localeTecnico','sottotetto','soppalco','piscina','altroAmbiente']]
 ];
 function svNumeroAmbienti(sv,k){
   if(!svAmbienteAttivo(sv,k)) return 0;
@@ -3844,81 +3922,125 @@ function svNumeroAmbienti(sv,k){
   const esistenti = sv.ambientiDettaglio && sv.ambientiDettaglio[k];
   return Math.max(1,Math.min(30,Number.isFinite(n)&&n>0 ? Math.trunc(n) : Array.isArray(esistenti)&&esistenti.length ? esistenti.length : 1));
 }
+const SV_FORME={
+ rettangolo:[['l','Lunghezza (m)'],['w','Profondità (m)']],
+ quadrato:[['l','Lato (m)']],
+ triangolo:[['base','Base (m)'],['altezza','Altezza (m)']],
+ cerchio:[['diametro','Diametro (m)']],
+ semicerchio:[['diametro','Diametro (m)']],
+ ellisse:[['asseMaggiore','Asse maggiore (m)'],['asseMinore','Asse minore (m)']],
+ trapezio:[['baseMaggiore','Base maggiore (m)'],['baseMinore','Base minore (m)'],['altezza','Altezza (m)']],
+ parallelogramma:[['base','Base (m)'],['altezza','Altezza (m)']],
+ rombo:[['diagMaggiore','Diagonale maggiore (m)'],['diagMinore','Diagonale minore (m)']],
+ elle:[['l','Lunghezza braccio 1 (m)'],['w','Larghezza braccio 1 (m)'],['l2','Lunghezza braccio 2 non sovrapposto (m)'],['w2','Larghezza braccio 2 (m)']],
+ irregolare:[['mqManuali','Superficie rilevata da planimetria (m²)']]
+};
 function svDettagliAmbiente(sv,k){
-  const arr = sv.ambientiDettaglio && sv.ambientiDettaglio[k];
-  if(Array.isArray(arr)) return arr.map(o => ({l:o && o.l || '',w:o && o.w || '',note:o && o.note || ''}));
-  const old = sv[k];
-  return old && typeof old === 'object' ? [{l:old.l || '',w:old.w || '',note:old.note || ''}] : [];
+ const arr=sv.ambientiDettaglio?.[k];
+ if(Array.isArray(arr))return arr.map(o=>({...o,forma:o?.forma||'rettangolo',note:o?.note||''}));
+ const old=sv[k];return old&&typeof old==='object'?[{...old,forma:old.forma||'rettangolo',note:old.note||''}]:[];
+}
+function svArea(v){
+ const n=k=>svMisuraNumero(v[k]);const f=v.forma||'rettangolo';let area=0;
+ if(f==='rettangolo')area=n('l')*n('w');
+ else if(f==='quadrato')area=n('l')**2;
+ else if(f==='triangolo')area=n('base')*n('altezza')/2;
+ else if(f==='cerchio')area=Math.PI*(n('diametro')/2)**2;
+ else if(f==='semicerchio')area=Math.PI*(n('diametro')/2)**2/2;
+ else if(f==='ellisse')area=Math.PI*n('asseMaggiore')*n('asseMinore')/4;
+ else if(f==='trapezio')area=(n('baseMaggiore')+n('baseMinore'))*n('altezza')/2;
+ else if(f==='parallelogramma')area=n('base')*n('altezza');
+ else if(f==='rombo')area=n('diagMaggiore')*n('diagMinore')/2;
+ else if(f==='elle')area=n('l')*n('w')+n('l2')*n('w2');
+ else if(f==='irregolare')area=n('mqManuali');
+ const filled=SV_FORME[f]&&SV_FORME[f].every(([k])=>n(k)>0);
+ return filled&&Number.isFinite(area)&&area>0?Math.round(area*100)/100:null;
+}
+function svFormaCambiata(k,i,select){
+ svRaccogliDettagli();
+ const old=window._svBozza.ambientiDettaglio[k][i];old.forma=select.value;
+ svRendiAmbienti();
 }
 function svRaccogliDettagli(){
-  const sv=window._svBozza; if(!sv)return;
-  sv.ambientiPresenti = sv.ambientiPresenti || {};
-  sv.ambientiQuantita = sv.ambientiQuantita || {};
-  sv.ambientiDettaglio = sv.ambientiDettaglio || {};
-  SV_AMBIENTI_DIM.forEach(k=>{
-    if(!svAmbienteAttivo(sv,k)) return;
-    const n=svNumeroAmbienti(sv,k);
-    const backup=svDettagliAmbiente(sv,k);
-    const arr=[];
-    for(let i=0;i<n;i++){
-      const lEl=document.getElementById(`sv-room-${k}-${i}-l`), wEl=document.getElementById(`sv-room-${k}-${i}-w`);
-      const noteEl=document.getElementById(`sv-room-${k}-${i}-note`);
-      arr.push({l:lEl?lEl.value:backup[i]&&backup[i].l||'',w:wEl?wEl.value:backup[i]&&backup[i].w||'',note:noteEl?noteEl.value:backup[i]&&backup[i].note||''});
-    }
-    sv.ambientiQuantita[k]=n;
-    sv.ambientiDettaglio[k]=arr;
-    sv[k]=arr[0]||{l:'',w:''}; // compatibilita con valutazioni precedenti
-  });
+ const sv=window._svBozza;if(!sv)return;
+ sv.ambientiPresenti=sv.ambientiPresenti||{};sv.ambientiQuantita=sv.ambientiQuantita||{};sv.ambientiDettaglio=sv.ambientiDettaglio||{};
+ SV_AMBIENTI_DIM.forEach(k=>{
+  if(!svAmbienteAttivo(sv,k))return;
+  const n=svNumeroAmbienti(sv,k),backup=svDettagliAmbiente(sv,k),arr=[];
+  for(let i=0;i<n;i++){
+   const v={...(backup[i]||{})};
+   const sel=document.getElementById(`sv-room-${k}-${i}-forma`);
+   if(sel)v.forma=sel.value;
+   (SV_FORME[v.forma||'rettangolo']||[]).forEach(([campo])=>{
+     const input=document.getElementById(`sv-room-${k}-${i}-${campo}`);if(input)v[campo]=input.value;
+   });
+   const note=document.getElementById(`sv-room-${k}-${i}-note`);if(note)v.note=note.value;
+   v.mq=svArea(v);arr.push(v);
+  }
+  sv.ambientiQuantita[k]=n;sv.ambientiDettaglio[k]=arr;
+  sv[k]=arr[0]||{l:'',w:''};
+ });
 }
-const SV_LOCALI_APPARTAMENTO = new Set(['ingresso','soggiorno','salaPranzo','cucinaAbitabile','angoloCottura','tinello','cameraGrande','cameraMedia','cameraPiccola','bagnoAmbiente','disimpegno','studio']);
+const SV_LOCALI_APPARTAMENTO = new Set(['ingresso','soggiorno','salaPranzo','cucinaAbitabile','angoloCottura','tinello','cameraGrande','cameraMedia','cameraPiccola','bagnoAmbiente','disimpegno','studio','ripostiglio']);
 function svMisuraNumero(v){const n=Number(String(v??'').trim().replace(',','.'));return Number.isFinite(n)&&n>0?n:0;}
 function svCalcolaMqAppartamento(){
-  const sv=window._svBozza;if(!sv)return {mq:0,completi:0};
-  let mq=0,completi=0;
-  SV_LOCALI_APPARTAMENTO.forEach(k=>{
-    if(!svAmbienteAttivo(sv,k))return;
-    const q=svNumeroAmbienti(sv,k),arr=svDettagliAmbiente(sv,k);
-    for(let i=0;i<q;i++){
-      const l=document.getElementById(`sv-room-${k}-${i}-l`),w=document.getElementById(`sv-room-${k}-${i}-w`);
-      const a=svMisuraNumero(l?l.value:arr[i]?.l),b=svMisuraNumero(w?w.value:arr[i]?.w);
-      if(a&&b){mq+=a*b;completi++;}
-    }
-  });
-  return {mq:Math.round(mq*100)/100,completi};
+ const sv=window._svBozza;if(!sv)return {mq:0,accessori:0,totali:0,completi:0,mancanti:0};
+ let mq=0,accessori=0,completi=0,mancanti=0;
+ SV_AMBIENTI_DIM.forEach(k=>{
+  if(!svAmbienteAttivo(sv,k))return;
+  const arr=svDettagliAmbiente(sv,k);
+  for(let i=0;i<svNumeroAmbienti(sv,k);i++){
+   const v={...(arr[i]||{})},sel=document.getElementById(`sv-room-${k}-${i}-forma`);
+   if(sel)v.forma=sel.value;
+   (SV_FORME[v.forma||'rettangolo']||[]).forEach(([campo])=>{const input=document.getElementById(`sv-room-${k}-${i}-${campo}`);if(input)v[campo]=input.value;});
+   const area=svArea(v);
+   if(area===null){mancanti++;continue;}completi++;
+   if(SV_LOCALI_APPARTAMENTO.has(k))mq+=area;else accessori+=area;
+  }
+ });
+ return {mq:Math.round(mq*100)/100,accessori:Math.round(accessori*100)/100,totali:Math.round((mq+accessori)*100)/100,completi,mancanti};
 }
 function svAggiornaMqAppartamento(){
-  const t=svCalcolaMqAppartamento(),el=document.getElementById('sv-mq');
-  if(el)el.value=t.completi?String(t.mq).replace('.',','):'';
-  const info=document.getElementById('sv-mq-info');
-  if(info)info.textContent=t.completi?`${t.completi} ${t.completi===1?'locale misurato':'locali misurati'} · solo superficie interna dell’appartamento`:'Inserisci lunghezza e profondita dei locali per calcolare il totale.';
+ const t=svCalcolaMqAppartamento(),el=document.getElementById('sv-mq');
+ if(el)el.value=t.completi?String(t.mq).replace('.',','):'';
+ const info=document.getElementById('sv-mq-info');
+ if(info)info.textContent=`Interni ${t.mq.toLocaleString('it-IT')} m² · pertinenze/esterni ${t.accessori.toLocaleString('it-IT')} m² · complessivi misurati ${t.totali.toLocaleString('it-IT')} m²${t.mancanti?' · '+t.mancanti+' ambienti ancora da misurare':''}. Le superfici commerciali vanno ponderate separatamente.`;
+ document.querySelectorAll('.sv-room-item').forEach(item=>{
+  const k=item.dataset.roomKey,i=Number(item.dataset.roomIndex),sv=window._svBozza;
+  const v={...(svDettagliAmbiente(sv,k)[i]||{})},sel=item.querySelector('.sv-shape-select');
+  if(sel)v.forma=sel.value;
+  (SV_FORME[v.forma]||[]).forEach(([key])=>{const el=item.querySelector(`[data-misura="${key}"]`);if(el)v[key]=el.value;});
+  const a=svArea(v),out=item.querySelector('.sv-area-result');if(out)out.textContent=a===null?'Superficie da calcolare':a.toLocaleString('it-IT')+' m²';
+ });
 }
 function svRendiAmbienti(){
-  const sv=window._svBozza; const target=document.getElementById('sv-ambienti-dettaglio');
-  if(!sv||!target)return;
-  let html='';
-  SV_CATEGORIE.forEach(([categoria,keys])=>{
-    const attivi=keys.filter(k=>svAmbienteAttivo(sv,k));
-    if(!attivi.length)return;
-    html+=`<div class="sv-room-group"><div class="sv-room-category">${categoria}</div>`;
-    attivi.forEach(k=>{
-      const q=svNumeroAmbienti(sv,k), arr=svDettagliAmbiente(sv,k);
-      html+=`<div class="sv-room-card"><div class="sv-room-top"><strong>${SV_NOMI[k]}</strong><div class="sv-room-counter"><button type="button" title="Meno ${SV_NOMI[k]}" aria-label="Riduci ${SV_NOMI[k]}" onclick="svCambiaQuantita('${k}',-1)" ${q<=1?'disabled':''}>−</button><b>${q}</b><button type="button" title="Piu ${SV_NOMI[k]}" aria-label="Aggiungi ${SV_NOMI[k]}" onclick="svCambiaQuantita('${k}',1)" ${q>=30?'disabled':''}>+</button></div></div>`;
-      for(let i=0;i<q;i++){
-        const v=arr[i]||{};
-        const noteId=`sv-room-${k}-${i}-note`;
-        const aperta=Boolean(v.note)||(window._svNoteAperte&&window._svNoteAperte[`${k}-${i}`]);
-        html+=`<div class="sv-room-item"><div class="sv-room-line"><span>${q>1?i+1:''}</span><label><small>L (m)</small><input class="form-input" id="sv-room-${k}-${i}-l" inputmode="decimal" oninput="svAggiornaMqAppartamento()" value="${esc(v.l||'')}"></label><label><small>P (m)</small><input class="form-input" id="sv-room-${k}-${i}-w" inputmode="decimal" oninput="svAggiornaMqAppartamento()" value="${esc(v.w||'')}"></label><button type="button" class="sv-room-note-btn${v.note?' has-note':''}" aria-expanded="${Boolean(aperta)}" aria-controls="sv-room-${k}-${i}-note-box" title="Note ${SV_NOMI[k]}${q>1?' '+(i+1):''}" onclick="svApriNoteAmbiente('${k}',${i},this)">${ico('nota',14)}<span>Note</span></button></div><div class="sv-room-note-box" id="sv-room-${k}-${i}-note-box" ${aperta?'':'hidden'}><label for="${noteId}">Note ${SV_NOMI[k]}${q>1?' '+(i+1):''}</label><textarea class="form-textarea" id="${noteId}" rows="2" placeholder="Es. finiture, lavori, particolarita…" oninput="svNotaCambiata('${k}',${i},this)">${esc(v.note||'')}</textarea></div></div>`;
-      }
-      html+='</div>';
-    });
-    html+='</div>';
-  });
-  target.innerHTML=html;
-  const camere=['cameraGrande','cameraMedia','cameraPiccola'].reduce((v,k)=>v+svNumeroAmbienti(sv,k),0);
-  const bagni=svNumeroAmbienti(sv,'bagnoAmbiente');
-  const sum=document.getElementById('sv-room-summary');
-  if(sum)sum.textContent=[camere?camere+' camere':'',bagni?bagni+' bagni':''].filter(Boolean).join(' · ');
-  svAggiornaMqAppartamento();
+ const sv=window._svBozza,target=document.getElementById('sv-ambienti-dettaglio');if(!sv||!target)return;
+ let html='';
+ SV_CATEGORIE.forEach(([categoria,keys])=>{
+  const attivi=keys.filter(k=>svAmbienteAttivo(sv,k));if(!attivi.length)return;
+  html+=`<div class="sv-room-group"><div class="sv-room-category">${categoria}</div>`;
+  attivi.forEach(k=>{
+   const q=svNumeroAmbienti(sv,k),arr=svDettagliAmbiente(sv,k);
+   html+=`<div class="sv-room-card"><div class="sv-room-top"><strong>${esc(SV_NOMI[k])}</strong><div class="sv-room-counter"><button type="button" onclick="svCambiaQuantita('${k}',-1)" aria-label="Riduci" ${q<=1?'disabled':''}>−</button><b>${q}</b><button type="button" onclick="svCambiaQuantita('${k}',1)" aria-label="Aggiungi" ${q>=30?'disabled':''}>+</button></div></div>`;
+   for(let i=0;i<q;i++){
+    const v=arr[i]||{},f=v.forma||'rettangolo',noteId=`sv-room-${k}-${i}-note`;
+    const aperta=Boolean(v.note)||(window._svNoteAperte&&window._svNoteAperte[`${k}-${i}`]);
+    html+=`<div class="sv-room-item" data-room-key="${k}" data-room-index="${i}"><div class="sv-room-head"><span class="form-label">${q>1?'Ambiente '+(i+1):'Forma e misure'}</span>`;
+    html+=`<select class="sv-shape-select" id="sv-room-${k}-${i}-forma" aria-label="Forma dell’ambiente" onchange="svFormaCambiata('${k}',${i},this)">${Object.keys(SV_FORME).map(x=>`<option value="${x}"${f===x?' selected':''}>${x==='elle'?'A L':x==='irregolare'?'Irregolare / rilievo':x[0].toUpperCase()+x.slice(1)}</option>`).join('')}</select>`;
+    html+=`<button type="button" class="sv-room-note-btn${v.note?' has-note':''}" aria-expanded="${Boolean(aperta)}" aria-controls="sv-room-${k}-${i}-note-box" onclick="svApriNoteAmbiente('${k}',${i},this)">${ico('nota',14)}<span>Note</span></button></div>`;
+    html+=`<div class="sv-dimension">${(SV_FORME[f]||SV_FORME.rettangolo).map(([key,lbl])=>`<label>${esc(lbl)}<input class="form-input" id="sv-room-${k}-${i}-${key}" data-misura="${key}" type="text" inputmode="decimal" oninput="svAggiornaMqAppartamento()" value="${esc(v[key]??'')}"></label>`).join('')}</div>`;
+    if(f==='elle')html+='<div class="sv-vincoli-hint">Misura due rettangoli adiacenti senza contare due volte la zona in comune.</div>';
+    if(f==='irregolare')html+='<div class="sv-vincoli-hint">Usa una superficie ricavata da rilievo o suddivisione geometrica. Dato da verificare.</div>';
+    html+=`<div class="sv-area-result"></div><div class="sv-room-note-box" id="sv-room-${k}-${i}-note-box" ${aperta?'':'hidden'}><label for="${noteId}">Note</label><textarea class="form-textarea" id="${noteId}" rows="2" oninput="svNotaCambiata('${k}',${i},this)">${esc(v.note||'')}</textarea></div></div>`;
+   }
+   html+='</div>';
+  });html+='</div>';
+ });
+ target.innerHTML=html;
+ const camere=['cameraGrande','cameraMedia','cameraPiccola'].reduce((v,k)=>v+svNumeroAmbienti(sv,k),0);
+ const bagni=svNumeroAmbienti(sv,'bagnoAmbiente'),sum=document.getElementById('sv-room-summary');
+ if(sum)sum.textContent=[camere?camere+' camere':'',bagni?bagni+' bagni':''].filter(Boolean).join(' · ');
+ svAggiornaMqAppartamento();
 }
 function svApriNoteAmbiente(k,i,btn){
   const box=document.getElementById(`sv-room-${k}-${i}-note-box`);
@@ -3980,7 +4102,7 @@ function apriSchedaValutazione(id){
   h += `<div class="cx-campo"><label class="form-label">Anno ristrutturazione</label><input class="form-input" id="sv-annorist" value="${esc(sv.annoRistrutturazione||'')}" inputmode="numeric"></div></div>`;
   h += `<div class="cx-row2"><div class="cx-campo"><label class="form-label">N. appartamenti</label><input class="form-input" id="sv-napp" value="${esc(sv.nAppartamenti||'')}" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Piani f.t.</label><input class="form-input" id="sv-piani" value="${esc(sv.pianiFuoriTerra||'')}" inputmode="numeric"></div></div>`;
-  h += `<div class="cx-campo"><label class="form-label">Riscaldamento</label><input class="form-input" id="sv-risc" value="${esc(sv.riscaldamento||'')}"></div>`;
+  h += `<div class="cx-row2 sv-heating"><div class="cx-campo"><label class="form-label">Tipologia impianto</label><select class="form-select" id="sv-risc-tipo">${['',...new Set([...OPT_RISC_TIPO_AUT,...OPT_RISC_TIPO_CEN])].map(o=>`<option value="${esc(o)}"${sv.riscaldamentoTipo===o?' selected':''}>${esc(o||'Non specificato')}</option>`).join('')}</select></div><div class="cx-campo"><label class="form-label">Gestione riscaldamento</label><select class="form-select" id="sv-risc"><option value="">Non indicato</option>${['Autonomo','Centralizzato','Esente'].map(o=>`<option value="${o}"${sv.riscaldamento===o?' selected':''}>${o}</option>`).join('')}</select></div></div>`;
   h += '<div class="form-label" style="margin-top:6px;">Presenza</div><div class="sv-quick">';
   [['ascensore','Ascensore'],['portineria','Portineria'],['lavanderia','Lavanderia'],['postoMacchina','Posto macchina']].forEach(([k,l]) => {
     h += `<button type="button" class="${sv[k]==='Si'?'active':''}" onclick="svToggle('${k}',this)">${l}</button>`;
@@ -4029,6 +4151,7 @@ function apriSchedaValutazione(id){
   h += '</div>';
   h += `<div class="cx-row2" id="sv-mutuo-fields" style="margin-top:6px;${sv.ipoteche==='Si'?'':'display:none;'}"><div class="cx-campo"><label class="form-label">Importo mutuo (€)</label><input class="form-input" id="sv-mutimp" value="${esc(sv.mutuoResiduoImporto||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div>`;
   h += `<div class="cx-campo"><label class="form-label">Rata mensile (€)</label><input class="form-input" id="sv-mutrata" value="${esc(sv.mutuoResiduoRata||'')}" style="background:var(--bg2);padding:8px 10px;border-radius:8px;" inputmode="numeric"></div></div>`;
+  h += `<div id="sv-vincoli-details" class="sv-vincoli" ${sv.vincoli==='Si'?'':'hidden'}><label class="form-label">Tipologie di vincolo (selezione multipla)</label>${ms('sv-vincoli-tipi', AR_VINCOLI, sv.vincoliTipi||[])}<p class="sv-vincoli-hint">Elenco operativo non esaustivo: verifica titoli, atti, registri, norme regionali e competenze degli enti. Inserisci solo vincoli documentati o da verificare.</p><input class="form-input" id="sv-vincoli-altro" placeholder="Altro vincolo / riferimento" value="${esc(sv.vincoliAltro||'')}" style="background:var(--bg2);padding:9px;border-radius:9px"></div>`;
   h += '</div></details>';
 
   /* 6. Valutazione */
@@ -4092,6 +4215,7 @@ function svAggiornaCampiCondizionali(){
   const aff=document.getElementById('sv-affdal')?.closest('.cx-campo');if(aff)aff.style.display=(sv.disponibilita||[]).includes('Affittato')?'':'none';
   const lib=document.getElementById('sv-libdal')?.closest('.cx-campo');if(lib)lib.style.display=(sv.disponibilita||[]).includes('Libero')?'':'none';
   const condo=document.getElementById('sv-spese')?.closest('.cx-row2');if(condo)condo.style.display='';
+  const vincoli=document.getElementById('sv-vincoli-details');if(vincoli)vincoli.hidden=sv.vincoli!=='Si';
 }
 function svToggleAmbiente(k, btn){
   const sv = window._svBozza; if(!sv) return;
@@ -4123,9 +4247,14 @@ function salvaSchedaValutazione(id){
   }
   if(!Array.isArray(sv.disponibilita)||!sv.disponibilita.includes('Affittato'))sv.affittatoDal='';
   if(!Array.isArray(sv.disponibilita)||!sv.disponibilita.includes('Libero'))sv.liberoDal='';
+  sv.vincoliTipi=sv.vincoli==='Si'?msVal('sv-vincoli-tipi'):[];
+  sv.vincoliAltro=sv.vincoli==='Si'?(document.getElementById('sv-vincoli-altro')?.value||'').trim():'';
+  sv.riscaldamentoTipo=document.getElementById('sv-risc-tipo')?.value||'';
   svRaccogliDettagli();
   const totaleAppartamento=svCalcolaMqAppartamento();
   sv.mqComplessivi=totaleAppartamento.completi?String(totaleAppartamento.mq):'';
+  sv.mqPertinenzeEsterni=totaleAppartamento.completi?String(totaleAppartamento.accessori):'';
+  sv.mqTotaliRilevati=totaleAppartamento.completi?String(totaleAppartamento.totali):'';
   SV_AMBIENTI_DIM.forEach(k=>{
     if(!svAmbienteAttivo(sv,k)){
       sv[k]=null;
@@ -4178,17 +4307,16 @@ function tipologiaDaValutazione(tipo){
   return map[tipo] || null;
 }
 function riepilogoLocaliDaValutazione(sv){
-  const rooms=[];
-  SV_AMBIENTI.forEach(([k,nome])=>{
-    if(!svAmbienteAttivo(sv,k))return;
-    const quantity=svNumeroAmbienti(sv,k), arr=svDettagliAmbiente(sv,k);
-    for(let i=0;i<quantity;i++){
-      const v=arr[i]||{}, l=String(v.l||'').trim(),p=String(v.w||'').trim();
-      const len=parseNum(l), wid=parseNum(p), mq=len>0&&wid>0 ? Math.round(len*wid*100)/100 : null;
-      rooms.push({tipo:k,nome:nome,numero:i+1,quantita:quantity,l,p,mq,note:String(v.note||'').trim()});
-    }
-  });
-  return rooms;
+ const rooms=[];
+ SV_AMBIENTI.forEach(([k,nome])=>{
+  if(!svAmbienteAttivo(sv,k))return;
+  const quantity=svNumeroAmbienti(sv,k),arr=svDettagliAmbiente(sv,k);
+  for(let i=0;i<quantity;i++){
+   const v=arr[i]||{},forma=v.forma||'rettangolo';
+   rooms.push({tipo:k,nome,numero:i+1,quantita:quantity,forma,misure:Object.fromEntries((SV_FORME[forma]||[]).map(([fld])=>[fld,v[fld]||''])),l:v.l||'',p:v.w||'',mq:svArea(v),note:String(v.note||'').trim(),interno:SV_LOCALI_APPARTAMENTO.has(k)});
+  }
+ });
+ return rooms;
 }
 function htmlLocaliDossier(d){
   const rooms=d.ambientiRilevati;
@@ -4197,8 +4325,8 @@ function htmlLocaliDossier(d){
   let h='<div class="dossier-rooms"><div class="dossier-rooms-heading">Ambienti rilevati</div>';
   rooms.forEach(r=>{
     const nome=esc(String(r.nome||r.tipo||'Ambiente'))+(r.quantita>1?' '+Number(r.numero||1):'');
-    const dimensioni=(r.l||r.p) ? esc([r.l,r.p].filter(Boolean).join(' × '))+' m' : '—';
-    h+=`<div class="dossier-room-row"><span>${nome}</span><strong>${dimensioni}</strong>${r.mq!==null&&r.mq!==undefined?`<small>${esc(String(r.mq))} m²</small>`:''}${r.note?`<span class="dossier-room-note">${esc(r.note)}</span>`:''}</div>`;
+    const dimensioni=r.misure ? esc(Object.entries(r.misure).filter(x=>x[1]).map(x=>x[0]+': '+x[1]).join(' · ')||'—') : ((r.l||r.p) ? esc([r.l,r.p].filter(Boolean).join(' × '))+' m' : '—');
+    h+=`<div class="dossier-room-row"><span>${nome}${r.forma?` <small>(${esc(r.forma)})</small>`:''}</span><strong>${dimensioni}</strong>${r.mq!==null&&r.mq!==undefined?`<small>${esc(String(r.mq))} m²</small>`:''}${r.note?`<span class="dossier-room-note">${esc(r.note)}</span>`:''}</div>`;
   });
   if(tot>0)h+=`<div class="dossier-room-total">Somma superfici misurate <strong>${tot.toFixed(2)} m²</strong></div>`;
   return h+'</div>';
@@ -4251,10 +4379,15 @@ function applicaSchedaAlDossier(im){
     const m = parseNum(sv.mqComplessivi);
     if(m !== null && m > 0){ d.mqCommerciali = sv.mqComplessivi; if(!d.mqCalpestabili) d.mqCalpestabili = sv.mqComplessivi; }
   }
+  if(sv.riscaldamentoTipo)d.riscaldamentoTipo=[sv.riscaldamentoTipo];
+  if(sv.vincoliTipi?.length)d.vincoliTipo=[...sv.vincoliTipi];
+  if(sv.vincoliAltro)d.vincoliNote=sv.vincoliAltro;
+  d.mqPertinenzeEsterni=sv.mqPertinenzeEsterni||'';d.mqTotaliRilevati=sv.mqTotaliRilevati||'';
   if(sv.riscaldamento){
     const r = sv.riscaldamento.toLowerCase();
     if(r.indexOf('autonom') >= 0) d.riscaldamento = ['Autonomo'];
     else if(r.indexOf('central') >= 0) d.riscaldamento = ['Centralizzato'];
+    else if(r.indexOf('esent') >= 0) d.riscaldamento = ['Esente'];
   }
   if(svAmbienteAttivo(sv,'studio')) d.studio = 'Si';
   if(svAmbienteAttivo(sv,'cucinaAbitabile')) d.cucina = ['Abitabile'];
@@ -5241,7 +5374,7 @@ function salvaNuovoImmobile(){
   localizzaImmobile(im, coordinateManuali);
   if(['affitto','entrambi'].includes(operazione)) setTimeout(()=>apriLocazioneImmobile(im.id),300);
   else if(['NT','INK','VND'].includes(im.stato)){ setTimeout(() => apriPrezzi(im.id), 400); }
-  else setTimeout(() => apriScheda(im.id), 180);
+  else setTimeout(() => apriScheda(im.id), 80);
 }
 
 function apriModifica(){
@@ -5671,6 +5804,7 @@ function apriNuovaPersona(){
   h += '<div class="form-row np-company" hidden><label class="form-label">Partita IVA</label><input class="form-input" id="np-piva"></div><div class="form-row np-company" hidden><label class="form-label">PEC</label><input class="form-input" id="np-pec"></div><div class="form-row np-company" hidden><label class="form-label">Referente</label><input class="form-input" id="np-referente"></div>';
   h += '<div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="np-telefono" type="tel"></div>';
   h += '<div class="form-row"><label class="form-label">Email</label><input class="form-input" id="np-email" type="email"></div>';
+  h += '<div class="form-row"><label class="form-label">Residenza · indirizzo completo</label><input class="form-input" id="np-residenza" autocomplete="street-address" placeholder="Via, numero, CAP, comune, provincia, Stato"></div>';
   h += anagraficaNascitaHtml('np');
   h += '</div>';
   h += '<div id="np-extra"></div>';
@@ -5702,7 +5836,7 @@ function salvaNuovaPersona(){
     }
   }
   const ad = new Date().toISOString();
-  const p = { id:uid(), tipoSoggetto:societa?'societa':'persona', ragioneSociale:societa?cog:'', partitaIVA:societa?g('np-piva').trim():'', pec:societa?g('np-pec').trim():'', referente:societa?g('np-referente').trim():'', nome:nom, cognome:cog, ruoli:_npR.slice(), telefono:tel, email:em, attivita:[], foto:[], createdAt:ad, updatedAt:ad };
+  const p = { id:uid(), tipoSoggetto:societa?'societa':'persona', ragioneSociale:societa?cog:'', partitaIVA:societa?g('np-piva').trim():'', pec:societa?g('np-pec').trim():'', referente:societa?g('np-referente').trim():'', nome:nom, cognome:cog, ruoli:_npR.slice(), telefono:tel, email:em, residenza:g('np-residenza').trim(), attivita:[], foto:[], createdAt:ad, updatedAt:ad };
   if(!societa)salvaAnagraficaNascita(p,'np');
   if(_npR.indexOf('PROFESSIONISTA') >= 0) p.tipoProf = g('np-tipoProf') || 'altro';
   if(_npR.indexOf('ACQUIRENTE') >= 0){
@@ -5934,6 +6068,7 @@ function apriSchedaPersona(id){
   h += '</div>';
   h += `<div class="top-title">${esc(nomeCogn(p).toUpperCase() || 'Persona')}</div>`;
   if(tel) h += `<div class="top-sub">${ico('telefono',12)} ${esc(tel)}</div>`;
+  if(p.residenza) h += `<div class="top-sub">Residenza · ${esc(p.residenza)}</div>`;
   if(p.dataNascita && p.tipoSoggetto!=='societa'){
     const dd=String(p.dataNascita).split('-');
     if(dd.length===3)h+=`<div class="top-sub ar-person-born">Compleanno: ${esc(dd[2]+'/'+dd[1]+'/'+dd[0])}${p.luogoNascita?' · '+esc(p.luogoNascita):''} <button type="button" class="ar-birth-export" onclick="scaricaCompleannoICS(${argEvento(p.id)})" title="Salva il promemoria annuale nel calendario">Calendario ↗</button></div>`;
@@ -5941,7 +6076,7 @@ function apriSchedaPersona(id){
   const immP = DB.immobili.filter(i => (i.proprietari||[]).some(pr => pr.personaId === p.id));
   if(immP.length) h += `<div class="top-sub">${ico('casa',12)} ${immP.length} immobili</div>`;
   h += '<div class="top-actions">';
-  if(tel) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(tel)}')">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(tel)}')">${ico('whatsapp',15)}</button>`;
+  if(tel) h += `<button class="btn btn-secondary btn-icon" onclick="chiama('${esc(tel)}','persona',${argEvento(p.id)})">${ico('telefono',15)}</button><button class="btn btn-secondary btn-icon" onclick="wa('${esc(tel)}')">${ico('whatsapp',15)}</button>`;
   if(p.email) h += `<button class="btn btn-secondary btn-icon" onclick="scriviEmail('${esc(p.email)}')">${ico('email',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" onclick="apriModificaPersona()">${ico('modifica',15)}</button>`;
   h += `<button class="btn btn-secondary btn-icon" title="Altre azioni" aria-label="Altre azioni" onclick="apriAltreAzioniPersona('${p.id}')"><span style="font-size:20px;line-height:1">⋯</span></button>`;
@@ -6049,6 +6184,7 @@ function apriModificaPersona(){
   h += `<div class="form-row"><label class="form-label">Telefono</label><input class="form-input" id="mp-telefono" type="tel" value="${esc(p.telefono||'')}"></div>`;
   h += `<div class="form-row"><label class="form-label">Telefono 2</label><input class="form-input" id="mp-telefono2" type="tel" value="${esc(p.telefono2||'')}"></div>`;
   h += `<div class="form-row"><label class="form-label">Email</label><input class="form-input" id="mp-email" value="${esc(p.email||'')}"></div>`;
+  h += `<div class="form-row"><label class="form-label">Residenza · indirizzo completo</label><input class="form-input" id="mp-residenza" autocomplete="street-address" value="${esc(p.residenza||'')}"></div>`;
   if(p.tipoSoggetto !== 'societa')h += anagraficaNascitaHtml('mp',p);
   else h += `<div class="form-row"><label class="form-label">CF</label><input class="form-input" id="mp-cf" value="${esc(p.cf||'')}"></div>`;
   h += `<div class="form-row"><label class="form-label">Note</label><textarea class="form-textarea" id="mp-note">${esc(p.note||'')}</textarea></div>`;
@@ -6065,6 +6201,7 @@ function salvaModificaPersona(){
   p.telefono = g('mp-telefono').trim();
   p.telefono2 = g('mp-telefono2').trim();
   p.email = g('mp-email').trim();
+  p.residenza = g('mp-residenza').trim();
   if(p.tipoSoggetto !== 'societa')salvaAnagraficaNascita(p,'mp');
   else p.cf = g('mp-cf').trim().toUpperCase();
   p.note = g('mp-note');
@@ -7224,17 +7361,22 @@ function renderPraticheDashboard(){
  const c=document.getElementById('pratiche-dashboard');if(!c)return;
  const arr=elencoPratiche().map(pr=>({pr,...datiPratica(pr),stato:praticaStatoEffettivo(pr)}))
    .sort((a,b)=>String(b.appuntamenti[0]?.dataInizio||b.pr.updatedAt||b.pr.createdAt).localeCompare(String(a.appuntamenti[0]?.dataInizio||a.pr.updatedAt||a.pr.createdAt)));
- const pratiche=arr.filter(x=>x.stato!=='potenziale'&&x.stato!=='chiusa'&&praticaVisitaConclusa(x.pr));
+ const rogitataConAttivita=pr=>praticaStatoEffettivo(pr)==='rogitata' && attivitaDiPratica(pr).some(a=>a.tipo==='da_fare'&&!a.completata);
+ const pratiche=arr.filter(x=>x.stato!=='potenziale'&&x.stato!=='chiusa'&&praticaVisitaConclusa(x.pr)&&(x.stato!=='rogitata'||rogitataConAttivita(x.pr)));
  const potenziali=arr.filter(x=>x.stato==='potenziale'&&praticaVisitaConclusa(x.pr)&&x.im.stato==='INK'&&(x.p.richiesta?.immobiliCollegati||[]).some(id=>String(id)===String(x.im.id)));
  const archiviate=arr.filter(x=>x.stato==='chiusa');
+ const rogitate=arr.filter(x=>x.stato==='rogitata'&&!rogitataConAttivita(x.pr));
  const mk=({pr,p,im,stato,proposal})=>{
   const isPossible=stato==='potenziale';
-  return `<button type="button" class="practice-card ${isPossible?'practice-card-possible':''}" onclick="apriPratica(${argEvento(pr.id)})">${isPossible?'':`<div class="practice-meta"><span class="practice-stage">${esc(faseGestionePratica(pr))}</span></div>`}<strong>${esc(titoloBrevePratica(pr))}</strong>${isPossible?'':''}</button>`;
+  const pending=stato==='rogitata'&&attivitaDiPratica(pr).some(a=>a.tipo==='da_fare'&&!a.completata);
+  return `<button type="button" class="practice-card ${isPossible?'practice-card-possible':''}" onclick="apriPratica(${argEvento(pr.id)})">${isPossible?'':`<div class="practice-meta"><span class="practice-stage">${pending?'ROGITATA · ATTIVITÀ DA ESEGUIRE':esc(faseGestionePratica(pr))}</span></div>`}<strong>${esc(titoloBrevePratica(pr))}</strong>${isPossible?'':''}</button>`;
  };
  let h='<div class="practice-head"><strong>Pratiche in gestione</strong><button type="button" class="btn btn-secondary" onclick="apriNuovaPratica()">+ Abbinamento</button></div>';
  h+=pratiche.length?pratiche.map(mk).join(''):'<div class="empty" style="padding:10px 8px">Nessuna proposta registrata.</div>';
  h+=`<div class="practice-head"><strong>Possibili pratiche</strong><span class="practice-count">${potenziali.length}</span></div>`;
  h+=potenziali.length?potenziali.map(mk).join(''):'<div class="geo-help" style="padding:6px">Nessun abbinamento senza proposta.</div>';
+ h+=`<div class="practice-head"><strong>Pratiche rogitate</strong><span class="practice-count">${rogitate.length}</span></div>`;
+ h+=rogitate.length?rogitate.map(mk).join(''):'<div class="geo-help" style="padding:6px">Nessuna pratica rog itata senza attività pendenti.</div>'.replace('rog itata','rogitata');
  if(archiviate.length)h+=`<details class="practice-archive"><summary>Pratiche chiuse · ${archiviate.length}</summary>${archiviate.map(mk).join('')}</details>`;
  c.innerHTML=h;
 }
@@ -7328,6 +7470,8 @@ function pr3DatiLive(pr){
  if(sellers.length)h+=`<button class="pr3-linkrow" onclick="apriScheda360('venditore',${argEvento(sellers[0].id)},${argEvento(im.id)})">Dati del venditore riferiti all'immobile <span>›</span></button>`;
  h+='</section>';
  h+='<section class="pr3-detail-group"><div class="pr3-section-title"><strong>Pratica</strong></div>';
+ h+=`<label class="ar-tutela-toggle"><input type="checkbox" ${pr.soprintendenzaPrevista?'checked':''} onchange="aggiornaSoprintendenzaPratica(${argEvento(pr.id)},this.checked)">Immobile soggetto a tutela · prevedere due atti solo se necessario</label>`;
+ h+='<p class="sv-vincoli-hint">Attiva solo se la documentazione e il notaio prevedono un atto iniziale e un atto definitivo. La tutela culturale non comporta automaticamente due rogiti.</p>';
  h+=`<button class="pr3-linkrow" onclick="apriScheda360('pratica',${argEvento(pr.id)})">Condizioni, pagamenti e verifiche <span>›</span></button>`;
  h+=`<button class="pr3-linkrow" onclick="arCatApri('pratica',${argEvento(pr.id)})">Repertorio dettagliato <span>›</span></button></section>`;
  return h;
@@ -8332,10 +8476,34 @@ function sezione(ctx,src){
       }
     });
     if(curRow.length) rows.push(curRow);
-    let body = rows.map(row => {
-      if(row.length === 1) return campo(row[0], ctx, src);
-      return `<div class="cx-row2">${row.map(f => campo(f, ctx, src)).join('')}</div>`;
-    }).join('');
+    // Primo livello: valori esistenti e variabili principali. Campi rimanenti non vengono persi.
+    const essenziali=new Set(['tipologia','sottotipologia','statoConservativo','piano','annoCostruzione','mqCommerciali','mqCalpestabili','camere','bagni','cucina','riscaldamento','riscaldamentoTipo','classeEnergetica','ipe','ascensore','balcone','terrazzo','box','giardino','mqGiardino','nPianiEdificio','destinazioneUso','occupazione','statoOccupazione','prezzo','vincoli','vincoliTipo']);
+    const usati=new Set(),base=[],extra=[];
+    l.forEach(f=>{
+      const value=src[ctx==='rq'?rk(f):ik(f)];
+      const compilato=Array.isArray(value)?value.length>0:(value!==undefined&&value!==null&&String(value).trim()!=='');
+      // Solo l'interfaccia raggruppa; gli attributi, inclusi i duplicati storici, restano nei dati.
+      const dedup=String(f.l||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+      const principale=!usati.has(dedup)&&(compilato||essenziali.has(f.k)||essenziali.has(ik(f)));
+      if(principale)base.push(f);else extra.push(f);
+      if(principale)usati.add(dedup);
+    });
+    const renderCampi=fields=>{
+      // Presenze opzionali non compilate in un unico selettore multiplo, senza rendere obbligatori i singoli sì/no.
+      const multiple=ctx==='im'?fields.filter(f=>f.t==='sn'&&!src[ik(f)]):[];
+      const ordinary=fields.filter(f=>!multiple.includes(f));
+      let out=ordinary.map(f=>campo(f,ctx,src)).join('');
+      if(multiple.length){
+        out+=`<details class="ar-dossier-advanced"><summary>Dotazioni e presenze · ${multiple.length} voci (selezione multipla)</summary><div class="zone-chips">`;
+        multiple.forEach(f=>{
+          const id=`cx-${ctx}-${f.k}`;
+          out+=`<label class="zone-chip" data-cx-ctx="${ctx}" data-cx-key="${f.k}"><input type="checkbox" aria-label="${esc(f.l)}" onchange="document.getElementById('${id}').value=this.checked?'Si':'No'">${esc(f.l)}<input type="hidden" id="${id}" value=""></label>`;
+        });out+='</div></details>';
+      }
+      return out;
+    };
+    let body=renderCampi(base);
+    if(extra.length)body+=`<details class="ar-dossier-advanced"><summary>Altre variabili specialistiche · ${extra.length}</summary><div>${renderCampi(extra)}</div></details>`;
     if(ctx==='im' && code==='DI') body += htmlLocaliDossier(src);
     const hideCommercial=ctx==='im' && code==='CM' && !A(src.tipologia).includes('Locale Commerciale');
     h += `<details class="fold" data-cx-group="${code}"${hideCommercial?' hidden':''}><summary>${g[1]}</summary><div>${body}</div></details>`;
@@ -9246,6 +9414,130 @@ function scaricaCompleannoICS(id){
  const blob=new Blob([lines],{type:'text/calendar;charset=utf-8'}),url=URL.createObjectURL(blob);
  const a=document.createElement('a');a.href=url;a.download='compleanno-'+(p.cognome||'contatto').toLowerCase().replace(/[^a-z0-9]/gi,'_')+'.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
 }
+</script>
+<script>
+/* ARANJO 2.20.0 - azioni operative, tutela e codice fiscale assistito */
+function svAggiungiAltro(select){
+ const k=select?.value,sv=window._svBozza;
+ if(!k||!sv||!SV_NOMI[k])return;
+ svRaccogliDettagli();
+ sv.ambientiPresenti=sv.ambientiPresenti||{};sv.ambientiQuantita=sv.ambientiQuantita||{};
+ sv.ambientiPresenti[k]=true;
+ if(!sv.ambientiQuantita[k])sv.ambientiQuantita[k]=1;
+ const chosen=select.previousElementSibling;
+ if(chosen&&!chosen.querySelector('[data-sv-room="'+k+'"]')){
+   const b=document.createElement('button');b.type='button';b.className='active';b.dataset.svRoom=k;b.setAttribute('aria-pressed','true');
+   b.textContent=SV_NOMI[k];b.onclick=()=>svToggleAmbiente(k,b);chosen.appendChild(b);
+ }
+ select.value='';svRendiAmbienti();
+}
+
+function creaAttivitaRapidaCensito(id,tipo){
+ const im=(DB.immobili||[]).find(x=>String(x.id)===String(id));
+ if(!im||im.stato!=='IMM'||!['NS','NR'].includes(tipo))return;
+ const key=id+':'+tipo,now=Date.now();
+ window._arQuickLast=window._arQuickLast||{};
+ if(now-(window._arQuickLast[key]||0)<1000)return;
+ window._arQuickLast[key]=now;
+ const data=new Date().toISOString(),testo=tipo==='NS'?'NS — Non sa nulla':'NR — Non risposto';
+ registraAttivitaCondivisa({id:uid(),seq:seq(),data,createdAt:data,tipo:'fatta',tipoAtt:tipo,testo,completata:true,immobileId:im.id,origine:'immobile'});
+ im.updatedAt=data;
+ Storage.save(DB);renderListaImmobili();aggiornaBadgeAttivita();renderAttivita();apriScheda(im.id);
+}
+function aggiornaSoprintendenzaPratica(id,val){
+ const pr=(DB.pratiche||[]).find(p=>String(p.id)===String(id));if(!pr)return;
+ pr.soprintendenzaPrevista=Boolean(val);pr.updatedAt=new Date().toISOString();
+ Storage.save(DB);renderPraticheDashboard();
+}
+// Catasto Belfiore: il luogo puo avere provincia mancante, estinta o codice estero Zxxx.
+// Il dataset di comuni correnti e scaricabile su rete e ridotto al necessario; i dati salvati restano locali.
+const AR_CF_ESTERI={
+ 'FRANCIA':'Z110','GERMANIA':'Z112','STATI UNITI':'Z404','STATI UNITI D AMERICA':'Z404',
+ 'REGNO UNITO':'Z114','GRAN BRETAGNA':'Z114','SPAGNA':'Z131','SVIZZERA':'Z133',
+ 'AUSTRIA':'Z102','BELGIO':'Z103','PAESI BASSI':'Z126','OLANDA':'Z126','PORTOGALLO':'Z128',
+ 'POLONIA':'Z127','ROMANIA':'Z129','ALBANIA':'Z100','BULGARIA':'Z104','GRECIA':'Z115',
+ 'IRLANDA':'Z116','DANIMARCA':'Z107','SVEZIA':'Z132','NORVEGIA':'Z125','FINLANDIA':'Z109',
+ 'REPUBBLICA CECA':'Z156','UNGHERIA':'Z134','SLOVENIA':'Z150','CROAZIA':'Z149','SERBIA':'Z158',
+ 'RUSSIA':'Z154','UCRAINA':'Z138','TURCHIA':'Z243','TUNISIA':'Z352','MAROCCO':'Z330',
+ 'EGITTO':'Z336','SENEGAL':'Z343','NIGERIA':'Z335','SUD AFRICA':'Z347','BRASILE':'Z602',
+ 'ARGENTINA':'Z600','COLOMBIA':'Z604','PERU':'Z611','MESSICO':'Z514','CANADA':'Z401',
+ 'CINA':'Z210','GIAPPONE':'Z219','INDIA':'Z222','PAKISTAN':'Z236','FILIPPINE':'Z216',
+ 'AUSTRALIA':'Z700','NUOVA ZELANDA':'Z719'
+};
+const arNormalizzaLuogo=s=>String(s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9]/g,' ').replace(/\s+/g,' ').trim();
+let arCfPlaces=null,arCfPlacesJob=null;
+function arCfLuoghiDefault(){
+ const map=new Map();
+ Object.entries(AR_CF_COMUNI).forEach(([cod,entry])=>map.set(arNormalizzaLuogo(entry[0]),{code:cod,nome:entry[0],prov:entry[1]}));
+ Object.entries(AR_CF_ESTERI).forEach(([name,cod])=>map.set(arNormalizzaLuogo(name),{code:cod,nome:name,prov:'EE'}));
+ return map;
+}
+function arCfCaricaLuoghi(){
+ if(arCfPlaces)return Promise.resolve(arCfPlaces);
+ if(arCfPlacesJob)return arCfPlacesJob;
+ const map=arCfLuoghiDefault();
+ try{
+  const cache=localStorage.getItem('aranjo_cf_luoghi_v1');
+  if(cache){JSON.parse(cache).forEach(([nome,code,prov])=>map.set(arNormalizzaLuogo(nome),{nome,code,prov}));arCfPlaces=map;return Promise.resolve(map);}
+ }catch(e){}
+ // Ridondanza: un errore di connessione non impedisce l'inserimento manuale del codice Belfiore.
+ arCfPlacesJob=fetch('https://cdn.jsdelivr.net/gh/RP92/comuni-italiani@main/data/comuni.json',{cache:'force-cache'})
+ .then(r=>{if(!r.ok)throw new Error('Dataset non disponibile');return r.json();})
+ .then(items=>{
+  const tuples=[];
+  items.forEach(i=>{if(i.codiceCatastale){const prov=i.sigla||i.provincia?.sigla||'';map.set(arNormalizzaLuogo(i.nome),{nome:i.nome,code:i.codiceCatastale,prov});tuples.push([i.nome,i.codiceCatastale,prov]);}});
+  arCfPlaces=map;
+  try{localStorage.setItem('aranjo_cf_luoghi_v1',JSON.stringify(tuples));}catch(e){}
+  return map;
+ }).catch(e=>{console.warn('Dataset Belfiore offline:',e);arCfPlaces=map;return map;});
+ return arCfPlacesJob;
+}
+function arCodiceFiscaleGenera(cognome,nome,data,sesso,place){
+ const clean=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z]/g,'');
+ const codeName=(s,isName)=>{
+  const c=clean(s),cons=c.replace(/[AEIOU]/g,''),voc=c.replace(/[^AEIOU]/g,'');
+  if(isName&&cons.length>=4)return cons[0]+cons[2]+cons[3];
+  return (cons+voc+'XXX').slice(0,3);
+ };
+ const d=String(data||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+ if(!d||!['M','F'].includes(sesso)||!/^[A-Z][0-9]{3}$/.test(place)||!clean(cognome)||!clean(nome))return null;
+ const y=Number(d[1]),m=Number(d[2]),day=Number(d[3]),dt=new Date(y,m-1,day);
+ if(y<1800||y>new Date().getFullYear()||dt.getFullYear()!==y||dt.getMonth()!==m-1||dt.getDate()!==day)return null;
+ const base=codeName(cognome,false)+codeName(nome,true)+String(y).slice(-2)+'ABCDEHLMPRST'[m-1]+String(day+(sesso==='F'?40:0)).padStart(2,'0')+place;
+ const odd={0:1,1:0,2:5,3:7,4:9,5:13,6:15,7:17,8:19,9:21,A:1,B:0,C:5,D:7,E:9,F:13,G:15,H:17,I:19,J:21,K:2,L:4,M:18,N:20,O:11,P:3,Q:6,R:8,S:12,T:14,U:16,V:10,W:22,X:25,Y:24,Z:23};
+ let sum=0;for(let i=0;i<15;i++){const c=base[i];sum+=i%2===0?odd[c]:/^[0-9]$/.test(c)?Number(c):c.charCodeAt(0)-65;}
+ return base+String.fromCharCode(65+sum%26);
+}
+async function arCfCalcolaDaForm(prefix){
+ const status=document.getElementById(prefix+'-cf-genera-hint'),cf=document.getElementById(prefix+'-cf');
+ if(!cf)return;
+ const val=x=>document.getElementById(prefix+'-'+x)?.value?.trim()||'';
+ const cognome=(document.getElementById(prefix==='np'?'np-cognome':'mp-cognome')?.value||''),nome=(document.getElementById(prefix==='np'?'np-nome':'mp-nome')?.value||'');
+ const luogo=val('luogo-nascita'),stato=val('stato-nascita'),prov=val('provincia-nascita');
+ const field=document.getElementById(prefix+'-codice-belfiore');let code=(field?.value||'').trim().toUpperCase();
+ if(!code){
+  const localMap=arCfLuoghiDefault();
+  const paese=arNormalizzaLuogo(stato),lookup=arNormalizzaLuogo(luogo);
+  const estero=paese&& !['ITALIA','ITALY','IT'].includes(paese);
+  let found=estero?(localMap.get(paese)||localMap.get(lookup)):localMap.get(lookup);
+  if(!found){const map=await arCfCaricaLuoghi();found=estero?(map.get(paese)||map.get(lookup)):map.get(lookup);}
+  if(found)code=found.code;
+ }
+ if(!code){if(status)status.textContent='Luogo non identificato: inserisci il codice Belfiore catastale (Zxxx per nascita all’estero), senza obbligo di provincia.';return;}
+ const calculated=arCodiceFiscaleGenera(cognome,nome,val('data-nascita'),val('sesso-cf'),code);
+ if(!calculated){if(status)status.textContent='Verifica nome, cognome, data, sesso e codice Belfiore (lettera + 3 cifre).';return;}
+ cf.value=calculated;if(field)field.value=code;
+ if(status)status.textContent='Codice teorico calcolato. Confermare con Tessera sanitaria/Agenzia Entrate: omocodia e assegnazioni ufficiali possono differire.';
+}
+function arCfAggiungiGeneratore(prefix){
+ const row=document.getElementById(prefix+'-cf')?.closest('.form-row');if(!row||document.getElementById(prefix+'-cf-genera'))return;
+ const html=`<div class="ar-cf-actions"><button type="button" class="btn btn-secondary" id="${prefix}-cf-genera" onclick="arCfCalcolaDaForm('${prefix}')">Calcola CF</button><input class="form-input" id="${prefix}-codice-belfiore" maxlength="4" placeholder="Belfiore (fac.)" style="width:137px;background:var(--bg2);padding:10px;border-radius:9px;font-size:13px;text-transform:uppercase" autocapitalize="characters" value=""></div><p class="ar-cf-status" id="${prefix}-cf-genera-hint">Per comuni senza provincia o Stati esteri non è obbligatorio indicare la provincia: puoi inserire direttamente il codice Belfiore.</p>`;
+ row.insertAdjacentHTML('afterend',html);
+}
+// Inserimento in tutti i modali di anagrafica, anche i modali riaperti.
+new MutationObserver(()=>{
+ ['np','mp'].forEach(p=>{if(document.getElementById(p+'-cf')&&!document.getElementById(p+'-cf-genera'))arCfAggiungiGeneratore(p);});
+}).observe(document.getElementById('modal-body'),{childList:true,subtree:false});
 </script>
 </body>
 </html>
